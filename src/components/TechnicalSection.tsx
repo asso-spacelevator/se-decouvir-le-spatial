@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Zap, ChevronRight, CheckCircle } from 'lucide-react';
 import { useSession } from '../contexts/SessionContext';
 import { Subsection } from './Subsection';
@@ -11,9 +11,20 @@ interface TechnicalSectionProps {
 }
 
 export function TechnicalSection({ onComplete, onHome, onBack }: TechnicalSectionProps) {
-  const { saveResponse } = useSession();
+  const { saveResponse, getResponses } = useSession();
   const [responses, setResponses] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
+
+  useEffect(() => {
+    const loadResponses = async () => {
+      const savedResponses = await getResponses('technical');
+      setResponses(savedResponses);
+      if (savedResponses.submitted === 'true') {
+        setSubmitted(true);
+      }
+    };
+    loadResponses();
+  }, []);
 
   const questions = [
     {
@@ -28,16 +39,13 @@ export function TechnicalSection({ onComplete, onHome, onBack }: TechnicalSectio
     }
   ];
 
-  const handleResponseChange = (id: string, value: string) => {
+  const handleResponseChange = async (id: string, value: string) => {
     setResponses(prev => ({ ...prev, [id]: value }));
+    await saveResponse('technical', id, value);
   };
 
   const handleSubmit = async () => {
-    for (const [questionId, response] of Object.entries(responses)) {
-      if (response.trim()) {
-        await saveResponse('technical', questionId, response);
-      }
-    }
+    await saveResponse('technical', 'submitted', 'true');
     setSubmitted(true);
     setTimeout(() => {
       onComplete();

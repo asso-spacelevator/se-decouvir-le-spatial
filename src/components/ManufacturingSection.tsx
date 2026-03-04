@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Cog, ChevronRight, CheckCircle } from 'lucide-react';
 import { useSession } from '../contexts/SessionContext';
 import { Subsection } from './Subsection';
@@ -11,10 +11,24 @@ interface ManufacturingSectionProps {
 }
 
 export function ManufacturingSection({ onComplete, onHome, onBack }: ManufacturingSectionProps) {
-  const { saveResponse } = useSession();
+  const { saveResponse, getResponses } = useSession();
   const [selectedSystem, setSelectedSystem] = useState<number | null>(null);
   const [responses, setResponses] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
+
+  useEffect(() => {
+    const loadResponses = async () => {
+      const savedResponses = await getResponses('manufacturing');
+      setResponses(savedResponses);
+      if (savedResponses.selectedSystem) {
+        setSelectedSystem(parseInt(savedResponses.selectedSystem));
+      }
+      if (savedResponses.submitted === 'true') {
+        setSubmitted(true);
+      }
+    };
+    loadResponses();
+  }, []);
 
   const subsystems = [
     {
@@ -55,14 +69,18 @@ export function ManufacturingSection({ onComplete, onHome, onBack }: Manufacturi
     }
   ];
 
-  const handleResponseChange = (id: string, value: string) => {
+  const handleSystemSelect = async (index: number) => {
+    setSelectedSystem(index);
+    await saveResponse('manufacturing', 'selectedSystem', String(index));
+  };
+
+  const handleResponseChange = async (id: string, value: string) => {
     setResponses(prev => ({ ...prev, [id]: value }));
+    await saveResponse('manufacturing', id, value);
   };
 
   const handleSubmit = async () => {
-    if (responses['reflection']?.trim()) {
-      await saveResponse('manufacturing', 'system_reflection', responses['reflection']);
-    }
+    await saveResponse('manufacturing', 'submitted', 'true');
     setSubmitted(true);
     setTimeout(() => {
       onComplete();
@@ -116,7 +134,7 @@ export function ManufacturingSection({ onComplete, onHome, onBack }: Manufacturi
             {subsystems.map((system, index) => (
               <button
                 key={index}
-                onClick={() => setSelectedSystem(index)}
+                onClick={() => handleSystemSelect(index)}
                 className={`text-left p-5 rounded-lg border transition-all duration-300 ${
                   selectedSystem === index
                     ? 'bg-emerald-500/20 border-emerald-400 shadow-lg shadow-emerald-500/20'

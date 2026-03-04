@@ -11,12 +11,28 @@ interface OperationsSectionProps {
 }
 
 export function OperationsSection({ onComplete, onHome, onBack }: OperationsSectionProps) {
-  const { saveResponse } = useSession();
+  const { saveResponse, getResponses } = useSession();
   const [currentPhase, setCurrentPhase] = useState(0);
   const [countdown, setCountdown] = useState(10);
   const [isLaunching, setIsLaunching] = useState(false);
   const [responses, setResponses] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  useEffect(() => {
+    const loadResponses = async () => {
+      const savedResponses = await getResponses('operations');
+      setResponses(savedResponses);
+      if (savedResponses.submitted === 'true') {
+        setSubmitted(true);
+      }
+      if (savedResponses.currentPhase) {
+        setCurrentPhase(parseInt(savedResponses.currentPhase));
+      }
+      setIsLoaded(true);
+    };
+    loadResponses();
+  }, []);
 
   const phases = [
     {
@@ -73,7 +89,9 @@ export function OperationsSection({ onComplete, onHome, onBack }: OperationsSect
       const phaseTimer = setInterval(() => {
         setCurrentPhase(prev => {
           if (prev < phases.length - 1) {
-            return prev + 1;
+            const newPhase = prev + 1;
+            saveResponse('operations', 'currentPhase', String(newPhase));
+            return newPhase;
           } else {
             clearInterval(phaseTimer);
             return prev;
@@ -84,20 +102,22 @@ export function OperationsSection({ onComplete, onHome, onBack }: OperationsSect
     }
   }, [isLaunching, countdown, currentPhase]);
 
-  const startLaunch = () => {
+  const startLaunch = async () => {
     setIsLaunching(true);
     setCountdown(10);
     setCurrentPhase(0);
+    await saveResponse('operations', 'currentPhase', '0');
   };
 
-  const handleResponseChange = (id: string, value: string) => {
+  const handleResponseChange = async (id: string, value: string) => {
     setResponses(prev => ({ ...prev, [id]: value }));
+    if (isLoaded) {
+      await saveResponse('operations', id, value);
+    }
   };
 
   const handleSubmit = async () => {
-    if (responses['experience']?.trim()) {
-      await saveResponse('operations', 'launch_experience', responses['experience']);
-    }
+    await saveResponse('operations', 'submitted', 'true');
     setSubmitted(true);
     setTimeout(() => {
       onComplete();

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Mail, Send, CheckCircle } from 'lucide-react';
 import { useSession } from '../contexts/SessionContext';
 import { Navigation } from './Navigation';
@@ -10,11 +10,22 @@ interface QuestionZoneProps {
 }
 
 export function QuestionZone({ onComplete, onHome, onBack }: QuestionZoneProps) {
-  const { submitQuestion } = useSession();
+  const { submitQuestion, saveResponse, getResponses } = useSession();
   const [category, setCategory] = useState<'career' | 'technical' | 'geopolitics' | 'general'>('general');
   const [questionText, setQuestionText] = useState('');
   const [isAnonymous, setIsAnonymous] = useState(true);
   const [submitted, setSubmitted] = useState(false);
+
+  useEffect(() => {
+    const loadResponses = async () => {
+      const responses = await getResponses('questions');
+      if (responses.category) setCategory(responses.category as any);
+      if (responses.questionText) setQuestionText(responses.questionText);
+      if (responses.isAnonymous) setIsAnonymous(responses.isAnonymous === 'true');
+      if (responses.submitted) setSubmitted(responses.submitted === 'true');
+    };
+    loadResponses();
+  }, []);
 
   const categories = [
     { id: 'career', label: 'Carrière et Orientation', icon: '💼', color: 'blue' },
@@ -34,11 +45,30 @@ export function QuestionZone({ onComplete, onHome, onBack }: QuestionZoneProps) 
   const handleSubmit = async () => {
     if (questionText.trim()) {
       await submitQuestion(category, questionText, isAnonymous);
+      await saveResponse('questions', 'category', category);
+      await saveResponse('questions', 'questionText', questionText);
+      await saveResponse('questions', 'isAnonymous', String(isAnonymous));
+      await saveResponse('questions', 'submitted', 'true');
       setSubmitted(true);
       setTimeout(() => {
         onComplete();
       }, 2000);
     }
+  };
+
+  const handleCategoryChange = async (newCategory: string) => {
+    setCategory(newCategory as any);
+    await saveResponse('questions', 'category', newCategory);
+  };
+
+  const handleQuestionTextChange = async (text: string) => {
+    setQuestionText(text);
+    await saveResponse('questions', 'questionText', text);
+  };
+
+  const handleAnonymousChange = async (isAnon: boolean) => {
+    setIsAnonymous(isAnon);
+    await saveResponse('questions', 'isAnonymous', String(isAnon));
   };
 
   return (
@@ -69,7 +99,7 @@ export function QuestionZone({ onComplete, onHome, onBack }: QuestionZoneProps) 
                   {categories.map((cat) => (
                     <button
                       key={cat.id}
-                      onClick={() => setCategory(cat.id as any)}
+                      onClick={() => handleCategoryChange(cat.id)}
                       className={`p-4 rounded-lg border transition-all duration-300 text-left ${
                         category === cat.id
                           ? `bg-${cat.color}-500/20 border-${cat.color}-400`
@@ -87,7 +117,7 @@ export function QuestionZone({ onComplete, onHome, onBack }: QuestionZoneProps) 
                 <label className="block text-gray-300 mb-3 font-medium">Votre Question</label>
                 <textarea
                   value={questionText}
-                  onChange={(e) => setQuestionText(e.target.value)}
+                  onChange={(e) => handleQuestionTextChange(e.target.value)}
                   placeholder="Tapez votre question ici..."
                   className="w-full bg-white/5 border border-white/10 rounded-lg p-4 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
                   rows={5}
@@ -107,7 +137,7 @@ export function QuestionZone({ onComplete, onHome, onBack }: QuestionZoneProps) 
                   <input
                     type="checkbox"
                     checked={isAnonymous}
-                    onChange={(e) => setIsAnonymous(e.target.checked)}
+                    onChange={(e) => handleAnonymousChange(e.target.checked)}
                     className="w-5 h-5 rounded border-white/10 bg-white/5 focus:ring-2 focus:ring-purple-500"
                   />
                   <span className="text-gray-300">Soumettre de façon anonyme</span>

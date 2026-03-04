@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Globe, ChevronRight, CheckCircle } from 'lucide-react';
 import { useSession } from '../contexts/SessionContext';
 import { Subsection } from './Subsection';
@@ -11,9 +11,20 @@ interface GeopoliticalSectionProps {
 }
 
 export function GeopoliticalSection({ onComplete, onHome, onBack }: GeopoliticalSectionProps) {
-  const { saveResponse } = useSession();
+  const { saveResponse, getResponses } = useSession();
   const [responses, setResponses] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
+
+  useEffect(() => {
+    const loadResponses = async () => {
+      const savedResponses = await getResponses('geopolitical');
+      setResponses(savedResponses);
+      if (savedResponses.submitted === 'true') {
+        setSubmitted(true);
+      }
+    };
+    loadResponses();
+  }, []);
 
   const questions = [
     {
@@ -33,16 +44,13 @@ export function GeopoliticalSection({ onComplete, onHome, onBack }: Geopolitical
     }
   ];
 
-  const handleResponseChange = (id: string, value: string) => {
+  const handleResponseChange = async (id: string, value: string) => {
     setResponses(prev => ({ ...prev, [id]: value }));
+    await saveResponse('geopolitical', id, value);
   };
 
   const handleSubmit = async () => {
-    for (const [questionId, response] of Object.entries(responses)) {
-      if (response.trim()) {
-        await saveResponse('geopolitical', questionId, response);
-      }
-    }
+    await saveResponse('geopolitical', 'submitted', 'true');
     setSubmitted(true);
     setTimeout(() => {
       onComplete();

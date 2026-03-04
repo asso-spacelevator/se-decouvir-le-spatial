@@ -7,6 +7,7 @@ interface SessionContextType {
   updateSection: (section: Section) => Promise<void>;
   completeSection: (section: string) => Promise<void>;
   saveResponse: (section: string, questionId: string, response: string) => Promise<void>;
+  getResponses: (section: string) => Promise<Record<string, string>>;
   submitQuestion: (category: string, questionText: string, isAnonymous: boolean) => Promise<void>;
 }
 
@@ -114,14 +115,48 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   const saveResponse = async (section: string, questionId: string, response: string) => {
     if (!session) return;
 
-    await supabase
+    const { data: existing } = await supabase
       .from('student_responses')
-      .insert({
-        session_id: session.id,
-        section,
-        question_id: questionId,
-        response_text: response
-      });
+      .select('id')
+      .eq('session_id', session.id)
+      .eq('section', section)
+      .eq('question_id', questionId)
+      .maybeSingle();
+
+    if (existing) {
+      await supabase
+        .from('student_responses')
+        .update({ response_text: response })
+        .eq('id', existing.id);
+    } else {
+      await supabase
+        .from('student_responses')
+        .insert({
+          session_id: session.id,
+          section,
+          question_id: questionId,
+          response_text: response
+        });
+    }
+  };
+
+  const getResponses = async (section: string): Promise<Record<string, string>> => {
+    if (!session) return {};
+
+    const { data, error } = await supabase
+      .from('student_responses')
+      .select('question_id, response_text')
+      .eq('session_id', session.id)
+      .eq('section', section);
+
+    if (error || !data) return {};
+
+    const responses: Record<string, string> = {};
+    data.forEach((item) => {
+      responses[item.question_id] = item.response_text;
+    });
+
+    return responses;
   };
 
   const submitQuestion = async (category: string, questionText: string, isAnonymous: boolean) => {
@@ -138,7 +173,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <SessionContext.Provider value={{ session, loading, updateSection, completeSection, saveResponse, submitQuestion }}>
+    <SessionContext.Provider value={{ session, loading, updateSection, completeSection, saveResponse, getResponses, submitQuestion }}>
       {children}
     </SessionContext.Provider>
   );
