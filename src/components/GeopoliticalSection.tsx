@@ -19,9 +19,6 @@ export function GeopoliticalSection({ onComplete, onHome, onBack }: Geopolitical
     const loadResponses = async () => {
       const savedResponses = await getResponses('geopolitical');
       setResponses(savedResponses);
-      if (savedResponses.submitted === 'true') {
-        setSubmitted(true);
-      }
     };
     loadResponses();
   }, []);
@@ -50,7 +47,6 @@ export function GeopoliticalSection({ onComplete, onHome, onBack }: Geopolitical
   };
 
   const handleSubmit = async () => {
-    await saveResponse('geopolitical', 'submitted', 'true');
     setSubmitted(true);
     setTimeout(() => {
       onComplete();

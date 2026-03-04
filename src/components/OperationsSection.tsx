@@ -23,9 +23,6 @@ export function OperationsSection({ onComplete, onHome, onBack }: OperationsSect
     const loadResponses = async () => {
       const savedResponses = await getResponses('operations');
       setResponses(savedResponses);
-      if (savedResponses.submitted === 'true') {
-        setSubmitted(true);
-      }
       if (savedResponses.currentPhase) {
         setCurrentPhase(parseInt(savedResponses.currentPhase));
       }
@@ -117,7 +114,6 @@ export function OperationsSection({ onComplete, onHome, onBack }: OperationsSect
   };
 
   const handleSubmit = async () => {
-    await saveResponse('operations', 'submitted', 'true');
     setSubmitted(true);
     setTimeout(() => {
       onComplete();

@@ -22,7 +22,6 @@ export function QuestionZone({ onComplete, onHome, onBack }: QuestionZoneProps) 
       if (responses.category) setCategory(responses.category as any);
       if (responses.questionText) setQuestionText(responses.questionText);
       if (responses.isAnonymous) setIsAnonymous(responses.isAnonymous === 'true');
-      if (responses.submitted) setSubmitted(responses.submitted === 'true');
     };
     loadResponses();
   }, []);
@@ -45,10 +44,6 @@ export function QuestionZone({ onComplete, onHome, onBack }: QuestionZoneProps) 
   const handleSubmit = async () => {
     if (questionText.trim()) {
       await submitQuestion(category, questionText, isAnonymous);
-      await saveResponse('questions', 'category', category);
-      await saveResponse('questions', 'questionText', questionText);
-      await saveResponse('questions', 'isAnonymous', String(isAnonymous));
-      await saveResponse('questions', 'submitted', 'true');
       setSubmitted(true);
       setTimeout(() => {
         onComplete();

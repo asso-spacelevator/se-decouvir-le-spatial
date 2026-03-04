@@ -23,9 +23,6 @@ export function ManufacturingSection({ onComplete, onHome, onBack }: Manufacturi
       if (savedResponses.selectedSystem) {
         setSelectedSystem(parseInt(savedResponses.selectedSystem));
       }
-      if (savedResponses.submitted === 'true') {
-        setSubmitted(true);
-      }
     };
     loadResponses();
   }, []);
@@ -80,7 +77,6 @@ export function ManufacturingSection({ onComplete, onHome, onBack }: Manufacturi
   };
 
   const handleSubmit = async () => {
-    await saveResponse('manufacturing', 'submitted', 'true');
     setSubmitted(true);
     setTimeout(() => {
       onComplete();

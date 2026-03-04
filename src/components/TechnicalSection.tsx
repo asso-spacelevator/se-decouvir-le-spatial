@@ -19,9 +19,6 @@ export function TechnicalSection({ onComplete, onHome, onBack }: TechnicalSectio
     const loadResponses = async () => {
       const savedResponses = await getResponses('technical');
       setResponses(savedResponses);
-      if (savedResponses.submitted === 'true') {
-        setSubmitted(true);
-      }
     };
     loadResponses();
   }, []);
@@ -45,7 +42,6 @@ export function TechnicalSection({ onComplete, onHome, onBack }: TechnicalSectio
   };
 
   const handleSubmit = async () => {
-    await saveResponse('technical', 'submitted', 'true');
     setSubmitted(true);
     setTimeout(() => {
       onComplete();
