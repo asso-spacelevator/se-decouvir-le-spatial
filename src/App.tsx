@@ -19,6 +19,8 @@ function AppContent() {
     }
   }, [session]);
 
+  const sectionOrder: Section[] = ['start', 'geopolitical', 'technical', 'manufacturing', 'operations', 'questions', 'completed'];
+
   const handleStartJourney = async () => {
     setCurrentView('geopolitical');
     await updateSection('geopolitical');
@@ -35,10 +37,19 @@ function AppContent() {
     await updateSection('start');
   };
 
+  const handleBack = async () => {
+    const currentIndex = sectionOrder.indexOf(currentView);
+    if (currentIndex > 0) {
+      const previousSection = sectionOrder[currentIndex - 1];
+      setCurrentView(previousSection);
+      await updateSection(previousSection);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-slate-900 flex items-center justify-center">
-        <div className="text-white text-xl">Loading...</div>
+        <div className="text-white text-xl">Chargement...</div>
       </div>
     );
   }
@@ -47,19 +58,39 @@ function AppContent() {
     <>
       {currentView === 'start' && <StartPage onStart={handleStartJourney} />}
       {currentView === 'geopolitical' && (
-        <GeopoliticalSection onComplete={() => handleSectionComplete('technical')} />
+        <GeopoliticalSection
+          onComplete={() => handleSectionComplete('technical')}
+          onHome={handleRestart}
+          onBack={handleBack}
+        />
       )}
       {currentView === 'technical' && (
-        <TechnicalSection onComplete={() => handleSectionComplete('manufacturing')} />
+        <TechnicalSection
+          onComplete={() => handleSectionComplete('manufacturing')}
+          onHome={handleRestart}
+          onBack={handleBack}
+        />
       )}
       {currentView === 'manufacturing' && (
-        <ManufacturingSection onComplete={() => handleSectionComplete('operations')} />
+        <ManufacturingSection
+          onComplete={() => handleSectionComplete('operations')}
+          onHome={handleRestart}
+          onBack={handleBack}
+        />
       )}
       {currentView === 'operations' && (
-        <OperationsSection onComplete={() => handleSectionComplete('questions')} />
+        <OperationsSection
+          onComplete={() => handleSectionComplete('questions')}
+          onHome={handleRestart}
+          onBack={handleBack}
+        />
       )}
       {currentView === 'questions' && (
-        <QuestionZone onComplete={() => handleSectionComplete('completed')} />
+        <QuestionZone
+          onComplete={() => handleSectionComplete('completed')}
+          onHome={handleRestart}
+          onBack={handleBack}
+        />
       )}
       {currentView === 'completed' && <CompletionPage onRestart={handleRestart} />}
     </>

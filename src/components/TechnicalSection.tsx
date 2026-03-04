@@ -2,14 +2,15 @@ import { useState } from 'react';
 import { Zap, ChevronRight, CheckCircle } from 'lucide-react';
 import { useSession } from '../contexts/SessionContext';
 import { Subsection } from './Subsection';
-import { ExitButton } from './ExitButton';
+import { Navigation } from './Navigation';
 
 interface TechnicalSectionProps {
   onComplete: () => void;
-  onExit: () => void;
+  onHome: () => void;
+  onBack: () => void;
 }
 
-export function TechnicalSection({ onComplete, onExit }: TechnicalSectionProps) {
+export function TechnicalSection({ onComplete, onHome, onBack }: TechnicalSectionProps) {
   const { saveResponse } = useSession();
   const [responses, setResponses] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
@@ -47,7 +48,7 @@ export function TechnicalSection({ onComplete, onExit }: TechnicalSectionProps) 
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-900 via-orange-950 to-slate-900 text-white py-16 px-6">
-      <ExitButton onExit={onExit} />
+      <Navigation onHome={onHome} onBack={onBack} showBack={true} />
 
       <div className="max-w-4xl mx-auto">
         <div className="flex items-center gap-4 mb-8">

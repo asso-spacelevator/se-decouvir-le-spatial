@@ -1,14 +1,15 @@
 import { useState } from 'react';
 import { Mail, Send, CheckCircle } from 'lucide-react';
 import { useSession } from '../contexts/SessionContext';
-import { ExitButton } from './ExitButton';
+import { Navigation } from './Navigation';
 
 interface QuestionZoneProps {
   onComplete: () => void;
-  onExit: () => void;
+  onHome: () => void;
+  onBack: () => void;
 }
 
-export function QuestionZone({ onComplete, onExit }: QuestionZoneProps) {
+export function QuestionZone({ onComplete, onHome, onBack }: QuestionZoneProps) {
   const { submitQuestion } = useSession();
   const [category, setCategory] = useState<'career' | 'technical' | 'geopolitics' | 'general'>('general');
   const [questionText, setQuestionText] = useState('');
@@ -42,7 +43,7 @@ export function QuestionZone({ onComplete, onExit }: QuestionZoneProps) {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-900 via-purple-950 to-slate-900 text-white py-16 px-6">
-      <ExitButton onExit={onExit} />
+      <Navigation onHome={onHome} onBack={onBack} showBack={true} />
 
       <div className="max-w-4xl mx-auto">
         <div className="flex items-center gap-4 mb-8">

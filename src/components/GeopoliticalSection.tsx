@@ -2,14 +2,15 @@ import { useState } from 'react';
 import { Globe, ChevronRight, CheckCircle } from 'lucide-react';
 import { useSession } from '../contexts/SessionContext';
 import { Subsection } from './Subsection';
-import { ExitButton } from './ExitButton';
+import { Navigation } from './Navigation';
 
 interface GeopoliticalSectionProps {
   onComplete: () => void;
-  onExit: () => void;
+  onHome: () => void;
+  onBack: () => void;
 }
 
-export function GeopoliticalSection({ onComplete, onExit }: GeopoliticalSectionProps) {
+export function GeopoliticalSection({ onComplete, onHome, onBack }: GeopoliticalSectionProps) {
   const { saveResponse } = useSession();
   const [responses, setResponses] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
@@ -53,7 +54,7 @@ export function GeopoliticalSection({ onComplete, onExit }: GeopoliticalSectionP
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-900 to-indigo-950 text-white py-16 px-6">
-      <ExitButton onExit={onExit} />
+      <Navigation onHome={onHome} onBack={onBack} showBack={true} />
 
       <div className="max-w-4xl mx-auto">
         <div className="flex items-center gap-4 mb-8">

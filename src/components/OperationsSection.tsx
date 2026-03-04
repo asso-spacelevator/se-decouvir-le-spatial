@@ -2,14 +2,15 @@ import { useState, useEffect } from 'react';
 import { Rocket, ChevronRight, CheckCircle } from 'lucide-react';
 import { useSession } from '../contexts/SessionContext';
 import { Subsection } from './Subsection';
-import { ExitButton } from './ExitButton';
+import { Navigation } from './Navigation';
 
 interface OperationsSectionProps {
   onComplete: () => void;
-  onExit: () => void;
+  onHome: () => void;
+  onBack: () => void;
 }
 
-export function OperationsSection({ onComplete, onExit }: OperationsSectionProps) {
+export function OperationsSection({ onComplete, onHome, onBack }: OperationsSectionProps) {
   const { saveResponse } = useSession();
   const [currentPhase, setCurrentPhase] = useState(0);
   const [countdown, setCountdown] = useState(10);
@@ -107,7 +108,7 @@ export function OperationsSection({ onComplete, onExit }: OperationsSectionProps
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-900 via-red-950 to-slate-900 text-white py-16 px-6">
-      <ExitButton onExit={onExit} />
+      <Navigation onHome={onHome} onBack={onBack} showBack={true} />
 
       <div className="max-w-4xl mx-auto">
         <div className="flex items-center gap-4 mb-8">

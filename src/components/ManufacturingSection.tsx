@@ -2,14 +2,15 @@ import { useState } from 'react';
 import { Cog, ChevronRight, CheckCircle } from 'lucide-react';
 import { useSession } from '../contexts/SessionContext';
 import { Subsection } from './Subsection';
-import { ExitButton } from './ExitButton';
+import { Navigation } from './Navigation';
 
 interface ManufacturingSectionProps {
   onComplete: () => void;
-  onExit: () => void;
+  onHome: () => void;
+  onBack: () => void;
 }
 
-export function ManufacturingSection({ onComplete, onExit }: ManufacturingSectionProps) {
+export function ManufacturingSection({ onComplete, onHome, onBack }: ManufacturingSectionProps) {
   const { saveResponse } = useSession();
   const [selectedSystem, setSelectedSystem] = useState<number | null>(null);
   const [responses, setResponses] = useState<Record<string, string>>({});
@@ -72,7 +73,7 @@ export function ManufacturingSection({ onComplete, onExit }: ManufacturingSectio
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-900 via-blue-950 to-slate-900 text-white py-16 px-6">
-      <ExitButton onExit={onExit} />
+      <Navigation onHome={onHome} onBack={onBack} showBack={true} />
 
       <div className="max-w-5xl mx-auto">
         <div className="flex items-center gap-4 mb-8">
