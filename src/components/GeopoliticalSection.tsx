@@ -1,12 +1,15 @@
 import { useState } from 'react';
 import { Globe, ChevronRight, CheckCircle } from 'lucide-react';
 import { useSession } from '../contexts/SessionContext';
+import { Subsection } from './Subsection';
+import { ExitButton } from './ExitButton';
 
 interface GeopoliticalSectionProps {
   onComplete: () => void;
+  onExit: () => void;
 }
 
-export function GeopoliticalSection({ onComplete }: GeopoliticalSectionProps) {
+export function GeopoliticalSection({ onComplete, onExit }: GeopoliticalSectionProps) {
   const { saveResponse } = useSession();
   const [responses, setResponses] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
@@ -14,18 +17,18 @@ export function GeopoliticalSection({ onComplete }: GeopoliticalSectionProps) {
   const questions = [
     {
       id: 'q1',
-      question: 'Why is independent access to space important for Europe?',
-      placeholder: 'Share your thoughts on European space sovereignty...'
+      question: 'Pourquoi l\'accès indépendant à l\'espace est-il important pour l\'Europe ?',
+      placeholder: 'Partagez vos réflexions sur la souveraineté spatiale européenne...'
     },
     {
       id: 'q2',
-      question: 'What might happen if a country depends entirely on another nation to launch satellites?',
-      placeholder: 'Consider security, economy, and strategic implications...'
+      question: 'Que pourrait-il se passer si un pays dépendait entièrement d\'une autre nation pour lancer des satellites ?',
+      placeholder: 'Considérez la sécurité, l\'économie et les implications stratégiques...'
     },
     {
       id: 'q3',
-      question: 'Name one advantage Europe has in the global space race.',
-      placeholder: 'Think about technology, cooperation, or infrastructure...'
+      question: 'Citez un avantage que l\'Europe possède dans la course spatiale mondiale.',
+      placeholder: 'Pensez à la technologie, la coopération ou l\'infrastructure...'
     }
   ];
 
@@ -50,49 +53,40 @@ export function GeopoliticalSection({ onComplete }: GeopoliticalSectionProps) {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-900 to-indigo-950 text-white py-16 px-6">
+      <ExitButton onExit={onExit} />
+
       <div className="max-w-4xl mx-auto">
         <div className="flex items-center gap-4 mb-8">
           <Globe className="w-12 h-12 text-blue-400" />
           <div>
             <div className="text-sm text-blue-400 font-semibold uppercase tracking-wider">Section 1</div>
-            <h2 className="text-4xl font-bold">A Geopolitical Project</h2>
+            <h2 className="text-4xl font-bold">Un Projet Géopolitique</h2>
           </div>
         </div>
 
-        <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10 mb-8">
-          <h3 className="text-2xl font-semibold mb-4">Understanding Space as a Strategic Domain</h3>
-          <p className="text-gray-300 mb-6 leading-relaxed">
-            Space is not just about science and exploration. It's about sovereignty, economics, and geopolitics.
-            The ability to launch satellites independently determines a nation's strategic autonomy in defense,
-            telecommunications, navigation, and Earth observation.
-          </p>
+        <Subsection
+          title="L'Agence Spatiale Européenne (ESA)"
+          content="L'ESA est une organisation internationale regroupant 22 États membres européens. Elle est responsable de la coordination et du financement des activités spatiales civiles en Europe. Fondée en 1975, l'ESA est devenue l'une des agences spatiales les plus avancées au monde."
+          videoUrl="https://www.youtube.com/embed/dQw4w9WgXcQ"
+          icon="🇪🇺"
+        />
 
-          <div className="grid md:grid-cols-3 gap-4 mb-6">
-            <div className="bg-blue-500/10 rounded-lg p-4 border border-blue-500/20">
-              <h4 className="font-semibold text-blue-300 mb-2">European Space Agency</h4>
-              <p className="text-sm text-gray-400">22 member states collaborating on space exploration and technology</p>
-            </div>
-            <div className="bg-purple-500/10 rounded-lg p-4 border border-purple-500/20">
-              <h4 className="font-semibold text-purple-300 mb-2">Ariane 6</h4>
-              <p className="text-sm text-gray-400">Europe's next-generation heavy-lift launch vehicle</p>
-            </div>
-            <div className="bg-indigo-500/10 rounded-lg p-4 border border-indigo-500/20">
-              <h4 className="font-semibold text-indigo-300 mb-2">Global Competition</h4>
-              <p className="text-sm text-gray-400">Competing with USA, China, Russia, and private companies</p>
-            </div>
-          </div>
+        <Subsection
+          title="L'Espace comme Domaine Stratégique"
+          content="L'espace n'est pas seulement un domaine scientifique - c'est un enjeu stratégique majeur. Les satellites sont essentiels pour la défense, les télécommunications, la navigation (GPS), et l'observation de la Terre. Sans capacités de lancement indépendantes, une nation dépend d'autres pour accéder à cet espace critique."
+          videoUrl="https://www.youtube.com/embed/dQw4w9WgXcQ"
+          icon="🛰️"
+        />
 
-          <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-4 mb-6">
-            <p className="text-sm text-yellow-200">
-              <span className="font-semibold">Did you know?</span> Without independent launch capabilities,
-              Europe would need to rely on other nations for critical satellite deployments, creating potential
-              security vulnerabilities.
-            </p>
-          </div>
-        </div>
+        <Subsection
+          title="La Compétition Mondiale"
+          content="Europe est en concurrence avec les États-Unis, la Chine, la Russie et les entreprises privées comme SpaceX. L'indépendance européenne en matière de lancement est cruciale pour maintenir sa compétitivité économique et sa souveraineté technologique dans un secteur en croissance rapide."
+          videoUrl="https://www.youtube.com/embed/dQw4w9WgXcQ"
+          icon="🌍"
+        />
 
         <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10">
-          <h3 className="text-2xl font-semibold mb-6">Reflect on What You've Learned</h3>
+          <h3 className="text-2xl font-semibold mb-6">Réfléchissez à ce que vous avez appris</h3>
 
           {questions.map((q) => (
             <div key={q.id} className="mb-6">
@@ -121,11 +115,11 @@ export function GeopoliticalSection({ onComplete }: GeopoliticalSectionProps) {
             {submitted ? (
               <>
                 <CheckCircle className="w-5 h-5" />
-                Responses Saved!
+                Réponses sauvegardées !
               </>
             ) : (
               <>
-                Continue to Technical Challenge
+                Continuer vers les Défis Techniques
                 <ChevronRight className="w-5 h-5" />
               </>
             )}
