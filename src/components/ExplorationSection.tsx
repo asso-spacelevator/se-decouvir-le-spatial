@@ -36,7 +36,8 @@ export function ExplorationSection({ onComplete, onHome, onBack }: ExplorationSe
       achievements: 'Découverte des galaxies les plus anciennes, analyse d\'atmosphères d\'exoplanètes, images spectaculaires de nébuleuses',
       future: 'Recherche de biosignatures dans les atmosphères d\'exoplanètes habitables',
       funFact: '🥶 Fun Fact : James Webb doit rester à -233°C pour fonctionner ! Son bouclier solaire, de la taille d\'un court de tennis, protège ses instruments de la chaleur du Soleil.',
-      videoUrl: 'https://www.youtube.com/embed/4P8fKd0IVOs'
+      videoUrl: '',
+      videoTitle: 'Interview : Astrophysicien James Webb'
     },
     {
       name: 'Exploration Lunaire',
@@ -46,7 +47,8 @@ export function ExplorationSection({ onComplete, onHome, onBack }: ExplorationSe
       achievements: 'Mission Artemis I (2022) réussie, sélection des sites d\'atterrissage au pôle Sud lunaire',
       future: 'Première femme et première personne de couleur sur la Lune (Artemis III, ~2026), base lunaire permanente',
       funFact: '🌙 Fun Fact : La Lune s\'éloigne de la Terre de 3,8 cm par an ! Dans 600 millions d\'années, les éclipses totales de Soleil ne seront plus possibles.',
-      videoUrl: 'https://www.youtube.com/embed/vl6jn-DdafM'
+      videoUrl: '',
+      videoTitle: 'Interview : Chef de Mission Artemis'
     },
     {
       name: 'Astronomie Moderne',
@@ -56,7 +58,8 @@ export function ExplorationSection({ onComplete, onHome, onBack }: ExplorationSe
       achievements: 'Première image d\'un trou noir (2019), détection d\'ondes gravitationnelles (2015), découverte de planètes habitables',
       future: 'Télescope géant ELT (2028), recherche de vie extraterrestre, cartographie complète de l\'univers proche',
       funFact: '🕳️ Fun Fact : Quand LIGO a détecté les premières ondes gravitationnelles en 2015, il a mesuré une déformation de l\'espace 10 000 fois plus petite que le diamètre d\'un proton !',
-      videoUrl: 'https://www.youtube.com/embed/QqsLTNkzvaY'
+      videoUrl: '',
+      videoTitle: 'Interview : Astronome Chercheur d\'Exoplanètes'
     },
     {
       name: 'Mars : La Prochaine Frontière',
@@ -66,31 +69,8 @@ export function ExplorationSection({ onComplete, onHome, onBack }: ExplorationSe
       achievements: 'Helicopter Ingenuity (premier vol sur une autre planète), découverte d\'eau liquide passée, analyse du sol martien',
       future: 'Missions habitées (années 2030-2040), établissement d\'une colonie permanente, terraformation (très long terme)',
       funFact: '🚁 Fun Fact : Ingenuity, le premier hélicoptère martien, doit tourner ses pales 5 fois plus vite que sur Terre à cause de l\'atmosphère ultra-fine de Mars (1% de la densité terrestre) !',
-      videoUrl: 'https://www.youtube.com/embed/rzmd7RouGrM'
-    }
-  ];
-
-  const influencers = [
-    {
-      name: 'AstronoGeek',
-      platform: 'YouTube',
-      description: 'Astronomie et exploration spatiale décryptées',
-      url: 'https://www.youtube.com/@AstronoGeek',
-      icon: '🔭'
-    },
-    {
-      name: 'Dr Nozman',
-      platform: 'YouTube',
-      description: 'Science et espace avec passion',
-      url: 'https://www.youtube.com/@DrNozman',
-      icon: '🧪'
-    },
-    {
-      name: 'Marcus House',
-      platform: 'YouTube',
-      description: 'Actualités spatiales hebdomadaires (EN)',
-      url: 'https://www.youtube.com/@MarcusHouse',
-      icon: '📰'
+      videoUrl: '',
+      videoTitle: 'Interview : Ingénieur Mission Mars'
     }
   ];
 
@@ -177,50 +157,28 @@ export function ExplorationSection({ onComplete, onHome, onBack }: ExplorationSe
                   <p className="text-purple-100">{explorationTopics[selectedTopic].funFact}</p>
                 </div>
               )}
-              {explorationTopics[selectedTopic].videoUrl && (
+              {explorationTopics[selectedTopic].videoTitle && (
                 <div>
-                  <h4 className="font-semibold text-purple-400 mb-3">📹 Vidéo Explicative</h4>
-                  <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
-                    <iframe
-                      className="absolute top-0 left-0 w-full h-full rounded-lg"
-                      src={explorationTopics[selectedTopic].videoUrl}
-                      title="Video"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                    />
-                  </div>
+                  <h4 className="font-semibold text-purple-400 mb-3">📹 {explorationTopics[selectedTopic].videoTitle}</h4>
+                  {explorationTopics[selectedTopic].videoUrl ? (
+                    <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
+                      <iframe
+                        className="absolute top-0 left-0 w-full h-full rounded-lg"
+                        src={explorationTopics[selectedTopic].videoUrl}
+                        title="Video"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      />
+                    </div>
+                  ) : (
+                    <div className="bg-purple-500/10 border border-purple-400/30 rounded-lg p-8 text-center">
+                      <p className="text-gray-400 italic">Vidéo à venir</p>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
           )}
-        </div>
-
-        <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10 mb-8">
-          <h3 className="text-2xl font-semibold mb-4 flex items-center gap-2">
-            <span>🎓</span>
-            Pour Aller Plus Loin
-          </h3>
-          <p className="text-gray-300 mb-4">
-            Découvrez ces créateurs de contenu passionnés qui explorent l'univers :
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {influencers.map((influencer, index) => (
-              <a
-                key={index}
-                href={influencer.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 border border-purple-400/30 rounded-xl p-4 hover:scale-105 transition-all hover:border-purple-400 group"
-              >
-                <div className="text-3xl mb-2">{influencer.icon}</div>
-                <h4 className="font-bold text-white group-hover:text-purple-400 transition-colors">
-                  {influencer.name}
-                </h4>
-                <p className="text-xs text-purple-400 mb-1">{influencer.platform}</p>
-                <p className="text-sm text-gray-400">{influencer.description}</p>
-              </a>
-            ))}
-          </div>
         </div>
 
         <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10">
