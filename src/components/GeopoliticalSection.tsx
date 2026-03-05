@@ -57,15 +57,15 @@ export function GeopoliticalSection({ onComplete, onHome, onBack }: Geopolitical
     Object.values(responses).some(r => r.trim().length > 0);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 to-indigo-950 text-white py-16 px-6">
+    <div className="min-h-screen bg-gradient-to-b from-slate-900 to-blue-950 text-white py-16 px-6">
       <Navigation onHome={onHome} onBack={onBack} showBack={true} />
 
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-4xl mx-auto mt-20">
         <div className="flex items-center gap-4 mb-8">
           <Globe className="w-12 h-12 text-blue-400" />
           <div>
-            <div className="text-sm text-blue-400 font-semibold uppercase tracking-wider">Section 1</div>
-            <h2 className="text-4xl font-bold">Un Projet Géopolitique</h2>
+            <div className="text-sm text-blue-400 font-semibold uppercase tracking-wider">🌍 De la Terre</div>
+            <h2 className="text-4xl font-bold">Géopolitique Spatiale</h2>
           </div>
         </div>
 
@@ -124,7 +124,7 @@ export function GeopoliticalSection({ onComplete, onHome, onBack }: Geopolitical
               </>
             ) : (
               <>
-                Continuer vers les Défis Techniques
+                Continuer vers l'Orbite 🚀
                 <ChevronRight className="w-5 h-5" />
               </>
             )}

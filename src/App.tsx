@@ -2,11 +2,12 @@ import { useState, useEffect } from 'react';
 import { SessionProvider, useSession } from './contexts/SessionContext';
 import { StartPage } from './components/StartPage';
 import { GeopoliticalSection } from './components/GeopoliticalSection';
-import { TechnicalSection } from './components/TechnicalSection';
-import { ManufacturingSection } from './components/ManufacturingSection';
-import { OperationsSection } from './components/OperationsSection';
+import { RocketSection } from './components/RocketSection';
+import { SatelliteSection } from './components/SatelliteSection';
+import { ExplorationSection } from './components/ExplorationSection';
 import { QuestionZone } from './components/QuestionZone';
 import { CompletionPage } from './components/CompletionPage';
+import { ProgressBar } from './components/ProgressBar';
 import type { Section } from './lib/supabase';
 
 function AppContent() {
@@ -19,7 +20,26 @@ function AppContent() {
     }
   }, [session]);
 
-  const sectionOrder: Section[] = ['start', 'geopolitical', 'technical', 'manufacturing', 'operations', 'questions', 'completed'];
+  const sectionOrder: Section[] = ['start', 'geopolitical', 'rockets', 'satellites', 'exploration', 'questions', 'completed'];
+
+  const progressSteps = [
+    { name: 'Terre', icon: '🌍' },
+    { name: 'Fusées', icon: '🚀' },
+    { name: 'Orbite', icon: '🛰️' },
+    { name: 'Au-delà', icon: '🌌' },
+    { name: 'Questions', icon: '❓' }
+  ];
+
+  const getCurrentStepIndex = () => {
+    const view = currentView;
+    if (view === 'start' || view === 'completed') return -1;
+    if (view === 'geopolitical') return 0;
+    if (view === 'rockets') return 1;
+    if (view === 'satellites') return 2;
+    if (view === 'exploration') return 3;
+    if (view === 'questions') return 4;
+    return -1;
+  };
 
   const handleStartJourney = async () => {
     setCurrentView('geopolitical');
@@ -54,32 +74,41 @@ function AppContent() {
     );
   }
 
+  const stepIndex = getCurrentStepIndex();
+
   return (
     <>
+      {stepIndex >= 0 && (
+        <ProgressBar
+          currentStep={stepIndex}
+          totalSteps={progressSteps.length}
+          steps={progressSteps}
+        />
+      )}
       {currentView === 'start' && <StartPage onStart={handleStartJourney} />}
       {currentView === 'geopolitical' && (
         <GeopoliticalSection
-          onComplete={() => handleSectionComplete('technical')}
+          onComplete={() => handleSectionComplete('rockets')}
           onHome={handleRestart}
           onBack={handleBack}
         />
       )}
-      {currentView === 'technical' && (
-        <TechnicalSection
-          onComplete={() => handleSectionComplete('manufacturing')}
+      {currentView === 'rockets' && (
+        <RocketSection
+          onComplete={() => handleSectionComplete('satellites')}
           onHome={handleRestart}
           onBack={handleBack}
         />
       )}
-      {currentView === 'manufacturing' && (
-        <ManufacturingSection
-          onComplete={() => handleSectionComplete('operations')}
+      {currentView === 'satellites' && (
+        <SatelliteSection
+          onComplete={() => handleSectionComplete('exploration')}
           onHome={handleRestart}
           onBack={handleBack}
         />
       )}
-      {currentView === 'operations' && (
-        <OperationsSection
+      {currentView === 'exploration' && (
+        <ExplorationSection
           onComplete={() => handleSectionComplete('questions')}
           onHome={handleRestart}
           onBack={handleBack}
