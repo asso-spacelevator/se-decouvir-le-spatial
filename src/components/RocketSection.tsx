@@ -32,25 +32,57 @@ export function RocketSection({ onComplete, onHome, onBack }: RocketSectionProps
       name: 'Températures Extrêmes',
       problem: 'Les moteurs de fusée peuvent atteindre 3 000°C, tandis que l\'espace oscille entre -150°C et +150°C',
       solution: 'Utilisation de matériaux composites céramiques ultra-résistants et de systèmes de refroidissement actifs avec circulation d\'hydrogène liquide',
-      innovation: 'Les boucliers thermiques modernes peuvent supporter des gradients de 3 000°C sur quelques centimètres d\'épaisseur'
+      innovation: 'Les boucliers thermiques modernes peuvent supporter des gradients de 3 000°C sur quelques centimètres d\'épaisseur',
+      funFact: '🔥 Fun Fact : Le nez d\'une fusée lors de la rentrée atmosphérique chauffe tellement qu\'il crée un plasma - un quatrième état de la matière - qui bloque temporairement les communications radio !',
+      videoUrl: 'https://www.youtube.com/embed/bZe5J8SVCYQ'
     },
     {
       name: 'Puissance Colossale',
       problem: 'Il faut générer plus de 1 000 tonnes de poussée pour vaincre la gravité terrestre',
       solution: 'Moteurs à combustion d\'hydrogène et oxygène liquides, brûlant 300 kg de carburant par seconde',
-      innovation: 'Un seul moteur Vulcain 2.1 produit une puissance équivalente à 1 500 voitures de F1 combinées'
+      innovation: 'Un seul moteur Vulcain 2.1 produit une puissance équivalente à 1 500 voitures de F1 combinées',
+      funFact: '💪 Fun Fact : Si vous pouviez canaliser toute la puissance d\'un moteur de fusée dans une ampoule, elle brillerait 190 fois plus fort que le Soleil vu depuis la Terre !',
+      videoUrl: 'https://www.youtube.com/embed/vYA0f6R5KAI'
     },
     {
       name: 'Précision Absolue',
       problem: 'Une erreur de 0,1° lors du lancement peut manquer la cible orbitale de milliers de kilomètres',
       solution: 'Systèmes de guidage inertiel couplés au GPS, avec corrections en temps réel toutes les millisecondes',
-      innovation: 'Les gyroscopes laser actuels détectent des rotations de l\'ordre du milliardième de degré'
+      innovation: 'Les gyroscopes laser actuels détectent des rotations de l\'ordre du milliardième de degré',
+      funFact: '🎯 Fun Fact : La précision requise est équivalente à lancer une fléchette depuis Paris et toucher le centre d\'une cible à New York !',
+      videoUrl: 'https://www.youtube.com/embed/bvim4rsNHkQ'
     },
     {
       name: 'Légèreté Maximale',
       problem: 'Chaque kilogramme de structure en trop réduit la charge utile possible',
       solution: 'Alliages aluminium-lithium et composites carbone ultra-légers, avec optimisation par intelligence artificielle',
-      innovation: 'Les nouveaux matériaux permettent un rapport résistance/poids 5 fois supérieur à l\'acier'
+      innovation: 'Les nouveaux matériaux permettent un rapport résistance/poids 5 fois supérieur à l\'acier',
+      funFact: '⚖️ Fun Fact : Économiser 1 kg sur la structure d\'une fusée peut permettre de placer 100 kg supplémentaires en orbite. C\'est pourquoi chaque boulon est optimisé !',
+      videoUrl: 'https://www.youtube.com/embed/lEr9cPpuAy8'
+    }
+  ];
+
+  const influencers = [
+    {
+      name: 'Hugo Lisoir',
+      platform: 'YouTube',
+      description: 'Vulgarisation spatiale et actualités des lancements',
+      url: 'https://www.youtube.com/@HugoLisoir',
+      icon: '🚀'
+    },
+    {
+      name: 'Stardust',
+      platform: 'YouTube',
+      description: 'La chaîne francophone de référence sur l\'espace',
+      url: 'https://www.youtube.com/@StardustLab',
+      icon: '⭐'
+    },
+    {
+      name: 'Everyday Astronaut',
+      platform: 'YouTube',
+      description: 'Analyses techniques approfondies (EN)',
+      url: 'https://www.youtube.com/@EverydayAstronaut',
+      icon: '👨‍🚀'
     }
   ];
 
@@ -131,8 +163,55 @@ export function RocketSection({ onComplete, onHome, onBack }: RocketSectionProps
                 <h4 className="font-semibold text-orange-400 mb-2">🔬 Le Saviez-vous ?</h4>
                 <p className="text-gray-200">{challenges[selectedChallenge].innovation}</p>
               </div>
+              {challenges[selectedChallenge].funFact && (
+                <div className="bg-orange-500/10 border border-orange-400/20 rounded-lg p-4">
+                  <p className="text-orange-100">{challenges[selectedChallenge].funFact}</p>
+                </div>
+              )}
+              {challenges[selectedChallenge].videoUrl && (
+                <div>
+                  <h4 className="font-semibold text-orange-400 mb-3">📹 Vidéo Explicative</h4>
+                  <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
+                    <iframe
+                      className="absolute top-0 left-0 w-full h-full rounded-lg"
+                      src={challenges[selectedChallenge].videoUrl}
+                      title="Video"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
+                  </div>
+                </div>
+              )}
             </div>
           )}
+        </div>
+
+        <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10 mb-8">
+          <h3 className="text-2xl font-semibold mb-4 flex items-center gap-2">
+            <span>🎓</span>
+            Pour Aller Plus Loin
+          </h3>
+          <p className="text-gray-300 mb-4">
+            Découvrez ces créateurs de contenu passionnés qui expliquent l'actualité spatiale :
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {influencers.map((influencer, index) => (
+              <a
+                key={index}
+                href={influencer.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-gradient-to-br from-orange-500/10 to-red-500/10 border border-orange-400/30 rounded-xl p-4 hover:scale-105 transition-all hover:border-orange-400 group"
+              >
+                <div className="text-3xl mb-2">{influencer.icon}</div>
+                <h4 className="font-bold text-white group-hover:text-orange-400 transition-colors">
+                  {influencer.name}
+                </h4>
+                <p className="text-xs text-orange-400 mb-1">{influencer.platform}</p>
+                <p className="text-sm text-gray-400">{influencer.description}</p>
+              </a>
+            ))}
+          </div>
         </div>
 
         <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10">

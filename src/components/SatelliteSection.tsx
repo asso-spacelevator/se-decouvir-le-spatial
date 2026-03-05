@@ -35,7 +35,9 @@ export function SatelliteSection({ onComplete, onHome, onBack }: SatelliteSectio
       missions: 'Station Spatiale Internationale (ISS), observation de la Terre, constellations internet (Starlink)',
       advantages: 'Images haute résolution, latence faible pour communications, coût de lancement réduit',
       challenges: 'Nécessite beaucoup de satellites pour couverture globale, friction atmosphérique résiduelle',
-      examples: '🛰️ ISS (408 km), Hubble (540 km), Starlink (550 km)'
+      examples: '🛰️ ISS (408 km), Hubble (540 km), Starlink (550 km)',
+      funFact: '🌍 Fun Fact : Un satellite en orbite basse fait le tour complet de la Terre en seulement 90 minutes ! Les astronautes de l\'ISS voient 16 levers et couchers de soleil par jour.',
+      videoUrl: 'https://www.youtube.com/embed/Bj5mxw8vwWQ'
     },
     {
       name: 'Orbite Moyenne (MEO)',
@@ -44,7 +46,9 @@ export function SatelliteSection({ onComplete, onHome, onBack }: SatelliteSectio
       missions: 'Navigation (GPS, Galileo, GLONASS), communications',
       advantages: 'Couverture terrestre étendue, compromis entre coût et performance',
       challenges: 'Radiation Van Allen, coût de lancement élevé',
-      examples: '🧭 GPS (20 200 km), Galileo (23 222 km)'
+      examples: '🧭 GPS (20 200 km), Galileo (23 222 km)',
+      funFact: '📍 Fun Fact : Pour calculer votre position GPS, votre téléphone doit recevoir le signal d\'au moins 4 satellites simultanément parmi une constellation de 31 satellites !',
+      videoUrl: 'https://www.youtube.com/embed/FU_pY2sTwTA'
     },
     {
       name: 'Orbite Géostationnaire (GEO)',
@@ -53,7 +57,9 @@ export function SatelliteSection({ onComplete, onHome, onBack }: SatelliteSectio
       missions: 'Météorologie, télécommunications, diffusion TV',
       advantages: 'Position fixe dans le ciel, couverture continue d\'une zone, antennes terrestres fixes',
       challenges: 'Latence importante (500ms), coût de lancement très élevé, zone encombrée',
-      examples: '📡 Météosat, satellites de télécommunications Astra/Eutelsat'
+      examples: '📡 Météosat, satellites de télécommunications Astra/Eutelsat',
+      funFact: '📺 Fun Fact : Il n\'existe qu\'UNE SEULE orbite géostationnaire possible : un cercle de 35 786 km d\'altitude exactement au-dessus de l\'équateur. C\'est l\'immobilier spatial le plus cher !',
+      videoUrl: 'https://www.youtube.com/embed/pB5_2bD_c1A'
     },
     {
       name: 'Orbites Spéciales',
@@ -62,7 +68,33 @@ export function SatelliteSection({ onComplete, onHome, onBack }: SatelliteSectio
       missions: 'Observation polaire, missions scientifiques, surveillance militaire',
       advantages: 'Orbites héliosynchrones (même heure locale), polaires (survol des pôles)',
       challenges: 'Complexité de maintien, consommation élevée de carburant',
-      examples: '🌍 Sentinel (Copernicus), satellites d\'observation météo polaires'
+      examples: '🌍 Sentinel (Copernicus), satellites d\'observation météo polaires',
+      funFact: '☀️ Fun Fact : Les satellites héliosynchrones passent toujours au-dessus du même endroit à la même heure solaire, ce qui garantit un éclairage constant pour comparer les images sur plusieurs années !',
+      videoUrl: 'https://www.youtube.com/embed/v4zWHI9FDqE'
+    }
+  ];
+
+  const influencers = [
+    {
+      name: 'Florence Porcel',
+      platform: 'YouTube',
+      description: 'Astrophysicienne et vulgarisatrice spatiale',
+      url: 'https://www.youtube.com/@FlorencePorcel',
+      icon: '🌟'
+    },
+    {
+      name: 'Le Sense of Wonder',
+      platform: 'YouTube',
+      description: 'Documentaires spatiaux captivants',
+      url: 'https://www.youtube.com/@LeSenseOfWonder',
+      icon: '🎬'
+    },
+    {
+      name: 'Scott Manley',
+      platform: 'YouTube',
+      description: 'Expert en mécanique orbitale (EN)',
+      url: 'https://www.youtube.com/@scottmanley',
+      icon: '🔬'
     }
   ];
 
@@ -151,8 +183,55 @@ export function SatelliteSection({ onComplete, onHome, onBack }: SatelliteSectio
                 <h4 className="font-semibold text-cyan-400 mb-2">📍 Exemples</h4>
                 <p className="text-gray-200">{orbits[selectedOrbit].examples}</p>
               </div>
+              {orbits[selectedOrbit].funFact && (
+                <div className="bg-cyan-500/10 border border-cyan-400/20 rounded-lg p-4">
+                  <p className="text-cyan-100">{orbits[selectedOrbit].funFact}</p>
+                </div>
+              )}
+              {orbits[selectedOrbit].videoUrl && (
+                <div>
+                  <h4 className="font-semibold text-cyan-400 mb-3">📹 Vidéo Explicative</h4>
+                  <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
+                    <iframe
+                      className="absolute top-0 left-0 w-full h-full rounded-lg"
+                      src={orbits[selectedOrbit].videoUrl}
+                      title="Video"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
+                  </div>
+                </div>
+              )}
             </div>
           )}
+        </div>
+
+        <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10 mb-8">
+          <h3 className="text-2xl font-semibold mb-4 flex items-center gap-2">
+            <span>🎓</span>
+            Pour Aller Plus Loin
+          </h3>
+          <p className="text-gray-300 mb-4">
+            Découvrez ces créateurs de contenu passionnés qui expliquent l'observation spatiale :
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {influencers.map((influencer, index) => (
+              <a
+                key={index}
+                href={influencer.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-gradient-to-br from-cyan-500/10 to-blue-500/10 border border-cyan-400/30 rounded-xl p-4 hover:scale-105 transition-all hover:border-cyan-400 group"
+              >
+                <div className="text-3xl mb-2">{influencer.icon}</div>
+                <h4 className="font-bold text-white group-hover:text-cyan-400 transition-colors">
+                  {influencer.name}
+                </h4>
+                <p className="text-xs text-cyan-400 mb-1">{influencer.platform}</p>
+                <p className="text-sm text-gray-400">{influencer.description}</p>
+              </a>
+            ))}
+          </div>
         </div>
 
         <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10">
