@@ -9,7 +9,7 @@ if (!supabaseUrl || !supabaseAnonKey) {
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-export type Section = 'start' | 'geopolitical' | 'rockets' | 'satellites' | 'exploration' | 'questions' | 'completed';
+export type Section = 'start' | 'geopolitical' | 'rockets' | 'satellites' | 'exploration' | 'associations' | 'faq' | 'resources' | 'questions' | 'completed';
 
 export interface StudentSession {
   id: string;

@@ -5,6 +5,9 @@ import { GeopoliticalSection } from './components/GeopoliticalSection';
 import { RocketSection } from './components/RocketSection';
 import { SatelliteSection } from './components/SatelliteSection';
 import { ExplorationSection } from './components/ExplorationSection';
+import { AssociationsSection } from './components/AssociationsSection';
+import { FAQSection } from './components/FAQSection';
+import { SchoolResourcesSection } from './components/SchoolResourcesSection';
 import { QuestionZone } from './components/QuestionZone';
 import { CompletionPage } from './components/CompletionPage';
 import { ProgressBar } from './components/ProgressBar';
@@ -20,13 +23,16 @@ function AppContent() {
     }
   }, [session]);
 
-  const sectionOrder: Section[] = ['start', 'geopolitical', 'rockets', 'satellites', 'exploration', 'questions', 'completed'];
+  const sectionOrder: Section[] = ['start', 'geopolitical', 'rockets', 'satellites', 'exploration', 'associations', 'faq', 'resources', 'questions', 'completed'];
 
   const progressSteps = [
     { name: 'Terre', icon: '🌍' },
     { name: 'Fusées', icon: '🚀' },
     { name: 'Orbite', icon: '🛰️' },
     { name: 'Au-delà', icon: '🌌' },
+    { name: 'Accompagnement', icon: '🤝' },
+    { name: 'FAQ', icon: '💭' },
+    { name: 'Ressources', icon: '📚' },
     { name: 'Questions', icon: '❓' }
   ];
 
@@ -37,7 +43,10 @@ function AppContent() {
     if (view === 'rockets') return 1;
     if (view === 'satellites') return 2;
     if (view === 'exploration') return 3;
-    if (view === 'questions') return 4;
+    if (view === 'associations') return 4;
+    if (view === 'faq') return 5;
+    if (view === 'resources') return 6;
+    if (view === 'questions') return 7;
     return -1;
   };
 
@@ -109,6 +118,27 @@ function AppContent() {
       )}
       {currentView === 'exploration' && (
         <ExplorationSection
+          onComplete={() => handleSectionComplete('associations')}
+          onHome={handleRestart}
+          onBack={handleBack}
+        />
+      )}
+      {currentView === 'associations' && (
+        <AssociationsSection
+          onComplete={() => handleSectionComplete('faq')}
+          onHome={handleRestart}
+          onBack={handleBack}
+        />
+      )}
+      {currentView === 'faq' && (
+        <FAQSection
+          onComplete={() => handleSectionComplete('resources')}
+          onHome={handleRestart}
+          onBack={handleBack}
+        />
+      )}
+      {currentView === 'resources' && (
+        <SchoolResourcesSection
           onComplete={() => handleSectionComplete('questions')}
           onHome={handleRestart}
           onBack={handleBack}

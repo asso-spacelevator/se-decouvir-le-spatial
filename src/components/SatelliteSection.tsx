@@ -3,6 +3,7 @@ import { Satellite, ChevronRight, CheckCircle } from 'lucide-react';
 import { useSession } from '../contexts/SessionContext';
 import { Subsection } from './Subsection';
 import { Navigation } from './Navigation';
+import { SocialReferencesSection } from './SocialReferencesSection';
 
 interface SatelliteSectionProps {
   onComplete: () => void;
@@ -191,6 +192,8 @@ export function SatelliteSection({ onComplete, onHome, onBack }: SatelliteSectio
             </div>
           )}
         </div>
+
+        <SocialReferencesSection />
 
         <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10">
           <h3 className="text-2xl font-semibold mb-6">Imaginez Votre Mission</h3>
