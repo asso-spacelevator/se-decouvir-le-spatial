@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Instagram, ChevronRight, CheckCircle } from 'lucide-react';
+import { Instagram, ChevronRight, CheckCircle, Clock, QrCode } from 'lucide-react';
 import { useSession } from '../contexts/SessionContext';
 import { Navigation } from './Navigation';
+import { QRCodeSVG } from 'qrcode.react';
 
 interface SocialReference {
   name: string;
@@ -21,6 +22,8 @@ export function SocialReferencesSection({ onComplete, onHome, onBack }: SocialRe
   const { saveResponse, getResponses } = useSession();
   const [responses, setResponses] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
+  const [showReminder, setShowReminder] = useState(false);
+  const [selectedQR, setSelectedQR] = useState<string | null>(null);
 
   useEffect(() => {
     const loadResponses = async () => {
@@ -28,6 +31,12 @@ export function SocialReferencesSection({ onComplete, onHome, onBack }: SocialRe
       setResponses(savedResponses);
     };
     loadResponses();
+
+    const timer = setTimeout(() => {
+      setShowReminder(true);
+    }, 40 * 60 * 1000);
+
+    return () => clearTimeout(timer);
   }, []);
 
   const references: SocialReference[] = [
@@ -112,6 +121,57 @@ export function SocialReferencesSection({ onComplete, onHome, onBack }: SocialRe
     <div className="min-h-screen bg-gradient-to-b from-slate-900 via-pink-950 to-slate-900 text-white py-16 px-6">
       <Navigation onHome={onHome} onBack={onBack} showBack={true} />
 
+      {showReminder && (
+        <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 max-w-md">
+          <div className="bg-gradient-to-br from-orange-500/95 to-red-600/95 backdrop-blur-lg rounded-2xl p-8 border-2 border-orange-400 shadow-2xl animate-pulse">
+            <div className="flex items-center gap-4 mb-4">
+              <Clock className="w-12 h-12 text-white" />
+              <h3 className="text-2xl font-bold text-white">Temps de continuer !</h3>
+            </div>
+            <p className="text-white mb-6 text-lg">
+              N'oubliez pas de poursuivre votre parcours spatial. L'aventure continue !
+            </p>
+            <button
+              onClick={() => setShowReminder(false)}
+              className="w-full py-3 bg-white text-orange-600 rounded-lg font-bold hover:bg-orange-50 transition-colors"
+            >
+              J'y vais !
+            </button>
+          </div>
+        </div>
+      )}
+
+      {selectedQR && (
+        <div
+          className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-6"
+          onClick={() => setSelectedQR(null)}
+        >
+          <div
+            className="bg-white rounded-2xl p-8 max-w-sm"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="text-center mb-4">
+              <h3 className="text-2xl font-bold text-gray-900 mb-2">Scanner pour suivre</h3>
+              <p className="text-gray-600 text-sm">Scannez ce QR code avec votre téléphone</p>
+            </div>
+            <div className="bg-white p-4 rounded-xl">
+              <QRCodeSVG
+                value={selectedQR}
+                size={256}
+                level="H"
+                includeMargin={true}
+              />
+            </div>
+            <button
+              onClick={() => setSelectedQR(null)}
+              className="w-full mt-4 py-3 bg-pink-600 text-white rounded-lg font-semibold hover:bg-pink-700 transition-colors"
+            >
+              Fermer
+            </button>
+          </div>
+        </div>
+      )}
+
       <div className="max-w-4xl mx-auto mt-20">
         <div className="flex items-center gap-4 mb-8">
           <Instagram className="w-12 h-12 text-pink-400" />
@@ -119,6 +179,16 @@ export function SocialReferencesSection({ onComplete, onHome, onBack }: SocialRe
             <div className="text-sm text-pink-400 font-semibold uppercase tracking-wider">📱 Réseaux Sociaux</div>
             <h2 className="text-4xl font-bold">En quoi ça me concerne ?</h2>
           </div>
+        </div>
+
+        <div className="bg-gradient-to-br from-pink-500/20 to-purple-600/20 backdrop-blur-sm rounded-2xl p-6 border border-pink-400/30 mb-8">
+          <div className="flex items-center gap-3 mb-3">
+            <QrCode className="w-6 h-6 text-pink-400" />
+            <h3 className="text-xl font-bold text-white">Connectez-vous facilement !</h3>
+          </div>
+          <p className="text-gray-200 text-sm">
+            Cliquez sur un compte pour afficher son QR code et le scanner avec votre téléphone.
+          </p>
         </div>
 
         <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10 mb-8">
@@ -134,24 +204,35 @@ export function SocialReferencesSection({ onComplete, onHome, onBack }: SocialRe
                   {references
                     .filter((ref) => ref.category === category)
                     .map((ref, index) => (
-                      <a
+                      <div
                         key={index}
-                        href={ref.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={`bg-gradient-to-br ${categoryColors[category]} rounded-xl p-5 hover:scale-105 transition-all border group`}
+                        className={`bg-gradient-to-br ${categoryColors[category]} rounded-xl p-5 border group relative`}
                       >
-                        <div className="flex items-start gap-3">
-                          <Instagram className="w-6 h-6 text-pink-400 flex-shrink-0 mt-1" />
-                          <div className="flex-1">
-                            <h5 className="font-bold text-white group-hover:text-pink-400 transition-colors">
-                              {ref.name}
-                            </h5>
-                            <p className="text-sm text-pink-400 mb-2">{ref.handle}</p>
-                            <p className="text-sm text-gray-300">{ref.description}</p>
+                        <a
+                          href={ref.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="block hover:scale-[1.02] transition-transform"
+                        >
+                          <div className="flex items-start gap-3">
+                            <Instagram className="w-6 h-6 text-pink-400 flex-shrink-0 mt-1" />
+                            <div className="flex-1">
+                              <h5 className="font-bold text-white group-hover:text-pink-400 transition-colors">
+                                {ref.name}
+                              </h5>
+                              <p className="text-sm text-pink-400 mb-2">{ref.handle}</p>
+                              <p className="text-sm text-gray-300">{ref.description}</p>
+                            </div>
                           </div>
-                        </div>
-                      </a>
+                        </a>
+                        <button
+                          onClick={() => setSelectedQR(ref.url)}
+                          className="mt-3 w-full flex items-center justify-center gap-2 py-2 bg-pink-500/30 hover:bg-pink-500/50 border border-pink-400/40 rounded-lg text-sm text-pink-300 hover:text-pink-200 transition-colors"
+                        >
+                          <QrCode className="w-4 h-4" />
+                          Afficher le QR Code
+                        </button>
+                      </div>
                     ))}
                 </div>
               </div>
