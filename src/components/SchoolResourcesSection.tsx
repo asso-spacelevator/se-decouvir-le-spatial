@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import { BookOpen, ChevronRight, CheckCircle, Search, ExternalLink, Wrench, Trophy } from 'lucide-react';
+import { BookOpen, ChevronRight, CheckCircle, Search, ExternalLink, Wrench, Trophy, Users, Heart, Lightbulb } from 'lucide-react';
 import { useSession } from '../contexts/SessionContext';
 import { Navigation } from './Navigation';
+import { supabase } from '../lib/supabase';
 
 interface Resource {
   name: string;
@@ -10,6 +11,27 @@ interface Resource {
   provider: string;
   url?: string;
   icon: string;
+}
+
+interface MentoringPlatform {
+  id: string;
+  name: string;
+  url: string;
+  target_audience: string;
+  domain: string;
+  supporters: string;
+}
+
+interface ScientificAssociation {
+  id: string;
+  name: string;
+  url: string;
+  category: string;
+  domain: string | null;
+  target_audience: string | null;
+  supporters: string | null;
+  activities: string | null;
+  region: string | null;
 }
 
 interface SchoolResourcesSectionProps {
@@ -23,16 +45,33 @@ export function SchoolResourcesSection({ onComplete, onHome, onBack }: SchoolRes
   const [responses, setResponses] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
   const [searchRegion, setSearchRegion] = useState('');
+  const [mentoringPlatforms, setMentoringPlatforms] = useState<MentoringPlatform[]>([]);
+  const [scientificAssociations, setScientificAssociations] = useState<ScientificAssociation[]>([]);
+  const [regionalAssociations, setRegionalAssociations] = useState<ScientificAssociation[]>([]);
 
   useEffect(() => {
-    const loadResponses = async () => {
+    const loadData = async () => {
       const savedResponses = await getResponses('school_resources');
       setResponses(savedResponses);
       if (savedResponses.searchRegion) {
         setSearchRegion(savedResponses.searchRegion);
       }
+
+      const { data: mentoring } = await supabase
+        .from('mentoring_platforms')
+        .select('*')
+        .order('name');
+
+      if (mentoring) setMentoringPlatforms(mentoring);
+
+      const { data: associations } = await supabase
+        .from('scientific_associations')
+        .select('*')
+        .order('name');
+
+      if (associations) setScientificAssociations(associations);
     };
-    loadResponses();
+    loadData();
   }, []);
 
   const resources: Resource[] = [
@@ -131,6 +170,18 @@ export function SchoolResourcesSection({ onComplete, onHome, onBack }: SchoolRes
   const handleRegionSearch = async (region: string) => {
     setSearchRegion(region);
     await saveResponse('school_resources', 'searchRegion', region);
+
+    if (region) {
+      const { data } = await supabase
+        .from('scientific_associations')
+        .select('*')
+        .eq('category', 'mediation')
+        .eq('region', region);
+
+      if (data) setRegionalAssociations(data);
+    } else {
+      setRegionalAssociations([]);
+    }
   };
 
   const handleResponseChange = async (id: string, value: string) => {
@@ -206,12 +257,146 @@ export function SchoolResourcesSection({ onComplete, onHome, onBack }: SchoolRes
         </div>
 
         <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10 mb-8">
+          <h3 className="text-2xl font-semibold mb-6 flex items-center gap-2">
+            <Users className="w-7 h-7 text-blue-400" />
+            Plateformes de Mentorat
+          </h3>
+          <p className="text-gray-300 mb-6">
+            Le mentorat est soutenu par le programme gouvernemental "1 jeune 1 mentor", qui accompagne déjà plus de 150 000 jeunes en France.
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+            {mentoringPlatforms.map((platform) => (
+              <a
+                key={platform.id}
+                href={platform.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-gradient-to-br from-blue-500/10 to-cyan-500/10 border border-blue-400/30 rounded-xl p-5 hover:scale-[1.02] transition-transform"
+              >
+                <h4 className="font-bold text-white mb-2 flex items-center gap-2">
+                  <Users className="w-5 h-5 text-blue-400" />
+                  {platform.name}
+                </h4>
+                <div className="space-y-1 text-sm">
+                  <p className="text-blue-300">
+                    <strong>Public:</strong> {platform.target_audience}
+                  </p>
+                  <p className="text-gray-300">
+                    <strong>Domaine:</strong> {platform.domain}
+                  </p>
+                  <p className="text-gray-400 text-xs">
+                    Soutenu par: {platform.supporters}
+                  </p>
+                </div>
+                <div className="mt-3 flex items-center gap-2 text-blue-300 text-sm">
+                  <ExternalLink className="w-4 h-4" />
+                  Découvrir
+                </div>
+              </a>
+            ))}
+          </div>
+
+          <h3 className="text-2xl font-semibold mb-6 flex items-center gap-2 mt-8">
+            <Lightbulb className="w-7 h-7 text-yellow-400" />
+            Associations Scientifiques
+          </h3>
+
+          <div className="space-y-6">
+            <div>
+              <h4 className="text-xl font-semibold text-green-400 mb-3">Sciences Générales</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {scientificAssociations
+                  .filter(a => a.category === 'general_science')
+                  .map((assoc) => (
+                    <a
+                      key={assoc.id}
+                      href={assoc.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="bg-gradient-to-br from-green-500/10 to-emerald-500/10 border border-green-400/30 rounded-xl p-5 hover:scale-[1.02] transition-transform"
+                    >
+                      <h5 className="font-bold text-white mb-2">{assoc.name}</h5>
+                      <div className="space-y-1 text-sm">
+                        {assoc.domain && <p className="text-green-300"><strong>Domaine:</strong> {assoc.domain}</p>}
+                        {assoc.target_audience && <p className="text-gray-300"><strong>Public:</strong> {assoc.target_audience}</p>}
+                        {assoc.supporters && <p className="text-gray-400 text-xs">Soutenu par: {assoc.supporters}</p>}
+                      </div>
+                      <div className="mt-3 flex items-center gap-2 text-green-300 text-sm">
+                        <ExternalLink className="w-4 h-4" />
+                        En savoir plus
+                      </div>
+                    </a>
+                  ))}
+              </div>
+            </div>
+
+            <div>
+              <h4 className="text-xl font-semibold text-purple-400 mb-3">Associations Spatiales</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {scientificAssociations
+                  .filter(a => a.category === 'space')
+                  .map((assoc) => (
+                    <a
+                      key={assoc.id}
+                      href={assoc.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 border border-purple-400/30 rounded-xl p-5 hover:scale-[1.02] transition-transform"
+                    >
+                      <h5 className="font-bold text-white mb-2">{assoc.name}</h5>
+                      <div className="space-y-1 text-sm">
+                        {assoc.activities && <p className="text-purple-300"><strong>Activités:</strong> {assoc.activities}</p>}
+                        {assoc.supporters && <p className="text-gray-400 text-xs">Soutenu par: {assoc.supporters}</p>}
+                      </div>
+                      <div className="mt-3 flex items-center gap-2 text-purple-300 text-sm">
+                        <ExternalLink className="w-4 h-4" />
+                        Découvrir
+                      </div>
+                    </a>
+                  ))}
+              </div>
+            </div>
+
+            <div>
+              <h4 className="text-xl font-semibold text-pink-400 mb-3">Encourager les Jeunes Filles dans les Sciences</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {scientificAssociations
+                  .filter(a => a.category === 'girls_in_stem')
+                  .map((assoc) => (
+                    <a
+                      key={assoc.id}
+                      href={assoc.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="bg-gradient-to-br from-pink-500/10 to-rose-500/10 border border-pink-400/30 rounded-xl p-5 hover:scale-[1.02] transition-transform"
+                    >
+                      <h5 className="font-bold text-white mb-2 flex items-center gap-2">
+                        <Heart className="w-5 h-5 text-pink-400" />
+                        {assoc.name}
+                      </h5>
+                      <div className="space-y-1 text-sm">
+                        {assoc.target_audience && <p className="text-pink-300"><strong>Public:</strong> {assoc.target_audience}</p>}
+                        {assoc.supporters && <p className="text-gray-400 text-xs">Soutenu par: {assoc.supporters}</p>}
+                      </div>
+                      <div className="mt-3 flex items-center gap-2 text-pink-300 text-sm">
+                        <ExternalLink className="w-4 h-4" />
+                        En savoir plus
+                      </div>
+                    </a>
+                  ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10 mb-8">
           <h3 className="text-2xl font-semibold mb-4 flex items-center gap-2">
             <Search className="w-7 h-7 text-emerald-400" />
-            Moteur de Recherche par Région
+            Médiation Scientifique par Région
           </h3>
           <p className="text-gray-300 mb-4">
-            Trouvez les associations qui proposent des interventions dans votre région :
+            Trouvez les centres de médiation scientifique dans votre région :
           </p>
 
           <div className="mb-4">
@@ -232,16 +417,35 @@ export function SchoolResourcesSection({ onComplete, onHome, onBack }: SchoolRes
             </select>
           </div>
 
-          {searchRegion && (
+          {searchRegion && regionalAssociations.length > 0 && (
             <div className="bg-emerald-500/10 border border-emerald-400/30 rounded-lg p-6">
-              <p className="text-emerald-200 mb-3">
+              <p className="text-emerald-200 mb-4">
                 <strong>Région sélectionnée :</strong> {searchRegion}
               </p>
-              <p className="text-gray-300 text-sm mb-4">
-                Les associations disponibles dans votre région seront affichées ici après développement du moteur de recherche complet.
-              </p>
-              <p className="text-xs text-gray-400 italic">
-                Fonctionnalité en cours de développement : base de données régionale des associations à intégrer
+              <div className="space-y-3">
+                {regionalAssociations.map((assoc) => (
+                  <a
+                    key={assoc.id}
+                    href={assoc.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block bg-emerald-500/20 border border-emerald-400/40 rounded-lg p-4 hover:bg-emerald-500/30 transition-colors"
+                  >
+                    <h5 className="font-bold text-white mb-1">{assoc.name}</h5>
+                    <p className="text-emerald-300 text-sm flex items-center gap-2">
+                      <ExternalLink className="w-4 h-4" />
+                      Visiter le site
+                    </p>
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {searchRegion && regionalAssociations.length === 0 && (
+            <div className="bg-yellow-500/10 border border-yellow-400/30 rounded-lg p-6">
+              <p className="text-yellow-300">
+                Aucun centre de médiation scientifique trouvé pour cette région dans notre base de données.
               </p>
             </div>
           )}
