@@ -5,6 +5,7 @@ import { GeopoliticalSection } from './components/GeopoliticalSection';
 import { RocketSection } from './components/RocketSection';
 import { SatelliteSection } from './components/SatelliteSection';
 import { ExplorationSection } from './components/ExplorationSection';
+import { SocialReferencesSection } from './components/SocialReferencesSection';
 import { AssociationsSection } from './components/AssociationsSection';
 import { FAQSection } from './components/FAQSection';
 import { SchoolResourcesSection } from './components/SchoolResourcesSection';
@@ -23,13 +24,14 @@ function AppContent() {
     }
   }, [session]);
 
-  const sectionOrder: Section[] = ['start', 'geopolitical', 'rockets', 'satellites', 'exploration', 'associations', 'faq', 'resources', 'questions', 'completed'];
+  const sectionOrder: Section[] = ['start', 'geopolitical', 'rockets', 'satellites', 'exploration', 'social', 'associations', 'faq', 'resources', 'questions', 'completed'];
 
   const progressSteps = [
     { name: 'Terre', icon: '🌍' },
     { name: 'Fusées', icon: '🚀' },
     { name: 'Orbite', icon: '🛰️' },
     { name: 'Au-delà', icon: '🌌' },
+    { name: 'Social', icon: '📱' },
     { name: 'Accompagnement', icon: '🤝' },
     { name: 'FAQ', icon: '💭' },
     { name: 'Ressources', icon: '📚' },
@@ -43,10 +45,11 @@ function AppContent() {
     if (view === 'rockets') return 1;
     if (view === 'satellites') return 2;
     if (view === 'exploration') return 3;
-    if (view === 'associations') return 4;
-    if (view === 'faq') return 5;
-    if (view === 'resources') return 6;
-    if (view === 'questions') return 7;
+    if (view === 'social') return 4;
+    if (view === 'associations') return 5;
+    if (view === 'faq') return 6;
+    if (view === 'resources') return 7;
+    if (view === 'questions') return 8;
     return -1;
   };
 
@@ -118,6 +121,13 @@ function AppContent() {
       )}
       {currentView === 'exploration' && (
         <ExplorationSection
+          onComplete={() => handleSectionComplete('social')}
+          onHome={handleRestart}
+          onBack={handleBack}
+        />
+      )}
+      {currentView === 'social' && (
+        <SocialReferencesSection
           onComplete={() => handleSectionComplete('associations')}
           onHome={handleRestart}
           onBack={handleBack}

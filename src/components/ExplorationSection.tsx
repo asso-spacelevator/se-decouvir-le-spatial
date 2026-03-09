@@ -182,8 +182,6 @@ export function ExplorationSection({ onComplete, onHome, onBack }: ExplorationSe
           )}
         </div>
 
-        <SocialReferencesSection />
-
         <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10">
           <h3 className="text-2xl font-semibold mb-6">Votre Vision de l'Avenir</h3>
 
@@ -218,7 +216,7 @@ export function ExplorationSection({ onComplete, onHome, onBack }: ExplorationSe
               </>
             ) : (
               <>
-                Continuer vers la Zone de Questions
+                Continuer vers les Réseaux Sociaux 📱
                 <ChevronRight className="w-5 h-5" />
               </>
             )}

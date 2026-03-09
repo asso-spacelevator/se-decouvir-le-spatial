@@ -8,7 +8,7 @@ interface NavigationProps {
 
 export function Navigation({ onHome, onBack, showBack = false }: NavigationProps) {
   return (
-    <div className="fixed top-6 right-6 z-50 flex items-center gap-3">
+    <div className="fixed top-24 right-6 z-40 flex items-center gap-3">
       {showBack && onBack && (
         <button
           onClick={onBack}

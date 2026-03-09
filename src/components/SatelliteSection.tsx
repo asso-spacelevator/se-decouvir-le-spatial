@@ -131,69 +131,68 @@ export function SatelliteSection({ onComplete, onHome, onBack }: SatelliteSectio
 
           <div className="space-y-4 mb-6">
             {orbits.map((orbit, index) => (
-              <button
-                key={index}
-                onClick={() => handleOrbitSelect(index)}
-                className={`w-full p-6 rounded-xl border-2 transition-all text-left ${
-                  selectedOrbit === index
-                    ? 'border-cyan-400 bg-cyan-500/20 scale-[1.02]'
-                    : 'border-white/10 bg-white/5 hover:border-cyan-400/50 hover:bg-white/10'
-                }`}
-              >
-                <div className="flex justify-between items-start mb-2">
-                  <h4 className="font-bold text-xl">{orbit.name}</h4>
-                  <span className="text-sm text-cyan-400 font-mono">{orbit.altitude}</span>
-                </div>
-                <p className="text-sm text-gray-400 mb-2">Période orbitale : {orbit.period}</p>
-                <p className="text-gray-300">{orbit.missions}</p>
-              </button>
+              <div key={index}>
+                <button
+                  onClick={() => handleOrbitSelect(index)}
+                  className={`w-full p-6 rounded-xl border-2 transition-all text-left ${
+                    selectedOrbit === index
+                      ? 'border-cyan-400 bg-cyan-500/20 scale-[1.02]'
+                      : 'border-white/10 bg-white/5 hover:border-cyan-400/50 hover:bg-white/10'
+                  }`}
+                >
+                  <div className="flex justify-between items-start mb-2">
+                    <h4 className="font-bold text-xl">{orbit.name}</h4>
+                    <span className="text-sm text-cyan-400 font-mono">{orbit.altitude}</span>
+                  </div>
+                  <p className="text-sm text-gray-400 mb-2">Période orbitale : {orbit.period}</p>
+                  <p className="text-gray-300">{orbit.missions}</p>
+                </button>
+
+                {selectedOrbit === index && (
+                  <div className="mt-4 bg-gradient-to-br from-cyan-500/10 to-blue-500/10 border border-cyan-400/30 rounded-xl p-6 space-y-4">
+                    <div>
+                      <h4 className="font-semibold text-cyan-400 mb-2">✅ Avantages</h4>
+                      <p className="text-gray-200">{orbit.advantages}</p>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-cyan-400 mb-2">⚠️ Défis</h4>
+                      <p className="text-gray-200">{orbit.challenges}</p>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-cyan-400 mb-2">📍 Exemples</h4>
+                      <p className="text-gray-200">{orbit.examples}</p>
+                    </div>
+                    {orbit.funFact && (
+                      <div className="bg-cyan-500/10 border border-cyan-400/20 rounded-lg p-4">
+                        <p className="text-cyan-100">{orbit.funFact}</p>
+                      </div>
+                    )}
+                    {orbit.videoTitle && (
+                      <div>
+                        <h4 className="font-semibold text-cyan-400 mb-3">📹 {orbit.videoTitle}</h4>
+                        {orbit.videoUrl ? (
+                          <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
+                            <iframe
+                              className="absolute top-0 left-0 w-full h-full rounded-lg"
+                              src={orbit.videoUrl}
+                              title="Video"
+                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                              allowFullScreen
+                            />
+                          </div>
+                        ) : (
+                          <div className="bg-cyan-500/10 border border-cyan-400/30 rounded-lg p-8 text-center">
+                            <p className="text-gray-400 italic">Vidéo à venir</p>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
             ))}
           </div>
-
-          {selectedOrbit !== null && (
-            <div className="bg-gradient-to-br from-cyan-500/10 to-blue-500/10 border border-cyan-400/30 rounded-xl p-6 space-y-4">
-              <div>
-                <h4 className="font-semibold text-cyan-400 mb-2">✅ Avantages</h4>
-                <p className="text-gray-200">{orbits[selectedOrbit].advantages}</p>
-              </div>
-              <div>
-                <h4 className="font-semibold text-cyan-400 mb-2">⚠️ Défis</h4>
-                <p className="text-gray-200">{orbits[selectedOrbit].challenges}</p>
-              </div>
-              <div>
-                <h4 className="font-semibold text-cyan-400 mb-2">📍 Exemples</h4>
-                <p className="text-gray-200">{orbits[selectedOrbit].examples}</p>
-              </div>
-              {orbits[selectedOrbit].funFact && (
-                <div className="bg-cyan-500/10 border border-cyan-400/20 rounded-lg p-4">
-                  <p className="text-cyan-100">{orbits[selectedOrbit].funFact}</p>
-                </div>
-              )}
-              {orbits[selectedOrbit].videoTitle && (
-                <div>
-                  <h4 className="font-semibold text-cyan-400 mb-3">📹 {orbits[selectedOrbit].videoTitle}</h4>
-                  {orbits[selectedOrbit].videoUrl ? (
-                    <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
-                      <iframe
-                        className="absolute top-0 left-0 w-full h-full rounded-lg"
-                        src={orbits[selectedOrbit].videoUrl}
-                        title="Video"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
-                      />
-                    </div>
-                  ) : (
-                    <div className="bg-cyan-500/10 border border-cyan-400/30 rounded-lg p-8 text-center">
-                      <p className="text-gray-400 italic">Vidéo à venir</p>
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-          )}
         </div>
-
-        <SocialReferencesSection />
 
         <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10">
           <h3 className="text-2xl font-semibold mb-6">Imaginez Votre Mission</h3>

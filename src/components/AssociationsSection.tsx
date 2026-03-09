@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Users, ChevronRight, CheckCircle, ExternalLink } from 'lucide-react';
+import { Users, ChevronRight, CheckCircle, ExternalLink, Mail } from 'lucide-react';
 import { useSession } from '../contexts/SessionContext';
 import { Navigation } from './Navigation';
 
@@ -7,7 +7,9 @@ interface Association {
   name: string;
   description: string;
   website: string;
+  email: string;
   focus: string;
+  howTheyHelp: string;
   icon: string;
 }
 
@@ -33,45 +35,75 @@ export function AssociationsSection({ onComplete, onHome, onBack }: Associations
   const associations: Association[] = [
     {
       name: 'Planète Sciences',
-      description: 'Association d\'éducation populaire aux sciences et techniques',
+      description: 'Association d\'éducation populaire aux sciences et techniques, leader en France',
       website: 'https://www.planete-sciences.org/',
-      focus: 'Ateliers, clubs et projets scientifiques pour jeunes',
+      email: 'contact@planete-sciences.org',
+      focus: 'Jeunes de 8 à 25 ans',
+      howTheyHelp: 'Clubs scientifiques, ateliers en classe, camps spatiaux, Concours de Fusées à Eau, accompagnement de projets (fusées expérimentales, ballons stratosphériques), formation d\'animateurs',
       icon: '🔬'
     },
     {
-      name: 'Space Elevator',
-      description: 'Communauté passionnée par l\'espace et l\'innovation',
-      website: 'https://space-elevator.org/',
-      focus: 'Projets spatiaux et networking',
+      name: 'GIFAS Jeunes',
+      description: 'Branche jeunesse du Groupement des Industries Françaises Aéronautiques et Spatiales',
+      website: 'https://www.gifas.fr/',
+      email: 'communication@gifas.fr',
+      focus: 'Lycéens et étudiants',
+      howTheyHelp: 'Rencontres avec des professionnels, visites d\'entreprises aérospatiales, conférences métiers, informations sur les formations et débouchés, mentorat par des ingénieurs',
+      icon: '✈️'
+    },
+    {
+      name: 'Espace dans ma Ville',
+      description: 'Programme du CNES pour démocratiser l\'accès à la culture spatiale',
+      website: 'https://cnes.fr/',
+      email: 'contact.cnes@cnes.fr',
+      focus: 'Tous publics, surtout jeunes en zones prioritaires',
+      howTheyHelp: 'Ateliers mobiles, animations gratuites, expositions itinérantes, interventions en établissements scolaires, prêt de matériel pédagogique, formations pour enseignants',
       icon: '🚀'
     },
     {
-      name: 'ASTRE',
-      description: 'Association pour le Spatial et ses Technologies',
-      website: '',
-      focus: 'Promotion du spatial auprès des jeunes',
-      icon: '⭐'
+      name: 'Les Petits Débrouillards',
+      description: 'Réseau d\'éducation populaire à la science et par la science',
+      website: 'https://www.lespetitsdebrouillards.org/',
+      email: 'national@lespetitsdebrouillards.org',
+      focus: 'Jeunes de 4 à 18 ans',
+      howTheyHelp: 'Ateliers expérimentaux sur l\'espace, clubs scientifiques, animations périscolaires, stages vacances, projets collaboratifs (construction de satellites miniatures, expériences en micropesanteur)',
+      icon: '🧪'
     },
     {
-      name: 'SWAN (Space Women Activation Network)',
-      description: 'Réseau de femmes dans le spatial',
-      website: '',
-      focus: 'Diversité et inclusion dans l\'industrie spatiale',
-      icon: '👩‍🚀'
+      name: 'Astronautes & Co',
+      description: 'Association créée par des passionnés pour partager la culture spatiale',
+      website: 'https://astronautes.co/',
+      email: 'contact@astronautes.co',
+      focus: 'Collégiens, lycéens et étudiants',
+      howTheyHelp: 'Conférences inspirantes, mentorat par des professionnels du spatial, organisation d\'événements spatiaux, mise en relation avec des acteurs de l\'industrie, accompagnement d\'orientation',
+      icon: '👨‍🚀'
     },
     {
-      name: 'Eurêka',
-      description: 'Association de culture scientifique',
-      website: '',
-      focus: 'Animations et ateliers scientifiques',
-      icon: '💡'
-    },
-    {
-      name: 'C\'est Génial',
-      description: 'Promotion des métiers scientifiques et techniques',
-      website: 'https://www.cgenial.org/',
-      focus: 'Rencontres avec des professionnels, concours',
+      name: 'ANSTJ (Association Nationale Sciences Techniques Jeunesse)',
+      description: 'Réseau d\'éducation scientifique pour les jeunes',
+      website: 'https://www.anstj.fr/',
+      email: 'contact@anstj.fr',
+      focus: 'Jeunes de 7 à 25 ans',
+      howTheyHelp: 'Clubs scientifiques dans toute la France, projets spatiaux (CanSat, ballons sondes), séjours scientifiques, concours nationaux, accompagnement technique de projets étudiants',
       icon: '🎓'
+    },
+    {
+      name: 'Fermat Science',
+      description: 'Association toulousaine de culture scientifique',
+      website: 'https://www.fermat-science.fr/',
+      email: 'contact@fermat-science.com',
+      focus: 'Tous niveaux scolaires',
+      howTheyHelp: 'Expositions sur l\'espace, ateliers thématiques, conférences, prêt de mallettes pédagogiques, organisation de la Fête de la Science, partenariats avec le CNES et Airbus',
+      icon: '🌟'
+    },
+    {
+      name: 'APMST (Association Pour les Métiers de la Science et de la Technologie)',
+      description: 'Promotion des carrières scientifiques et techniques auprès des jeunes',
+      website: 'https://www.apmst.fr/',
+      email: 'contact@apmst.fr',
+      focus: 'Collégiens, lycéens et étudiants',
+      howTheyHelp: 'Témoignages de professionnels du spatial, découverte des métiers, stages en entreprise, visites de laboratoires, conseils d\'orientation personnalisés',
+      icon: '💼'
     }
   ];
 
@@ -107,29 +139,50 @@ export function AssociationsSection({ onComplete, onHome, onBack }: Associations
             De nombreuses associations peuvent vous accompagner dans votre découverte du spatial, que vous soyez lycéen, étudiant ou simplement passionné :
           </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-4">
             {associations.map((association, index) => (
               <div
                 key={index}
-                className="bg-gradient-to-br from-teal-500/10 to-cyan-500/10 border border-teal-400/30 rounded-xl p-6 hover:scale-105 transition-all"
+                className="bg-gradient-to-br from-teal-500/10 to-cyan-500/10 border border-teal-400/30 rounded-xl p-6 hover:scale-[1.01] transition-all"
               >
-                <div className="text-4xl mb-3">{association.icon}</div>
-                <h3 className="text-xl font-bold text-white mb-2">{association.name}</h3>
-                <p className="text-gray-300 mb-3 text-sm">{association.description}</p>
-                <p className="text-teal-400 text-sm mb-3">
-                  <strong>Focus :</strong> {association.focus}
-                </p>
-                {association.website && (
-                  <a
-                    href={association.website}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 text-sm text-teal-300 hover:text-teal-200 transition-colors"
-                  >
-                    <ExternalLink className="w-4 h-4" />
-                    Visiter le site
-                  </a>
-                )}
+                <div className="flex items-start gap-4 mb-4">
+                  <div className="text-4xl">{association.icon}</div>
+                  <div className="flex-1">
+                    <h3 className="text-xl font-bold text-white mb-2">{association.name}</h3>
+                    <p className="text-gray-300 mb-2">{association.description}</p>
+                    <p className="text-teal-400 text-sm font-semibold mb-2">
+                      Public : {association.focus}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="bg-teal-500/10 border border-teal-400/20 rounded-lg p-4 mb-4">
+                  <h4 className="font-semibold text-teal-300 mb-2">Comment ils accompagnent les jeunes :</h4>
+                  <p className="text-gray-200 text-sm leading-relaxed">{association.howTheyHelp}</p>
+                </div>
+
+                <div className="flex flex-wrap gap-3">
+                  {association.website && (
+                    <a
+                      href={association.website}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-teal-500/20 hover:bg-teal-500/30 border border-teal-400/40 rounded-lg text-sm text-teal-300 hover:text-teal-200 transition-colors"
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                      Site web
+                    </a>
+                  )}
+                  {association.email && (
+                    <a
+                      href={`mailto:${association.email}`}
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-400/40 rounded-lg text-sm text-cyan-300 hover:text-cyan-200 transition-colors"
+                    >
+                      <Mail className="w-4 h-4" />
+                      Contact
+                    </a>
+                  )}
+                </div>
               </div>
             ))}
           </div>
