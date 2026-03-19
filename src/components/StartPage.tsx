@@ -6,8 +6,8 @@ interface StartPageProps {
 
 export function StartPage({ onStart }: StartPageProps) {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center relative overflow-hidden">
-      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAKICAKICAKICAKICAKICAKICAKICAKICAKICAKICAK')]"></div>
+    <div className="min-h-screen relative overflow-hidden flex items-center justify-center">
+      <div className="starry-background absolute inset-0"></div>
 
       <div className="relative z-10 text-center px-6 max-w-4xl">
         <div className="mb-8 inline-block">

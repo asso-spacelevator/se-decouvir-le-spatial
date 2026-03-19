@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { SessionProvider, useSession } from './contexts/SessionContext';
 import { StartPage } from './components/StartPage';
+import { IntroductionPage } from './components/IntroductionPage';
 import { GeopoliticalSection } from './components/GeopoliticalSection';
 import { RocketSection } from './components/RocketSection';
 import { SatelliteSection } from './components/SatelliteSection';
@@ -24,7 +25,7 @@ function AppContent() {
     }
   }, [session]);
 
-  const sectionOrder: Section[] = ['start', 'geopolitical', 'rockets', 'satellites', 'exploration', 'social', 'associations', 'faq', 'resources', 'questions', 'completed'];
+  const sectionOrder: Section[] = ['start', 'introduction', 'geopolitical', 'rockets', 'satellites', 'exploration', 'social', 'associations', 'faq', 'resources', 'questions', 'completed'];
 
   const progressSteps = [
     { name: 'Terre', icon: '🌍' },
@@ -40,7 +41,7 @@ function AppContent() {
 
   const getCurrentStepIndex = () => {
     const view = currentView;
-    if (view === 'start' || view === 'completed') return -1;
+    if (view === 'start' || view === 'introduction' || view === 'completed') return -1;
     if (view === 'geopolitical') return 0;
     if (view === 'rockets') return 1;
     if (view === 'satellites') return 2;
@@ -54,6 +55,11 @@ function AppContent() {
   };
 
   const handleStartJourney = async () => {
+    setCurrentView('introduction');
+    await updateSection('introduction');
+  };
+
+  const handleIntroductionComplete = async () => {
     setCurrentView('geopolitical');
     await updateSection('geopolitical');
   };
@@ -98,6 +104,13 @@ function AppContent() {
         />
       )}
       {currentView === 'start' && <StartPage onStart={handleStartJourney} />}
+      {currentView === 'introduction' && (
+        <IntroductionPage
+          onContinue={handleIntroductionComplete}
+          onHome={handleRestart}
+          onBack={handleBack}
+        />
+      )}
       {currentView === 'geopolitical' && (
         <GeopoliticalSection
           onComplete={() => handleSectionComplete('rockets')}
