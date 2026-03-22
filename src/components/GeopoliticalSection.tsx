@@ -3,6 +3,7 @@ import { Globe, ChevronRight, CheckCircle } from 'lucide-react';
 import { useSession } from '../contexts/SessionContext';
 import { Subsection } from './Subsection';
 import { Navigation } from './Navigation';
+import { Quiz } from './Quiz';
 
 interface GeopoliticalSectionProps {
   onComplete: () => void;
@@ -11,9 +12,10 @@ interface GeopoliticalSectionProps {
 }
 
 export function GeopoliticalSection({ onComplete, onHome, onBack }: GeopoliticalSectionProps) {
-  const { saveResponse, getResponses } = useSession();
+  const { saveResponse, getResponses, saveQuizScore } = useSession();
   const [responses, setResponses] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
+  const [quizCompleted, setQuizCompleted] = useState(false);
 
   useEffect(() => {
     const loadResponses = async () => {
@@ -23,20 +25,46 @@ export function GeopoliticalSection({ onComplete, onHome, onBack }: Geopolitical
     loadResponses();
   }, []);
 
+  const quizQuestions = [
+    {
+      id: 'geo_q1',
+      question: 'Quel est le principal avantage d\'avoir un accès indépendant à l\'espace ?',
+      options: [
+        { id: 'a', text: 'Coûts réduits', isCorrect: false },
+        { id: 'b', text: 'Souveraineté et autonomie stratégique', isCorrect: true },
+        { id: 'c', text: 'Prestige international uniquement', isCorrect: false },
+        { id: 'd', text: 'Emplois dans le secteur spatial', isCorrect: false }
+      ],
+      explanation: 'L\'accès indépendant à l\'espace garantit la souveraineté et l\'autonomie stratégique. Cela permet à l\'Europe de lancer ses propres satellites critiques sans dépendre d\'autres nations, assurant sa sécurité et sa compétitivité.'
+    },
+    {
+      id: 'geo_q2',
+      question: 'Combien de pays collaborent au sein de l\'Agence Spatiale Européenne (ESA) ?',
+      options: [
+        { id: 'a', text: '10 pays', isCorrect: false },
+        { id: 'b', text: '15 pays', isCorrect: false },
+        { id: 'c', text: 'Plus de 20 pays', isCorrect: true },
+        { id: 'd', text: '5 pays', isCorrect: false }
+      ],
+      explanation: 'L\'ESA rassemble plus de 20 pays européens qui collaborent pour des missions spatiales ambitieuses. Cette coopération permet de mutualiser les ressources et l\'expertise pour rivaliser avec les grandes puissances spatiales.'
+    },
+    {
+      id: 'geo_q3',
+      question: 'Quelle est l\'une des missions critiques des satellites européens ?',
+      options: [
+        { id: 'a', text: 'Divertissement télévisé uniquement', isCorrect: false },
+        { id: 'b', text: 'Observation de la Terre et climat', isCorrect: true },
+        { id: 'c', text: 'Exploration de Mars', isCorrect: false },
+        { id: 'd', text: 'Tourisme spatial', isCorrect: false }
+      ],
+      explanation: 'Les satellites européens jouent un rôle crucial dans l\'observation de la Terre, la surveillance du climat, les télécommunications et la navigation (Galileo). Ces missions sont essentielles pour la sécurité, l\'environnement et l\'économie européenne.'
+    }
+  ];
+
   const questions = [
     {
       id: 'q1',
-      question: 'Pourquoi l\'accès indépendant à l\'espace est-il important pour l\'Europe ?',
-      placeholder: 'Partagez vos réflexions sur la souveraineté spatiale européenne...'
-    },
-    {
-      id: 'q2',
-      question: 'Que pourrait-il se passer si un pays dépendait entièrement d\'une autre nation pour lancer des satellites ?',
-      placeholder: 'Considérez la sécurité, l\'économie et les implications stratégiques...'
-    },
-    {
-      id: 'q3',
-      question: 'Citez un avantage que l\'Europe possède dans la course spatiale mondiale.',
+      question: 'Selon vous, quel autre avantage stratégique l\'Europe possède-t-elle dans la course spatiale ?',
       placeholder: 'Pensez à la technologie, la coopération ou l\'infrastructure...'
     }
   ];
@@ -46,6 +74,17 @@ export function GeopoliticalSection({ onComplete, onHome, onBack }: Geopolitical
     await saveResponse('geopolitical', id, value);
   };
 
+  const handleQuizScoreUpdate = async (points: number) => {
+    const currentQuestion = quizQuestions.find(() => true);
+    if (currentQuestion) {
+      await saveQuizScore('geopolitical', currentQuestion.id, points, points > 0);
+    }
+  };
+
+  const handleQuizComplete = () => {
+    setQuizCompleted(true);
+  };
+
   const handleSubmit = async () => {
     setSubmitted(true);
     setTimeout(() => {
@@ -53,8 +92,7 @@ export function GeopoliticalSection({ onComplete, onHome, onBack }: Geopolitical
     }, 1500);
   };
 
-  const canSubmit = Object.keys(responses).length >= 2 &&
-    Object.values(responses).some(r => r.trim().length > 0);
+  const canSubmit = quizCompleted && responses['q1']?.trim().length > 0;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-900 to-blue-950 text-white py-16 px-6">
@@ -90,7 +128,13 @@ export function GeopoliticalSection({ onComplete, onHome, onBack }: Geopolitical
           icon="🌍"
         />
 
-        <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10">
+        <Quiz
+          questions={quizQuestions}
+          onScoreUpdate={handleQuizScoreUpdate}
+          onComplete={handleQuizComplete}
+        />
+
+        <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10 mt-8">
           <h3 className="text-2xl font-semibold mb-6">Réfléchissez à ce que vous avez appris</h3>
 
           {questions.map((q) => (
