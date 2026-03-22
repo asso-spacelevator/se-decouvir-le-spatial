@@ -3,7 +3,7 @@ import { Rocket, ChevronRight, CheckCircle } from 'lucide-react';
 import { useSession } from '../contexts/SessionContext';
 import { Subsection } from './Subsection';
 import { Navigation } from './Navigation';
-import { SocialReferencesSection } from './SocialReferencesSection';
+import { Quiz } from './Quiz';
 
 interface RocketSectionProps {
   onComplete: () => void;
@@ -12,10 +12,11 @@ interface RocketSectionProps {
 }
 
 export function RocketSection({ onComplete, onHome, onBack }: RocketSectionProps) {
-  const { saveResponse, getResponses } = useSession();
+  const { saveResponse, getResponses, saveQuizScore } = useSession();
   const [responses, setResponses] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
   const [selectedChallenge, setSelectedChallenge] = useState<number | null>(null);
+  const [quizCompleted, setQuizCompleted] = useState(false);
 
   useEffect(() => {
     const loadResponses = async () => {
@@ -67,6 +68,42 @@ export function RocketSection({ onComplete, onHome, onBack }: RocketSectionProps
     }
   ];
 
+  const quizQuestions = [
+    {
+      id: 'rocket_q1',
+      question: 'Quelle est la température maximale que peuvent atteindre les moteurs de lanceur ?',
+      options: [
+        { id: 'a', text: '500°C', isCorrect: false },
+        { id: 'b', text: '1 500°C', isCorrect: false },
+        { id: 'c', text: '3 000°C', isCorrect: true },
+        { id: 'd', text: '5 000°C', isCorrect: false }
+      ],
+      explanation: 'Les moteurs de lanceur peuvent atteindre des températures extrêmes de 3 000°C. Des matériaux composites céramiques ultra-résistants et des systèmes de refroidissement actifs sont nécessaires pour gérer ces températures.'
+    },
+    {
+      id: 'rocket_q2',
+      question: 'Combien de carburant un lanceur brûle-t-il par seconde pendant le décollage ?',
+      options: [
+        { id: 'a', text: '50 kg/s', isCorrect: false },
+        { id: 'b', text: '100 kg/s', isCorrect: false },
+        { id: 'c', text: '300 kg/s', isCorrect: true },
+        { id: 'd', text: '500 kg/s', isCorrect: false }
+      ],
+      explanation: 'Un lanceur brûle environ 300 kg de carburant par seconde lors du décollage ! Cette combustion d\'hydrogène et d\'oxygène liquides génère la puissance colossale nécessaire pour vaincre la gravité.'
+    },
+    {
+      id: 'rocket_q3',
+      question: 'Pourquoi la précision du lancement est-elle si critique ?',
+      options: [
+        { id: 'a', text: 'Pour économiser du carburant', isCorrect: false },
+        { id: 'b', text: 'Une erreur de 0,1° peut manquer l\'orbite de milliers de km', isCorrect: true },
+        { id: 'c', text: 'Pour éviter les collisions avec des avions', isCorrect: false },
+        { id: 'd', text: 'Pour respecter les horaires', isCorrect: false }
+      ],
+      explanation: 'La précision est absolument critique : une erreur de seulement 0,1° lors du lancement peut faire manquer la cible orbitale de milliers de kilomètres. C\'est comme lancer une fléchette depuis Paris et viser le centre d\'une cible à New York !'
+    }
+  ];
+
   const handleChallengeSelect = async (index: number) => {
     setSelectedChallenge(index);
     await saveResponse('rockets', 'selectedChallenge', String(index));
@@ -77,6 +114,17 @@ export function RocketSection({ onComplete, onHome, onBack }: RocketSectionProps
     await saveResponse('rockets', id, value);
   };
 
+  const handleQuizScoreUpdate = async (points: number) => {
+    const currentQuestion = quizQuestions.find(() => true);
+    if (currentQuestion) {
+      await saveQuizScore('rockets', currentQuestion.id, points, points > 0);
+    }
+  };
+
+  const handleQuizComplete = () => {
+    setQuizCompleted(true);
+  };
+
   const handleSubmit = async () => {
     setSubmitted(true);
     setTimeout(() => {
@@ -84,7 +132,7 @@ export function RocketSection({ onComplete, onHome, onBack }: RocketSectionProps
     }, 1500);
   };
 
-  const canSubmit = selectedChallenge !== null && responses['reflection']?.trim().length > 0;
+  const canSubmit = quizCompleted && selectedChallenge !== null && responses['reflection']?.trim().length > 0;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-900 via-orange-950 to-slate-900 text-white py-16 px-6">
@@ -173,7 +221,13 @@ export function RocketSection({ onComplete, onHome, onBack }: RocketSectionProps
           )}
         </div>
 
-        <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10">
+        <Quiz
+          questions={quizQuestions}
+          onScoreUpdate={handleQuizScoreUpdate}
+          onComplete={handleQuizComplete}
+        />
+
+        <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10 mt-8">
           <h3 className="text-2xl font-semibold mb-6">Votre Réflexion</h3>
 
           <div className="mb-6">

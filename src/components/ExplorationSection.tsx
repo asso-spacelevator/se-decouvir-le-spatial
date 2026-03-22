@@ -3,7 +3,7 @@ import { Telescope, ChevronRight, CheckCircle, Moon, Sparkles } from 'lucide-rea
 import { useSession } from '../contexts/SessionContext';
 import { Subsection } from './Subsection';
 import { Navigation } from './Navigation';
-import { SocialReferencesSection } from './SocialReferencesSection';
+import { Quiz } from './Quiz';
 
 interface ExplorationSectionProps {
   onComplete: () => void;
@@ -12,10 +12,11 @@ interface ExplorationSectionProps {
 }
 
 export function ExplorationSection({ onComplete, onHome, onBack }: ExplorationSectionProps) {
-  const { saveResponse, getResponses } = useSession();
+  const { saveResponse, getResponses, saveQuizScore } = useSession();
   const [responses, setResponses] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
   const [selectedTopic, setSelectedTopic] = useState<number | null>(null);
+  const [quizCompleted, setQuizCompleted] = useState(false);
 
   useEffect(() => {
     const loadResponses = async () => {
@@ -75,6 +76,42 @@ export function ExplorationSection({ onComplete, onHome, onBack }: ExplorationSe
     }
   ];
 
+  const quizQuestions = [
+    {
+      id: 'exploration_q1',
+      question: 'À quelle température doit fonctionner le télescope spatial James Webb ?',
+      options: [
+        { id: 'a', text: '-50°C', isCorrect: false },
+        { id: 'b', text: '-100°C', isCorrect: false },
+        { id: 'c', text: '-233°C', isCorrect: true },
+        { id: 'd', text: '-273°C', isCorrect: false }
+      ],
+      explanation: 'Le télescope James Webb doit rester à -233°C pour fonctionner correctement ! Son bouclier solaire, de la taille d\'un court de tennis, protège ses instruments ultra-sensibles de la chaleur du Soleil.'
+    },
+    {
+      id: 'exploration_q2',
+      question: 'Combien d\'exoplanètes ont été découvertes à ce jour ?',
+      options: [
+        { id: 'a', text: 'Plus de 500', isCorrect: false },
+        { id: 'b', text: 'Plus de 1 000', isCorrect: false },
+        { id: 'c', text: 'Plus de 5 000', isCorrect: true },
+        { id: 'd', text: 'Plus de 10 000', isCorrect: false }
+      ],
+      explanation: 'Plus de 5 000 exoplanètes ont été découvertes grâce aux télescopes modernes ! L\'astronomie contemporaine combine télescopes terrestres géants, télescopes spatiaux et détecteurs d\'ondes gravitationnelles pour explorer l\'univers.'
+    },
+    {
+      id: 'exploration_q3',
+      question: 'Quelle est la durée d\'un voyage vers Mars ?',
+      options: [
+        { id: 'a', text: '2-3 mois', isCorrect: false },
+        { id: 'b', text: '6-9 mois', isCorrect: true },
+        { id: 'c', text: '12-15 mois', isCorrect: false },
+        { id: 'd', text: '2 ans', isCorrect: false }
+      ],
+      explanation: 'Un voyage vers Mars dure entre 6 et 9 mois, selon la position relative des planètes. Les défis sont immenses : radiations, gravité réduite, températures extrêmes et isolement total.'
+    }
+  ];
+
   const handleTopicSelect = async (index: number) => {
     setSelectedTopic(index);
     await saveResponse('exploration', 'selectedTopic', String(index));
@@ -85,6 +122,17 @@ export function ExplorationSection({ onComplete, onHome, onBack }: ExplorationSe
     await saveResponse('exploration', id, value);
   };
 
+  const handleQuizScoreUpdate = async (points: number) => {
+    const currentQuestion = quizQuestions.find(() => true);
+    if (currentQuestion) {
+      await saveQuizScore('exploration', currentQuestion.id, points, points > 0);
+    }
+  };
+
+  const handleQuizComplete = () => {
+    setQuizCompleted(true);
+  };
+
   const handleSubmit = async () => {
     setSubmitted(true);
     setTimeout(() => {
@@ -92,7 +140,7 @@ export function ExplorationSection({ onComplete, onHome, onBack }: ExplorationSe
     }, 1500);
   };
 
-  const canSubmit = selectedTopic !== null && responses['dream']?.trim().length > 0;
+  const canSubmit = quizCompleted && selectedTopic !== null && responses['dream']?.trim().length > 0;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-900 via-purple-950 to-slate-900 text-white py-16 px-6">
@@ -182,7 +230,13 @@ export function ExplorationSection({ onComplete, onHome, onBack }: ExplorationSe
           )}
         </div>
 
-        <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10">
+        <Quiz
+          questions={quizQuestions}
+          onScoreUpdate={handleQuizScoreUpdate}
+          onComplete={handleQuizComplete}
+        />
+
+        <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10 mt-8">
           <h3 className="text-2xl font-semibold mb-6">Votre Vision de l'Avenir</h3>
 
           <div className="mb-6">

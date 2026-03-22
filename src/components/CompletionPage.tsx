@@ -8,7 +8,7 @@ interface CompletionPageProps {
 export function CompletionPage({ onRestart }: CompletionPageProps) {
   const { getTotalQuizScore } = useSession();
   const totalScore = getTotalQuizScore();
-  const maxPossibleScore = 30;
+  const maxPossibleScore = 120;
   const scorePercentage = Math.round((totalScore / maxPossibleScore) * 100);
 
   const getScoreMessage = () => {

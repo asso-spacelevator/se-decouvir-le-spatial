@@ -3,7 +3,7 @@ import { Satellite, ChevronRight, CheckCircle } from 'lucide-react';
 import { useSession } from '../contexts/SessionContext';
 import { Subsection } from './Subsection';
 import { Navigation } from './Navigation';
-import { SocialReferencesSection } from './SocialReferencesSection';
+import { Quiz } from './Quiz';
 
 interface SatelliteSectionProps {
   onComplete: () => void;
@@ -12,10 +12,11 @@ interface SatelliteSectionProps {
 }
 
 export function SatelliteSection({ onComplete, onHome, onBack }: SatelliteSectionProps) {
-  const { saveResponse, getResponses } = useSession();
+  const { saveResponse, getResponses, saveQuizScore } = useSession();
   const [responses, setResponses] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
   const [selectedOrbit, setSelectedOrbit] = useState<number | null>(null);
+  const [quizCompleted, setQuizCompleted] = useState(false);
 
   useEffect(() => {
     const loadResponses = async () => {
@@ -79,6 +80,42 @@ export function SatelliteSection({ onComplete, onHome, onBack }: SatelliteSectio
     }
   ];
 
+  const quizQuestions = [
+    {
+      id: 'satellite_q1',
+      question: 'Combien de temps faut-il à un satellite en orbite basse (LEO) pour faire le tour de la Terre ?',
+      options: [
+        { id: 'a', text: '30 minutes', isCorrect: false },
+        { id: 'b', text: '90 minutes', isCorrect: true },
+        { id: 'c', text: '3 heures', isCorrect: false },
+        { id: 'd', text: '24 heures', isCorrect: false }
+      ],
+      explanation: 'Un satellite en orbite basse fait le tour complet de la Terre en environ 90 minutes ! C\'est pourquoi les astronautes de l\'ISS voient 16 levers et couchers de soleil par jour.'
+    },
+    {
+      id: 'satellite_q2',
+      question: 'À quelle altitude se trouve l\'orbite géostationnaire (GEO) ?',
+      options: [
+        { id: 'a', text: '10 000 km', isCorrect: false },
+        { id: 'b', text: '20 000 km', isCorrect: false },
+        { id: 'c', text: '35 786 km', isCorrect: true },
+        { id: 'd', text: '50 000 km', isCorrect: false }
+      ],
+      explanation: 'L\'orbite géostationnaire est située exactement à 35 786 km d\'altitude au-dessus de l\'équateur. À cette altitude, un satellite met 24 heures pour faire le tour de la Terre, restant donc fixe au-dessus d\'un point de la surface.'
+    },
+    {
+      id: 'satellite_q3',
+      question: 'Quel système de navigation européen utilise des satellites en orbite moyenne (MEO) ?',
+      options: [
+        { id: 'a', text: 'GPS', isCorrect: false },
+        { id: 'b', text: 'Galileo', isCorrect: true },
+        { id: 'c', text: 'Copernicus', isCorrect: false },
+        { id: 'd', text: 'Hubble', isCorrect: false }
+      ],
+      explanation: 'Galileo est le système de navigation par satellite européen, situé en orbite moyenne à environ 23 222 km d\'altitude. Il offre une précision et une fiabilité supérieures au GPS américain.'
+    }
+  ];
+
   const handleOrbitSelect = async (index: number) => {
     setSelectedOrbit(index);
     await saveResponse('satellites', 'selectedOrbit', String(index));
@@ -89,6 +126,17 @@ export function SatelliteSection({ onComplete, onHome, onBack }: SatelliteSectio
     await saveResponse('satellites', id, value);
   };
 
+  const handleQuizScoreUpdate = async (points: number) => {
+    const currentQuestion = quizQuestions.find(() => true);
+    if (currentQuestion) {
+      await saveQuizScore('satellites', currentQuestion.id, points, points > 0);
+    }
+  };
+
+  const handleQuizComplete = () => {
+    setQuizCompleted(true);
+  };
+
   const handleSubmit = async () => {
     setSubmitted(true);
     setTimeout(() => {
@@ -96,7 +144,7 @@ export function SatelliteSection({ onComplete, onHome, onBack }: SatelliteSectio
     }, 1500);
   };
 
-  const canSubmit = selectedOrbit !== null && responses['mission_idea']?.trim().length > 0;
+  const canSubmit = quizCompleted && selectedOrbit !== null && responses['mission_idea']?.trim().length > 0;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-900 via-cyan-950 to-slate-900 text-white py-16 px-6">
@@ -194,7 +242,13 @@ export function SatelliteSection({ onComplete, onHome, onBack }: SatelliteSectio
           </div>
         </div>
 
-        <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10">
+        <Quiz
+          questions={quizQuestions}
+          onScoreUpdate={handleQuizScoreUpdate}
+          onComplete={handleQuizComplete}
+        />
+
+        <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10 mt-8">
           <h3 className="text-2xl font-semibold mb-6">Imaginez Votre Mission</h3>
 
           <div className="mb-6">
