@@ -39,7 +39,7 @@ export function AssociationsSection({ onComplete, onHome, onBack }: Associations
       website: 'https://www.planete-sciences.org/',
       email: 'contact@planete-sciences.org',
       focus: 'Jeunes de 8 à 25 ans',
-      howTheyHelp: 'Clubs scientifiques, ateliers en classe, camps spatiaux, Concours de Fusées à Eau, accompagnement de projets (fusées expérimentales, ballons stratosphériques), formation d\'animateurs',
+      howTheyHelp: 'Clubs scientifiques, ateliers en classe, camps spatiaux, Concours de Lanceurs à Eau, accompagnement de projets (lanceurs expérimentaux, ballons stratosphériques), formation d\'animateurs',
       icon: '🔬'
     },
     {

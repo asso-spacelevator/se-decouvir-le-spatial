@@ -26,7 +26,7 @@ export function TechnicalSection({ onComplete, onHome, onBack }: TechnicalSectio
   const questions = [
     {
       id: 'q1',
-      question: 'Quel est le plus grand défi technique selon vous pour créer une fusée ?',
+      question: 'Quel est le plus grand défi technique selon vous pour créer un lanceur ?',
       placeholder: 'Réfléchissez aux matériaux, à la précision, à l\'énergie...'
     },
     {
@@ -65,21 +65,21 @@ export function TechnicalSection({ onComplete, onHome, onBack }: TechnicalSectio
 
         <Subsection
           title="Les Températures Extrêmes"
-          content="Les fusées atteignent des températures dépassant les 3 000°C. À ces extrêmes, aucun matériau ordinaire ne peut survivre. Les ingénieurs doivent inventer ou développer des matériaux spécialisés comme les céramiques thermiques et les alliages avancés pour protéger la structure et les équipements délicats."
+          content="Les lanceurs atteignent des températures dépassant les 3 000°C. À ces extrêmes, aucun matériau ordinaire ne peut survivre. Les ingénieurs doivent inventer ou développer des matériaux spécialisés comme les céramiques thermiques et les alliages avancés pour protéger la structure et les équipements délicats."
           videoUrl="https://www.youtube.com/embed/dQw4w9WgXcQ"
           icon="🔥"
         />
 
         <Subsection
           title="La Précision Extrême"
-          content="Pour atteindre l'orbite, une fusée doit déployer ses charges utiles avec une précision millimétrique. Les systèmes de navigation utilisent des gyroscopes et accéléromètres de haute précision pour corriger continuellement la trajectoire. Une erreur d'un centimètre sur un million de kilomètres serait un échec."
+          content="Pour atteindre l'orbite, un lanceur doit déployer ses charges utiles avec une précision millimétrique. Les systèmes de navigation utilisent des gyroscopes et accéléromètres de haute précision pour corriger continuellement la trajectoire. Une erreur d'un centimètre sur un million de kilomètres serait un échec."
           videoUrl="https://www.youtube.com/embed/dQw4w9WgXcQ"
           icon="🎯"
         />
 
         <Subsection
           title="Les Vibrations et les Chocs"
-          content="Lors du décollage, les fusées subissent des vibrations massives qui pourraient endommager les équipements sensibles. Les ingénieurs conçoivent des systèmes d'amortissement et d'isolation sophistiqués pour protéger les instruments scientifiques et les charges précieuses du bombardement sismique du lancement."
+          content="Lors du décollage, les lanceurs subissent des vibrations massives qui pourraient endommager les équipements sensibles. Les ingénieurs conçoivent des systèmes d'amortissement et d'isolation sophistiqués pour protéger les instruments scientifiques et les charges précieuses du bombardement sismique du lancement."
           videoUrl="https://www.youtube.com/embed/dQw4w9WgXcQ"
           icon="📡"
         />

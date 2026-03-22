@@ -38,7 +38,7 @@ export function IntroductionPage({ onContinue, onHome, onBack }: IntroductionPag
               </div>
               <h3 className="text-2xl font-bold text-white mb-3 text-center">Explorer</h3>
               <p className="text-gray-200 text-center">
-                Découvrez les fusées, satellites et technologies spatiales qui façonnent notre avenir
+                Découvrez les lanceurs, satellites et technologies spatiales qui façonnent notre avenir
               </p>
             </div>
 

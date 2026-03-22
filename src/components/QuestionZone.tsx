@@ -35,7 +35,7 @@ export function QuestionZone({ onComplete, onHome, onBack }: QuestionZoneProps) 
 
   const exampleQuestions = [
     'Quels cursus mènent à une carrière dans l\'industrie spatiale ?',
-    'Comment Ariane 6 se compare-t-elle aux fusées de SpaceX ?',
+    'Comment Ariane 6 se compare-t-elle aux lanceurs de SpaceX ?',
     'Quelles sont les opportunités de carrière à l\'ESA ?',
     'Pourquoi l\'Europe investit-elle dans ses propres capacités de lancement ?',
     'Quelles compétences sont les plus précieuses pour les ingénieurs spatiaux ?'

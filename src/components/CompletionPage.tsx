@@ -21,7 +21,7 @@ export function CompletionPage({ onRestart }: CompletionPageProps) {
         <p className="text-xl text-gray-300 mb-8 leading-relaxed max-w-2xl mx-auto">
           Félicitations d'avoir complété votre voyage à travers l'industrie spatiale européenne.
           Vous avez exploré le paysage géopolitique, les défis techniques, l'excellence manufacturière,
-          et expérimenté un lancement de fusée.
+          et expérimenté un lancement de lanceur.
         </p>
 
         <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10 mb-8">
@@ -37,7 +37,7 @@ export function CompletionPage({ onRestart }: CompletionPageProps) {
             </div>
             <div className="bg-emerald-500/10 rounded-lg p-4 border border-emerald-500/20">
               <h4 className="font-semibold text-emerald-300 mb-2">Fabrication Avancée</h4>
-              <p className="text-sm text-gray-400">Systèmes complexes de fusée</p>
+              <p className="text-sm text-gray-400">Systèmes complexes de lanceur</p>
             </div>
             <div className="bg-orange-500/10 rounded-lg p-4 border border-orange-500/20">
               <h4 className="font-semibold text-orange-300 mb-2">Opérations de Lancement</h4>

@@ -62,7 +62,7 @@ export function ManufacturingSection({ onComplete, onHome, onBack }: Manufacturi
       name: 'Télécommunications',
       description: 'Liaisons de télémétrie haut débit transmettant des milliers de paramètres',
       details: 'Transmission de données en temps réel au contrôle au sol pour la surveillance et la prise de décision',
-      didYouKnow: 'La fusée envoie plus de données à la Terre lors d\'un lancement qu\'un smartphone n\'en utilise en un mois'
+      didYouKnow: 'Le lanceur envoie plus de données à la Terre lors d\'un lancement qu\'un smartphone n\'en utilise en un mois'
     }
   ];
 
@@ -100,14 +100,14 @@ export function ManufacturingSection({ onComplete, onHome, onBack }: Manufacturi
 
         <Subsection
           title="L'Assemblage et l'Intégration"
-          content="L'assemblage d'une fusée est un processus hautement coordonné impliquant des milliers de techniciens et d'ingénieurs. Chaque composant doit être intégré avec une précision extrême. Les tests de compatibilité et d'intégration prennent des mois pour assurer que tous les systèmes fonctionnent harmonieusement."
+          content="L'assemblage d'un lanceur est un processus hautement coordonné impliquant des milliers de techniciens et d'ingénieurs. Chaque composant doit être intégré avec une précision extrême. Les tests de compatibilité et d'intégration prennent des mois pour assurer que tous les systèmes fonctionnent harmonieusement."
           videoUrl="https://www.youtube.com/embed/dQw4w9WgXcQ"
           icon="🔧"
         />
 
         <Subsection
           title="Les Tests et Validation"
-          content="Avant le lancement, les fusées subissent des centaines de tests : tests d'environnement thermique, tests de vibration, tests de pression, et simulations du vol. Chaque test doit être réussi pour garantir la sécurité et le succès de la mission. Les standards de qualité sont extraordinairement rigoureux."
+          content="Avant le lancement, les lanceurs subissent des centaines de tests : tests d'environnement thermique, tests de vibration, tests de pression, et simulations du vol. Chaque test doit être réussi pour garantir la sécurité et le succès de la mission. Les standards de qualité sont extraordinairement rigoureux."
           videoUrl="https://www.youtube.com/embed/dQw4w9WgXcQ"
           icon="✓"
         />
@@ -122,7 +122,7 @@ export function ManufacturingSection({ onComplete, onHome, onBack }: Manufacturi
         <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10 mb-8">
           <h3 className="text-2xl font-semibold mb-4">Explorez les Sous-systèmes</h3>
           <p className="text-gray-300 mb-8 leading-relaxed">
-            Une fusée moderne est une symphonie de systèmes interconnectés, chacun repoussant les limites de l'ingénierie.
+            Un lanceur moderne est une symphonie de systèmes interconnectés, chacun repoussant les limites de l'ingénierie.
             Explorez chaque sous-système pour comprendre comment ils travaillent ensemble pour réaliser le vol spatial.
           </p>
 

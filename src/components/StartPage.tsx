@@ -24,7 +24,7 @@ export function StartPage({ onStart }: StartPageProps) {
 
         <p className="text-lg text-gray-400 mb-12 max-w-2xl mx-auto">
           Embarquez pour un voyage interactif à travers les défis géopolitiques, techniques et opérationnels
-          du lancement de fusées dans l'espace. De la stratégie au décollage.
+          du lancement de lanceurs dans l'espace. De la stratégie au décollage.
         </p>
 
         <button

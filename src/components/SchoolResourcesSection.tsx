@@ -92,7 +92,7 @@ export function SchoolResourcesSection({ onComplete, onHome, onBack }: SchoolRes
       icon: '🧰'
     },
     {
-      name: 'Construction de Fusées à Eau',
+      name: 'Construction de Lanceurs à Eau',
       description: 'Projet DIY pour comprendre la propulsion',
       type: 'diy',
       provider: 'Communauté',

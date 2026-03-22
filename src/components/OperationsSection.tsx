@@ -151,7 +151,7 @@ export function OperationsSection({ onComplete, onHome, onBack }: OperationsSect
 
         <Subsection
           title="Après le Décollage"
-          content="Une fois en orbite, la fusée a terminé sa mission. Les satellites ou autres charges utiles se séparent et commencent leurs propres missions. Les étages de la fusée se désorbient de manière contrôlée pour limiter les débris spatiaux et protéger l'environnement orbital."
+          content="Une fois en orbite, le lanceur a terminé sa mission. Les satellites ou autres charges utiles se séparent et commencent leurs propres missions. Les étages du lanceur se désorbient de manière contrôlée pour limiter les débris spatiaux et protéger l'environnement orbital."
           videoUrl="https://www.youtube.com/embed/dQw4w9WgXcQ"
           icon="🌌"
         />
@@ -160,7 +160,7 @@ export function OperationsSection({ onComplete, onHome, onBack }: OperationsSect
           <h3 className="text-2xl font-semibold mb-4">Vivre le Lancement d'Ariane 6</h3>
           <p className="text-gray-300 mb-6 leading-relaxed">
             Du compte à rebours final à l'insertion orbitale, expérience la séquence intense
-            qui transforme une fusée posée au sol en vaisseau spatial lancé à 28 000 km/h.
+            qui transforme un lanceur posé au sol en vaisseau spatial lancé à 28 000 km/h.
           </p>
 
           {!isLaunching ? (
