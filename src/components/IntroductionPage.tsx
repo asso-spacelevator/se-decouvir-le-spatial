@@ -24,7 +24,7 @@ export function IntroductionPage({ onContinue, onHome, onBack }: IntroductionPag
               </div>
             </div>
             <h1 className="text-5xl md:text-6xl font-bold text-white mb-4">
-              Bienvenue dans l'Univers de l'Espace
+              Bienvenue dans l'Univers du Spatial
             </h1>
             <p className="text-2xl text-blue-200">
               Un voyage éducatif pour découvrir les merveilles du spatial
@@ -58,7 +58,7 @@ export function IntroductionPage({ onContinue, onHome, onBack }: IntroductionPag
               </div>
               <h3 className="text-2xl font-bold text-white mb-3 text-center">Connecter</h3>
               <p className="text-gray-200 text-center">
-                Trouvez des associations, mentors et ressources pour poursuivre votre passion
+                Trouvez des associations, mentors et ressources pour poursuivre votre exploration
               </p>
             </div>
           </div>
@@ -75,9 +75,9 @@ export function IntroductionPage({ onContinue, onHome, onBack }: IntroductionPag
                   </div>
                 </div>
                 <div>
-                  <h4 className="text-xl font-semibold text-white mb-2">Les Fusées</h4>
+                  <h4 className="text-xl font-semibold text-white mb-2">Les Lanceurs</h4>
                   <p className="text-gray-300">
-                    Comment fonctionnent-elles ? Qui les fabrique ? Découvrez les secrets de la propulsion spatiale
+                    Comment fonctionnent-ils ? Qui les fabrique ? Découvrez les secrets de la propulsion spatiale
                   </p>
                 </div>
               </div>
