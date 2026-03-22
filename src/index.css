@@ -2,11 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@keyframes twinkle {
-  0%, 100% { opacity: 0.5; }
-  50% { opacity: 1; }
-}
-
 .starry-background {
   background: #000000;
   background-image:
@@ -31,5 +26,4 @@
     radial-gradient(circle at 35% 95%, rgba(255, 255, 255, 0.7) 0%, transparent 1%),
     radial-gradient(circle at 88% 92%, rgba(255, 255, 255, 0.6) 0%, transparent 0.5%);
   background-size: 100% 100%;
-  animation: twinkle 4s ease-in-out infinite alternate;
 }
