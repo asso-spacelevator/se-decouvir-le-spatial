@@ -87,28 +87,6 @@ export function ExplorationSection({ onComplete, onHome, onBack }: ExplorationSe
         { id: 'd', text: '-273°C', isCorrect: false }
       ],
       explanation: 'Le télescope James Webb doit rester à -233°C pour fonctionner correctement ! Son bouclier solaire, de la taille d\'un court de tennis, protège ses instruments ultra-sensibles de la chaleur du Soleil.'
-    },
-    {
-      id: 'exploration_q2',
-      question: 'Combien d\'exoplanètes ont été découvertes à ce jour ?',
-      options: [
-        { id: 'a', text: 'Plus de 500', isCorrect: false },
-        { id: 'b', text: 'Plus de 1 000', isCorrect: false },
-        { id: 'c', text: 'Plus de 5 000', isCorrect: true },
-        { id: 'd', text: 'Plus de 10 000', isCorrect: false }
-      ],
-      explanation: 'Plus de 5 000 exoplanètes ont été découvertes grâce aux télescopes modernes ! L\'astronomie contemporaine combine télescopes terrestres géants, télescopes spatiaux et détecteurs d\'ondes gravitationnelles pour explorer l\'univers.'
-    },
-    {
-      id: 'exploration_q3',
-      question: 'Quelle est la durée d\'un voyage vers Mars ?',
-      options: [
-        { id: 'a', text: '2-3 mois', isCorrect: false },
-        { id: 'b', text: '6-9 mois', isCorrect: true },
-        { id: 'c', text: '12-15 mois', isCorrect: false },
-        { id: 'd', text: '2 ans', isCorrect: false }
-      ],
-      explanation: 'Un voyage vers Mars dure entre 6 et 9 mois, selon la position relative des planètes. Les défis sont immenses : radiations, gravité réduite, températures extrêmes et isolement total.'
     }
   ];
 

@@ -91,28 +91,6 @@ export function SatelliteSection({ onComplete, onHome, onBack }: SatelliteSectio
         { id: 'd', text: '24 heures', isCorrect: false }
       ],
       explanation: 'Un satellite en orbite basse fait le tour complet de la Terre en environ 90 minutes ! C\'est pourquoi les astronautes de l\'ISS voient 16 levers et couchers de soleil par jour.'
-    },
-    {
-      id: 'satellite_q2',
-      question: 'À quelle altitude se trouve l\'orbite géostationnaire (GEO) ?',
-      options: [
-        { id: 'a', text: '10 000 km', isCorrect: false },
-        { id: 'b', text: '20 000 km', isCorrect: false },
-        { id: 'c', text: '35 786 km', isCorrect: true },
-        { id: 'd', text: '50 000 km', isCorrect: false }
-      ],
-      explanation: 'L\'orbite géostationnaire est située exactement à 35 786 km d\'altitude au-dessus de l\'équateur. À cette altitude, un satellite met 24 heures pour faire le tour de la Terre, restant donc fixe au-dessus d\'un point de la surface.'
-    },
-    {
-      id: 'satellite_q3',
-      question: 'Quel système de navigation européen utilise des satellites en orbite moyenne (MEO) ?',
-      options: [
-        { id: 'a', text: 'GPS', isCorrect: false },
-        { id: 'b', text: 'Galileo', isCorrect: true },
-        { id: 'c', text: 'Copernicus', isCorrect: false },
-        { id: 'd', text: 'Hubble', isCorrect: false }
-      ],
-      explanation: 'Galileo est le système de navigation par satellite européen, situé en orbite moyenne à environ 23 222 km d\'altitude. Il offre une précision et une fiabilité supérieures au GPS américain.'
     }
   ];
 

@@ -36,28 +36,6 @@ export function GeopoliticalSection({ onComplete, onHome, onBack }: Geopolitical
         { id: 'd', text: 'Emplois dans le secteur spatial', isCorrect: false }
       ],
       explanation: 'L\'accès indépendant à l\'espace garantit la souveraineté et l\'autonomie stratégique. Cela permet à l\'Europe de lancer ses propres satellites critiques sans dépendre d\'autres nations, assurant sa sécurité et sa compétitivité.'
-    },
-    {
-      id: 'geo_q2',
-      question: 'Combien de pays collaborent au sein de l\'Agence Spatiale Européenne (ESA) ?',
-      options: [
-        { id: 'a', text: '10 pays', isCorrect: false },
-        { id: 'b', text: '15 pays', isCorrect: false },
-        { id: 'c', text: 'Plus de 20 pays', isCorrect: true },
-        { id: 'd', text: '5 pays', isCorrect: false }
-      ],
-      explanation: 'L\'ESA rassemble plus de 20 pays européens qui collaborent pour des missions spatiales ambitieuses. Cette coopération permet de mutualiser les ressources et l\'expertise pour rivaliser avec les grandes puissances spatiales.'
-    },
-    {
-      id: 'geo_q3',
-      question: 'Quelle est l\'une des missions critiques des satellites européens ?',
-      options: [
-        { id: 'a', text: 'Divertissement télévisé uniquement', isCorrect: false },
-        { id: 'b', text: 'Observation de la Terre et climat', isCorrect: true },
-        { id: 'c', text: 'Exploration de Mars', isCorrect: false },
-        { id: 'd', text: 'Tourisme spatial', isCorrect: false }
-      ],
-      explanation: 'Les satellites européens jouent un rôle crucial dans l\'observation de la Terre, la surveillance du climat, les télécommunications et la navigation (Galileo). Ces missions sont essentielles pour la sécurité, l\'environnement et l\'économie européenne.'
     }
   ];
 

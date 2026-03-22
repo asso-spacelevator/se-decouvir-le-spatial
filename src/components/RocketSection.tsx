@@ -79,28 +79,6 @@ export function RocketSection({ onComplete, onHome, onBack }: RocketSectionProps
         { id: 'd', text: '5 000°C', isCorrect: false }
       ],
       explanation: 'Les moteurs de lanceur peuvent atteindre des températures extrêmes de 3 000°C. Des matériaux composites céramiques ultra-résistants et des systèmes de refroidissement actifs sont nécessaires pour gérer ces températures.'
-    },
-    {
-      id: 'rocket_q2',
-      question: 'Combien de carburant un lanceur brûle-t-il par seconde pendant le décollage ?',
-      options: [
-        { id: 'a', text: '50 kg/s', isCorrect: false },
-        { id: 'b', text: '100 kg/s', isCorrect: false },
-        { id: 'c', text: '300 kg/s', isCorrect: true },
-        { id: 'd', text: '500 kg/s', isCorrect: false }
-      ],
-      explanation: 'Un lanceur brûle environ 300 kg de carburant par seconde lors du décollage ! Cette combustion d\'hydrogène et d\'oxygène liquides génère la puissance colossale nécessaire pour vaincre la gravité.'
-    },
-    {
-      id: 'rocket_q3',
-      question: 'Pourquoi la précision du lancement est-elle si critique ?',
-      options: [
-        { id: 'a', text: 'Pour économiser du carburant', isCorrect: false },
-        { id: 'b', text: 'Une erreur de 0,1° peut manquer l\'orbite de milliers de km', isCorrect: true },
-        { id: 'c', text: 'Pour éviter les collisions avec des avions', isCorrect: false },
-        { id: 'd', text: 'Pour respecter les horaires', isCorrect: false }
-      ],
-      explanation: 'La précision est absolument critique : une erreur de seulement 0,1° lors du lancement peut faire manquer la cible orbitale de milliers de kilomètres. C\'est comme lancer une fléchette depuis Paris et viser le centre d\'une cible à New York !'
     }
   ];
 
