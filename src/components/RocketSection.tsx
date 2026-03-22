@@ -31,10 +31,10 @@ export function RocketSection({ onComplete, onHome, onBack }: RocketSectionProps
   const challenges = [
     {
       name: 'Températures Extrêmes',
-      problem: 'Les moteurs de fusée peuvent atteindre 3 000°C, tandis que l\'espace oscille entre -150°C et +150°C',
+      problem: 'Les moteurs de lanceur peuvent atteindre 3 000°C, tandis que l\'espace oscille entre -150°C et +150°C',
       solution: 'Utilisation de matériaux composites céramiques ultra-résistants et de systèmes de refroidissement actifs avec circulation d\'hydrogène liquide',
       innovation: 'Les boucliers thermiques modernes peuvent supporter des gradients de 3 000°C sur quelques centimètres d\'épaisseur',
-      funFact: '🔥 Fun Fact : Le nez d\'une fusée lors de la rentrée atmosphérique chauffe tellement qu\'il crée un plasma - un quatrième état de la matière - qui bloque temporairement les communications radio !',
+      funFact: '🔥 Fun Fact : Le nez d\'un lanceur lors de la rentrée atmosphérique chauffe tellement qu\'il crée un plasma - un quatrième état de la matière - qui bloque temporairement les communications radio !',
       videoUrl: '',
       videoTitle: 'Interview : Ingénieur en Matériaux Thermiques'
     },
@@ -43,7 +43,7 @@ export function RocketSection({ onComplete, onHome, onBack }: RocketSectionProps
       problem: 'Il faut générer plus de 1 000 tonnes de poussée pour vaincre la gravité terrestre',
       solution: 'Moteurs à combustion d\'hydrogène et oxygène liquides, brûlant 300 kg de carburant par seconde',
       innovation: 'Un seul moteur Vulcain 2.1 produit une puissance équivalente à 1 500 voitures de F1 combinées',
-      funFact: '💪 Fun Fact : Si vous pouviez canaliser toute la puissance d\'un moteur de fusée dans une ampoule, elle brillerait 190 fois plus fort que le Soleil vu depuis la Terre !',
+      funFact: '💪 Fun Fact : Si vous pouviez canaliser toute la puissance d\'un moteur de lanceur dans une ampoule, elle brillerait 190 fois plus fort que le Soleil vu depuis la Terre !',
       videoUrl: '',
       videoTitle: 'Interview : Ingénieur en Propulsion Spatiale'
     },
@@ -61,7 +61,7 @@ export function RocketSection({ onComplete, onHome, onBack }: RocketSectionProps
       problem: 'Chaque kilogramme de structure en trop réduit la charge utile possible',
       solution: 'Alliages aluminium-lithium et composites carbone ultra-légers, avec optimisation par intelligence artificielle',
       innovation: 'Les nouveaux matériaux permettent un rapport résistance/poids 5 fois supérieur à l\'acier',
-      funFact: '⚖️ Fun Fact : Économiser 1 kg sur la structure d\'une fusée peut permettre de placer 100 kg supplémentaires en orbite. C\'est pourquoi chaque boulon est optimisé !',
+      funFact: '⚖️ Fun Fact : Économiser 1 kg sur la structure d\'un lanceur peut permettre de placer 100 kg supplémentaires en orbite. C\'est pourquoi chaque boulon est optimisé !',
       videoUrl: '',
       videoTitle: 'Interview : Ingénieur en Structures Spatiales'
     }
@@ -95,19 +95,19 @@ export function RocketSection({ onComplete, onHome, onBack }: RocketSectionProps
           <Rocket className="w-12 h-12 text-orange-400" />
           <div>
             <div className="text-sm text-orange-400 font-semibold uppercase tracking-wider">🚀 Vers l'Orbite</div>
-            <h2 className="text-4xl font-bold">Les Fusées : Défis et Innovation</h2>
+            <h2 className="text-4xl font-bold">Les Lanceurs : Défis et Innovation</h2>
           </div>
         </div>
 
         <Subsection
           title="Ariane 6 : La Nouvelle Génération"
-          content="Ariane 6 est la fusée de nouvelle génération de l'Europe, conçue pour être plus flexible et économique qu'Ariane 5. Elle peut placer jusqu'à 11,5 tonnes en orbite de transfert géostationnaire. Son premier vol a eu lieu en 2024, marquant une nouvelle ère pour l'accès européen à l'espace."
+          content="Ariane 6 est le lanceur de nouvelle génération de l'Europe, conçu pour être plus flexible et économique qu'Ariane 5. Il peut placer jusqu'à 11,5 tonnes en orbite de transfert géostationnaire. Son premier vol a eu lieu en 2024, marquant une nouvelle ère pour l'accès européen à l'espace."
           icon="🚀"
         />
 
         <Subsection
           title="Fabrication de Pointe"
-          content="La construction d'une fusée nécessite une précision extrême. Les composants sont fabriqués dans des salles blanches avec une tolérance au micromètre. Chaque soudure, chaque boulon doit être parfait car une seule défaillance peut être catastrophique. Plus de 10 000 pièces composent une fusée moderne."
+          content="La construction d'un lanceur nécessite une précision extrême. Les composants sont fabriqués dans des salles blanches avec une tolérance au micromètre. Chaque soudure, chaque boulon doit être parfait car une seule défaillance peut être catastrophique. Plus de 10 000 pièces composent un lanceur moderne."
           icon="⚙️"
         />
 
@@ -178,12 +178,12 @@ export function RocketSection({ onComplete, onHome, onBack }: RocketSectionProps
 
           <div className="mb-6">
             <label className="block text-gray-300 mb-3 font-medium">
-              Selon vous, quel est le défi le plus impressionnant à surmonter pour construire une fusée, et pourquoi ?
+              Selon vous, quel est le défi le plus impressionnant à surmonter pour construire un lanceur, et pourquoi ?
             </label>
             <textarea
               value={responses['reflection'] || ''}
               onChange={(e) => handleResponseChange('reflection', e.target.value)}
-              placeholder="Partagez vos réflexions sur l'ingénierie des fusées..."
+              placeholder="Partagez vos réflexions sur l'ingénierie des lanceurs..."
               className="w-full bg-white/5 border border-white/10 rounded-lg p-4 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none"
               rows={4}
             />

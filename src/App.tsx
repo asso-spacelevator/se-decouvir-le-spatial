@@ -29,7 +29,7 @@ function AppContent() {
 
   const progressSteps = [
     { name: 'Terre', icon: '🌍' },
-    { name: 'Fusées', icon: '🚀' },
+    { name: 'Lanceurs', icon: '🚀' },
     { name: 'Orbite', icon: '🛰️' },
     { name: 'Au-delà', icon: '🌌' },
     { name: 'Social', icon: '📱' },
