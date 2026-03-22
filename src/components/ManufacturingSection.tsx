@@ -3,6 +3,7 @@ import { Cog, ChevronRight, CheckCircle } from 'lucide-react';
 import { useSession } from '../contexts/SessionContext';
 import { Subsection } from './Subsection';
 import { Navigation } from './Navigation';
+import { Quiz } from './Quiz';
 
 interface ManufacturingSectionProps {
   onComplete: () => void;
@@ -11,10 +12,11 @@ interface ManufacturingSectionProps {
 }
 
 export function ManufacturingSection({ onComplete, onHome, onBack }: ManufacturingSectionProps) {
-  const { saveResponse, getResponses } = useSession();
+  const { saveResponse, getResponses, saveQuizScore } = useSession();
   const [selectedSystem, setSelectedSystem] = useState<number | null>(null);
   const [responses, setResponses] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
+  const [quizCompleted, setQuizCompleted] = useState(false);
 
   useEffect(() => {
     const loadResponses = async () => {
@@ -66,6 +68,42 @@ export function ManufacturingSection({ onComplete, onHome, onBack }: Manufacturi
     }
   ];
 
+  const quizQuestions = [
+    {
+      id: 'manu_q1',
+      question: 'Quelle puissance produit un moteur Ariane 6 par rapport aux voitures de Formule 1 ?',
+      options: [
+        { id: 'a', text: 'Équivalent à 50 voitures de F1', isCorrect: false },
+        { id: 'b', text: 'Équivalent à 500 voitures de F1', isCorrect: false },
+        { id: 'c', text: 'Équivalent à 1 500 voitures de F1', isCorrect: true },
+        { id: 'd', text: 'Équivalent à 5 000 voitures de F1', isCorrect: false }
+      ],
+      explanation: 'Un seul moteur Ariane 6 produit une puissance équivalente à 1 500 voitures de Formule 1 réunies ! Cette puissance colossale est nécessaire pour vaincre la gravité et propulser plusieurs tonnes en orbite.'
+    },
+    {
+      id: 'manu_q2',
+      question: 'Combien de carburant un moteur Vulcain 2.1 brûle-t-il par seconde ?',
+      options: [
+        { id: 'a', text: '50 kg/s', isCorrect: false },
+        { id: 'b', text: '150 kg/s', isCorrect: false },
+        { id: 'c', text: '300 kg/s', isCorrect: true },
+        { id: 'd', text: '600 kg/s', isCorrect: false }
+      ],
+      explanation: 'Le moteur Vulcain 2.1 brûle 300 kilogrammes de carburant par seconde à des températures atteignant 3 000°C. C\'est cette combustion intense qui génère la poussée nécessaire au décollage.'
+    },
+    {
+      id: 'manu_q3',
+      question: 'Pourquoi chaque kilogramme économisé dans la structure est-il important ?',
+      options: [
+        { id: 'a', text: 'Pour réduire les coûts', isCorrect: false },
+        { id: 'b', text: 'Pour permettre un kg supplémentaire de charge utile', isCorrect: true },
+        { id: 'c', text: 'Pour faciliter le transport', isCorrect: false },
+        { id: 'd', text: 'Pour améliorer l\'esthétique', isCorrect: false }
+      ],
+      explanation: 'Chaque kilogramme économisé dans la structure permet d\'emporter un kilogramme supplémentaire de charge utile en orbite. C\'est pourquoi les ingénieurs utilisent des matériaux ultra-légers comme les composites en fibre de carbone.'
+    }
+  ];
+
   const handleSystemSelect = async (index: number) => {
     setSelectedSystem(index);
     await saveResponse('manufacturing', 'selectedSystem', String(index));
@@ -76,6 +114,17 @@ export function ManufacturingSection({ onComplete, onHome, onBack }: Manufacturi
     await saveResponse('manufacturing', id, value);
   };
 
+  const handleQuizScoreUpdate = async (points: number) => {
+    const currentQuestion = quizQuestions.find(() => true);
+    if (currentQuestion) {
+      await saveQuizScore('manufacturing', currentQuestion.id, points, points > 0);
+    }
+  };
+
+  const handleQuizComplete = () => {
+    setQuizCompleted(true);
+  };
+
   const handleSubmit = async () => {
     setSubmitted(true);
     setTimeout(() => {
@@ -83,7 +132,7 @@ export function ManufacturingSection({ onComplete, onHome, onBack }: Manufacturi
     }, 1500);
   };
 
-  const canSubmit = responses['reflection']?.trim().length > 0;
+  const canSubmit = quizCompleted && responses['reflection']?.trim().length > 0;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-900 via-blue-950 to-slate-900 text-white py-16 px-6">
@@ -119,7 +168,13 @@ export function ManufacturingSection({ onComplete, onHome, onBack }: Manufacturi
           icon="🛡️"
         />
 
-        <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10 mb-8">
+        <Quiz
+          questions={quizQuestions}
+          onScoreUpdate={handleQuizScoreUpdate}
+          onComplete={handleQuizComplete}
+        />
+
+        <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10 mb-8 mt-8">
           <h3 className="text-2xl font-semibold mb-4">Explorez les Sous-systèmes</h3>
           <p className="text-gray-300 mb-8 leading-relaxed">
             Un lanceur moderne est une symphonie de systèmes interconnectés, chacun repoussant les limites de l'ingénierie.

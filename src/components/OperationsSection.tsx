@@ -3,6 +3,7 @@ import { Rocket, ChevronRight, CheckCircle } from 'lucide-react';
 import { useSession } from '../contexts/SessionContext';
 import { Subsection } from './Subsection';
 import { Navigation } from './Navigation';
+import { Quiz } from './Quiz';
 
 interface OperationsSectionProps {
   onComplete: () => void;
@@ -11,13 +12,14 @@ interface OperationsSectionProps {
 }
 
 export function OperationsSection({ onComplete, onHome, onBack }: OperationsSectionProps) {
-  const { saveResponse, getResponses } = useSession();
+  const { saveResponse, getResponses, saveQuizScore } = useSession();
   const [currentPhase, setCurrentPhase] = useState(0);
   const [countdown, setCountdown] = useState(10);
   const [isLaunching, setIsLaunching] = useState(false);
   const [responses, setResponses] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [quizCompleted, setQuizCompleted] = useState(false);
 
   useEffect(() => {
     const loadResponses = async () => {
@@ -106,11 +108,58 @@ export function OperationsSection({ onComplete, onHome, onBack }: OperationsSect
     await saveResponse('operations', 'currentPhase', '0');
   };
 
+  const quizQuestions = [
+    {
+      id: 'ops_q1',
+      question: 'À quelle vitesse un vaisseau spatial doit-il se déplacer pour rester en orbite ?',
+      options: [
+        { id: 'a', text: '1 000 km/h', isCorrect: false },
+        { id: 'b', text: '10 000 km/h', isCorrect: false },
+        { id: 'c', text: '28 000 km/h', isCorrect: true },
+        { id: 'd', text: '50 000 km/h', isCorrect: false }
+      ],
+      explanation: 'Pour rester en orbite basse, un vaisseau spatial doit se déplacer à environ 28 000 km/h ! C\'est environ 23 fois la vitesse du son. À cette vitesse, il fait le tour complet de la Terre en seulement 90 minutes.'
+    },
+    {
+      id: 'ops_q2',
+      question: 'Que se passe-t-il après la séparation du satellite de son lanceur ?',
+      options: [
+        { id: 'a', text: 'Le lanceur reste en orbite indéfiniment', isCorrect: false },
+        { id: 'b', text: 'Le lanceur se désorbite de manière contrôlée', isCorrect: true },
+        { id: 'c', text: 'Le lanceur retourne à la base', isCorrect: false },
+        { id: 'd', text: 'Le lanceur explose', isCorrect: false }
+      ],
+      explanation: 'Une fois en orbite, le lanceur a terminé sa mission. Les étages se désorbient de manière contrôlée pour limiter les débris spatiaux et protéger l\'environnement orbital. C\'est essentiel pour la sécurité des futures missions.'
+    },
+    {
+      id: 'ops_q3',
+      question: 'Combien de temps avant le lancement la séquence automatisée démarre-t-elle ?',
+      options: [
+        { id: 'a', text: '30 secondes', isCorrect: false },
+        { id: 'b', text: '1 minute', isCorrect: false },
+        { id: 'c', text: '3 minutes', isCorrect: true },
+        { id: 'd', text: '10 minutes', isCorrect: false }
+      ],
+      explanation: 'La séquence automatisée commence 3 minutes avant le décollage (T-3:00). À ce moment, l\'ordinateur prend le contrôle, les réservoirs sont pressurisés et les vérifications finales sont terminées.'
+    }
+  ];
+
   const handleResponseChange = async (id: string, value: string) => {
     setResponses(prev => ({ ...prev, [id]: value }));
     if (isLoaded) {
       await saveResponse('operations', id, value);
     }
+  };
+
+  const handleQuizScoreUpdate = async (points: number) => {
+    const currentQuestion = quizQuestions.find(() => true);
+    if (currentQuestion) {
+      await saveQuizScore('operations', currentQuestion.id, points, points > 0);
+    }
+  };
+
+  const handleQuizComplete = () => {
+    setQuizCompleted(true);
   };
 
   const handleSubmit = async () => {
@@ -120,7 +169,7 @@ export function OperationsSection({ onComplete, onHome, onBack }: OperationsSect
     }, 1500);
   };
 
-  const canSubmit = currentPhase === phases.length - 1 && responses['experience']?.trim().length > 0;
+  const canSubmit = quizCompleted && currentPhase === phases.length - 1 && responses['experience']?.trim().length > 0;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-900 via-red-950 to-slate-900 text-white py-16 px-6">
@@ -156,7 +205,13 @@ export function OperationsSection({ onComplete, onHome, onBack }: OperationsSect
           icon="🌌"
         />
 
-        <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10 mb-8">
+        <Quiz
+          questions={quizQuestions}
+          onScoreUpdate={handleQuizScoreUpdate}
+          onComplete={handleQuizComplete}
+        />
+
+        <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10 mb-8 mt-8">
           <h3 className="text-2xl font-semibold mb-4">Vivre le Lancement d'Ariane 6</h3>
           <p className="text-gray-300 mb-6 leading-relaxed">
             Du compte à rebours final à l'insertion orbitale, expérience la séquence intense

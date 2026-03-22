@@ -3,6 +3,7 @@ import { Zap, ChevronRight, CheckCircle } from 'lucide-react';
 import { useSession } from '../contexts/SessionContext';
 import { Subsection } from './Subsection';
 import { Navigation } from './Navigation';
+import { Quiz } from './Quiz';
 
 interface TechnicalSectionProps {
   onComplete: () => void;
@@ -11,9 +12,10 @@ interface TechnicalSectionProps {
 }
 
 export function TechnicalSection({ onComplete, onHome, onBack }: TechnicalSectionProps) {
-  const { saveResponse, getResponses } = useSession();
+  const { saveResponse, getResponses, saveQuizScore } = useSession();
   const [responses, setResponses] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
+  const [quizCompleted, setQuizCompleted] = useState(false);
 
   useEffect(() => {
     const loadResponses = async () => {
@@ -23,22 +25,64 @@ export function TechnicalSection({ onComplete, onHome, onBack }: TechnicalSectio
     loadResponses();
   }, []);
 
+  const quizQuestions = [
+    {
+      id: 'tech_q1',
+      question: 'Quelle température peut atteindre un lanceur lors de sa rentrée atmosphérique ?',
+      options: [
+        { id: 'a', text: 'Environ 500°C', isCorrect: false },
+        { id: 'b', text: 'Environ 1 500°C', isCorrect: false },
+        { id: 'c', text: 'Plus de 3 000°C', isCorrect: true },
+        { id: 'd', text: 'Environ 10 000°C', isCorrect: false }
+      ],
+      explanation: 'Les lanceurs peuvent atteindre des températures dépassant les 3 000°C lors de leur vol. À ces températures extrêmes, les ingénieurs doivent utiliser des matériaux spécialisés comme des céramiques thermiques et des alliages avancés.'
+    },
+    {
+      id: 'tech_q2',
+      question: 'Quelle précision est nécessaire pour déployer un satellite en orbite ?',
+      options: [
+        { id: 'a', text: 'Précision de quelques kilomètres', isCorrect: false },
+        { id: 'b', text: 'Précision millimétrique', isCorrect: true },
+        { id: 'c', text: 'Précision de quelques mètres', isCorrect: false },
+        { id: 'd', text: 'La précision n\'est pas importante', isCorrect: false }
+      ],
+      explanation: 'La précision doit être millimétrique ! Les systèmes de navigation utilisent des gyroscopes et accéléromètres de haute précision. Une erreur d\'un centimètre sur un million de kilomètres peut être catastrophique.'
+    },
+    {
+      id: 'tech_q3',
+      question: 'Pourquoi les lanceurs subissent-ils des vibrations importantes au décollage ?',
+      options: [
+        { id: 'a', text: 'À cause du vent', isCorrect: false },
+        { id: 'b', text: 'À cause de la combustion des moteurs', isCorrect: true },
+        { id: 'c', text: 'À cause de la gravité', isCorrect: false },
+        { id: 'd', text: 'À cause des nuages', isCorrect: false }
+      ],
+      explanation: 'Les moteurs génèrent des vibrations massives lors de la combustion. Les ingénieurs conçoivent des systèmes d\'amortissement sophistiqués pour protéger les instruments scientifiques et les charges précieuses.'
+    }
+  ];
+
   const questions = [
     {
       id: 'q1',
-      question: 'Quel est le plus grand défi technique selon vous pour créer un lanceur ?',
+      question: 'Selon vous, quel autre défi technique est crucial pour créer un lanceur ?',
       placeholder: 'Réfléchissez aux matériaux, à la précision, à l\'énergie...'
-    },
-    {
-      id: 'q2',
-      question: 'Comment les ingénieurs pourraient-ils résoudre le problème des températures extrêmes ?',
-      placeholder: 'Pensez aux matériaux, aux revêtements, ou aux systèmes de refroidissement...'
     }
   ];
 
   const handleResponseChange = async (id: string, value: string) => {
     setResponses(prev => ({ ...prev, [id]: value }));
     await saveResponse('technical', id, value);
+  };
+
+  const handleQuizScoreUpdate = async (points: number) => {
+    const currentQuestion = quizQuestions.find(() => true);
+    if (currentQuestion) {
+      await saveQuizScore('technical', currentQuestion.id, points, points > 0);
+    }
+  };
+
+  const handleQuizComplete = () => {
+    setQuizCompleted(true);
   };
 
   const handleSubmit = async () => {
@@ -48,7 +92,7 @@ export function TechnicalSection({ onComplete, onHome, onBack }: TechnicalSectio
     }, 1500);
   };
 
-  const canSubmit = Object.values(responses).some(r => r.trim().length > 0);
+  const canSubmit = quizCompleted && Object.values(responses).some(r => r.trim().length > 0);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-900 via-orange-950 to-slate-900 text-white py-16 px-6">
@@ -84,7 +128,13 @@ export function TechnicalSection({ onComplete, onHome, onBack }: TechnicalSectio
           icon="📡"
         />
 
-        <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10">
+        <Quiz
+          questions={quizQuestions}
+          onScoreUpdate={handleQuizScoreUpdate}
+          onComplete={handleQuizComplete}
+        />
+
+        <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10 mt-8">
           <h3 className="text-2xl font-semibold mb-6">Réfléchissez à ce que vous avez appris</h3>
 
           {questions.map((q) => (

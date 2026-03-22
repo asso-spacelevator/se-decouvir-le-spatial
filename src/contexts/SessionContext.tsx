@@ -9,6 +9,8 @@ interface SessionContextType {
   saveResponse: (section: string, questionId: string, response: string) => Promise<void>;
   getResponses: (section: string) => Promise<Record<string, string>>;
   submitQuestion: (category: string, questionText: string, isAnonymous: boolean) => Promise<void>;
+  saveQuizScore: (section: string, questionId: string, points: number, isCorrect: boolean) => Promise<void>;
+  getTotalQuizScore: () => number;
 }
 
 const SessionContext = createContext<SessionContextType | undefined>(undefined);
@@ -172,8 +174,38 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       });
   };
 
+  const saveQuizScore = async (section: string, questionId: string, points: number, isCorrect: boolean) => {
+    if (!session) return;
+
+    await supabase
+      .from('quiz_scores')
+      .insert({
+        session_id: session.id,
+        section,
+        question_id: questionId,
+        points_earned: points,
+        is_correct: isCorrect
+      });
+
+    const newTotalScore = (session.total_quiz_score || 0) + points;
+    const { data } = await supabase
+      .from('student_sessions')
+      .update({ total_quiz_score: newTotalScore })
+      .eq('id', session.id)
+      .select()
+      .single();
+
+    if (data) {
+      setSession(data);
+    }
+  };
+
+  const getTotalQuizScore = () => {
+    return session?.total_quiz_score || 0;
+  };
+
   return (
-    <SessionContext.Provider value={{ session, loading, updateSection, completeSection, saveResponse, getResponses, submitQuestion }}>
+    <SessionContext.Provider value={{ session, loading, updateSection, completeSection, saveResponse, getResponses, submitQuestion, saveQuizScore, getTotalQuizScore }}>
       {children}
     </SessionContext.Provider>
   );
