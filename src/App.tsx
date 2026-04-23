@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { SessionProvider, useSession } from './contexts/SessionContext';
 import { StartPage } from './components/StartPage';
 import { IntroductionPage } from './components/IntroductionPage';
-import { GeopoliticalSection } from './components/GeopoliticalSection';
+import { ImpactTerrestreSection } from './components/ImpactTerrestreSection';
 import { RocketSection } from './components/RocketSection';
 import { SatelliteSection } from './components/SatelliteSection';
 import { ExplorationSection } from './components/ExplorationSection';
@@ -25,10 +25,10 @@ function AppContent() {
     }
   }, [session]);
 
-  const sectionOrder: Section[] = ['start', 'introduction', 'geopolitical', 'rockets', 'satellites', 'exploration', 'social', 'associations', 'faq', 'resources', 'questions', 'completed'];
+  const sectionOrder: Section[] = ['start', 'introduction', 'impact_terrestre', 'rockets', 'satellites', 'exploration', 'social', 'associations', 'faq', 'resources', 'questions', 'completed'];
 
   const progressSteps = [
-    { name: 'Terre', icon: '🌍' },
+    { name: 'Impact Terre', icon: '🌍' },
     { name: 'Lanceurs', icon: '🚀' },
     { name: 'Orbite', icon: '🛰️' },
     { name: 'Au-delà', icon: '🌌' },
@@ -42,7 +42,7 @@ function AppContent() {
   const getCurrentStepIndex = () => {
     const view = currentView;
     if (view === 'start' || view === 'introduction' || view === 'completed') return -1;
-    if (view === 'geopolitical') return 0;
+    if (view === 'impact_terrestre') return 0;
     if (view === 'rockets') return 1;
     if (view === 'satellites') return 2;
     if (view === 'exploration') return 3;
@@ -60,8 +60,8 @@ function AppContent() {
   };
 
   const handleIntroductionComplete = async () => {
-    setCurrentView('geopolitical');
-    await updateSection('geopolitical');
+    setCurrentView('impact_terrestre');
+    await updateSection('impact_terrestre');
   };
 
   const handleSectionComplete = async (nextSection: Section) => {
@@ -111,8 +111,8 @@ function AppContent() {
           onBack={handleBack}
         />
       )}
-      {currentView === 'geopolitical' && (
-        <GeopoliticalSection
+      {currentView === 'impact_terrestre' && (
+        <ImpactTerrestreSection
           onComplete={() => handleSectionComplete('rockets')}
           onHome={handleRestart}
           onBack={handleBack}

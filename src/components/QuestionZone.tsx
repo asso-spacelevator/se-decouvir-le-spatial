@@ -11,7 +11,7 @@ interface QuestionZoneProps {
 
 export function QuestionZone({ onComplete, onHome, onBack }: QuestionZoneProps) {
   const { submitQuestion, saveResponse, getResponses } = useSession();
-  const [category, setCategory] = useState<'career' | 'technical' | 'geopolitics' | 'general'>('general');
+  const [category, setCategory] = useState<'career' | 'technical' | 'impact' | 'general'>('general');
   const [questionText, setQuestionText] = useState('');
   const [isAnonymous, setIsAnonymous] = useState(true);
   const [submitted, setSubmitted] = useState(false);
@@ -29,7 +29,7 @@ export function QuestionZone({ onComplete, onHome, onBack }: QuestionZoneProps) 
   const categories = [
     { id: 'career', label: 'Carrière et Orientation', icon: '💼', color: 'blue' },
     { id: 'technical', label: 'Questions Techniques', icon: '🔧', color: 'cyan' },
-    { id: 'geopolitics', label: 'Géopolitique et Stratégie', icon: '🌍', color: 'purple' },
+    { id: 'impact', label: 'Impact du Spatial sur Terre', icon: '🌍', color: 'green' },
     { id: 'general', label: 'Questions Générales', icon: '💬', color: 'emerald' }
   ];
 

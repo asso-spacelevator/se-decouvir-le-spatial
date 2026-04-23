@@ -4,7 +4,7 @@ import { AvatarGuide } from './AvatarGuide';
 
 const INTRO_LINES = [
   { speaker: 'girl' as const, text: "Bienvenue ! Avant de plonger dans les sections, voici un aperçu de ce qui t'attend." },
-  { speaker: 'boy' as const,  text: "On va explorer la géopolitique, les lanceurs, les satellites et bien plus encore !" },
+  { speaker: 'boy' as const,  text: "On va explorer l'impact du spatial sur Terre, les lanceurs, les satellites et bien plus encore !" },
   { speaker: 'girl' as const, text: "N'hésite pas à répondre aux questions — il n'y a pas de mauvaises réponses." },
   { speaker: 'boy' as const,  text: "À la fin, tu découvriras des associations et ressources pour aller plus loin." },
 ];
@@ -116,9 +116,9 @@ export function IntroductionPage({ onContinue, onHome, onBack }: IntroductionPag
                   </div>
                 </div>
                 <div>
-                  <h4 className="text-xl font-semibold text-white mb-2">Les Acteurs</h4>
+                  <h4 className="text-xl font-semibold text-white mb-2">Impact sur Terre & Coopération</h4>
                   <p className="text-gray-300">
-                    Agences spatiales, entreprises privées et organisations mondiales
+                    Comment le spatial améliore la vie sur Terre et unit les nations dans une collaboration unique
                   </p>
                 </div>
               </div>
