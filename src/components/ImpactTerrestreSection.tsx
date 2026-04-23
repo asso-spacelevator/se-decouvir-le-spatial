@@ -7,9 +7,9 @@ import { Quiz } from './Quiz';
 import { AvatarGuide } from './AvatarGuide';
 
 const IMPACT_LINES = [
-  { speaker: 'girl' as const, text: "Tu sais que l'espace, c'est pas que de la science-fiction — ça change concrètement la vie sur Terre." },
-  { speaker: 'boy' as const,  text: "Météo, GPS, internet, gestion des catastrophes... tout ça repose sur des satellites !" },
-  { speaker: 'girl' as const, text: "Et dans cette section, on verra aussi comment les nations du monde coopèrent pour explorer ensemble." },
+  { speaker: 'girl' as const, text: "Cette section, c'est la grande question : qu'est-ce que l'espace change concrètement pour nous sur Terre ?" },
+  { speaker: 'boy' as const,  text: "Pas les orbites ni la technique — ça viendra après. Ici on parle d'impact humain, social et environnemental." },
+  { speaker: 'girl' as const, text: "Et on verra aussi comment les pays du monde entier collaborent malgré leurs rivalités." },
 ];
 
 interface ImpactTerrestreSectionProps {
@@ -35,14 +35,14 @@ export function ImpactTerrestreSection({ onComplete, onHome, onBack }: ImpactTer
   const quizQuestions = [
     {
       id: 'impact_q1',
-      question: 'Quelle application spatiale a le plus grand impact quotidien sur la population mondiale ?',
+      question: 'Quel programme spatial européen fournit des données environnementales en accès libre à tous ?',
       options: [
-        { id: 'a', text: 'Les missions habitées vers la Lune', isCorrect: false },
-        { id: 'b', text: 'La navigation GPS et les télécommunications', isCorrect: true },
-        { id: 'c', text: 'Les sondes interplanétaires', isCorrect: false },
-        { id: 'd', text: 'Les vols touristiques suborbitaux', isCorrect: false }
+        { id: 'a', text: 'Ariane 6', isCorrect: false },
+        { id: 'b', text: 'Copernicus', isCorrect: true },
+        { id: 'c', text: 'Artemis', isCorrect: false },
+        { id: 'd', text: 'Hubble', isCorrect: false }
       ],
-      explanation: 'Les satellites de navigation (GPS, Galileo) et de télécommunications touchent des milliards de personnes chaque jour : guidage routier, appels téléphoniques, internet, transactions bancaires. Sans eux, notre monde connecté s\'arrêterait.'
+      explanation: 'Copernicus est le programme européen d\'observation de la Terre de l\'ESA. Ses données sont entièrement ouvertes et gratuites : elles servent à surveiller les forêts, mesurer la fonte des glaces, anticiper les catastrophes naturelles et guider les agriculteurs. C\'est le programme de données spatiales le plus utilisé au monde.'
     }
   ];
 
@@ -69,49 +69,49 @@ export function ImpactTerrestreSection({ onComplete, onHome, onBack }: ImpactTer
   const canSubmit = quizCompleted && responses['q1']?.trim().length > 0;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 to-blue-950 text-white py-16 px-6">
+    <div className="min-h-screen bg-gradient-to-b from-slate-900 to-emerald-950 text-white py-16 px-6">
       <Navigation onHome={onHome} onBack={onBack} showBack={true} />
 
       <div className="max-w-4xl mx-auto mt-20">
         <div className="flex items-center gap-4 mb-6">
-          <Earth className="w-12 h-12 text-green-400" />
+          <Earth className="w-12 h-12 text-emerald-400" />
           <div>
-            <div className="text-sm text-green-400 font-semibold uppercase tracking-wider">🌍 Impact sur Terre</div>
-            <h2 className="text-4xl font-bold">Le Spatial au Service de la Terre</h2>
+            <div className="text-sm text-emerald-400 font-semibold uppercase tracking-wider">🌍 Impact sur Terre</div>
+            <h2 className="text-4xl font-bold">Le Spatial au Service de l'Humanité</h2>
           </div>
         </div>
 
-        <div className="mb-8 bg-white/5 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
+        <div className="mb-8 bg-white/5 backdrop-blur-sm rounded-2xl p-4 border border-emerald-500/20">
           <AvatarGuide lines={IMPACT_LINES} interval={4000} />
         </div>
 
         <Subsection
-          title="Observer la Terre depuis l'Espace"
-          content="Les satellites d'observation terrestre révolutionnent notre compréhension de la planète. Le programme européen Copernicus surveille les forêts, les océans, les glaciers et les zones urbaines en temps quasi-réel. Ces données sont essentielles pour lutter contre le changement climatique, gérer les ressources naturelles et anticiper les catastrophes naturelles comme les inondations ou les incendies de forêt."
-          icon="🛰️"
+          title="Surveiller la Santé de notre Planète"
+          content="Le programme européen Copernicus met à disposition de tous — gratuitement — des images satellites de la Terre entière, actualisées plusieurs fois par semaine. Des scientifiques, des gouvernements et des ONG s'en servent pour mesurer la fonte des glaces polaires, suivre la déforestation en Amazonie, cartographier les zones inondées après un cyclone, ou estimer les rendements agricoles d'un pays. Sans cette vue depuis l'espace, nous serions aveugles face au changement climatique."
+          icon="🌿"
         />
 
         <Subsection
-          title="Météo, Agriculture et Gestion des Crises"
-          content="Sans satellites météorologiques, prévoir un ouragan 5 jours à l'avance serait impossible. Les satellites Météosat de l'ESA sauvent des milliers de vies chaque année. En agriculture, des images satellites précises permettent d'optimiser l'irrigation et de détecter les maladies des cultures. Lors de catastrophes (tsunamis, séismes, inondations), les satellites guident les secours avec une précision inégalée."
-          icon="🌦️"
+          title="Sauver des Vies : Gestion des Catastrophes"
+          content="Lors d'un tremblement de terre, d'une inondation ou d'un incendie de forêt, les satellites d'observation deviennent une bouée de sauvetage. En quelques heures, des images à haute résolution permettent d'identifier les zones détruites, de guider les convois de secours vers les zones coupées du monde et d'évaluer les dégâts. Le service Copernicus Emergency Management a été activé plus de 700 fois depuis sa création — pour des catastrophes en Europe et sur tous les continents."
+          icon="🚨"
         />
 
         <Subsection
-          title="Communications, Connectivité et Inclusion Numérique"
-          content="Plus de 3 milliards de personnes dans les zones rurales et reculées dépendent des satellites pour accéder à internet, aux services bancaires, à la télémédecine et à l'éducation. Des constellations comme Galileo (GPS européen) assurent la navigation de millions de véhicules, d'avions et de navires chaque jour. Le secteur spatial génère plus de 380 milliards d'euros par an dans l'économie mondiale."
-          icon="📡"
+          title="Connecter les Oubliés du Numérique"
+          content="Aujourd'hui encore, 2,6 milliards de personnes n'ont pas accès à internet. Dans les zones rurales d'Afrique, d'Asie centrale ou d'Amazonie, les satellites sont souvent la seule option réaliste. Au-delà d'internet, ils permettent la télémédecine (consultation médicale à distance), l'éducation en ligne pour des milliers d'élèves isolés, et des transactions bancaires dans des régions sans infrastructure. L'espace est un vecteur d'équité mondiale."
+          icon="📶"
         />
 
         <Subsection
-          title="Collaboration Internationale : Construire l'Espace Ensemble"
-          content="L'espace est l'un des rares domaines où nations rivales coopèrent. La Station Spatiale Internationale (ISS) réunit depuis 25 ans des astronautes de 19 pays : USA, Russie, Europe, Japon, Canada. L'ESA collabore avec la NASA, JAXA (Japon) et ISRO (Inde) sur des missions scientifiques majeures comme James Webb ou ExoMars. Des traités internationaux encadrent l'utilisation de l'espace pour le bien commun — un modèle unique de diplomatie scientifique."
+          title="Coopération Internationale : l'Espace comme Terrain de Paix"
+          content="La Station Spatiale Internationale est le symbole le plus fort de ce que des nations rivales peuvent accomplir ensemble. Depuis 1998, des astronautes américains, russes, européens, japonais et canadiens partagent ce laboratoire orbital — même aux pires moments des tensions géopolitiques. L'ESA collabore avec la NASA (James Webb, mission Mars), JAXA (Japon) et ISRO (Inde) sur des projets qui dépassent les frontières. Le Traité de l'Espace de 1967 pose un principe fondateur : l'espace est le patrimoine commun de l'humanité."
           icon="🤝"
         />
 
         <Subsection
-          title="L'Europe, Acteur Clé de l'Espace Mondial"
-          content="L'ESA regroupe 22 États membres et coordonne les ambitions spatiales européennes : lanceurs Ariane, programme Galileo, Copernicus, missions vers Mars et la Lune. La France est le premier contributeur de l'ESA, avec le Centre Spatial Guyanais comme port de lancement de référence. Être autonome dans l'accès à l'espace, c'est garantir l'indépendance des services vitaux que les satellites fournissent aux citoyens européens."
+          title="L'Europe Indépendante dans un Monde Interdépendant"
+          content="L'ESA réunit 22 États membres autour d'un principe : pour peser dans les grandes décisions spatiales internationales — normes, orbites, fréquences, exploitation des ressources — il faut une capacité propre. Avoir ses propres lanceurs (Ariane), ses propres satellites de navigation (Galileo) et d'observation (Copernicus) garantit que l'Europe peut décider seule de l'utilisation de ces services vitaux, sans être soumise aux choix politiques d'une autre puissance."
           icon="🇪🇺"
         />
 
@@ -126,13 +126,13 @@ export function ImpactTerrestreSection({ onComplete, onHome, onBack }: ImpactTer
 
           <div className="mb-6">
             <label className="block text-gray-300 mb-3 font-medium">
-              Selon vous, quel impact du spatial sur la Terre vous semble le plus important pour votre génération ?
+              Parmi tous les impacts du spatial sur Terre évoqués ici, lequel vous touche le plus personnellement et pourquoi ?
             </label>
             <textarea
               value={responses['q1'] || ''}
               onChange={(e) => handleResponseChange('q1', e.target.value)}
-              placeholder="Environnement, santé, connectivité, sécurité... partagez votre point de vue."
-              className="w-full bg-white/5 border border-white/10 rounded-lg p-4 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none"
+              placeholder="Environnement, inclusion numérique, gestion des crises, coopération internationale..."
+              className="w-full bg-white/5 border border-white/10 rounded-lg p-4 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent resize-none"
               rows={3}
             />
           </div>
@@ -144,7 +144,7 @@ export function ImpactTerrestreSection({ onComplete, onHome, onBack }: ImpactTer
               submitted
                 ? 'bg-green-600 text-white'
                 : canSubmit
-                ? 'bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white'
+                ? 'bg-gradient-to-r from-emerald-500 to-blue-500 hover:from-emerald-600 hover:to-blue-600 text-white'
                 : 'bg-gray-700 text-gray-400 cursor-not-allowed'
             }`}
           >
