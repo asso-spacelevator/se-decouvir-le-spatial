@@ -10,7 +10,7 @@ const DIALOGUE = [
   { speaker: 'girl' as const, text: "Salut ! Moi c'est Léa. Tu veux découvrir l'industrie spatiale ?" },
   { speaker: 'boy' as const,  text: "Et moi c'est Noah ! On va t'emmener dans un voyage interactif." },
   { speaker: 'girl' as const, text: "Lanceurs, satellites, géopolitique... on a tout prévu !" },
-  { speaker: 'boy' as const,  text: "Environ 20 minutes, et tu repartiras avec plein d'idées." },
+  { speaker: 'boy' as const,  text: "Environ 50 minutes, et tu repartiras avec plein d'idées." },
   { speaker: 'girl' as const, text: "Tu es prêt(e) ? Clique sur 'Commencer' — on y va !" },
 ];
 
@@ -124,7 +124,7 @@ export function StartPage({ onStart }: StartPageProps) {
             Commencer le voyage
             <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </button>
-          <p className="text-gray-500 text-sm mt-4">Environ 20 minutes · Gratuit · Interactif</p>
+          <p className="text-gray-500 text-sm mt-4">Une aventure proposée par l'association Space ELevator</p>
         </div>
       </div>
     </div>
