@@ -43,7 +43,7 @@ export function SatelliteSection({ onComplete, onHome, onBack }: SatelliteSectio
       period: '90 – 120 min par tour',
       engineering: 'Satellites plus petits et moins coûteux à lancer. Pour assurer une couverture continue, il faut des constellations de dizaines à des milliers de satellites (ex : Starlink compte plus de 5 000 unités). La friction atmosphérique résiduelle fait descendre progressivement l\'orbite : les satellites doivent embarquer des petits moteurs pour se maintenir et se désorbiter en fin de vie.',
       challenges: 'Collision avoidance permanent, gestion des débris spatiaux, renouvellement fréquent de la flotte',
-      funFact: '⚡ Fun Fact : Un satellite LEO se déplace à 27 000 km/h — soit 25 fois la vitesse du son. Si vous pouviez le voir à l\'œil nu, il traverserait le ciel d\'horizon à horizon en moins de 5 minutes !',
+      funFact: '👁️ Fun Fact : L\'ISS est visible à l\'œil nu ! Elle brille comme une étoile filante lente et traverse le ciel en 2 à 5 minutes. Des applications comme "Spot The Station" (NASA) ou "ISS Detector" te disent exactement à quelle heure regarder et dans quelle direction — souvent le soir ou à l\'aube, quand le Soleil l\'éclaire encore.',
       videoTitle: 'Interview : Ingénieur en constellations LEO'
     },
     {
