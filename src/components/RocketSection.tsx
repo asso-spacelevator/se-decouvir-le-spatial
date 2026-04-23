@@ -4,6 +4,13 @@ import { useSession } from '../contexts/SessionContext';
 import { Subsection } from './Subsection';
 import { Navigation } from './Navigation';
 import { Quiz } from './Quiz';
+import { AvatarGuide } from './AvatarGuide';
+
+const ROCKET_LINES = [
+  { speaker: 'boy' as const,  text: "On arrive aux lanceurs ! C'est la partie la plus spectaculaire — des millions de chevaux-vapeur au décollage." },
+  { speaker: 'girl' as const, text: "Les ingénieurs doivent résoudre des défis dingues : 3000°C, précision au millimètre, poids minimal." },
+  { speaker: 'boy' as const,  text: "Choisis un défi qui t'intéresse et explore comment les équipes l'ont relevé !" },
+];
 
 interface RocketSectionProps {
   onComplete: () => void;
@@ -117,12 +124,16 @@ export function RocketSection({ onComplete, onHome, onBack }: RocketSectionProps
       <Navigation onHome={onHome} onBack={onBack} showBack={true} />
 
       <div className="max-w-4xl mx-auto mt-20">
-        <div className="flex items-center gap-4 mb-8">
+        <div className="flex items-center gap-4 mb-6">
           <Rocket className="w-12 h-12 text-orange-400" />
           <div>
             <div className="text-sm text-orange-400 font-semibold uppercase tracking-wider">🚀 Vers l'Orbite</div>
             <h2 className="text-4xl font-bold">Les Lanceurs : Défis et Innovation</h2>
           </div>
+        </div>
+
+        <div className="mb-8 bg-white/5 backdrop-blur-sm rounded-2xl p-4 border border-orange-500/20">
+          <AvatarGuide lines={ROCKET_LINES} interval={4000} />
         </div>
 
         <Subsection

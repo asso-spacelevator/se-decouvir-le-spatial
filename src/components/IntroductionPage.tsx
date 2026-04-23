@@ -1,5 +1,13 @@
 import { ChevronRight, Rocket, Satellite, Globe, Star } from 'lucide-react';
 import { Navigation } from './Navigation';
+import { AvatarGuide } from './AvatarGuide';
+
+const INTRO_LINES = [
+  { speaker: 'girl' as const, text: "Bienvenue ! Avant de plonger dans les sections, voici un aperçu de ce qui t'attend." },
+  { speaker: 'boy' as const,  text: "On va explorer la géopolitique, les lanceurs, les satellites et bien plus encore !" },
+  { speaker: 'girl' as const, text: "N'hésite pas à répondre aux questions — il n'y a pas de mauvaises réponses." },
+  { speaker: 'boy' as const,  text: "À la fin, tu découvriras des associations et ressources pour aller plus loin." },
+];
 
 interface IntroductionPageProps {
   onContinue: () => void;
@@ -16,7 +24,7 @@ export function IntroductionPage({ onContinue, onHome, onBack }: IntroductionPag
         <Navigation onHome={onHome} onBack={onBack} showBack={true} />
 
         <div className="max-w-5xl mx-auto px-6 py-20 mt-12">
-          <div className="text-center mb-16">
+          <div className="text-center mb-10">
             <div className="flex justify-center mb-6">
               <div className="relative">
                 <Star className="w-20 h-20 text-yellow-300 animate-pulse" />
@@ -29,6 +37,11 @@ export function IntroductionPage({ onContinue, onHome, onBack }: IntroductionPag
             <p className="text-2xl text-blue-200">
               Un voyage éducatif pour découvrir les merveilles du spatial
             </p>
+          </div>
+
+          {/* Avatar guide intro */}
+          <div className="mb-12 bg-white/5 backdrop-blur-sm rounded-2xl p-5 border border-white/10">
+            <AvatarGuide lines={INTRO_LINES} interval={3800} />
           </div>
 
           <div className="grid md:grid-cols-3 gap-6 mb-16">
@@ -63,7 +76,7 @@ export function IntroductionPage({ onContinue, onHome, onBack }: IntroductionPag
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-blue-900/40 to-purple-900/40 backdrop-blur-md rounded-2xl p-10 border border-white/20 mb-12">
+          <div className="bg-gradient-to-br from-blue-900/40 to-slate-900/40 backdrop-blur-md rounded-2xl p-10 border border-white/20 mb-12">
             <h2 className="text-3xl font-bold text-white mb-6 text-center">
               Ce que vous allez découvrir
             </h2>
@@ -98,8 +111,8 @@ export function IntroductionPage({ onContinue, onHome, onBack }: IntroductionPag
 
               <div className="flex gap-4">
                 <div className="flex-shrink-0">
-                  <div className="w-12 h-12 rounded-full bg-purple-500/30 flex items-center justify-center border border-purple-400">
-                    <span className="text-xl font-bold text-purple-300">3</span>
+                  <div className="w-12 h-12 rounded-full bg-teal-500/30 flex items-center justify-center border border-teal-400">
+                    <span className="text-xl font-bold text-teal-300">3</span>
                   </div>
                 </div>
                 <div>
@@ -129,7 +142,7 @@ export function IntroductionPage({ onContinue, onHome, onBack }: IntroductionPag
           <div className="text-center">
             <button
               onClick={onContinue}
-              className="group bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 hover:from-blue-600 hover:via-purple-600 hover:to-pink-600 text-white px-12 py-5 rounded-full font-bold text-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-2xl flex items-center gap-3 mx-auto"
+              className="group bg-gradient-to-r from-blue-500 to-teal-500 hover:from-blue-600 hover:to-teal-600 text-white px-12 py-5 rounded-full font-bold text-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-2xl flex items-center gap-3 mx-auto"
             >
               Commencer l'Exploration
               <ChevronRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />

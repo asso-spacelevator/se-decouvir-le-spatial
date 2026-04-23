@@ -1,5 +1,6 @@
 import { Trophy, Home, Award, Star } from 'lucide-react';
 import { useSession } from '../contexts/SessionContext';
+import { AvatarGuide } from './AvatarGuide';
 
 interface CompletionPageProps {
   onRestart: () => void;
@@ -98,10 +99,22 @@ export function CompletionPage({ onRestart }: CompletionPageProps) {
           </div>
         </div>
 
+        <div className="mb-8 max-w-xl mx-auto bg-white/5 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
+          <AvatarGuide
+            lines={[
+              { speaker: 'girl', text: "Bravo ! Tu as parcouru tout le voyage spatial avec nous." },
+              { speaker: 'boy',  text: "J'espère que tu repars avec de nouvelles idées et peut-être une vocation !" },
+              { speaker: 'girl', text: "N'hésite pas à rejoindre une association ou à contacter des pros du secteur." },
+              { speaker: 'boy',  text: "À bientôt, et qui sait — peut-être qu'on se retrouvera dans l'espace un jour !" },
+            ]}
+            interval={4200}
+          />
+        </div>
+
         <div className="flex gap-4 justify-center">
           <button
             onClick={onRestart}
-            className="group relative px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white text-lg font-semibold rounded-full hover:from-blue-600 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center gap-2"
+            className="group relative px-8 py-4 bg-gradient-to-r from-blue-500 to-teal-500 text-white text-lg font-semibold rounded-full hover:from-blue-600 hover:to-teal-600 transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center gap-2"
           >
             <Home className="w-5 h-5" />
             Retour au Début

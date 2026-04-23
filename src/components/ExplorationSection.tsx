@@ -4,6 +4,13 @@ import { useSession } from '../contexts/SessionContext';
 import { Subsection } from './Subsection';
 import { Navigation } from './Navigation';
 import { Quiz } from './Quiz';
+import { AvatarGuide } from './AvatarGuide';
+
+const EXPLOR_LINES = [
+  { speaker: 'boy' as const,  text: "On y est, la section exploration ! James Webb, la Lune, Mars... c'est le grand voyage." },
+  { speaker: 'girl' as const, text: "Chaque mission repose sur des années de travail d'équipes internationales passionnées." },
+  { speaker: 'boy' as const,  text: "Quel sujet t'attire le plus ? Choisis-en un et plonge dedans !" },
+];
 
 interface ExplorationSectionProps {
   onComplete: () => void;
@@ -125,12 +132,16 @@ export function ExplorationSection({ onComplete, onHome, onBack }: ExplorationSe
       <Navigation onHome={onHome} onBack={onBack} showBack={true} />
 
       <div className="max-w-4xl mx-auto mt-20">
-        <div className="flex items-center gap-4 mb-8">
+        <div className="flex items-center gap-4 mb-6">
           <Telescope className="w-12 h-12 text-purple-400" />
           <div>
             <div className="text-sm text-purple-400 font-semibold uppercase tracking-wider">🌌 Au-delà</div>
             <h2 className="text-4xl font-bold">Exploration Spatiale</h2>
           </div>
+        </div>
+
+        <div className="mb-8 bg-white/5 backdrop-blur-sm rounded-2xl p-4 border border-purple-500/20">
+          <AvatarGuide lines={EXPLOR_LINES} interval={4000} />
         </div>
 
         <Subsection

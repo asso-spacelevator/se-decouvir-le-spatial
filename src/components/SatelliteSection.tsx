@@ -4,6 +4,13 @@ import { useSession } from '../contexts/SessionContext';
 import { Subsection } from './Subsection';
 import { Navigation } from './Navigation';
 import { Quiz } from './Quiz';
+import { AvatarGuide } from './AvatarGuide';
+
+const SAT_LINES = [
+  { speaker: 'girl' as const, text: "Les satellites, c'est partout dans notre vie : GPS, météo, internet, TV..." },
+  { speaker: 'boy' as const,  text: "Mais savais-tu qu'il existe plusieurs types d'orbites, chacune avec ses avantages ?" },
+  { speaker: 'girl' as const, text: "Choisis l'orbite qui t'intrigue et découvre quels satellites y vivent !" },
+];
 
 interface SatelliteSectionProps {
   onComplete: () => void;
@@ -129,12 +136,16 @@ export function SatelliteSection({ onComplete, onHome, onBack }: SatelliteSectio
       <Navigation onHome={onHome} onBack={onBack} showBack={true} />
 
       <div className="max-w-4xl mx-auto mt-20">
-        <div className="flex items-center gap-4 mb-8">
+        <div className="flex items-center gap-4 mb-6">
           <Satellite className="w-12 h-12 text-cyan-400" />
           <div>
             <div className="text-sm text-cyan-400 font-semibold uppercase tracking-wider">🛰️ En Orbite</div>
             <h2 className="text-4xl font-bold">Satellites et Orbites</h2>
           </div>
+        </div>
+
+        <div className="mb-8 bg-white/5 backdrop-blur-sm rounded-2xl p-4 border border-cyan-500/20">
+          <AvatarGuide lines={SAT_LINES} interval={4000} />
         </div>
 
         <Subsection

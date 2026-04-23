@@ -4,6 +4,13 @@ import { useSession } from '../contexts/SessionContext';
 import { Subsection } from './Subsection';
 import { Navigation } from './Navigation';
 import { Quiz } from './Quiz';
+import { AvatarGuide } from './AvatarGuide';
+
+const GEO_LINES = [
+  { speaker: 'girl' as const, text: "Cette section parle de géopolitique spatiale — pourquoi l'Europe veut son propre accès à l'espace." },
+  { speaker: 'boy' as const,  text: "Les satellites ne sont pas que de la science : c'est de la stratégie, de la défense, de l'économie." },
+  { speaker: 'girl' as const, text: "Tu vas découvrir l'ESA et comment l'Europe se positionne face aux USA, à la Chine et à la Russie." },
+];
 
 interface GeopoliticalSectionProps {
   onComplete: () => void;
@@ -77,12 +84,16 @@ export function GeopoliticalSection({ onComplete, onHome, onBack }: Geopolitical
       <Navigation onHome={onHome} onBack={onBack} showBack={true} />
 
       <div className="max-w-4xl mx-auto mt-20">
-        <div className="flex items-center gap-4 mb-8">
+        <div className="flex items-center gap-4 mb-6">
           <Globe className="w-12 h-12 text-blue-400" />
           <div>
             <div className="text-sm text-blue-400 font-semibold uppercase tracking-wider">🌍 De la Terre</div>
             <h2 className="text-4xl font-bold">Géopolitique Spatiale</h2>
           </div>
+        </div>
+
+        <div className="mb-8 bg-white/5 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
+          <AvatarGuide lines={GEO_LINES} interval={4000} />
         </div>
 
         <Subsection
