@@ -671,6 +671,3 @@ export function Ariane6Diagram() {
     </div>
   );
 }
-
-
-export { Ariane6Diagram }
