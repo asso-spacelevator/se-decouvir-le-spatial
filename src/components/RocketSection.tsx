@@ -5,6 +5,7 @@ import { Subsection } from './Subsection';
 import { Navigation } from './Navigation';
 import { Quiz } from './Quiz';
 import { AvatarGuide } from './AvatarGuide';
+import { Ariane6Diagram } from './Ariane6Diagram';
 
 const ROCKET_LINES = [
   { speaker: 'boy' as const,  text: "On arrive aux lanceurs ! C'est la partie la plus spectaculaire — des millions de chevaux-vapeur au décollage." },
@@ -147,6 +148,10 @@ export function RocketSection({ onComplete, onHome, onBack }: RocketSectionProps
           content="La construction d'un lanceur nécessite une précision extrême. Les composants sont fabriqués dans des salles blanches avec une tolérance au micromètre. Chaque soudure, chaque boulon doit être parfait car une seule défaillance peut être catastrophique. Plus de 10 000 pièces composent un lanceur moderne."
           icon="⚙️"
         />
+
+        <div className="mb-8">
+          <Ariane6Diagram />
+        </div>
 
         <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10 mb-8">
           <h3 className="text-2xl font-semibold mb-4">Les Défis Techniques Majeurs</h3>
