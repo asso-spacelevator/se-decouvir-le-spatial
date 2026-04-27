@@ -9,7 +9,7 @@ if (!supabaseUrl || !supabaseAnonKey) {
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-export type Section = 'start' | 'introduction' | 'impact_terrestre' | 'rockets' | 'satellites' | 'exploration' | 'social' | 'associations' | 'faq' | 'resources' | 'questions' | 'completed';
+export type Section = 'start' | 'introduction' | 'geopolitical' | 'rockets' | 'satellites' | 'exploration' | 'social' | 'associations' | 'faq' | 'resources' | 'questions' | 'completed';
 
 export interface StudentSession {
   id: string;
@@ -32,7 +32,7 @@ export interface StudentResponse {
 export interface StudentQuestion {
   id: string;
   session_id: string;
-  category: 'career' | 'technical' | 'impact' | 'general';
+  category: 'career' | 'technical' | 'geopolitics' | 'general';
   question_text: string;
   is_anonymous: boolean;
   created_at: string;
