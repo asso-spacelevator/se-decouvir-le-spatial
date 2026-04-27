@@ -5,11 +5,12 @@ import { Subsection } from './Subsection';
 import { Navigation } from './Navigation';
 import { Quiz } from './Quiz';
 import { AvatarGuide } from './AvatarGuide';
+import { OrbitalAnimation } from './OrbitalAnimation';
 
 const SAT_LINES = [
-  { speaker: 'girl' as const, text: "Les satellites, c'est partout dans notre vie : GPS, météo, internet, TV..." },
-  { speaker: 'boy' as const,  text: "Mais savais-tu qu'il existe plusieurs types d'orbites, chacune avec ses avantages ?" },
-  { speaker: 'girl' as const, text: "Choisis l'orbite qui t'intrigue et découvre quels satellites y vivent !" },
+  { speaker: 'boy' as const,  text: "On sait que les satellites sont utiles — mais comment est-ce qu'on les construit et où les place-t-on ?" },
+  { speaker: 'girl' as const, text: "Cette section plonge dans la mécanique : orbites, conception, durée de vie, propulsion..." },
+  { speaker: 'boy' as const,  text: "Explore l'animation, puis choisis une orbite pour voir ses défis d'ingénierie !" },
 ];
 
 interface SatelliteSectionProps {
@@ -39,65 +40,53 @@ export function SatelliteSection({ onComplete, onHome, onBack }: SatelliteSectio
   const orbits = [
     {
       name: 'Orbite Basse (LEO)',
-      altitude: '160 - 2 000 km',
-      period: '90 - 120 minutes',
-      missions: 'Station Spatiale Internationale (ISS), observation de la Terre, constellations internet (Starlink)',
-      advantages: 'Images haute résolution, latence faible pour communications, coût de lancement réduit',
-      challenges: 'Nécessite beaucoup de satellites pour couverture globale, friction atmosphérique résiduelle',
-      examples: '🛰️ ISS (408 km), Hubble (540 km), Starlink (550 km)',
-      funFact: '🌍 Fun Fact : Un satellite en orbite basse fait le tour complet de la Terre en seulement 90 minutes ! Les astronautes de l\'ISS voient 16 levers et couchers de soleil par jour.',
-      videoUrl: '',
-      videoTitle: 'Interview : Ingénieur Satellitaire en Orbite Basse'
+      altitude: '160 – 2 000 km',
+      period: '90 – 120 min par tour',
+      engineering: 'Satellites plus petits et moins coûteux à lancer. Pour assurer une couverture continue, il faut des constellations de dizaines à des milliers de satellites (ex : Starlink compte plus de 5 000 unités). La friction atmosphérique résiduelle fait descendre progressivement l\'orbite : les satellites doivent embarquer des petits moteurs pour se maintenir et se désorbiter en fin de vie.',
+      challenges: 'Collision avoidance permanent, gestion des débris spatiaux, renouvellement fréquent de la flotte',
+      funFact: '👁️ Fun Fact : L\'ISS est visible à l\'œil nu ! Elle brille comme une étoile filante lente et traverse le ciel en 2 à 5 minutes. Des applications comme "Spot The Station" (NASA) ou "ISS Detector" te disent exactement à quelle heure regarder et dans quelle direction — souvent le soir ou à l\'aube, quand le Soleil l\'éclaire encore.',
+      videoTitle: 'Interview : Ingénieur en constellations LEO'
     },
     {
       name: 'Orbite Moyenne (MEO)',
-      altitude: '2 000 - 35 786 km',
-      period: '2 - 24 heures',
-      missions: 'Navigation (GPS, Galileo, GLONASS), communications',
-      advantages: 'Couverture terrestre étendue, compromis entre coût et performance',
-      challenges: 'Radiation Van Allen, coût de lancement élevé',
-      examples: '🧭 GPS (20 200 km), Galileo (23 222 km)',
-      funFact: '📍 Fun Fact : Pour calculer votre position GPS, votre téléphone doit recevoir le signal d\'au moins 4 satellites simultanément parmi une constellation de 31 satellites !',
-      videoUrl: '',
-      videoTitle: 'Interview : Spécialiste des Systèmes de Navigation'
+      altitude: '2 000 – 35 786 km',
+      period: '2 – 24 heures',
+      engineering: 'Zone idéale pour la navigation (GPS, Galileo). Un satellite MEO couvre une large zone terrestre avec un seul engin, contrairement au LEO. La conception doit résister aux ceintures de radiation de Van Allen — des protections spéciales (blindage, composants durcis) sont indispensables. Les satellites GPS embarquent des horloges atomiques d\'une précision de 1 nanoseconde.',
+      challenges: 'Radiations Van Allen intenses, coût de lancement plus élevé, orbites encombrées par les débris',
+      funFact: '⏱️ Fun Fact : Les horloges atomiques de Galileo sont si précises qu\'elles ne se décalent que d\'une seconde en 3 millions d\'années. Sans cette précision, le GPS aurait une erreur de kilomètres, pas de mètres !',
+      videoTitle: 'Interview : Spécialiste des systèmes de navigation'
     },
     {
       name: 'Orbite Géostationnaire (GEO)',
-      altitude: '35 786 km',
-      period: '24 heures (synchrone avec la Terre)',
-      missions: 'Météorologie, télécommunications, diffusion TV',
-      advantages: 'Position fixe dans le ciel, couverture continue d\'une zone, antennes terrestres fixes',
-      challenges: 'Latence importante (500ms), coût de lancement très élevé, zone encombrée',
-      examples: '📡 Météosat, satellites de télécommunications Astra/Eutelsat',
-      funFact: '📺 Fun Fact : Il n\'existe qu\'UNE SEULE orbite géostationnaire possible : un cercle de 35 786 km d\'altitude exactement au-dessus de l\'équateur. C\'est l\'immobilier spatial le plus cher !',
-      videoUrl: '',
-      videoTitle: 'Interview : Expert en Télécommunications Spatiales'
+      altitude: '35 786 km exactement',
+      period: '24 heures – synchrone avec la Terre',
+      engineering: 'Un satellite GEO pèse souvent plusieurs tonnes et coûte 300 à 500 millions d\'euros. Il doit maintenir sa position précisément (station-keeping) grâce à de petits propulseurs tout au long de ses 15 ans de vie. La chaleur est un défi majeur : d\'un côté du satellite il fait +150°C, de l\'autre -150°C. Les panneaux solaires doivent basculer pour toujours faire face au Soleil.',
+      challenges: 'Orbite très encombrée (moins de 1 800 positions disponibles, régulées par l\'ITU), latence de 500ms pour les signaux',
+      funFact: '📺 Fun Fact : Il n\'existe qu\'UNE SEULE orbite géostationnaire — un anneau de 36 000 km de diamètre. Les positions dessus sont si précieuses qu\'elles sont attribuées par un organisme de l\'ONU, comme des terrains à construire !',
+      videoTitle: 'Interview : Ingénieur télécoms GEO'
     },
     {
-      name: 'Orbites Spéciales',
-      altitude: 'Variable',
-      period: 'Variable',
-      missions: 'Observation polaire, missions scientifiques, surveillance militaire',
-      advantages: 'Orbites héliosynchrones (même heure locale), polaires (survol des pôles)',
-      challenges: 'Complexité de maintien, consommation élevée de carburant',
-      examples: '🌍 Sentinel (Copernicus), satellites d\'observation météo polaires',
-      funFact: '☀️ Fun Fact : Les satellites héliosynchrones passent toujours au-dessus du même endroit à la même heure solaire, ce qui garantit un éclairage constant pour comparer les images sur plusieurs années !',
-      videoUrl: '',
-      videoTitle: 'Interview : Responsable Programme Copernicus'
+      name: 'Orbites Polaires & Héliosynchrones',
+      altitude: '400 – 1 000 km (variable)',
+      period: 'Variable selon altitude',
+      engineering: 'En inclinant l\'orbite à ~98°, le satellite survole les pôles et passe au-dessus de chaque point de la Terre une fois par jour. L\'orbite héliosynchrone est calibrée pour que le satellite passe toujours à la même heure locale solaire — garantissant un éclairage constant d\'une image à l\'autre, essentiel pour comparer des photos prises à des mois d\'intervalle.',
+      challenges: 'Consommation élevée de carburant pour maintien d\'orbite, fenêtres de lancement très précises',
+      funFact: '📸 Fun Fact : Les satellites Sentinel-2 de Copernicus prennent des images à 10 m de résolution, couvrent l\'intégralité des terres émergées tous les 5 jours et produisent 1,6 téraoctet de données par jour — mises en ligne gratuitement !',
+      videoTitle: 'Interview : Ingénieur observation terrestre'
     }
   ];
 
   const quizQuestions = [
     {
       id: 'satellite_q1',
-      question: 'Combien de temps faut-il à un satellite en orbite basse (LEO) pour faire le tour de la Terre ?',
+      question: 'Pourquoi les satellites GPS embarquent-ils des horloges atomiques ultra-précises ?',
       options: [
-        { id: 'a', text: '30 minutes', isCorrect: false },
-        { id: 'b', text: '90 minutes', isCorrect: true },
-        { id: 'c', text: '3 heures', isCorrect: false },
-        { id: 'd', text: '24 heures', isCorrect: false }
+        { id: 'a', text: 'Pour économiser de l\'énergie', isCorrect: false },
+        { id: 'b', text: 'Pour synchroniser les autres satellites', isCorrect: false },
+        { id: 'c', text: 'Car la localisation GPS repose sur des mesures de temps à la nanoseconde', isCorrect: true },
+        { id: 'd', text: 'Pour faciliter la communication avec les stations au sol', isCorrect: false }
       ],
-      explanation: 'Un satellite en orbite basse fait le tour complet de la Terre en environ 90 minutes ! C\'est pourquoi les astronautes de l\'ISS voient 16 levers et couchers de soleil par jour.'
+      explanation: 'Le GPS calcule une position en mesurant le temps que met un signal radio à voyager depuis au moins 4 satellites. À la vitesse de la lumière, 1 nanoseconde d\'erreur se traduit par 30 cm d\'imprécision au sol. Une horloge ordinaire rendrait le GPS inutilisable après quelques minutes.'
     }
   ];
 
@@ -112,10 +101,7 @@ export function SatelliteSection({ onComplete, onHome, onBack }: SatelliteSectio
   };
 
   const handleQuizScoreUpdate = async (points: number) => {
-    const currentQuestion = quizQuestions.find(() => true);
-    if (currentQuestion) {
-      await saveQuizScore('satellites', currentQuestion.id, points, points > 0);
-    }
+    await saveQuizScore('satellites', 'satellite_q1', points, points > 0);
   };
 
   const handleQuizComplete = () => {
@@ -139,8 +125,8 @@ export function SatelliteSection({ onComplete, onHome, onBack }: SatelliteSectio
         <div className="flex items-center gap-4 mb-6">
           <Satellite className="w-12 h-12 text-cyan-400" />
           <div>
-            <div className="text-sm text-cyan-400 font-semibold uppercase tracking-wider">🛰️ En Orbite</div>
-            <h2 className="text-4xl font-bold">Satellites et Orbites</h2>
+            <div className="text-sm text-cyan-400 font-semibold uppercase tracking-wider">🛰️ Ingénierie Orbitale</div>
+            <h2 className="text-4xl font-bold">Comment Construire et Placer un Satellite</h2>
           </div>
         </div>
 
@@ -149,24 +135,33 @@ export function SatelliteSection({ onComplete, onHome, onBack }: SatelliteSectio
         </div>
 
         <Subsection
-          title="Les Sentinelles de l'Espace"
-          content="Plus de 8 000 satellites opérationnels orbitent autour de la Terre. Ils fournissent des services essentiels : GPS pour la navigation, télécommunications, prévisions météo, observation de la Terre, surveillance des océans, et bien plus. Sans satellites, notre monde moderne s'arrêterait."
-          icon="🛰️"
+          title="Anatomie d'un Satellite"
+          content="Un satellite est composé de deux grandes parties : la plateforme (structure, alimentation électrique via panneaux solaires, batteries, systèmes de contrôle thermique et d'attitude) et la charge utile (les instruments scientifiques ou de communication qui réalisent la mission). La masse varie de quelques kilos pour un CubeSat à plus de 6 tonnes pour un satellite GEO de télécommunications. Chaque composant doit résister au vide, aux radiations, aux variations thermiques extrêmes et aux vibrations du lancement."
+          icon="🔩"
         />
 
         <Subsection
-          title="Copernicus : L'Œil Européen"
-          content="Copernicus est le programme européen d'observation de la Terre le plus ambitieux au monde. Avec sa constellation de satellites Sentinel, il surveille en continu l'atmosphère, les océans, les terres émergées et le climat. Ces données ouvertes sont utilisées pour la gestion des catastrophes, l'agriculture, la surveillance environnementale et la recherche climatique."
-          icon="🌍"
+          title="La Mécanique Orbitale : pourquoi les satellites ne tombent-ils pas ?"
+          content="Un satellite est en chute libre perpétuelle — mais il va si vite latéralement que la courbure de la Terre s'écarte aussi vite qu'il tombe. C'est l'équilibre entre la vitesse tangentielle et l'attraction gravitationnelle. Plus l'orbite est haute, plus la période s'allonge : à 400 km (LEO) il faut 7,7 km/s et 90 minutes ; à 36 000 km (GEO) seulement 3,1 km/s, mais la distance est 90 fois plus grande."
+          icon="🌐"
         />
 
-        <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10 mb-8">
-          <h3 className="text-2xl font-semibold mb-4">Les Différentes Orbites</h3>
-          <p className="text-gray-300 mb-6">
-            Chaque orbite a ses caractéristiques uniques. Explorez les différentes altitudes et leurs usages :
-          </p>
+        <Subsection
+          title="Durée de Vie et Fin de Mission"
+          content="Un satellite est conçu pour 10 à 15 ans. Le facteur limitant n'est généralement pas la panne des instruments, mais l'épuisement du carburant de contrôle d'attitude et de station-keeping. À l'issue de sa vie, il doit être mis sur une orbite cimetière (GEO) ou désorbité pour brûler dans l'atmosphère (LEO) : c'est une exigence réglementaire pour éviter la prolifération des débris spatiaux. Aujourd'hui, plus de 27 000 objets de plus de 10 cm sont suivis en orbite."
+          icon="♻️"
+        />
 
-          <div className="space-y-4 mb-6">
+        {/* Orbital animation */}
+        <div className="mb-8">
+          <OrbitalAnimation />
+        </div>
+
+        <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10 mb-8">
+          <h3 className="text-2xl font-semibold mb-2">Explorez les Défis d'Ingénierie par Orbite</h3>
+          <p className="text-gray-400 mb-6">Chaque altitude impose ses propres contraintes. Sélectionnez-en une pour voir les détails techniques.</p>
+
+          <div className="space-y-4">
             {orbits.map((orbit, index) => (
               <div key={index}>
                 <button
@@ -177,27 +172,22 @@ export function SatelliteSection({ onComplete, onHome, onBack }: SatelliteSectio
                       : 'border-white/10 bg-white/5 hover:border-cyan-400/50 hover:bg-white/10'
                   }`}
                 >
-                  <div className="flex justify-between items-start mb-2">
+                  <div className="flex justify-between items-start mb-1">
                     <h4 className="font-bold text-xl">{orbit.name}</h4>
                     <span className="text-sm text-cyan-400 font-mono">{orbit.altitude}</span>
                   </div>
-                  <p className="text-sm text-gray-400 mb-2">Période orbitale : {orbit.period}</p>
-                  <p className="text-gray-300">{orbit.missions}</p>
+                  <p className="text-sm text-gray-400">Période orbitale : {orbit.period}</p>
                 </button>
 
                 {selectedOrbit === index && (
-                  <div className="mt-4 bg-gradient-to-br from-cyan-500/10 to-blue-500/10 border border-cyan-400/30 rounded-xl p-6 space-y-4">
+                  <div className="mt-3 bg-gradient-to-br from-cyan-500/10 to-blue-500/10 border border-cyan-400/30 rounded-xl p-6 space-y-4">
                     <div>
-                      <h4 className="font-semibold text-cyan-400 mb-2">✅ Avantages</h4>
-                      <p className="text-gray-200">{orbit.advantages}</p>
+                      <h4 className="font-semibold text-cyan-300 mb-2">⚙️ Contraintes d'ingénierie</h4>
+                      <p className="text-gray-200 leading-relaxed">{orbit.engineering}</p>
                     </div>
                     <div>
-                      <h4 className="font-semibold text-cyan-400 mb-2">⚠️ Défis</h4>
+                      <h4 className="font-semibold text-cyan-300 mb-2">⚠️ Défis principaux</h4>
                       <p className="text-gray-200">{orbit.challenges}</p>
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-cyan-400 mb-2">📍 Exemples</h4>
-                      <p className="text-gray-200">{orbit.examples}</p>
                     </div>
                     {orbit.funFact && (
                       <div className="bg-cyan-500/10 border border-cyan-400/20 rounded-lg p-4">
@@ -205,23 +195,8 @@ export function SatelliteSection({ onComplete, onHome, onBack }: SatelliteSectio
                       </div>
                     )}
                     {orbit.videoTitle && (
-                      <div>
-                        <h4 className="font-semibold text-cyan-400 mb-3">📹 {orbit.videoTitle}</h4>
-                        {orbit.videoUrl ? (
-                          <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
-                            <iframe
-                              className="absolute top-0 left-0 w-full h-full rounded-lg"
-                              src={orbit.videoUrl}
-                              title="Video"
-                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                              allowFullScreen
-                            />
-                          </div>
-                        ) : (
-                          <div className="bg-cyan-500/10 border border-cyan-400/30 rounded-lg p-8 text-center">
-                            <p className="text-gray-400 italic">Vidéo à venir</p>
-                          </div>
-                        )}
+                      <div className="bg-white/5 border border-white/10 rounded-lg p-4 text-center">
+                        <p className="text-gray-400 text-sm italic">📹 {orbit.videoTitle} — vidéo à venir</p>
                       </div>
                     )}
                   </div>
@@ -239,17 +214,16 @@ export function SatelliteSection({ onComplete, onHome, onBack }: SatelliteSectio
 
         <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10 mt-8">
           <h3 className="text-2xl font-semibold mb-6">Imaginez Votre Mission</h3>
-
           <div className="mb-6">
             <label className="block text-gray-300 mb-3 font-medium">
-              Si vous pouviez placer un satellite sur n'importe quelle orbite, quelle mission lui confieriez-vous et pourquoi ?
+              Si vous deviez concevoir un satellite, quelle orbite choisiriez-vous et quels défis techniques anticiperiez-vous ?
             </label>
             <textarea
               value={responses['mission_idea'] || ''}
               onChange={(e) => handleResponseChange('mission_idea', e.target.value)}
-              placeholder="Décrivez votre mission spatiale idéale (observation, communication, science...)..."
+              placeholder="Décrivez votre choix d'orbite, la mission et les principaux défis d'ingénierie..."
               className="w-full bg-white/5 border border-white/10 rounded-lg p-4 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent resize-none"
-              rows={5}
+              rows={4}
             />
           </div>
 
