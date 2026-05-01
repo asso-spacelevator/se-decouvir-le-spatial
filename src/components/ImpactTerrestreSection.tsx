@@ -302,6 +302,36 @@ export function ImpactTerrestreSection({ onComplete, onHome, onBack }: ImpactTer
               </div>
             </div>
 
+            {/* Invention 5 — IRM */}
+            <div className="group rounded-xl border border-white/10 bg-white/3 hover:bg-white/8 hover:border-rose-400/30 transition-all duration-300 overflow-hidden">
+              <div className="flex items-start gap-0">
+                <div className="flex-shrink-0 w-14 flex flex-col items-center justify-start pt-5 pb-5 bg-rose-500/10 border-r border-white/10">
+                  <span className="text-2xl">🧲</span>
+                  <span className="text-xs text-rose-400 font-bold mt-1 opacity-70">NASA</span>
+                </div>
+                <div className="p-5 flex-1">
+                  <div className="flex items-center gap-2 mb-1">
+                    <h4 className="font-bold text-white text-base">IRM — Imagerie par Résonance Magnétique</h4>
+                    <span className="text-xs px-2 py-0.5 rounded-full bg-rose-500/15 text-rose-400 border border-rose-500/20">Années 70</span>
+                  </div>
+                  <p className="text-gray-400 text-sm leading-relaxed mb-3">
+                    Les algorithmes de traitement d'image développés par la NASA pour reconstituer des photos nettes
+                    à partir des signaux bruités envoyés par les sondes lunaires (programme Apollo) ont directement
+                    inspiré les premières machines IRM. Ces techniques de reconstruction numérique permettent de
+                    transformer un signal radiofréquence faible en image anatomique précise — sans rayonnement
+                    ionisant. Aujourd'hui, l'IRM est l'outil de diagnostic le plus puissant de la médecine moderne :
+                    tumeurs, accidents vasculaires, maladies neurologiques, lésions musculaires — elle voit ce
+                    qu'aucun autre examen ne peut révéler.
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {['Neurologie', 'Oncologie', 'Cardiologie', 'Orthopédie', 'Diagnostic précoce'].map(tag => (
+                      <span key={tag} className="text-xs px-2 py-0.5 rounded-full bg-white/5 text-gray-400 border border-white/10">{tag}</span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
 
