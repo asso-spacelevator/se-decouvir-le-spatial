@@ -332,6 +332,36 @@ export function ImpactTerrestreSection({ onComplete, onHome, onBack }: ImpactTer
               </div>
             </div>
 
+            {/* Invention 6 — Céramique haute performance */}
+            <div className="group rounded-xl border border-white/10 bg-white/3 hover:bg-white/8 hover:border-cyan-400/30 transition-all duration-300 overflow-hidden">
+              <div className="flex items-start gap-0">
+                <div className="flex-shrink-0 w-14 flex flex-col items-center justify-start pt-5 pb-5 bg-cyan-500/10 border-r border-white/10">
+                  <span className="text-2xl">🔥</span>
+                  <span className="text-xs text-cyan-400 font-bold mt-1 opacity-70">NASA</span>
+                </div>
+                <div className="p-5 flex-1">
+                  <div className="flex items-center gap-2 mb-1">
+                    <h4 className="font-bold text-white text-base">Céramique haute performance</h4>
+                    <span className="text-xs px-2 py-0.5 rounded-full bg-cyan-500/15 text-cyan-400 border border-cyan-500/20">Années 70–80</span>
+                  </div>
+                  <p className="text-gray-400 text-sm leading-relaxed mb-3">
+                    Pour résister aux températures extrêmes de la rentrée atmosphérique (jusqu'à 1 600 °C), la NASA
+                    a développé des tuiles en céramique ultra-légère pour la navette spatiale — capables d'isoler si
+                    efficacement qu'on peut tenir une tuile chauffée à blanc à mains nues quelques secondes après
+                    l'avoir retirée du four. Ces recherches ont donné naissance à toute une famille de céramiques
+                    techniques aujourd'hui omniprésentes : revêtements de turbines d'avions, implants dentaires et
+                    osseux (zircone), plaques de cuisson vitrocéramiques, blindages légers, et systèmes de freinage
+                    haute performance pour véhicules de sport et trains à grande vitesse.
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {['Implants dentaires', 'Plaques de cuisson', 'Turbines', 'Freinage TGV', 'Blindage'].map(tag => (
+                      <span key={tag} className="text-xs px-2 py-0.5 rounded-full bg-white/5 text-gray-400 border border-white/10">{tag}</span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
 
