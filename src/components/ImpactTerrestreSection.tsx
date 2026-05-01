@@ -176,17 +176,134 @@ export function ImpactTerrestreSection({ onComplete, onHome, onBack }: ImpactTer
           </a>
         </div>
 
-        <Subsection
-          title="Sauver des Vies : Gestion des Catastrophes"
-          content="Lors d'un tremblement de terre, d'une inondation ou d'un incendie de forêt, les satellites d'observation deviennent une bouée de sauvetage. En quelques heures, des images à haute résolution permettent d'identifier les zones détruites, de guider les convois de secours vers les zones coupées du monde et d'évaluer les dégâts. Le service Copernicus Emergency Management a été activé plus de 700 fois depuis sa création — pour des catastrophes en Europe et sur tous les continents."
-          icon="🚨"
-        />
+        {/* ── Les objets du quotidien nés du spatial ── */}
+        <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10 mb-8">
+          <div className="flex items-center gap-3 mb-2">
+            <span className="text-2xl">🏠</span>
+            <h3 className="text-2xl font-semibold">Les Objets du Quotidien Nés du Spatial</h3>
+          </div>
+          <p className="text-gray-400 text-sm mb-6">
+            Vous utilisez chaque jour des technologies inventées pour conquérir l'espace, sans même le savoir.
+          </p>
 
-        <Subsection
-          title="Connecter les Oubliés du Numérique"
-          content="Aujourd'hui encore, 2,6 milliards de personnes n'ont pas accès à internet. Dans les zones rurales d'Afrique, d'Asie centrale ou d'Amazonie, les satellites sont souvent la seule option réaliste. Au-delà d'internet, ils permettent la télémédecine (consultation médicale à distance), l'éducation en ligne pour des milliers d'élèves isolés, et des transactions bancaires dans des régions sans infrastructure. L'espace est un vecteur d'équité mondiale."
-          icon="📶"
-        />
+          <div className="space-y-6">
+
+            {/* Invention 1 — Mousse à mémoire de forme */}
+            <div className="group rounded-xl border border-white/10 bg-white/3 hover:bg-white/8 hover:border-emerald-400/30 transition-all duration-300 overflow-hidden">
+              <div className="flex items-start gap-0">
+                <div className="flex-shrink-0 w-14 flex flex-col items-center justify-start pt-5 pb-5 bg-emerald-500/10 border-r border-white/10">
+                  <span className="text-2xl">🛏️</span>
+                  <span className="text-xs text-emerald-400 font-bold mt-1 writing-mode-vertical rotate-90 mt-4 opacity-70">NASA</span>
+                </div>
+                <div className="p-5 flex-1">
+                  <div className="flex items-center gap-2 mb-1">
+                    <h4 className="font-bold text-white text-base">Mousse à mémoire de forme</h4>
+                    <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/20">1966</span>
+                  </div>
+                  <p className="text-gray-400 text-sm leading-relaxed mb-3">
+                    Développée par la NASA pour absorber les chocs lors des décollages et protéger les astronautes,
+                    la mousse viscoélastique — dite "mousse à mémoire de forme" — a révolutionné notre façon de dormir.
+                    Ses propriétés uniques (elle épouse le corps puis reprend sa forme) en font aujourd'hui le matériau
+                    de référence dans les matelas haut de gamme, les sièges de voiture, les équipements médicaux
+                    anti-escarres et les casques de protection.
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {['Matelas', 'Sièges auto', 'Casques sport', 'Fauteuils médicaux'].map(tag => (
+                      <span key={tag} className="text-xs px-2 py-0.5 rounded-full bg-white/5 text-gray-400 border border-white/10">{tag}</span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Invention 2 — Scratch (Velcro) */}
+            <div className="group rounded-xl border border-white/10 bg-white/3 hover:bg-white/8 hover:border-sky-400/30 transition-all duration-300 overflow-hidden">
+              <div className="flex items-start gap-0">
+                <div className="flex-shrink-0 w-14 flex flex-col items-center justify-start pt-5 pb-5 bg-sky-500/10 border-r border-white/10">
+                  <span className="text-2xl">👟</span>
+                  <span className="text-xs text-sky-400 font-bold mt-1 opacity-70">NASA</span>
+                </div>
+                <div className="p-5 flex-1">
+                  <div className="flex items-center gap-2 mb-1">
+                    <h4 className="font-bold text-white text-base">Velcro & fixations sans apesanteur</h4>
+                    <span className="text-xs px-2 py-0.5 rounded-full bg-sky-500/15 text-sky-400 border border-sky-500/20">Années 60</span>
+                  </div>
+                  <p className="text-gray-400 text-sm leading-relaxed mb-3">
+                    Dans l'espace, aucune vis ne peut être serrée à la main en apesanteur sans s'envoler. La NASA a
+                    massivement adopté le velcro (inventé en 1941 mais popularisé par le programme Apollo) pour fixer
+                    outils, équipements et vêtements à bord des capsules et de la Station spatiale. Cette adoption
+                    à grande échelle a lancé sa diffusion mondiale : chaussures, vêtements de sport, articles médicaux,
+                    sacs et même les couches pour bébés lui doivent leur fermeture rapide.
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {['Chaussures', 'Vêtements', 'Équipement médical', 'Bagages'].map(tag => (
+                      <span key={tag} className="text-xs px-2 py-0.5 rounded-full bg-white/5 text-gray-400 border border-white/10">{tag}</span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Invention 3 — Capteurs photo CMOS */}
+            <div className="group rounded-xl border border-white/10 bg-white/3 hover:bg-white/8 hover:border-amber-400/30 transition-all duration-300 overflow-hidden">
+              <div className="flex items-start gap-0">
+                <div className="flex-shrink-0 w-14 flex flex-col items-center justify-start pt-5 pb-5 bg-amber-500/10 border-r border-white/10">
+                  <span className="text-2xl">📸</span>
+                  <span className="text-xs text-amber-400 font-bold mt-1 opacity-70">JPL</span>
+                </div>
+                <div className="p-5 flex-1">
+                  <div className="flex items-center gap-2 mb-1">
+                    <h4 className="font-bold text-white text-base">Capteur photo CMOS (smartphone)</h4>
+                    <span className="text-xs px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-400 border border-amber-500/20">1993</span>
+                  </div>
+                  <p className="text-gray-400 text-sm leading-relaxed mb-3">
+                    En 1993, le Jet Propulsion Laboratory (JPL) de la NASA développe un capteur d'image miniaturisé
+                    à faible consommation pour équiper les sondes spatiales : le capteur CMOS actif. Trop encombrants
+                    et énergivores, les capteurs CCD de l'époque ne convenaient pas aux contraintes de l'espace.
+                    Cette invention a ensuite été transférée vers l'industrie civile et constitue aujourd'hui le cœur
+                    de <strong className="text-white">tous les appareils photo de smartphones</strong> — soit des
+                    milliards de capteurs produits chaque année.
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {['Smartphones', 'Appareils photo', 'Webcams', 'Caméras médicales'].map(tag => (
+                      <span key={tag} className="text-xs px-2 py-0.5 rounded-full bg-white/5 text-gray-400 border border-white/10">{tag}</span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Invention 4 — GPS */}
+            <div className="group rounded-xl border border-white/10 bg-white/3 hover:bg-white/8 hover:border-orange-400/30 transition-all duration-300 overflow-hidden">
+              <div className="flex items-start gap-0">
+                <div className="flex-shrink-0 w-14 flex flex-col items-center justify-start pt-5 pb-5 bg-orange-500/10 border-r border-white/10">
+                  <span className="text-2xl">📍</span>
+                  <span className="text-xs text-orange-400 font-bold mt-1 opacity-70">DOD</span>
+                </div>
+                <div className="p-5 flex-1">
+                  <div className="flex items-center gap-2 mb-1">
+                    <h4 className="font-bold text-white text-base">GPS / Géolocalisation</h4>
+                    <span className="text-xs px-2 py-0.5 rounded-full bg-orange-500/15 text-orange-400 border border-orange-500/20">1973</span>
+                  </div>
+                  <p className="text-gray-400 text-sm leading-relaxed mb-3">
+                    Conçu par le Département de la Défense américain pour guider missiles et troupes, le système GPS
+                    (24 satellites en orbite moyenne) a été ouvert au civil en 1983 après la catastrophe du vol
+                    Korean Air 007. Aujourd'hui, il est le fondement invisible de la navigation automobile, de la
+                    livraison à domicile, de l'agriculture de précision, des transactions boursières (synchronisation
+                    temporelle), des urgences médicales et bien sûr de toutes les cartes mobiles. L'Europe a développé
+                    son propre système souverain : <strong className="text-white">Galileo</strong>.
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {['Navigation', 'Logistique', 'Agriculture', 'Sécurité civile', 'Finance'].map(tag => (
+                      <span key={tag} className="text-xs px-2 py-0.5 rounded-full bg-white/5 text-gray-400 border border-white/10">{tag}</span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
 
         <Subsection
           title="Coopération Internationale : l'Espace comme Terrain de Paix"
