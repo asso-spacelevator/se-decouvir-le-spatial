@@ -13,56 +13,62 @@ const GROUND_JOBS = [
   {
     icon: '🖥️',
     color: 'emerald',
-    title: 'Contrôleur de Vol',
+    title: 'Contrôleur de Vol / Sauvegarde Vol',
     subtitle: 'Flight Controller',
-    desc: 'Surveille en temps réel la santé du satellite (énergie, température, orientation, propulsion). En cas d\'alarme, il diagnostique et applique des procédures d\'urgence en quelques minutes — le médecin urgentiste du satellite.',
-    example: 'Si un panneau solaire refuse de se déployer au lancement, le FC dispose de quelques minutes pour forcer le mécanisme à distance avant épuisement de la batterie.',
-    tags: ['24/7', 'Procédures d\'urgence', 'Systèmes embarqués'],
+    desc: "Surveille en temps réel la santé du satellite (énergie, température, orientation, propulsion). En cas d'alarme, il diagnostique et applique des procédures d'urgence en quelques minutes — le médecin urgentiste du satellite. Le responsable sauvegarde vol assure la sécurité des personnes et des biens dès que le lanceur quitte la base de lancement.",
+    example: "Si un panneau solaire refuse de se déployer au lancement, le FC dispose de quelques minutes pour forcer le mécanisme à distance avant épuisement de la batterie.",
+    videos: [{ id: 'oXhQWfPAuAU', label: 'Témoignage : responsable sauvegarde vol' }],
   },
   {
     icon: '📐',
     color: 'sky',
-    title: 'Ingénieur Trajectoire',
+    title: 'Ingénieur Trajectoire & Orbitographie',
     subtitle: 'Orbital Mechanics Engineer',
-    desc: 'Calcule et corrige l\'orbite tout au long de la vie du satellite. Prépare les manœuvres d\'évitement de débris, les corrections de cap et la déorbitisation finale avec une précision de quelques cm/s.',
-    example: 'L\'ISS effectue en moyenne 2 manœuvres d\'évitement de débris par an — préparées par les équipes trajectoire de Houston et Moscou.',
-    tags: ['Astrodynamique', 'Python / MATLAB', 'Physique avancée'],
+    desc: "Calcule et corrige l'orbite tout au long de la vie du satellite. Prépare les manœuvres d'évitement de débris, les corrections de cap et la déorbitisation finale avec une précision de quelques cm/s.",
+    example: "L'ISS effectue en moyenne 2 manœuvres d'évitement de débris par an — préparées par les équipes trajectoire de Houston et Moscou.",
+    videos: [{ id: 'KfcjGFfPQi8', label: 'Témoignage : ingénieur orbitographie' }],
   },
   {
     icon: '🗑️',
     color: 'orange',
-    title: 'Spécialiste Débris Spatiaux',
-    subtitle: 'Space Debris Analyst',
-    desc: 'Surveille les 35 000+ objets catalogués en orbite (débris de lanceurs, satellites morts, fragments de collisions). Calcule les probabilités de collision et émet des alertes pour les opérateurs de satellites actifs.',
-    example: 'Le réseau Space Fence de l\'US Space Force détecte des objets de 10 cm en LEO. En Europe, l\'ESA gère le service SST (Space Surveillance and Tracking) depuis son centre de Darmstadt.',
-    tags: ['Surveillance radar', 'Modélisation', 'SST / SSA'],
+    title: 'Responsable Sauvegarde Sol / Débris Spatiaux',
+    subtitle: 'Ground Safety & Space Debris',
+    desc: "Surveille les 35 000+ objets catalogués en orbite (débris de lanceurs, satellites morts, fragments de collisions). Calcule les probabilités de collision et émet des alertes pour les opérateurs de satellites actifs. Gère aussi la sécurité au sol lors des lancements.",
+    example: "Le réseau Space Fence de l'US Space Force détecte des objets de 10 cm en LEO. En Europe, l'ESA gère le service SST (Space Surveillance and Tracking) depuis son centre de Darmstadt.",
+    videos: [{ id: '6EzPAgSw8KM', label: 'Témoignage : responsable sauvegarde sol' }],
   },
   {
     icon: '🚀',
     color: 'amber',
-    title: 'Opérateur ISS',
-    subtitle: 'ISS Flight Controller',
-    desc: 'Spécialiste des systèmes de la Station Spatiale Internationale : gestion de l\'atmosphère interne, des systèmes de survie, des amarrages de vaisseaux (Dragon, Soyuz, Cygnus). Travaille en coordination avec Houston, Moscou, Toulouse et Tsukuba.',
-    example: 'Lors de l\'amarrage d\'un Dragon SpaceX, jusqu\'à 6 centres de contrôle sur 3 continents communiquent simultanément pour valider chaque étape de l\'approche finale.',
-    tags: ['ISS', 'Systèmes de survie', 'Multi-centres'],
+    title: 'Ingénieur / Technicien Opérations',
+    subtitle: 'Satellite Operations Engineer',
+    desc: "Spécialiste des opérations de satellites et missions spatiales : suit le déroulement des missions, coordonne avec les équipes ISS, gère les amarrages de vaisseaux (Dragon, Soyuz, Cygnus) et assure le lien entre Houston, Moscou, Toulouse et Tsukuba.",
+    example: "Lors de l'amarrage d'un Dragon SpaceX, jusqu'à 6 centres de contrôle sur 3 continents communiquent simultanément pour valider chaque étape de l'approche finale.",
+    videos: [{ id: 'QqkNx23Zv2s', label: 'Témoignage : ingénieur / technicien opérations' }],
   },
   {
     icon: '📡',
     color: 'teal',
-    title: 'Opérateur Télécommunications Sol',
-    subtitle: 'Ground Station Operator',
-    desc: 'Gère les antennes paraboliques qui "parlent" au satellite : planifie les fenêtres de contact, encode les télécommandes et décode la télémétrie. Sans liaison sol, le satellite est sourd et muet.',
-    example: 'Pour Mars Express, chaque session dure 8 à 10 h et doit être réservée des jours à l\'avance en fonction de la géométrie Terre–Mars et de la disponibilité des antennes du réseau DSN.',
-    tags: ['RF & antennes', 'CCSDS', 'Planification de contacts'],
+    title: 'Ingénieur / Technicien Stations Sol',
+    subtitle: 'Ground Station Engineer',
+    desc: "Spécifie, développe, valide et maintient les antennes et équipements sol qui communiquent avec les satellites. Planifie les fenêtres de contact, encode les télécommandes et décode la télémétrie. Maîtrise des fréquences radio (RF) et des protocoles de communication spatiale.",
+    example: "Pour Mars Express, chaque session dure 8 à 10 h et doit être réservée des jours à l'avance en fonction de la géométrie Terre–Mars et de la disponibilité des antennes du réseau DSN.",
+    videos: [
+      { id: '7ckHeYw8xAc', label: 'Témoignage : ingénieur / technicien stations sol' },
+      { id: 'HZ5a0Roc3lE', label: 'Témoignage : radio fréquence – télécommunication' },
+    ],
   },
   {
     icon: '🔭',
     color: 'violet',
-    title: 'Ingénieur Charge Utile',
-    subtitle: 'Payload Engineer',
-    desc: 'Programme les séquences d\'observation de l\'instrument scientifique ou commercial embarqué (caméra, radar, sondeur météo…), calibre les capteurs et analyse la qualité des données reçues. Interface entre les scientifiques et le satellite.',
-    example: 'Les opérateurs payload de l\'ESAC (Espagne) programment chaque semaine les pointages du télescope Cheops vers les exoplanètes prioritaires des chercheurs européens.',
-    tags: ['Optique / radar', 'Traitement du signal', 'Science spatiale'],
+    title: 'Ingénieur Charge Utile & Exploitation',
+    subtitle: 'Payload & Exploitation Engineer',
+    desc: "Programme les séquences d'observation de l'instrument scientifique ou commercial embarqué (caméra, radar, sondeur météo…), calibre les capteurs et analyse la qualité des données reçues. Interface entre les scientifiques et le satellite.",
+    example: "Les opérateurs payload de l'ESAC (Espagne) programment chaque semaine les pointages du télescope Cheops vers les exoplanètes prioritaires des chercheurs européens.",
+    videos: [
+      { id: 'a3TsE5G_FEk', label: "Témoignage : ingénieur / technicien d'exploitation" },
+      { id: 'HW7I22CXmzE', label: 'Témoignage : assemblage intégration charges utiles optiques' },
+    ],
   },
 ];
 
@@ -161,12 +167,31 @@ function GroundStationsBlock() {
               {isOpen && (
                 <div className="px-5 pb-5">
                   <p className="text-gray-300 text-sm leading-relaxed mb-3">{job.desc}</p>
-                  <div className={`rounded-lg p-3 ${c.bg} border ${c.ring}`}>
+                  <div className={`rounded-lg p-3 ${c.bg} border ${c.ring} mb-3`}>
                     <p className="text-xs text-gray-300 leading-relaxed">
                       <strong className={`${c.text} block mb-1`}>Exemple concret</strong>
                       {job.example}
                     </p>
                   </div>
+                  {job.videos.map((v) => (
+                    <div key={v.id} className="rounded-xl overflow-hidden border border-white/10 mb-2 last:mb-0">
+                      <div className="px-3 py-2 bg-white/5 border-b border-white/10 flex items-center gap-2">
+                        <svg className="w-3.5 h-3.5 text-red-400 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31.6 31.6 0 0 0 0 12a31.6 31.6 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31.6 31.6 0 0 0 24 12a31.6 31.6 0 0 0-.5-5.8zM9.75 15.5v-7l6.25 3.5-6.25 3.5z"/>
+                        </svg>
+                        <span className="text-xs text-gray-400">{v.label}</span>
+                      </div>
+                      <div className="aspect-video">
+                        <iframe
+                          src={`https://www.youtube.com/embed/${v.id}`}
+                          title={v.label}
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          allowFullScreen
+                          className="w-full h-full"
+                        />
+                      </div>
+                    </div>
+                  ))}
                 </div>
               )}
             </div>
