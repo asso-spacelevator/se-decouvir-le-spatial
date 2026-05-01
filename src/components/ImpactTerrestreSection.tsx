@@ -11,15 +11,6 @@ import { AvatarGuide } from './AvatarGuide';
    ───────────────────────────────────────── */
 const GROUND_JOBS = [
   {
-    icon: '🖥️',
-    color: 'emerald',
-    title: 'Contrôleur de Vol / Sauvegarde Vol',
-    subtitle: 'Flight Controller',
-    desc: "Surveille en temps réel la santé du satellite (énergie, température, orientation, propulsion). En cas d'alarme, il diagnostique et applique des procédures d'urgence en quelques minutes — le médecin urgentiste du satellite. Le responsable sauvegarde vol assure la sécurité des personnes et des biens dès que le lanceur quitte la base de lancement.",
-    example: "Si un panneau solaire refuse de se déployer au lancement, le FC dispose de quelques minutes pour forcer le mécanisme à distance avant épuisement de la batterie.",
-    videos: [{ id: 'oXhQWfPAuAU', label: 'Témoignage : responsable sauvegarde vol' }],
-  },
-  {
     icon: '📐',
     color: 'sky',
     title: 'Ingénieur Trajectoire & Orbitographie',
@@ -40,9 +31,9 @@ const GROUND_JOBS = [
   {
     icon: '🚀',
     color: 'amber',
-    title: 'Ingénieur / Technicien Opérations',
-    subtitle: 'Satellite Operations Engineer',
-    desc: "Spécialiste des opérations de satellites et missions spatiales : suit le déroulement des missions, coordonne avec les équipes ISS, gère les amarrages de vaisseaux (Dragon, Soyuz, Cygnus) et assure le lien entre Houston, Moscou, Toulouse et Tsukuba.",
+    title: 'Contrôleur de Vol & Ingénieur Opérations',
+    subtitle: 'Flight Controller & Operations Engineer',
+    desc: "Surveille en temps réel la santé du satellite (énergie, température, orientation, propulsion) et applique des procédures d'urgence en quelques minutes. Suit le déroulement des missions, coordonne avec les équipes ISS, gère les amarrages de vaisseaux (Dragon, Soyuz, Cygnus) et assure le lien entre Houston, Moscou, Toulouse et Tsukuba.",
     example: "Lors de l'amarrage d'un Dragon SpaceX, jusqu'à 6 centres de contrôle sur 3 continents communiquent simultanément pour valider chaque étape de l'approche finale.",
     videos: [{ id: 'QqkNx23Zv2s', label: 'Témoignage : ingénieur / technicien opérations' }],
   },
