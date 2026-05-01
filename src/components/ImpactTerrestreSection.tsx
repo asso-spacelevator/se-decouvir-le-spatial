@@ -161,11 +161,6 @@ function GroundStationsBlock() {
               {isOpen && (
                 <div className="px-5 pb-5">
                   <p className="text-gray-300 text-sm leading-relaxed mb-3">{job.desc}</p>
-                  <div className="flex flex-wrap gap-1.5 mb-3">
-                    {job.tags.map(t => (
-                      <span key={t} className={`text-xs px-2 py-0.5 rounded-full border ${c.tag}`}>{t}</span>
-                    ))}
-                  </div>
                   <div className={`rounded-lg p-3 ${c.bg} border ${c.ring}`}>
                     <p className="text-xs text-gray-300 leading-relaxed">
                       <strong className={`${c.text} block mb-1`}>Exemple concret</strong>
