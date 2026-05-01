@@ -1,10 +1,186 @@
 import { useState, useEffect } from 'react';
-import { Earth, ChevronRight, CheckCircle } from 'lucide-react';
+import { Earth, ChevronRight, CheckCircle, Radio } from 'lucide-react';
 import { useSession } from '../contexts/SessionContext';
 import { Subsection } from './Subsection';
 import { Navigation } from './Navigation';
 import { Quiz } from './Quiz';
 import { AvatarGuide } from './AvatarGuide';
+
+/* ─────────────────────────────────────────
+   Ground Stations & Opérateurs au sol block
+   ───────────────────────────────────────── */
+const GROUND_JOBS = [
+  {
+    icon: '🖥️',
+    color: 'emerald',
+    title: 'Contrôleur de Vol',
+    subtitle: 'Flight Controller',
+    desc: 'Surveille en temps réel la santé du satellite (énergie, température, orientation, propulsion). En cas d\'alarme, il diagnostique et applique des procédures d\'urgence en quelques minutes — le médecin urgentiste du satellite.',
+    example: 'Si un panneau solaire refuse de se déployer au lancement, le FC dispose de quelques minutes pour forcer le mécanisme à distance avant épuisement de la batterie.',
+    tags: ['24/7', 'Procédures d\'urgence', 'Systèmes embarqués'],
+  },
+  {
+    icon: '📐',
+    color: 'sky',
+    title: 'Ingénieur Trajectoire',
+    subtitle: 'Orbital Mechanics Engineer',
+    desc: 'Calcule et corrige l\'orbite tout au long de la vie du satellite. Prépare les manœuvres d\'évitement de débris, les corrections de cap et la déorbitisation finale avec une précision de quelques cm/s.',
+    example: 'L\'ISS effectue en moyenne 2 manœuvres d\'évitement de débris par an — préparées par les équipes trajectoire de Houston et Moscou.',
+    tags: ['Astrodynamique', 'Python / MATLAB', 'Physique avancée'],
+  },
+  {
+    icon: '🗑️',
+    color: 'orange',
+    title: 'Spécialiste Débris Spatiaux',
+    subtitle: 'Space Debris Analyst',
+    desc: 'Surveille les 35 000+ objets catalogués en orbite (débris de lanceurs, satellites morts, fragments de collisions). Calcule les probabilités de collision et émet des alertes pour les opérateurs de satellites actifs.',
+    example: 'Le réseau Space Fence de l\'US Space Force détecte des objets de 10 cm en LEO. En Europe, l\'ESA gère le service SST (Space Surveillance and Tracking) depuis son centre de Darmstadt.',
+    tags: ['Surveillance radar', 'Modélisation', 'SST / SSA'],
+  },
+  {
+    icon: '🚀',
+    color: 'amber',
+    title: 'Opérateur ISS',
+    subtitle: 'ISS Flight Controller',
+    desc: 'Spécialiste des systèmes de la Station Spatiale Internationale : gestion de l\'atmosphère interne, des systèmes de survie, des amarrages de vaisseaux (Dragon, Soyuz, Cygnus). Travaille en coordination avec Houston, Moscou, Toulouse et Tsukuba.',
+    example: 'Lors de l\'amarrage d\'un Dragon SpaceX, jusqu\'à 6 centres de contrôle sur 3 continents communiquent simultanément pour valider chaque étape de l\'approche finale.',
+    tags: ['ISS', 'Systèmes de survie', 'Multi-centres'],
+  },
+  {
+    icon: '📡',
+    color: 'teal',
+    title: 'Opérateur Télécommunications Sol',
+    subtitle: 'Ground Station Operator',
+    desc: 'Gère les antennes paraboliques qui "parlent" au satellite : planifie les fenêtres de contact, encode les télécommandes et décode la télémétrie. Sans liaison sol, le satellite est sourd et muet.',
+    example: 'Pour Mars Express, chaque session dure 8 à 10 h et doit être réservée des jours à l\'avance en fonction de la géométrie Terre–Mars et de la disponibilité des antennes du réseau DSN.',
+    tags: ['RF & antennes', 'CCSDS', 'Planification de contacts'],
+  },
+  {
+    icon: '🔭',
+    color: 'violet',
+    title: 'Ingénieur Charge Utile',
+    subtitle: 'Payload Engineer',
+    desc: 'Programme les séquences d\'observation de l\'instrument scientifique ou commercial embarqué (caméra, radar, sondeur météo…), calibre les capteurs et analyse la qualité des données reçues. Interface entre les scientifiques et le satellite.',
+    example: 'Les opérateurs payload de l\'ESAC (Espagne) programment chaque semaine les pointages du télescope Cheops vers les exoplanètes prioritaires des chercheurs européens.',
+    tags: ['Optique / radar', 'Traitement du signal', 'Science spatiale'],
+  },
+];
+
+const GS_COLOR: Record<string, { ring: string; bg: string; text: string; tag: string }> = {
+  emerald: { ring: 'border-emerald-400/40', bg: 'bg-emerald-500/10', text: 'text-emerald-300', tag: 'bg-emerald-500/10 text-emerald-400 border-emerald-400/20' },
+  sky:     { ring: 'border-sky-400/40',     bg: 'bg-sky-500/10',     text: 'text-sky-300',     tag: 'bg-sky-500/10 text-sky-400 border-sky-400/20' },
+  orange:  { ring: 'border-orange-400/40',  bg: 'bg-orange-500/10',  text: 'text-orange-300',  tag: 'bg-orange-500/10 text-orange-400 border-orange-400/20' },
+  amber:   { ring: 'border-amber-400/40',   bg: 'bg-amber-500/10',   text: 'text-amber-300',   tag: 'bg-amber-500/10 text-amber-400 border-amber-400/20' },
+  teal:    { ring: 'border-teal-400/40',    bg: 'bg-teal-500/10',    text: 'text-teal-300',    tag: 'bg-teal-500/10 text-teal-400 border-teal-400/20' },
+  violet:  { ring: 'border-blue-400/40',    bg: 'bg-blue-500/10',    text: 'text-blue-300',    tag: 'bg-blue-500/10 text-blue-400 border-blue-400/20' },
+};
+
+function GroundStationsBlock() {
+  const [open, setOpen] = useState<number | null>(null);
+  return (
+    <div className="mb-8">
+      {/* Header */}
+      <div className="flex items-center gap-3 mb-4">
+        <div className="w-10 h-10 rounded-xl bg-emerald-500/15 border border-emerald-400/30 flex items-center justify-center flex-shrink-0">
+          <Radio className="w-5 h-5 text-emerald-400" />
+        </div>
+        <div>
+          <h3 className="text-xl font-bold text-white">Stations Sol & Opérations Satellite</h3>
+          <p className="text-gray-400 text-xs mt-0.5">Les équipes invisibles qui pilotent l'espace depuis la Terre</p>
+        </div>
+      </div>
+
+      {/* Intro + photo */}
+      <div className="bg-white/5 rounded-2xl border border-white/10 overflow-hidden mb-5">
+        <div className="relative">
+          <img
+            src="https://images.pexels.com/photos/586056/pexels-photo-586056.jpeg"
+            alt="Salle de contrôle spatiale type ESOC Darmstadt"
+            className="w-full object-cover h-52"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-transparent to-transparent" />
+          <div className="absolute bottom-4 left-5 right-5">
+            <span className="text-xs text-gray-300 bg-black/40 px-2 py-1 rounded">
+              Salle d'opérations — type ESOC, Darmstadt (Allemagne) · ESA
+            </span>
+          </div>
+        </div>
+        <div className="p-5">
+          <p className="text-gray-300 text-sm leading-relaxed mb-4">
+            Chaque satellite en orbite est surveillé et commandé depuis la Terre, 24 h/24. Ces centres —
+            appelés <strong className="text-white">stations sol</strong> — sont équipés d'antennes paraboliques,
+            de serveurs de calcul et de consoles de contrôle qui échangent des milliers de commandes par jour
+            avec l'espace. Le plus grand centre européen est l'<strong className="text-white">ESOC</strong>{' '}
+            (European Space Operations Centre) à <strong className="text-white">Darmstadt, Allemagne</strong>,
+            qui contrôle plus de 20 missions ESA simultanément — de l'orbite basse jusqu'aux sondes interplanétaires.
+          </p>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {[
+              { v: '1967', l: 'Fondation ESOC' },
+              { v: '20+',  l: 'Missions contrôlées' },
+              { v: '24/7', l: 'Opérations continues' },
+              { v: '900+', l: 'Experts sur site' },
+            ].map(s => (
+              <div key={s.l} className="bg-white/5 rounded-xl p-3 border border-white/10 text-center">
+                <div className="text-xl font-bold text-emerald-400">{s.v}</div>
+                <div className="text-xs text-gray-400 mt-0.5">{s.l}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Métiers */}
+      <p className="text-gray-400 text-sm mb-3">Clique sur un métier pour en savoir plus.</p>
+      <div className="space-y-2">
+        {GROUND_JOBS.map((job, i) => {
+          const c = GS_COLOR[job.color];
+          const isOpen = open === i;
+          return (
+            <div
+              key={i}
+              className={`rounded-xl border transition-all duration-300 overflow-hidden ${isOpen ? `${c.bg} ${c.ring}` : 'border-white/10 bg-white/3 hover:bg-white/6 hover:border-white/20'}`}
+            >
+              <button
+                className="w-full flex items-center gap-4 px-5 py-4 text-left"
+                onClick={() => setOpen(isOpen ? null : i)}
+              >
+                <span className="text-xl flex-shrink-0">{job.icon}</span>
+                <div className="flex-1 min-w-0">
+                  <span className="font-semibold text-white text-sm">{job.title}</span>
+                  <span className="text-gray-500 text-xs ml-2">{job.subtitle}</span>
+                </div>
+                <svg
+                  className={`w-4 h-4 text-gray-400 transition-transform duration-300 flex-shrink-0 ${isOpen ? 'rotate-180' : ''}`}
+                  fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+
+              {isOpen && (
+                <div className="px-5 pb-5">
+                  <p className="text-gray-300 text-sm leading-relaxed mb-3">{job.desc}</p>
+                  <div className="flex flex-wrap gap-1.5 mb-3">
+                    {job.tags.map(t => (
+                      <span key={t} className={`text-xs px-2 py-0.5 rounded-full border ${c.tag}`}>{t}</span>
+                    ))}
+                  </div>
+                  <div className={`rounded-lg p-3 ${c.bg} border ${c.ring}`}>
+                    <p className="text-xs text-gray-300 leading-relaxed">
+                      <strong className={`${c.text} block mb-1`}>Exemple concret</strong>
+                      {job.example}
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
 
 const IMPACT_LINES = [
   { speaker: 'girl' as const, text: "Cette section, c'est la grande question : qu'est-ce que l'espace change concrètement pour nous sur Terre ?" },
@@ -364,6 +540,9 @@ export function ImpactTerrestreSection({ onComplete, onHome, onBack }: ImpactTer
 
           </div>
         </div>
+
+        {/* ── Stations Sol & Opérations ── */}
+        <GroundStationsBlock />
 
         <Subsection
           title="Coopération Internationale : l'Espace comme Terrain de Paix"
