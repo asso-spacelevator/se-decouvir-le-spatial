@@ -172,7 +172,7 @@ function SpinOffBlock() {
       </div>
       <p className="text-gray-400 text-sm mb-6">
         Vous utilisez chaque jour des technologies inventées pour conquérir l'espace, sans même le savoir.
-        <span className="ml-1 text-gray-500">Passez votre souris sur un objet pour voir la comparaison.</span>
+     
       </p>
       <div className="space-y-4">
         {SPINOFFS.map((item, i) => {
