@@ -108,7 +108,7 @@ const SPINOFFS = [
     title: 'Capteur photo CMOS (smartphone)',
     desc: "En 1993, le JPL de la NASA développe un capteur d'image miniaturisé à faible consommation pour équiper les sondes spatiales. Cette invention constitue aujourd'hui le cœur de tous les appareils photo de smartphones — soit des milliards de capteurs produits chaque année.",
     imgDaily: 'https://images.pexels.com/photos/1828109/pexels-photo-1828109.jpeg',
-    imgSpace: 'https://images.pexels.com/photos/30596313/pexels-photo-30596313.jpeg',
+    imgSpace: 'https://images.pexels.com/photos/30596313/pexels-photo-30596313.png',
     labelDaily: 'Photographier avec son smartphone',
     labelSpace: 'Image satellitaire de la Terre (Copernicus/ESA)',
   },
