@@ -264,8 +264,8 @@ function GroundStationsBlock() {
           </div>
         </div>
         <div className="p-5">
-          <p className="text-gray-300 text-sm leading-relaxed mb-3">
-            As Europe's centre of excellence for mission operations, the <strong className="text-white">European Space Operations Centre (ESOC)</strong> is home to the engineers who control spacecraft in orbit, manage our global tracking station network, and design and build the systems on ground that support missions in space. Over 60 satellites belonging to ESA and its partners have been flown from Darmstadt, Germany.
+          <p className="text-gray-400 text-xs italic leading-relaxed mb-4 border-l-2 border-white/20 pl-3">
+            Centre d'excellence européen pour les opérations de mission, l'ESOC abrite les ingénieurs qui contrôlent les engins spatiaux en orbite, gèrent le réseau mondial de stations sol et conçoivent les systèmes au sol qui soutiennent les missions dans l'espace. Plus de 60 satellites appartenant à l'ESA et à ses partenaires ont été pilotés depuis Darmstadt, Allemagne. <span className="text-gray-500">— © ESA</span>
           </p>
           <p className="text-gray-300 text-sm leading-relaxed mb-4">
             Chaque satellite en orbite est surveillé et commandé depuis la Terre, 24 h/24. Ces centres d'opération sont équipés de serveurs de calcul et de consoles de contrôle qui échangent des milliers de commandes par jour avec l'espace. Ils sont reliés à des dizaines de <strong className="text-white">stations sol</strong> réparties dans le monde pour pouvoir contacter le plus souvent possible les satellites. Le plus grand centre européen est l'<strong className="text-white">ESOC</strong> (European Space Operations Centre) à <strong className="text-white">Darmstadt, Allemagne</strong>, qui contrôle plus de 20 missions ESA simultanément — de l'orbite basse jusqu'aux sondes interplanétaires.
@@ -526,7 +526,7 @@ export function ImpactTerrestreSection({ onComplete, onHome, onBack }: ImpactTer
               d'autres révèlent la présence de bactéries dans l'eau !
             </p>
 
-            <div className="grid md:grid-cols-3 gap-4">
+            <div className="grid md:grid-cols-2 gap-4">
               <div className="flex flex-col gap-2">
                 <div className="rounded-lg overflow-hidden border border-white/10 aspect-[4/3] bg-black/30">
                   <img
@@ -557,20 +557,6 @@ export function ImpactTerrestreSection({ onComplete, onHome, onBack }: ImpactTer
                 <p className="text-blue-200/40 text-xs">Source : ESA / Sentinel-5P TROPOMI, 2022</p>
               </div>
 
-              <div className="flex flex-col gap-2">
-                <div className="rounded-lg overflow-hidden border border-white/10 aspect-[4/3] bg-black/30">
-                  <img
-                    src="https://sentinels.copernicus.eu/documents/4634164/4650239/Time-lapses-cyanobacteria-distribution-maps.png"
-                    alt="Sentinel-3 — Cartographie des cyanobactéries dans les lacs"
-                    className="w-full h-full object-cover object-top"
-                  />
-                </div>
-                <p className="text-white text-xs font-semibold">Cyanobactéries dans les lacs</p>
-                <p className="text-blue-200/70 text-xs leading-relaxed">
-                  Sentinel-3 cartographie les bactéries potentiellement toxiques dans les lacs pour protéger la santé publique.
-                </p>
-                <p className="text-blue-200/40 text-xs">Source : ESA / Sentinel-3, Copernicus</p>
-              </div>
             </div>
           </div>
         </div>
