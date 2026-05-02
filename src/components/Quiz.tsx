@@ -12,6 +12,7 @@ interface QuizQuestion {
   question: string;
   options: QuizOption[];
   explanation: string;
+  image?: { src: string; alt: string; credit?: string };
 }
 
 interface QuizProps {
@@ -70,6 +71,21 @@ export function Quiz({ questions, onScoreUpdate, onComplete }: QuizProps) {
 
       <div className="mb-6">
         <p className="text-lg text-gray-200 mb-4 leading-relaxed">{currentQuestion.question}</p>
+
+        {currentQuestion.image && (
+          <div className="relative mb-4 rounded-xl overflow-hidden border border-white/10">
+            <img
+              src={currentQuestion.image.src}
+              alt={currentQuestion.image.alt}
+              className="w-full object-cover max-h-56"
+            />
+            {currentQuestion.image.credit && (
+              <span className="absolute bottom-2 right-3 text-xs text-gray-300 bg-black/50 px-2 py-0.5 rounded">
+                {currentQuestion.image.credit}
+              </span>
+            )}
+          </div>
+        )}
 
         <div className="space-y-3">
           {currentQuestion.options.map((option) => {

@@ -414,6 +414,22 @@ export function ImpactTerrestreSection({ onComplete, onHome, onBack }: ImpactTer
         { id: 'd', text: 'Uniquement les gouvernements européens', isCorrect: false }
       ],
       explanation: 'Plus de 80 % des bénéfices économiques de Copernicus sont générés en dehors du secteur spatial ! Les données sont utilisées dans des domaines très variés : les agriculteurs optimisent leurs récoltes, les assureurs évaluent les catastrophes naturelles, les autorités surveillent la qualité de l\'air, les pêcheurs localisent les zones poissonneuses... Ces données gratuites créent une valeur immense pour toute l\'économie.'
+    },
+    {
+      id: 'impact_q3',
+      question: 'Quelle est la taille de la plus grande antenne au sol utilisée pour les télécommunications spatiales ?',
+      image: {
+        src: 'https://www.nasa.gov/wp-content/uploads/2020/03/dsn-stadium-final.jpg?resize=900,900',
+        alt: 'Antenne parabolique de 70 mètres de Goldstone — Deep Space Network NASA',
+        credit: '© NASA / Deep Space Network'
+      },
+      options: [
+        { id: 'a', text: '10 mètres', isCorrect: false },
+        { id: 'b', text: '34 mètres', isCorrect: false },
+        { id: 'c', text: '70 mètres', isCorrect: true },
+        { id: 'd', text: '120 mètres', isCorrect: false }
+      ],
+      explanation: 'L\'antenne de 70 mètres de Goldstone, en Californie, fait partie du Deep Space Network (DSN) de la NASA — le réseau mondial d\'antennes géantes qui maintient le contact avec les sondes spatiales lointaines. Pour comparaison, elle est plus large qu\'un terrain de football ! Ce colosse peut capter des signaux émis par des sondes situées à des milliards de kilomètres de la Terre.'
     }
   ];
 
