@@ -403,6 +403,17 @@ export function ImpactTerrestreSection({ onComplete, onHome, onBack }: ImpactTer
         { id: 'd', text: 'Hubble', isCorrect: false }
       ],
       explanation: 'Copernicus est le programme européen d\'observation de la Terre de l\'ESA. Ses données sont entièrement ouvertes et gratuites : elles servent à surveiller les forêts, mesurer la fonte des glaces, anticiper les catastrophes naturelles et guider les agriculteurs. C\'est le programme de données spatiales le plus utilisé au monde.'
+    },
+    {
+      id: 'impact_q2',
+      question: 'Parmi ces secteurs, lequel utilise les données Copernicus ?',
+      options: [
+        { id: 'a', text: 'Uniquement les agences spatiales', isCorrect: false },
+        { id: 'b', text: 'Uniquement les météorologues', isCorrect: false },
+        { id: 'c', text: 'Agriculture, pêche, assurances, qualité de l\'air...', isCorrect: true },
+        { id: 'd', text: 'Uniquement les gouvernements européens', isCorrect: false }
+      ],
+      explanation: 'Plus de 80 % des bénéfices économiques de Copernicus sont générés en dehors du secteur spatial ! Les données sont utilisées dans des domaines très variés : les agriculteurs optimisent leurs récoltes, les assureurs évaluent les catastrophes naturelles, les autorités surveillent la qualité de l\'air, les pêcheurs localisent les zones poissonneuses... Ces données gratuites créent une valeur immense pour toute l\'économie.'
     }
   ];
 
@@ -479,18 +490,38 @@ export function ImpactTerrestreSection({ onComplete, onHome, onBack }: ImpactTer
             Source : CGDD, 2025 — d'après le Stockholm Resilience Centre
           </p>
 
-          <a
-            href="https://www.notre-environnement.gouv.fr/themes/climate/les-observations-du-changement-climatique-ressources/article/comprendre-le-changement-climatique-causes-et-impacts-en-france"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-emerald-500/15 border border-emerald-400/30 text-emerald-300 hover:bg-emerald-500/25 hover:border-emerald-400/60 transition-all duration-200 text-sm font-medium group"
-          >
-            <span>🌍</span>
-            <span>Comprendre le changement climatique : causes et impacts en France</span>
-            <svg className="w-4 h-4 opacity-60 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-            </svg>
-          </a>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <a
+              href="https://www.notre-environnement.gouv.fr/themes/climate/les-observations-du-changement-climatique-ressources/article/comprendre-le-changement-climatique-causes-et-impacts-en-france"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-emerald-500/15 border border-emerald-400/30 text-emerald-300 hover:bg-emerald-500/25 hover:border-emerald-400/60 transition-all duration-200 text-sm font-medium group"
+            >
+              <span>🌍</span>
+              <span>Comprendre le changement climatique : causes et impacts en France</span>
+              <svg className="w-4 h-4 opacity-60 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+              </svg>
+            </a>
+            <a
+              href="https://www.copernicus.eu/sites/default/files/Brochure%20Copernicus%20FR%20web.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-blue-500/15 border border-blue-400/30 text-blue-300 hover:bg-blue-500/25 hover:border-blue-400/60 transition-all duration-200 text-sm font-medium group"
+            >
+              <span>🛰️</span>
+              <span>Brochure Copernicus — Programme européen d'observation de la Terre (PDF)</span>
+              <svg className="w-4 h-4 opacity-60 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+              </svg>
+            </a>
+          </div>
+
+          <div className="mt-6 rounded-xl bg-blue-500/10 border border-blue-400/20 p-4">
+            <p className="text-blue-200 text-sm leading-relaxed">
+              <strong className="text-blue-300">Le saviez-vous ?</strong> Selon les estimations, plus de 80 % des bénéfices économiques de Copernicus seront générés <em>en dehors</em> du secteur spatial, grâce à l'utilisation de ses données dans d'autres branches de l'économie : agriculture, pêche, assurances, qualité de l'air, et bien d'autres.
+            </p>
+          </div>
         </div>
 
         {/* ── Surveillance des Océans ── */}
