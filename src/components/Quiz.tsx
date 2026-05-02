@@ -72,21 +72,6 @@ export function Quiz({ questions, onScoreUpdate, onComplete }: QuizProps) {
       <div className="mb-6">
         <p className="text-lg text-gray-200 mb-4 leading-relaxed">{currentQuestion.question}</p>
 
-        {currentQuestion.image && (
-          <div className="relative mb-4 rounded-xl overflow-hidden border border-white/10">
-            <img
-              src={currentQuestion.image.src}
-              alt={currentQuestion.image.alt}
-              className="w-full object-cover max-h-56"
-            />
-            {currentQuestion.image.credit && (
-              <span className="absolute bottom-2 right-3 text-xs text-gray-300 bg-black/50 px-2 py-0.5 rounded">
-                {currentQuestion.image.credit}
-              </span>
-            )}
-          </div>
-        )}
-
         <div className="space-y-3">
           {currentQuestion.options.map((option) => {
             const isSelected = selectedAnswer === option.id;
@@ -129,13 +114,25 @@ export function Quiz({ questions, onScoreUpdate, onComplete }: QuizProps) {
 
       {showFeedback && (
         <div
-          className={`mb-6 p-4 rounded-lg border-2 ${
-            isCorrect
-              ? 'border-green-500 bg-green-500/10'
-              : 'border-red-500 bg-red-500/10'
+          className={`mb-6 rounded-lg border-2 overflow-hidden ${
+            isCorrect ? 'border-green-500 bg-green-500/10' : 'border-red-500 bg-red-500/10'
           } animate-fadeIn`}
         >
-          <div className="flex items-start gap-3">
+          {currentQuestion.image && (
+            <div className="relative">
+              <img
+                src={currentQuestion.image.src}
+                alt={currentQuestion.image.alt}
+                className="w-full object-contain"
+              />
+              {currentQuestion.image.credit && (
+                <span className="absolute bottom-2 right-3 text-xs text-gray-300 bg-black/60 px-2 py-0.5 rounded">
+                  {currentQuestion.image.credit}
+                </span>
+              )}
+            </div>
+          )}
+          <div className="flex items-start gap-3 p-4">
             {isCorrect ? (
               <CheckCircle className="w-6 h-6 text-green-400 flex-shrink-0 mt-1" />
             ) : (

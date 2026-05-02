@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Earth, ChevronRight, CheckCircle, Radio, Globe } from 'lucide-react';
+import { Earth, ChevronRight, CheckCircle, Radio, Globe, ExternalLink } from 'lucide-react';
 import { useSession } from '../contexts/SessionContext';
 import { Subsection } from './Subsection';
 import { Navigation } from './Navigation';
@@ -687,18 +687,52 @@ export function ImpactTerrestreSection({ onComplete, onHome, onBack }: ImpactTer
           <div className="mb-6">
             <h4 className="text-white font-semibold text-sm mb-3">Grands projets de coopération internationale</h4>
             <div className="grid md:grid-cols-2 gap-3">
-              {[
-                { name: 'Télescope James Webb', partners: 'NASA · ESA · CSA', desc: "Le plus grand télescope spatial jamais construit. Observe les premières galaxies de l'Univers depuis le point de Lagrange L2." },
-                { name: 'Station Spatiale Internationale', partners: 'NASA · Roscosmos · ESA · JAXA · CSA', desc: 'Laboratoire orbital habité en continu depuis novembre 2000. Symbole ultime de la coopération internationale.' },
-                { name: 'ExoMars', partners: 'ESA · Roscosmos', desc: "Programme d'exploration de Mars pour rechercher des traces de vie passée ou présente sur la planète rouge." },
-                { name: 'Artémis / Lunar Gateway', partners: 'NASA · ESA · JAXA · CSA', desc: "Retour humain sur la Lune et future station orbitale lunaire pour préparer l'exploration de Mars." },
-              ].map(p => (
-                <div key={p.name} className="bg-white/5 rounded-xl p-4 border border-white/10">
-                  <p className="text-white font-semibold text-sm mb-1">{p.name}</p>
-                  <p className="text-blue-300 text-xs mb-2">{p.partners}</p>
-                  <p className="text-gray-400 text-xs leading-relaxed">{p.desc}</p>
-                </div>
-              ))}
+              {/* James Webb */}
+              <div className="bg-white/5 rounded-xl p-4 border border-white/10 flex flex-col">
+                <p className="text-white font-semibold text-sm mb-1">Télescope James Webb</p>
+                <p className="text-blue-300 text-xs mb-2">NASA · ESA · CSA</p>
+                <p className="text-gray-400 text-xs leading-relaxed mb-3 flex-1">
+                  Le plus grand télescope spatial jamais construit, fruit de 15 ans de coopération internationale. Un symbole de ce que l'humanité peut accomplir ensemble.
+                </p>
+                <a
+                  href="https://www.esa.int/Space_in_Member_States/France/Il_y_a_un_an_le_lancement_parfait_du_telescope_spatial_James_Webb"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-xs text-cyan-400 hover:text-cyan-300 transition-colors group"
+                >
+                  <ExternalLink className="w-3 h-3 flex-shrink-0" />
+                  <span className="group-hover:underline">Lire l'article ESA (fr)</span>
+                </a>
+              </div>
+              {/* ISS */}
+              <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+                <p className="text-white font-semibold text-sm mb-1">Station Spatiale Internationale</p>
+                <p className="text-blue-300 text-xs mb-2">NASA · Roscosmos · ESA · JAXA · CSA</p>
+                <p className="text-gray-400 text-xs leading-relaxed">Laboratoire orbital habité en continu depuis novembre 2000. Symbole ultime de la coopération internationale.</p>
+              </div>
+              {/* ExoMars */}
+              <div className="bg-white/5 rounded-xl p-4 border border-white/10 flex flex-col">
+                <p className="text-white font-semibold text-sm mb-1">ExoMars</p>
+                <p className="text-blue-300 text-xs mb-2">ESA · Roscosmos</p>
+                <p className="text-gray-400 text-xs leading-relaxed mb-3 flex-1">
+                  Programme conjoint ESA–Roscosmos pour explorer Mars et rechercher des traces de vie. Preuve que la coopération scientifique peut dépasser les tensions politiques.
+                </p>
+                <a
+                  href="https://www.esa.int/Space_in_Member_States/France/Cap_sur_la_planete_rouge_avec_la_mission_ExoMars"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-xs text-cyan-400 hover:text-cyan-300 transition-colors group"
+                >
+                  <ExternalLink className="w-3 h-3 flex-shrink-0" />
+                  <span className="group-hover:underline">Lire l'article ESA (fr)</span>
+                </a>
+              </div>
+              {/* Artemis */}
+              <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+                <p className="text-white font-semibold text-sm mb-1">Artémis / Lunar Gateway</p>
+                <p className="text-blue-300 text-xs mb-2">NASA · ESA · JAXA · CSA</p>
+                <p className="text-gray-400 text-xs leading-relaxed">Retour humain sur la Lune et future station orbitale lunaire pour préparer l'exploration de Mars.</p>
+              </div>
             </div>
           </div>
 
