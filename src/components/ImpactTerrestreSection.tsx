@@ -371,6 +371,7 @@ export function ImpactTerrestreSection({ onComplete, onHome, onBack }: ImpactTer
   const [responses, setResponses] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
   const [quizCompleted, setQuizCompleted] = useState(false);
+  const [currentQuizIndex, setCurrentQuizIndex] = useState(0);
 
   useEffect(() => {
     const loadResponses = async () => {
@@ -381,6 +382,17 @@ export function ImpactTerrestreSection({ onComplete, onHome, onBack }: ImpactTer
   }, []);
 
   const quizQuestions = [
+    {
+      id: 'impact_q0',
+      question: 'Combien de satellites utilises-tu au cours d\'une journée (en moyenne) ?',
+      options: [
+        { id: 'a', text: 'Aucun, je ne suis pas astronaute', isCorrect: false },
+        { id: 'b', text: 'Entre 2 et 4', isCorrect: false },
+        { id: 'c', text: 'Au moins 8, souvent bien plus', isCorrect: true },
+        { id: 'd', text: 'Exactement 1 (mon téléphone)', isCorrect: false }
+      ],
+      explanation: 'Sans t\'en rendre compte, tu utilises des dizaines de satellites chaque jour ! Le matin pour aller à l\'école : au moins 4 satellites GPS te localisent. Tes appels, SMS et internet passent par des satellites télécom (+2). Tu regardes la météo ? +2 satellites météo. La nourriture de ta cantine vient de champs surveillés depuis l\'espace par des satellites agricoles. Ce n\'est qu\'une moyenne — parfois plus, parfois moins. L\'espace est partout dans ton quotidien !'
+    },
     {
       id: 'impact_q1',
       question: 'Quel programme spatial européen fournit des données environnementales en accès libre à tous ?',
@@ -400,7 +412,9 @@ export function ImpactTerrestreSection({ onComplete, onHome, onBack }: ImpactTer
   };
 
   const handleQuizScoreUpdate = async (points: number) => {
-    await saveQuizScore('impact_terrestre', 'impact_q1', points, points > 0);
+    const questionId = quizQuestions[currentQuizIndex]?.id ?? 'impact_q0';
+    await saveQuizScore('impact_terrestre', questionId, points, points > 0);
+    setCurrentQuizIndex(prev => prev + 1);
   };
 
   const handleQuizComplete = () => {
