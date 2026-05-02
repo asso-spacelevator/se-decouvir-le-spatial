@@ -61,17 +61,11 @@ export function Quiz({ questions, onScoreUpdate, onComplete }: QuizProps) {
 
   return (
     <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10">
-      <div className="flex justify-between items-center mb-6">
-        <div>
-          <h3 className="text-2xl font-semibold">Quiz Interactif</h3>
-          <p className="text-gray-400 text-sm mt-1">
-            Question {currentQuestionIndex + 1} sur {questions.length}
-          </p>
-        </div>
-        <div className="text-right">
-          <div className="text-3xl font-bold text-cyan-400">{score}</div>
-          <div className="text-xs text-gray-400">points</div>
-        </div>
+      <div className="mb-6">
+        <h3 className="text-2xl font-semibold">Quiz Interactif</h3>
+        <p className="text-gray-400 text-sm mt-1">
+          Question {currentQuestionIndex + 1} sur {questions.length}
+        </p>
       </div>
 
       <div className="mb-6">
@@ -133,7 +127,7 @@ export function Quiz({ questions, onScoreUpdate, onComplete }: QuizProps) {
             )}
             <div>
               <p className={`font-semibold mb-2 ${isCorrect ? 'text-green-300' : 'text-red-300'}`}>
-                {isCorrect ? 'Bonne réponse ! +10 points' : 'Mauvaise réponse. -5 points'}
+                {isCorrect ? 'Bonne réponse !' : 'Mauvaise réponse.'}
               </p>
               <p className="text-gray-300 text-sm leading-relaxed">{currentQuestion.explanation}</p>
             </div>
