@@ -1,6 +1,8 @@
+import { useState, useEffect } from 'react';
 import { ChevronRight, Rocket, Satellite, Globe, Star } from 'lucide-react';
 import { Navigation } from './Navigation';
 import { AvatarGuide } from './AvatarGuide';
+import { useSession } from '../contexts/SessionContext';
 
 const INTRO_LINES = [
   { speaker: 'girl' as const, text: "Bienvenue ! Avant de plonger dans les sections, voici un aperçu de ce qui t'attend." },
@@ -16,6 +18,25 @@ interface IntroductionPageProps {
 }
 
 export function IntroductionPage({ onContinue, onHome, onBack }: IntroductionPageProps) {
+  const { saveResponse, getResponses } = useSession();
+  const [words, setWords] = useState<string[]>(['', '', '', '', '']);
+
+  useEffect(() => {
+    (async () => {
+      const saved = await getResponses('introduction');
+      if (saved.spaceWords) {
+        const parsed = JSON.parse(saved.spaceWords) as string[];
+        setWords(parsed);
+      }
+    })();
+  }, []);
+
+  const handleWordChange = async (index: number, value: string) => {
+    const updated = words.map((w, i) => (i === index ? value : w));
+    setWords(updated);
+    await saveResponse('introduction', 'spaceWords', JSON.stringify(updated));
+  };
+
   return (
     <div className="min-h-screen relative overflow-hidden">
       <div className="starry-background absolute inset-0"></div>
@@ -136,6 +157,28 @@ export function IntroductionPage({ onContinue, onHome, onBack }: IntroductionPag
                   </p>
                 </div>
               </div>
+            </div>
+          </div>
+
+          {/* Question : 5 mots spatial */}
+          <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10 mb-10">
+            <p className="text-lg font-semibold text-white mb-6 text-center">
+              Écris 5 mots qui te font penser au domaine du spatial
+            </p>
+            <div className="flex flex-wrap gap-3 justify-center">
+              {words.map((word, i) => (
+                <div key={i} className="flex items-center gap-2">
+                  <span className="text-xs font-bold text-blue-400 w-4 text-center">{i + 1}</span>
+                  <input
+                    type="text"
+                    value={word}
+                    onChange={(e) => handleWordChange(i, e.target.value)}
+                    placeholder={`Mot ${i + 1}`}
+                    maxLength={30}
+                    className="w-36 bg-white/8 border border-white/15 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
+                  />
+                </div>
+              ))}
             </div>
           </div>
 
