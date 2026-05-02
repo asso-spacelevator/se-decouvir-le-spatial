@@ -108,9 +108,10 @@ const SPINOFFS = [
     title: 'Capteur photo CMOS (smartphone)',
     desc: "En 1993, le JPL de la NASA développe un capteur d'image miniaturisé à faible consommation pour équiper les sondes spatiales. Cette invention constitue aujourd'hui le cœur de tous les appareils photo de smartphones — soit des milliards de capteurs produits chaque année.",
     imgDaily: 'https://images.pexels.com/photos/1828109/pexels-photo-1828109.jpeg',
-    imgSpace: 'https://images.pexels.com/photos/30596313/pexels-photo-30596313.png',
+    imgSpace: 'https://www.copernicus.eu/system/files/styles/image_of_the_day/private/2024-12/image_day/20241231_Seine%20river.png?itok=Zg_IUmBQ',
     labelDaily: 'Photographier avec son smartphone',
-    labelSpace: 'Image satellitaire de la Terre (Copernicus/ESA)',
+    labelSpace: "La Seine vue par Sentinel-2 — l'ESA propose de recevoir une image de votre région chaque jour",
+    creditSpace: '© Union européenne, Copernicus Sentinel-2',
   },
   {
     icon: '📍',
@@ -216,6 +217,9 @@ function SpinOffBlock() {
                       <div className="absolute bottom-0 left-0 right-0 p-3">
                         <span className="block text-xs text-gray-300 font-semibold uppercase tracking-wide mb-0.5">Origine spatiale</span>
                         <span className="block text-xs text-white leading-snug">{item.labelSpace}</span>
+                        {'creditSpace' in item && (
+                          <span className="block text-[10px] text-gray-400 mt-1 italic">{(item as typeof item & { creditSpace: string }).creditSpace}</span>
+                        )}
                       </div>
                     </div>
                   </div>
