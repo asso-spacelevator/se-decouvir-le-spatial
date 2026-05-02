@@ -524,6 +524,77 @@ export function ImpactTerrestreSection({ onComplete, onHome, onBack }: ImpactTer
           </div>
         </div>
 
+        {/* ── Le saviez-vous ? La flotte Copernicus ── */}
+        <div className="bg-gradient-to-br from-blue-900/30 to-slate-900/30 backdrop-blur-sm rounded-2xl p-8 border border-blue-500/20 mb-8">
+          <div className="flex items-center gap-3 mb-5">
+            <span className="text-2xl">🛰️</span>
+            <h3 className="text-2xl font-semibold">Le saviez-vous ? La flotte Copernicus</h3>
+          </div>
+
+          <p className="text-gray-300 leading-relaxed mb-6">
+            Afin d'offrir une grande quantité de données de bonne qualité, le programme Copernicus est composé d'une
+            flotte de <strong className="text-blue-300">20 satellites</strong>, dont 7 sont déjà en orbite. Tous ne
+            prennent pas des images dans le spectre du visible : certains sont capables de détecter des gaz invisibles
+            à l'œil nu, d'autres encore révèlent la présence de bactéries dans l'eau !
+          </p>
+
+          <div className="grid md:grid-cols-3 gap-5">
+            {/* Image 1 : Piton de la Fournaise */}
+            <div className="flex flex-col gap-3">
+              <div className="rounded-xl overflow-hidden border border-white/10 aspect-[4/3] bg-black/30">
+                <img
+                  src="https://esa.int/var/esa/storage/images/esa_multimedia/images/2016/05/piton_de_la_fournaise/15985095-1-eng-GB/Piton_de_la_Fournaise.jpg"
+                  alt="Sentinel-1 — Piton de la Fournaise, La Réunion"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div>
+                <p className="text-white text-sm font-semibold mb-1">Piton de la Fournaise, La Réunion</p>
+                <p className="text-gray-400 text-xs leading-relaxed">
+                  Image radar Sentinel-1 du volcan en éruption. Les satellites radar voient à travers les nuages et de nuit, permettant un suivi continu des déformations du sol.
+                </p>
+                <p className="text-gray-600 text-xs mt-1">Source : ESA / Sentinel-1, 2016</p>
+              </div>
+            </div>
+
+            {/* Image 2 : Dioxyde de soufre */}
+            <div className="flex flex-col gap-3">
+              <div className="rounded-xl overflow-hidden border border-white/10 aspect-[4/3] bg-black/30">
+                <img
+                  src="https://esa.int/var/esa/storage/images/esa_multimedia/images/2022/01/sulphur_dioxide_from_tonga_eruption_spreads_over_australia/23907503-1-eng-GB/Sulphur_dioxide_from_Tonga_eruption_spreads_over_Australia_card_full.jpg"
+                  alt="Sentinel-5P TROPOMI — Dioxyde de soufre de l'éruption de Tonga"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div>
+                <p className="text-white text-sm font-semibold mb-1">Dioxyde de soufre — Éruption de Tonga</p>
+                <p className="text-gray-400 text-xs leading-relaxed">
+                  Le satellite Sentinel-5P et son instrument TROPOMI détectent des gaz invisibles à l'œil nu. Ici, le nuage de SO2 de l'éruption de Tonga (2022) se dispersant au-dessus de l'Australie.
+                </p>
+                <p className="text-gray-600 text-xs mt-1">Source : ESA / Sentinel-5P TROPOMI, 2022</p>
+              </div>
+            </div>
+
+            {/* Image 3 : Cyanobactéries dans les lacs */}
+            <div className="flex flex-col gap-3">
+              <div className="rounded-xl overflow-hidden border border-white/10 aspect-[4/3] bg-black/30">
+                <img
+                  src="https://sentinels.copernicus.eu/documents/4634164/4650239/Time-lapses-cyanobacteria-distribution-maps.png"
+                  alt="Sentinel-3 — Cartographie des cyanobactéries dans les lacs"
+                  className="w-full h-full object-cover object-top"
+                />
+              </div>
+              <div>
+                <p className="text-white text-sm font-semibold mb-1">Cyanobactéries dans les lacs</p>
+                <p className="text-gray-400 text-xs leading-relaxed">
+                  Sentinel-3 cartographie la distribution des cyanobactéries (bactéries potentiellement toxiques) dans les lacs. Ces données permettent de protéger la santé publique et les écosystèmes aquatiques.
+                </p>
+                <p className="text-gray-600 text-xs mt-1">Source : ESA / Sentinel-3, Copernicus</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* ── Surveillance des Océans ── */}
         <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10 mb-8">
           <div className="flex items-center gap-3 mb-4">
