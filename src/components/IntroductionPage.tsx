@@ -37,6 +37,9 @@ export function IntroductionPage({ onContinue, onHome, onBack }: IntroductionPag
     await saveResponse('introduction', 'spaceWords', JSON.stringify(updated));
   };
 
+  const filledWords = words.filter(w => w.trim().length > 0).length;
+  const canContinue = filledWords >= 3;
+
   return (
     <div className="min-h-screen relative overflow-hidden">
       <div className="starry-background absolute inset-0"></div>
@@ -185,12 +188,22 @@ export function IntroductionPage({ onContinue, onHome, onBack }: IntroductionPag
           <div className="text-center">
             <button
               onClick={onContinue}
-              className="group bg-gradient-to-r from-blue-500 to-teal-500 hover:from-blue-600 hover:to-teal-600 text-white px-12 py-5 rounded-full font-bold text-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-2xl flex items-center gap-3 mx-auto"
+              disabled={!canContinue}
+              className={`group px-12 py-5 rounded-full font-bold text-xl transition-all duration-300 flex items-center gap-3 mx-auto ${
+                canContinue
+                  ? 'bg-gradient-to-r from-blue-500 to-teal-500 hover:from-blue-600 hover:to-teal-600 text-white transform hover:scale-105 shadow-lg hover:shadow-2xl'
+                  : 'bg-gray-700 text-gray-400 cursor-not-allowed'
+              }`}
             >
               Commencer l'Exploration
               <ChevronRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
             </button>
-            <p className="text-gray-400 mt-6">
+            {!canContinue && (
+              <p className="text-amber-400 mt-3 text-sm">
+                Écris au moins 3 mots pour continuer ({filledWords}/3)
+              </p>
+            )}
+            <p className="text-gray-400 mt-4">
               Temps estimé : 15-20 minutes
             </p>
           </div>
