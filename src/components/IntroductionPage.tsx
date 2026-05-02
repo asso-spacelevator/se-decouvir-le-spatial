@@ -175,7 +175,7 @@ export function IntroductionPage({ onContinue, onHome, onBack }: IntroductionPag
                     onChange={(e) => handleWordChange(i, e.target.value)}
                     placeholder={`Mot ${i + 1}`}
                     maxLength={30}
-                    className="w-36 bg-white/8 border border-white/15 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
+                    className="w-36 bg-white border border-white/20 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
                   />
                 </div>
               ))}
