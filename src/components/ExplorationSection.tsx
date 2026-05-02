@@ -3,7 +3,14 @@ import { Telescope, ChevronRight, CheckCircle, Moon, Sparkles } from 'lucide-rea
 import { useSession } from '../contexts/SessionContext';
 import { Subsection } from './Subsection';
 import { Navigation } from './Navigation';
-import { SocialReferencesSection } from './SocialReferencesSection';
+import { Quiz } from './Quiz';
+import { AvatarGuide } from './AvatarGuide';
+
+const EXPLOR_LINES = [
+  { speaker: 'boy' as const,  text: "On y est, la section exploration ! James Webb, la Lune, Mars... c'est le grand voyage." },
+  { speaker: 'girl' as const, text: "Chaque mission repose sur des années de travail d'équipes internationales passionnées." },
+  { speaker: 'boy' as const,  text: "Quel sujet t'attire le plus ? Choisis-en un et plonge dedans !" },
+];
 
 interface ExplorationSectionProps {
   onComplete: () => void;
@@ -12,10 +19,11 @@ interface ExplorationSectionProps {
 }
 
 export function ExplorationSection({ onComplete, onHome, onBack }: ExplorationSectionProps) {
-  const { saveResponse, getResponses } = useSession();
+  const { saveResponse, getResponses, saveQuizScore } = useSession();
   const [responses, setResponses] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
   const [selectedTopic, setSelectedTopic] = useState<number | null>(null);
+  const [quizCompleted, setQuizCompleted] = useState(false);
 
   useEffect(() => {
     const loadResponses = async () => {
@@ -75,6 +83,20 @@ export function ExplorationSection({ onComplete, onHome, onBack }: ExplorationSe
     }
   ];
 
+  const quizQuestions = [
+    {
+      id: 'exploration_q1',
+      question: 'À quelle température doit fonctionner le télescope spatial James Webb ?',
+      options: [
+        { id: 'a', text: '-50°C', isCorrect: false },
+        { id: 'b', text: '-100°C', isCorrect: false },
+        { id: 'c', text: '-233°C', isCorrect: true },
+        { id: 'd', text: '-273°C', isCorrect: false }
+      ],
+      explanation: 'Le télescope James Webb doit rester à -233°C pour fonctionner correctement ! Son bouclier solaire, de la taille d\'un court de tennis, protège ses instruments ultra-sensibles de la chaleur du Soleil.'
+    }
+  ];
+
   const handleTopicSelect = async (index: number) => {
     setSelectedTopic(index);
     await saveResponse('exploration', 'selectedTopic', String(index));
@@ -85,6 +107,17 @@ export function ExplorationSection({ onComplete, onHome, onBack }: ExplorationSe
     await saveResponse('exploration', id, value);
   };
 
+  const handleQuizScoreUpdate = async (points: number) => {
+    const currentQuestion = quizQuestions.find(() => true);
+    if (currentQuestion) {
+      await saveQuizScore('exploration', currentQuestion.id, points, points > 0);
+    }
+  };
+
+  const handleQuizComplete = () => {
+    setQuizCompleted(true);
+  };
+
   const handleSubmit = async () => {
     setSubmitted(true);
     setTimeout(() => {
@@ -92,19 +125,23 @@ export function ExplorationSection({ onComplete, onHome, onBack }: ExplorationSe
     }, 1500);
   };
 
-  const canSubmit = selectedTopic !== null && responses['dream']?.trim().length > 0;
+  const canSubmit = quizCompleted && selectedTopic !== null && responses['dream']?.trim().length > 0;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-900 via-purple-950 to-slate-900 text-white py-16 px-6">
       <Navigation onHome={onHome} onBack={onBack} showBack={true} />
 
       <div className="max-w-4xl mx-auto mt-20">
-        <div className="flex items-center gap-4 mb-8">
+        <div className="flex items-center gap-4 mb-6">
           <Telescope className="w-12 h-12 text-purple-400" />
           <div>
             <div className="text-sm text-purple-400 font-semibold uppercase tracking-wider">🌌 Au-delà</div>
             <h2 className="text-4xl font-bold">Exploration Spatiale</h2>
           </div>
+        </div>
+
+        <div className="mb-8 bg-white/5 backdrop-blur-sm rounded-2xl p-4 border border-purple-500/20">
+          <AvatarGuide lines={EXPLOR_LINES} interval={4000} />
         </div>
 
         <Subsection
@@ -182,7 +219,13 @@ export function ExplorationSection({ onComplete, onHome, onBack }: ExplorationSe
           )}
         </div>
 
-        <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10">
+        <Quiz
+          questions={quizQuestions}
+          onScoreUpdate={handleQuizScoreUpdate}
+          onComplete={handleQuizComplete}
+        />
+
+        <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10 mt-8">
           <h3 className="text-2xl font-semibold mb-6">Votre Vision de l'Avenir</h3>
 
           <div className="mb-6">

@@ -3,7 +3,15 @@ import { Rocket, ChevronRight, CheckCircle } from 'lucide-react';
 import { useSession } from '../contexts/SessionContext';
 import { Subsection } from './Subsection';
 import { Navigation } from './Navigation';
-import { SocialReferencesSection } from './SocialReferencesSection';
+import { Quiz } from './Quiz';
+import { AvatarGuide } from './AvatarGuide';
+import { Ariane6Diagram } from './Ariane6Diagram';
+
+const ROCKET_LINES = [
+  { speaker: 'boy' as const,  text: "On arrive aux lanceurs ! C'est la partie la plus spectaculaire — des millions de chevaux-vapeur au décollage." },
+  { speaker: 'girl' as const, text: "Les ingénieurs doivent résoudre des défis dingues : 3000°C, précision au millimètre, poids minimal." },
+  { speaker: 'boy' as const,  text: "Choisis un défi qui t'intéresse et explore comment les équipes l'ont relevé !" },
+];
 
 interface RocketSectionProps {
   onComplete: () => void;
@@ -12,10 +20,11 @@ interface RocketSectionProps {
 }
 
 export function RocketSection({ onComplete, onHome, onBack }: RocketSectionProps) {
-  const { saveResponse, getResponses } = useSession();
+  const { saveResponse, getResponses, saveQuizScore } = useSession();
   const [responses, setResponses] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
   const [selectedChallenge, setSelectedChallenge] = useState<number | null>(null);
+  const [quizCompleted, setQuizCompleted] = useState(false);
 
   useEffect(() => {
     const loadResponses = async () => {
@@ -67,6 +76,20 @@ export function RocketSection({ onComplete, onHome, onBack }: RocketSectionProps
     }
   ];
 
+  const quizQuestions = [
+    {
+      id: 'rocket_q1',
+      question: 'Quelle est la température maximale que peuvent atteindre les moteurs de lanceur ?',
+      options: [
+        { id: 'a', text: '500°C', isCorrect: false },
+        { id: 'b', text: '1 500°C', isCorrect: false },
+        { id: 'c', text: '3 000°C', isCorrect: true },
+        { id: 'd', text: '5 000°C', isCorrect: false }
+      ],
+      explanation: 'Les moteurs de lanceur peuvent atteindre des températures extrêmes de 3 000°C. Des matériaux composites céramiques ultra-résistants et des systèmes de refroidissement actifs sont nécessaires pour gérer ces températures.'
+    }
+  ];
+
   const handleChallengeSelect = async (index: number) => {
     setSelectedChallenge(index);
     await saveResponse('rockets', 'selectedChallenge', String(index));
@@ -77,6 +100,17 @@ export function RocketSection({ onComplete, onHome, onBack }: RocketSectionProps
     await saveResponse('rockets', id, value);
   };
 
+  const handleQuizScoreUpdate = async (points: number) => {
+    const currentQuestion = quizQuestions.find(() => true);
+    if (currentQuestion) {
+      await saveQuizScore('rockets', currentQuestion.id, points, points > 0);
+    }
+  };
+
+  const handleQuizComplete = () => {
+    setQuizCompleted(true);
+  };
+
   const handleSubmit = async () => {
     setSubmitted(true);
     setTimeout(() => {
@@ -84,19 +118,23 @@ export function RocketSection({ onComplete, onHome, onBack }: RocketSectionProps
     }, 1500);
   };
 
-  const canSubmit = selectedChallenge !== null && responses['reflection']?.trim().length > 0;
+  const canSubmit = quizCompleted && selectedChallenge !== null && responses['reflection']?.trim().length > 0;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-900 via-orange-950 to-slate-900 text-white py-16 px-6">
       <Navigation onHome={onHome} onBack={onBack} showBack={true} />
 
       <div className="max-w-4xl mx-auto mt-20">
-        <div className="flex items-center gap-4 mb-8">
+        <div className="flex items-center gap-4 mb-6">
           <Rocket className="w-12 h-12 text-orange-400" />
           <div>
             <div className="text-sm text-orange-400 font-semibold uppercase tracking-wider">🚀 Vers l'Orbite</div>
             <h2 className="text-4xl font-bold">Les Lanceurs : Défis et Innovation</h2>
           </div>
+        </div>
+
+        <div className="mb-8 bg-white/5 backdrop-blur-sm rounded-2xl p-4 border border-orange-500/20">
+          <AvatarGuide lines={ROCKET_LINES} interval={4000} />
         </div>
 
         <Subsection
@@ -110,6 +148,10 @@ export function RocketSection({ onComplete, onHome, onBack }: RocketSectionProps
           content="La construction d'un lanceur nécessite une précision extrême. Les composants sont fabriqués dans des salles blanches avec une tolérance au micromètre. Chaque soudure, chaque boulon doit être parfait car une seule défaillance peut être catastrophique. Plus de 10 000 pièces composent un lanceur moderne."
           icon="⚙️"
         />
+
+        <div className="mb-8">
+          <Ariane6Diagram />
+        </div>
 
         <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10 mb-8">
           <h3 className="text-2xl font-semibold mb-4">Les Défis Techniques Majeurs</h3>
@@ -173,7 +215,13 @@ export function RocketSection({ onComplete, onHome, onBack }: RocketSectionProps
           )}
         </div>
 
-        <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10">
+        <Quiz
+          questions={quizQuestions}
+          onScoreUpdate={handleQuizScoreUpdate}
+          onComplete={handleQuizComplete}
+        />
+
+        <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10 mt-8">
           <h3 className="text-2xl font-semibold mb-6">Votre Réflexion</h3>
 
           <div className="mb-6">

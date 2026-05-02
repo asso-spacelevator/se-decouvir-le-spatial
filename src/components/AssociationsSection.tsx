@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Users, ChevronRight, CheckCircle, ExternalLink, Mail } from 'lucide-react';
+import { Users, ChevronRight, CheckCircle, ExternalLink, Mail, UserSearch } from 'lucide-react';
 import { useSession } from '../contexts/SessionContext';
 import { Navigation } from './Navigation';
 
@@ -186,6 +186,51 @@ export function AssociationsSection({ onComplete, onHome, onBack }: Associations
               </div>
             ))}
           </div>
+        </div>
+
+        <div className="bg-gradient-to-br from-blue-500/10 to-indigo-500/10 border border-blue-400/30 rounded-2xl p-8 mb-8">
+          <div className="flex items-start gap-4 mb-6">
+            <UserSearch className="w-10 h-10 text-blue-400 flex-shrink-0 mt-1" />
+            <div>
+              <h3 className="text-2xl font-bold text-white mb-3">MyJobGlasses - Rencontrez des Professionnels</h3>
+              <p className="text-gray-300 text-lg leading-relaxed mb-4">
+                Vous souhaitez échanger directement avec des professionnels du secteur spatial ? MyJobGlasses vous permet de rencontrer des ambassadeurs qui travaillent dans l'aérospatiale et de découvrir leur métier de l'intérieur.
+              </p>
+            </div>
+          </div>
+
+          <div className="bg-blue-500/10 border border-blue-400/20 rounded-xl p-6 mb-6">
+            <h4 className="font-semibold text-blue-300 mb-3 text-lg">Ce que MyJobGlasses vous offre :</h4>
+            <ul className="space-y-2 text-gray-200">
+              <li className="flex items-start gap-2">
+                <span className="text-blue-400 mt-1">•</span>
+                <span>Échanges individuels avec des ingénieurs, techniciens et chercheurs du spatial</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-blue-400 mt-1">•</span>
+                <span>Découverte concrète des métiers et du quotidien dans l'aérospatiale</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-blue-400 mt-1">•</span>
+                <span>Conseils personnalisés pour votre orientation et votre parcours</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-blue-400 mt-1">•</span>
+                <span>Réseau de professionnels bienveillants prêts à partager leur expérience</span>
+              </li>
+            </ul>
+          </div>
+
+          <a
+            href="https://www.myjobglasses.com/rencontrez-des-ambassadeurs/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-3 px-6 py-4 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 rounded-xl text-white font-semibold text-lg transition-all transform hover:scale-105 shadow-lg"
+          >
+            <ExternalLink className="w-5 h-5" />
+            Découvrir les ambassadeurs MyJobGlasses
+            <ChevronRight className="w-5 h-5" />
+          </a>
         </div>
 
         <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10">
