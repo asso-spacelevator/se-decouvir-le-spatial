@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Earth, ChevronRight, CheckCircle, Radio } from 'lucide-react';
+import { Earth, ChevronRight, CheckCircle, Radio, Globe } from 'lucide-react';
 import { useSession } from '../contexts/SessionContext';
 import { Subsection } from './Subsection';
 import { Navigation } from './Navigation';
@@ -612,17 +612,88 @@ export function ImpactTerrestreSection({ onComplete, onHome, onBack }: ImpactTer
         {/* ── Stations Sol & Opérations ── */}
         <GroundStationsBlock />
 
-        <Subsection
-          title="Coopération Internationale : l'Espace comme Terrain de Paix"
-          content="La Station Spatiale Internationale est le symbole le plus fort de ce que des nations rivales peuvent accomplir ensemble. Depuis 1998, des astronautes américains, russes, européens, japonais et canadiens partagent ce laboratoire orbital — même aux pires moments des tensions géopolitiques. L'ESA collabore avec la NASA (James Webb, mission Mars), JAXA (Japon) et ISRO (Inde) sur des projets qui dépassent les frontières. Le Traité de l'Espace de 1967 pose un principe fondateur : l'espace est le patrimoine commun de l'humanité."
-          icon="🤝"
-        />
+        {/* ── Coopération Internationale ── */}
+        <div className="bg-gradient-to-br from-slate-900/60 to-blue-950/40 backdrop-blur-sm rounded-2xl p-8 border border-blue-500/20 mb-8">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-10 h-10 rounded-xl bg-blue-500/15 border border-blue-400/30 flex items-center justify-center flex-shrink-0">
+              <Globe className="w-5 h-5 text-blue-400" />
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-white">Coopération Internationale : l'Espace comme Terrain de Paix</h3>
+              <p className="text-gray-400 text-xs mt-0.5">Des nations rivales, un laboratoire commun</p>
+            </div>
+          </div>
 
-        <Subsection
-          title="L'Europe Indépendante dans un Monde Interdépendant"
-          content="L'ESA réunit 22 États membres autour d'un principe : pour peser dans les grandes décisions spatiales internationales — normes, orbites, fréquences, exploitation des ressources — il faut une capacité propre. Avoir ses propres lanceurs (Ariane), ses propres satellites de navigation (Galileo) et d'observation (Copernicus) garantit que l'Europe peut décider seule de l'utilisation de ces services vitaux, sans être soumise aux choix politiques d'une autre puissance."
-          icon="🇪🇺"
-        />
+          <p className="text-gray-300 text-sm leading-relaxed mb-6">
+            L'exploration spatiale est l'une des rares activités humaines où les grandes puissances mondiales collaborent réellement, même en période de tensions. Quatre agences dominent la scène internationale :
+          </p>
+
+          {/* Les grandes agences */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
+            {[
+              { name: 'ESA', flag: '🇪🇺', color: 'from-blue-900/40 to-blue-800/20', border: 'border-blue-500/30', text: 'text-blue-300', desc: '22 États membres — Ariane, Copernicus, Galileo, James Webb' },
+              { name: 'NASA', flag: '🇺🇸', color: 'from-red-900/30 to-slate-900/20', border: 'border-red-500/30', text: 'text-red-300', desc: 'Artemis, James Webb, Perseverance, ISS' },
+              { name: 'JAXA', flag: '🇯🇵', color: 'from-rose-900/30 to-slate-900/20', border: 'border-rose-500/30', text: 'text-rose-300', desc: 'Module Kibô ISS, mission Hayabusa, lanceur H3' },
+              { name: 'Roscosmos', flag: '🇷🇺', color: 'from-slate-800/40 to-slate-900/20', border: 'border-slate-500/30', text: 'text-slate-300', desc: "Soyouz, Progress, segment russe de l'ISS" },
+            ].map(a => (
+              <div key={a.name} className={`bg-gradient-to-br ${a.color} rounded-xl p-4 border ${a.border}`}>
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-xl">{a.flag}</span>
+                  <span className={`font-bold text-lg ${a.text}`}>{a.name}</span>
+                </div>
+                <p className="text-gray-400 text-xs leading-relaxed">{a.desc}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* ISS et drapeaux astronautes */}
+          <div className="bg-white/5 rounded-xl border border-white/10 p-5 mb-6">
+            <h4 className="text-white font-semibold text-sm mb-1">La Station Spatiale Internationale (ISS)</h4>
+            <p className="text-gray-400 text-xs mb-4">Plus de 270 astronautes de 21 nationalités différentes ont séjourné à bord depuis 1998.</p>
+            <div className="flex flex-wrap gap-2 text-2xl mb-4">
+              {['🇺🇸','🇷🇺','🇯🇵','🇩🇪','🇫🇷','🇨🇦','🇮🇹','🇬🇧','🇳🇱','🇧🇪','🇸🇪','🇩🇰','🇳🇴','🇪🇸','🇨🇭','🇧🇷','🇰🇿','🇺🇦','🇸🇦','🇦🇪','🇰🇷'].map(f => (
+                <span key={f} className="hover:scale-125 transition-transform cursor-default select-none">{f}</span>
+              ))}
+            </div>
+            <p className="text-gray-300 text-sm leading-relaxed">
+              Depuis 1998, des astronautes américains, russes, européens, japonais et canadiens partagent ce laboratoire orbital — même aux pires moments des tensions géopolitiques. L'ISS est le projet d'ingénierie internationale le plus ambitieux jamais réalisé, assemblé pièce par pièce lors de plus de 40 missions de construction.
+            </p>
+          </div>
+
+          {/* Anecdote Ukraine */}
+          <div className="bg-amber-500/10 border border-amber-400/20 rounded-xl p-5 mb-6">
+            <p className="text-amber-200 text-sm leading-relaxed">
+              <strong className="text-amber-300">La science au-dessus des conflits —</strong> En février 2022, lors du déclenchement de la guerre en Ukraine, le cosmonaute russe Oleg Artemyev se trouvait en orbite à bord de l'ISS. Malgré les tensions diplomatiques au sol, la collaboration scientifique n'a pas été interrompue : russes et américains ont continué à travailler côte à côte dans l'espace, preuve que la science peut transcender les conflits politiques.
+            </p>
+          </div>
+
+          {/* Projets internationaux */}
+          <div className="mb-6">
+            <h4 className="text-white font-semibold text-sm mb-3">Grands projets de coopération internationale</h4>
+            <div className="grid md:grid-cols-2 gap-3">
+              {[
+                { name: 'Télescope James Webb', partners: 'NASA · ESA · CSA', desc: "Le plus grand télescope spatial jamais construit. Observe les premières galaxies de l'Univers depuis le point de Lagrange L2." },
+                { name: 'Station Spatiale Internationale', partners: 'NASA · Roscosmos · ESA · JAXA · CSA', desc: 'Laboratoire orbital habité en continu depuis novembre 2000. Symbole ultime de la coopération internationale.' },
+                { name: 'ExoMars', partners: 'ESA · Roscosmos', desc: "Programme d'exploration de Mars pour rechercher des traces de vie passée ou présente sur la planète rouge." },
+                { name: 'Artémis / Lunar Gateway', partners: 'NASA · ESA · JAXA · CSA', desc: "Retour humain sur la Lune et future station orbitale lunaire pour préparer l'exploration de Mars." },
+              ].map(p => (
+                <div key={p.name} className="bg-white/5 rounded-xl p-4 border border-white/10">
+                  <p className="text-white font-semibold text-sm mb-1">{p.name}</p>
+                  <p className="text-blue-300 text-xs mb-2">{p.partners}</p>
+                  <p className="text-gray-400 text-xs leading-relaxed">{p.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Traité de l'espace */}
+          <div className="bg-blue-500/10 border border-blue-400/20 rounded-xl p-5">
+            <h4 className="text-blue-300 font-semibold text-sm mb-2">Le Traité de l'Espace (1967)</h4>
+            <p className="text-blue-100 text-sm leading-relaxed">
+              Signé en pleine Guerre froide par les États-Unis, l'URSS et le Royaume-Uni, le <strong className="text-white">Traité sur l'Espace Extra-Atmosphérique</strong> pose un principe fondateur : l'espace est le patrimoine commun de l'humanité, non appropriable par aucune nation. Il interdit les armes nucléaires en orbite et sur les corps célestes. C'est une <strong className="text-white">première brique essentielle</strong> d'une législation spatiale internationale — mais elle laisse encore de nombreuses zones grises à consolider : exploitation des ressources lunaires, trafic orbital, débris spatiaux, militarisation de l'espace. Le droit spatial international reste un chantier ouvert, plus urgent que jamais face à la multiplication des acteurs privés et étatiques.
+            </p>
+          </div>
+        </div>
 
         <Quiz
           questions={quizQuestions}
