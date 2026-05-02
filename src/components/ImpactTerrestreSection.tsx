@@ -94,7 +94,7 @@ const SPINOFFS = [
     year: 'Années 60',
     title: 'Velcro & fixations sans apesanteur',
     desc: "Dans l'espace, aucune vis ne peut être serrée à la main sans s'envoler. La NASA a massivement adopté le velcro pour fixer outils et vêtements à bord des capsules Apollo et de l'ISS. Cette adoption à grande échelle a lancé sa diffusion mondiale dans les chaussures, vêtements de sport, articles médicaux et bagages.",
-    imgDaily: 'https://images.pexels.com/photos/1598505/pexels-photo-1598505.jpeg',
+    imgDaily: 'https://images.pexels.com/photos/30641951/pexels-photo-30641951.jpeg',
     imgSpace: 'https://live.staticflickr.com/65535/55180852205_ecf572f1df_c.jpg',
     labelDaily: 'Chaussures à velcro',
     labelSpace: 'Sophie Adenot attache son matériel via des velcros sur ses jambes',
