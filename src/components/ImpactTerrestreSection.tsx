@@ -431,50 +431,6 @@ export function ImpactTerrestreSection({ onComplete, onHome, onBack }: ImpactTer
       ],
       explanation: 'L\'antenne de 70 mètres de Goldstone, en Californie, fait partie du Deep Space Network (DSN) de la NASA — le réseau mondial d\'antennes géantes qui maintient le contact avec les sondes spatiales lointaines. Pour comparaison, elle est plus large qu\'un terrain de football ! Ce colosse peut capter des signaux émis par des sondes situées à des milliards de kilomètres de la Terre.'
     },
-    {
-      id: 'impact_q4',
-      question: 'D\'après le document « Les puissances spatiales dans le monde », quel pays dépensait le plus pour son programme spatial en 2021 ?',
-      options: [
-        { id: 'a', text: 'La Chine (~10 milliards $)', isCorrect: false },
-        { id: 'b', text: 'Les États-Unis (~60 milliards $)', isCorrect: true },
-        { id: 'c', text: 'La Russie (~4 milliards $)', isCorrect: false },
-        { id: 'd', text: 'La France (~3 milliards $)', isCorrect: false }
-      ],
-      explanation: 'Selon le rapport Euroconsult 2022, les États-Unis consacraient environ 60 milliards de dollars à leur programme spatial en 2021 — soit près de 6 fois plus que la Chine, deuxième du classement avec ~10 milliards $. Cette hyperpuissance financière est l\'un des marqueurs de la domination américaine dans le domaine spatial.'
-    },
-    {
-      id: 'impact_q5',
-      question: 'Fin 2022, combien de satellites en orbite appartenaient aux États-Unis ?',
-      options: [
-        { id: 'a', text: '134', isCorrect: false },
-        { id: 'b', text: '1 133', isCorrect: false },
-        { id: 'c', text: '4 529', isCorrect: true },
-        { id: 'd', text: '64', isCorrect: false }
-      ],
-      explanation: 'Avec 4 529 satellites en orbite fin 2022, les États-Unis dominent très largement le domaine — principalement grâce à la constellation Starlink de SpaceX. La Chine arrive en 2ème position avec 1 133 satellites, suivie d\'un troisième pays à 134. L\'ESA en possédait 64 et les satellites multinationaux 62.'
-    },
-    {
-      id: 'impact_q6',
-      question: 'Pourquoi la Russie a-t-elle développé sa base de Vostotchny en plus de celle de Baïkonour ?',
-      options: [
-        { id: 'a', text: 'Baïkonour est trop proche de l\'équateur pour certains lancements', isCorrect: false },
-        { id: 'b', text: 'Baïkonour est située au Kazakhstan et les tensions avec ce pays ont poussé la Russie à chercher une alternative sur son propre territoire', isCorrect: true },
-        { id: 'c', text: 'Vostotchny dispose d\'une meilleure météo pour les lancements', isCorrect: false },
-        { id: 'd', text: 'Baïkonour a été détruite lors d\'un incident', isCorrect: false }
-      ],
-      explanation: 'La base de Baïkonour se trouve au Kazakhstan — un État indépendant depuis la dissolution de l\'URSS. La Russie la loue contre paiement d\'un loyer, mais les tensions entre les deux pays ont conduit Moscou à développer une base sur son propre territoire : Vostotchny, dans l\'Extrême-Orient russe.'
-    },
-    {
-      id: 'impact_q7',
-      question: 'Selon le document, quelle qualification est donnée à l\'Europe (ESA) et au Japon en tant que puissances spatiales ?',
-      options: [
-        { id: 'a', text: 'Hyperpuissance', isCorrect: false },
-        { id: 'b', text: 'Puissance émergente', isCorrect: false },
-        { id: 'c', text: 'Puissance technologique excluant le vol habité', isCorrect: true },
-        { id: 'd', text: 'Puissance incomplète', isCorrect: false }
-      ],
-      explanation: 'L\'ESA et le Japon (JAXA) sont classés comme « puissances technologiques excluant le vol habité » : des compétences scientifiques et techniques reconnues mondialement, une forte volonté de coopération internationale, mais pas de capacité autonome d\'envoyer des humains dans l\'espace. La maîtrise du vol habité reste un attribut réservé aux États-Unis, à la Russie et à la Chine.'
-    }
   ];
 
   const handleResponseChange = async (id: string, value: string) => {
@@ -780,6 +736,25 @@ export function ImpactTerrestreSection({ onComplete, onHome, onBack }: ImpactTer
             </div>
           </div>
 
+          {/* Ressource PDF */}
+          <div className="mb-4">
+            <a
+              href="https://www.cartolycee.net/IMG/pdf/les_puissances_spatiales_dans_le_monde.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-3 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 rounded-xl p-4 transition-colors group"
+            >
+              <div className="w-9 h-9 rounded-lg bg-orange-500/15 border border-orange-400/30 flex items-center justify-center flex-shrink-0">
+                <FileText className="w-4 h-4 text-orange-400" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-white text-sm font-medium group-hover:text-orange-200 transition-colors">Les puissances spatiales dans le monde</p>
+                <p className="text-gray-500 text-xs mt-0.5">Cartolycée — JC Fichet · PDF · Euroconsult, UCS, Assemblée nationale</p>
+              </div>
+              <ExternalLink className="w-4 h-4 text-gray-500 group-hover:text-orange-400 flex-shrink-0 transition-colors" />
+            </a>
+          </div>
+
           {/* Traité de l'espace */}
           <div className="bg-blue-500/10 border border-blue-400/20 rounded-xl p-5">
             <h4 className="text-blue-300 font-semibold text-sm mb-2">Le Traité de l'Espace (1967)</h4>
@@ -787,40 +762,6 @@ export function ImpactTerrestreSection({ onComplete, onHome, onBack }: ImpactTer
               Signé en pleine Guerre froide par les États-Unis, l'URSS et le Royaume-Uni, le <strong className="text-white">Traité sur l'Espace Extra-Atmosphérique</strong> pose un principe fondateur : l'espace est le patrimoine commun de l'humanité, non appropriable par aucune nation. Il interdit les armes nucléaires en orbite et sur les corps célestes. C'est une <strong className="text-white">première brique essentielle</strong> d'une législation spatiale internationale — mais elle laisse encore de nombreuses zones grises à consolider : exploitation des ressources lunaires, trafic orbital, débris spatiaux, militarisation de l'espace. Le droit spatial international reste un chantier ouvert, plus urgent que jamais face à la multiplication des acteurs privés et étatiques.
             </p>
           </div>
-        </div>
-
-        {/* ── Document PDF : Les puissances spatiales ── */}
-        <div className="bg-gradient-to-br from-slate-900/60 to-slate-800/40 backdrop-blur-sm rounded-2xl p-6 border border-white/10 mb-8">
-          <div className="flex items-start justify-between gap-4 mb-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-orange-500/15 border border-orange-400/30 flex items-center justify-center flex-shrink-0">
-                <FileText className="w-5 h-5 text-orange-400" />
-              </div>
-              <div>
-                <h3 className="text-white font-bold text-base leading-tight">Les puissances spatiales dans le monde</h3>
-                <p className="text-gray-400 text-xs mt-0.5">Cartolycée — JC Fichet · Sources : Euroconsult, UCS, Assemblée nationale</p>
-              </div>
-            </div>
-            <a
-              href="https://www.cartolycee.net/IMG/pdf/les_puissances_spatiales_dans_le_monde.pdf"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex-shrink-0 inline-flex items-center gap-1.5 text-xs bg-orange-500/15 hover:bg-orange-500/25 border border-orange-400/30 text-orange-300 hover:text-orange-200 px-3 py-1.5 rounded-lg transition-colors"
-            >
-              <ExternalLink className="w-3 h-3" />
-              Ouvrir le PDF
-            </a>
-          </div>
-          <div className="w-full rounded-xl overflow-hidden border border-white/10 bg-black/30" style={{ height: '520px' }}>
-            <iframe
-              src="https://www.cartolycee.net/IMG/pdf/les_puissances_spatiales_dans_le_monde.pdf"
-              className="w-full h-full"
-              title="Les puissances spatiales dans le monde"
-            />
-          </div>
-          <p className="text-gray-500 text-xs mt-3 text-center">
-            Si le document ne s'affiche pas, utilisez le bouton « Ouvrir le PDF » ci-dessus.
-          </p>
         </div>
 
         <Quiz
