@@ -252,29 +252,29 @@ function GroundStationsBlock() {
       <div className="bg-white/5 rounded-2xl border border-white/10 overflow-hidden mb-5">
         <div className="relative">
           <img
-            src="https://images.pexels.com/photos/586056/pexels-photo-586056.jpeg"
-            alt="Salle de contrôle spatiale type ESOC Darmstadt"
-            className="w-full object-cover h-52"
+            src="https://www.esa.int/var/esa/storage/images/esa_multimedia/images/2012/06/main_control_room_at_esa_s_space_operations_centre/11252253-2-eng-GB/Main_Control_Room_at_ESA_s_Space_Operations_Centre_pillars.jpg"
+            alt="Salle de contrôle principale de l'ESOC — European Space Operations Centre, Darmstadt"
+            className="w-full object-cover h-64"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-transparent to-transparent" />
           <div className="absolute bottom-4 left-5 right-5">
-            <span className="text-xs text-gray-300 bg-black/40 px-2 py-1 rounded">
-              Salle d'opérations — type ESOC, Darmstadt (Allemagne) · ESA
+            <span className="text-xs text-gray-300 bg-black/50 px-2 py-1 rounded">
+              Salle de contrôle principale — ESOC, Darmstadt (Allemagne) · © ESA
             </span>
           </div>
         </div>
         <div className="p-5">
-          <p className="text-gray-300 text-sm leading-relaxed mb-4">
-            Chaque satellite en orbite est surveillé et commandé depuis la Terre, 24 h/24. Ces centres —
-            appelés <strong className="text-white">stations sol</strong> — sont équipés d'antennes paraboliques,
-            de serveurs de calcul et de consoles de contrôle qui échangent des milliers de commandes par jour
-            avec l'espace. Le plus grand centre européen est l'<strong className="text-white">ESOC</strong>{' '}
-            (European Space Operations Centre) à <strong className="text-white">Darmstadt, Allemagne</strong>,
-            qui contrôle plus de 20 missions ESA simultanément — de l'orbite basse jusqu'aux sondes interplanétaires.
+          <p className="text-gray-300 text-sm leading-relaxed mb-3">
+            As Europe's centre of excellence for mission operations, the <strong className="text-white">European Space Operations Centre (ESOC)</strong> is home to the engineers who control spacecraft in orbit, manage our global tracking station network, and design and build the systems on ground that support missions in space. Over 60 satellites belonging to ESA and its partners have been flown from Darmstadt, Germany.
           </p>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <p className="text-gray-300 text-sm leading-relaxed mb-4">
+            Chaque satellite en orbite est surveillé et commandé depuis la Terre, 24 h/24. Ces centres d'opération sont équipés de serveurs de calcul et de consoles de contrôle qui échangent des milliers de commandes par jour avec l'espace. Ils sont reliés à des dizaines de <strong className="text-white">stations sol</strong> réparties dans le monde pour pouvoir contacter le plus souvent possible les satellites. Le plus grand centre européen est l'<strong className="text-white">ESOC</strong> (European Space Operations Centre) à <strong className="text-white">Darmstadt, Allemagne</strong>, qui contrôle plus de 20 missions ESA simultanément — de l'orbite basse jusqu'aux sondes interplanétaires.
+          </p>
+          <p className="text-gray-300 text-sm leading-relaxed mb-4">
+            C'est dans le centre d'opération de la NASA à <strong className="text-white">Houston</strong> qu'étaient gérées les missions Apollo, avec lesquelles les astronautes étaient en communication. Aujourd'hui, les opérateurs se relayent pour les opérations à bord de l'<strong className="text-white">ISS</strong>. Ce sont ces mêmes types de centres d'opérations qui pilotent des missions lointaines comme <strong className="text-white">Perseverance</strong>, le rover de la NASA sur Mars !
+          </p>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
             {[
-              { v: '1967', l: 'Fondation ESOC' },
               { v: '20+',  l: 'Missions contrôlées' },
               { v: '24/7', l: 'Opérations continues' },
               { v: '900+', l: 'Experts sur site' },
