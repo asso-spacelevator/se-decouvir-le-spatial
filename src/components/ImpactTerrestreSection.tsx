@@ -94,10 +94,10 @@ const SPINOFFS = [
     year: 'Années 60',
     title: 'Velcro & fixations sans apesanteur',
     desc: "Dans l'espace, aucune vis ne peut être serrée à la main sans s'envoler. La NASA a massivement adopté le velcro pour fixer outils et vêtements à bord des capsules Apollo et de l'ISS. Cette adoption à grande échelle a lancé sa diffusion mondiale dans les chaussures, vêtements de sport, articles médicaux et bagages.",
-    imgDaily: 'https://images.pexels.com/photos/2529148/pexels-photo-2529148.jpeg',
-    imgSpace: 'https://images.pexels.com/photos/41005/rocket-launch-rocket-take-off-soyuz-41005.jpeg',
+    imgDaily: 'https://images.pexels.com/photos/1598505/pexels-photo-1598505.jpeg',
+    imgSpace: 'https://live.staticflickr.com/65535/55180852205_ecf572f1df_c.jpg',
     labelDaily: 'Chaussures à velcro',
-    labelSpace: 'Fixations ISS',
+    labelSpace: 'Sophie Adenot attache son matériel via des velcros sur ses jambes',
   },
   {
     icon: '📸',
@@ -201,20 +201,22 @@ function SpinOffBlock() {
                     <p className="text-gray-400 text-sm leading-relaxed">{item.desc}</p>
                   </div>
                   {/* Image comparison — visible on hover */}
-                  <div className={`grid grid-cols-2 gap-0 transition-all duration-500 ${isHovered ? 'max-h-56 opacity-100' : 'max-h-0 opacity-0'} overflow-hidden`}>
+                  <div className={`grid grid-cols-2 gap-0 transition-all duration-500 ${isHovered ? 'max-h-72 opacity-100' : 'max-h-0 opacity-0'} overflow-hidden`}>
                     <div className="relative">
-                      <img src={item.imgDaily} alt={item.labelDaily} className="w-full h-44 object-cover" />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
-                      <span className="absolute bottom-2 left-3 text-xs text-white font-medium bg-black/40 px-2 py-0.5 rounded">
-                        Quotidien
-                      </span>
+                      <img src={item.imgDaily} alt={item.labelDaily} className="w-full h-48 object-cover" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
+                      <div className="absolute bottom-0 left-0 right-0 p-3">
+                        <span className="block text-xs text-gray-300 font-semibold uppercase tracking-wide mb-0.5">Quotidien</span>
+                        <span className="block text-xs text-white leading-snug">{item.labelDaily}</span>
+                      </div>
                     </div>
                     <div className="relative border-l border-white/10">
-                      <img src={item.imgSpace} alt={item.labelSpace} className="w-full h-44 object-cover" />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
-                      <span className="absolute bottom-2 left-3 text-xs text-white font-medium bg-black/40 px-2 py-0.5 rounded">
-                        Origine spatiale
-                      </span>
+                      <img src={item.imgSpace} alt={item.labelSpace} className="w-full h-48 object-cover" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
+                      <div className="absolute bottom-0 left-0 right-0 p-3">
+                        <span className="block text-xs text-gray-300 font-semibold uppercase tracking-wide mb-0.5">Origine spatiale</span>
+                        <span className="block text-xs text-white leading-snug">{item.labelSpace}</span>
+                      </div>
                     </div>
                   </div>
                 </div>
