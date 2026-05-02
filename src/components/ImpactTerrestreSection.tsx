@@ -72,6 +72,161 @@ const GS_COLOR: Record<string, { ring: string; bg: string; text: string; tag: st
   violet:  { ring: 'border-blue-400/40',    bg: 'bg-blue-500/10',    text: 'text-blue-300',    tag: 'bg-blue-500/10 text-blue-400 border-blue-400/20' },
 };
 
+const SPINOFFS = [
+  {
+    icon: '🛏️',
+    color: 'emerald',
+    accent: 'border-emerald-400/30',
+    source: 'NASA',
+    year: '1966',
+    title: 'Mousse à mémoire de forme',
+    desc: "Développée par la NASA pour absorber les chocs lors des décollages et protéger les astronautes, la mousse viscoélastique a révolutionné notre façon de dormir. Ses propriétés uniques (elle épouse le corps puis reprend sa forme) en font le matériau de référence dans les matelas haut de gamme, les sièges de voiture et les équipements médicaux anti-escarres.",
+    imgDaily: 'https://images.pexels.com/photos/1666021/pexels-photo-1666021.jpeg',
+    imgSpace: 'https://images.pexels.com/photos/355465/pexels-photo-355465.jpeg',
+    labelDaily: 'Matelas quotidien',
+    labelSpace: 'Siège capsule spatiale',
+  },
+  {
+    icon: '👟',
+    color: 'sky',
+    accent: 'border-sky-400/30',
+    source: 'NASA',
+    year: 'Années 60',
+    title: 'Velcro & fixations sans apesanteur',
+    desc: "Dans l'espace, aucune vis ne peut être serrée à la main sans s'envoler. La NASA a massivement adopté le velcro pour fixer outils et vêtements à bord des capsules Apollo et de l'ISS. Cette adoption à grande échelle a lancé sa diffusion mondiale dans les chaussures, vêtements de sport, articles médicaux et bagages.",
+    imgDaily: 'https://images.pexels.com/photos/2529148/pexels-photo-2529148.jpeg',
+    imgSpace: 'https://images.pexels.com/photos/41005/rocket-launch-rocket-take-off-soyuz-41005.jpeg',
+    labelDaily: 'Chaussures à velcro',
+    labelSpace: 'Fixations ISS',
+  },
+  {
+    icon: '📸',
+    color: 'amber',
+    accent: 'border-amber-400/30',
+    source: 'JPL',
+    year: '1993',
+    title: 'Capteur photo CMOS (smartphone)',
+    desc: "En 1993, le JPL de la NASA développe un capteur d'image miniaturisé à faible consommation pour équiper les sondes spatiales. Cette invention constitue aujourd'hui le cœur de tous les appareils photo de smartphones — soit des milliards de capteurs produits chaque année.",
+    imgDaily: 'https://images.pexels.com/photos/607812/pexels-photo-607812.jpeg',
+    imgSpace: 'https://images.pexels.com/photos/23764/pexels-photo.jpg',
+    labelDaily: 'Smartphone avec capteur CMOS',
+    labelSpace: 'Sonde spatiale JPL',
+  },
+  {
+    icon: '📍',
+    color: 'orange',
+    accent: 'border-orange-400/30',
+    source: 'DOD',
+    year: '1973',
+    title: 'GPS / Géolocalisation',
+    desc: "Conçu par le Département de la Défense américain pour guider missiles et troupes, le GPS (24 satellites en orbite moyenne) a été ouvert au civil en 1983. Aujourd'hui fondement invisible de la navigation auto, de la logistique et de l'agriculture de précision. L'Europe a développé son propre système souverain : Galileo.",
+    imgDaily: 'https://images.pexels.com/photos/1051077/pexels-photo-1051077.jpeg',
+    imgSpace: 'https://images.pexels.com/photos/586056/pexels-photo-586056.jpeg',
+    labelDaily: 'Navigation GPS quotidienne',
+    labelSpace: 'Constellation GPS en orbite',
+  },
+  {
+    icon: '🧲',
+    color: 'rose',
+    accent: 'border-rose-400/30',
+    source: 'NASA',
+    year: 'Années 70',
+    title: 'IRM — Imagerie par Résonance Magnétique',
+    desc: "Les algorithmes de traitement d'image développés par la NASA pour reconstituer des photos des sondes lunaires ont directement inspiré les premières machines IRM. Aujourd'hui, l'IRM est l'outil de diagnostic le plus puissant de la médecine moderne : tumeurs, AVC, maladies neurologiques.",
+    imgDaily: 'https://images.pexels.com/photos/236380/pexels-photo-236380.jpeg',
+    imgSpace: 'https://images.pexels.com/photos/73873/star-clusters-rosette-nebula-star-galaxies-73873.jpeg',
+    labelDaily: 'Machine IRM médicale',
+    labelSpace: 'Reconstruction d\'image NASA',
+  },
+  {
+    icon: '🔥',
+    color: 'cyan',
+    accent: 'border-cyan-400/30',
+    source: 'NASA',
+    year: 'Années 70–80',
+    title: 'Céramique haute performance',
+    desc: "Pour résister aux températures extrêmes de la rentrée atmosphérique (1 600 °C), la NASA développe des tuiles en céramique ultra-légère pour la navette spatiale. Ces recherches ont donné naissance aux implants dentaires en zircone, plaques de cuisson vitrocéramiques et systèmes de freinage TGV.",
+    imgDaily: 'https://images.pexels.com/photos/4099354/pexels-photo-4099354.jpeg',
+    imgSpace: 'https://images.pexels.com/photos/2159/flight-sky-earth-space.jpg',
+    labelDaily: 'Plaque vitrocéramique',
+    labelSpace: 'Navette spatiale — tuiles thermiques',
+  },
+];
+
+const SO_COLOR: Record<string, { sideBg: string; sideText: string; yearBg: string; yearText: string; yearBorder: string }> = {
+  emerald: { sideBg: 'bg-emerald-500/10', sideText: 'text-emerald-400', yearBg: 'bg-emerald-500/15', yearText: 'text-emerald-400', yearBorder: 'border-emerald-500/20' },
+  sky:     { sideBg: 'bg-sky-500/10',     sideText: 'text-sky-400',     yearBg: 'bg-sky-500/15',     yearText: 'text-sky-400',     yearBorder: 'border-sky-500/20' },
+  amber:   { sideBg: 'bg-amber-500/10',   sideText: 'text-amber-400',   yearBg: 'bg-amber-500/15',   yearText: 'text-amber-400',   yearBorder: 'border-amber-500/20' },
+  orange:  { sideBg: 'bg-orange-500/10',  sideText: 'text-orange-400',  yearBg: 'bg-orange-500/15',  yearText: 'text-orange-400',  yearBorder: 'border-orange-500/20' },
+  rose:    { sideBg: 'bg-rose-500/10',    sideText: 'text-rose-400',    yearBg: 'bg-rose-500/15',    yearText: 'text-rose-400',    yearBorder: 'border-rose-500/20' },
+  cyan:    { sideBg: 'bg-cyan-500/10',    sideText: 'text-cyan-400',    yearBg: 'bg-cyan-500/15',    yearText: 'text-cyan-400',    yearBorder: 'border-cyan-500/20' },
+};
+
+function SpinOffBlock() {
+  const [hovered, setHovered] = useState<number | null>(null);
+  return (
+    <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10 mb-8">
+      <div className="flex items-center gap-3 mb-2">
+        <span className="text-2xl">🏠</span>
+        <h3 className="text-2xl font-semibold">Les Objets du Quotidien Nés du Spatial</h3>
+      </div>
+      <p className="text-gray-400 text-sm mb-6">
+        Vous utilisez chaque jour des technologies inventées pour conquérir l'espace, sans même le savoir.
+        <span className="ml-1 text-gray-500">Passez votre souris sur un objet pour voir la comparaison.</span>
+      </p>
+      <div className="space-y-4">
+        {SPINOFFS.map((item, i) => {
+          const c = SO_COLOR[item.color];
+          const isHovered = hovered === i;
+          return (
+            <div
+              key={i}
+              className={`rounded-xl border transition-all duration-300 overflow-hidden cursor-default ${isHovered ? `${item.accent} bg-white/8` : 'border-white/10 bg-white/3 hover:border-white/20'}`}
+              onMouseEnter={() => setHovered(i)}
+              onMouseLeave={() => setHovered(null)}
+            >
+              <div className="flex items-start gap-0">
+                {/* Sidebar */}
+                <div className={`flex-shrink-0 w-14 flex flex-col items-center justify-start pt-5 pb-5 ${c.sideBg} border-r border-white/10`}>
+                  <span className="text-2xl">{item.icon}</span>
+                  <span className={`text-xs font-bold mt-3 opacity-70 ${c.sideText}`}>{item.source}</span>
+                </div>
+                {/* Content */}
+                <div className="flex-1 min-w-0">
+                  <div className="p-5 pb-3">
+                    <div className="flex items-center gap-2 mb-1">
+                      <h4 className="font-bold text-white text-base">{item.title}</h4>
+                      <span className={`text-xs px-2 py-0.5 rounded-full ${c.yearBg} ${c.yearText} border ${c.yearBorder}`}>{item.year}</span>
+                    </div>
+                    <p className="text-gray-400 text-sm leading-relaxed">{item.desc}</p>
+                  </div>
+                  {/* Image comparison — visible on hover */}
+                  <div className={`grid grid-cols-2 gap-0 transition-all duration-500 ${isHovered ? 'max-h-56 opacity-100' : 'max-h-0 opacity-0'} overflow-hidden`}>
+                    <div className="relative">
+                      <img src={item.imgDaily} alt={item.labelDaily} className="w-full h-44 object-cover" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+                      <span className="absolute bottom-2 left-3 text-xs text-white font-medium bg-black/40 px-2 py-0.5 rounded">
+                        Quotidien
+                      </span>
+                    </div>
+                    <div className="relative border-l border-white/10">
+                      <img src={item.imgSpace} alt={item.labelSpace} className="w-full h-44 object-cover" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+                      <span className="absolute bottom-2 left-3 text-xs text-white font-medium bg-black/40 px-2 py-0.5 rounded">
+                        Origine spatiale
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 function GroundStationsBlock() {
   const [open, setOpen] = useState<number | null>(null);
   return (
@@ -364,193 +519,7 @@ export function ImpactTerrestreSection({ onComplete, onHome, onBack }: ImpactTer
         </div>
 
         {/* ── Les objets du quotidien nés du spatial ── */}
-        <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10 mb-8">
-          <div className="flex items-center gap-3 mb-2">
-            <span className="text-2xl">🏠</span>
-            <h3 className="text-2xl font-semibold">Les Objets du Quotidien Nés du Spatial</h3>
-          </div>
-          <p className="text-gray-400 text-sm mb-6">
-            Vous utilisez chaque jour des technologies inventées pour conquérir l'espace, sans même le savoir.
-          </p>
-
-          <div className="space-y-6">
-
-            {/* Invention 1 — Mousse à mémoire de forme */}
-            <div className="group rounded-xl border border-white/10 bg-white/3 hover:bg-white/8 hover:border-emerald-400/30 transition-all duration-300 overflow-hidden">
-              <div className="flex items-start gap-0">
-                <div className="flex-shrink-0 w-14 flex flex-col items-center justify-start pt-5 pb-5 bg-emerald-500/10 border-r border-white/10">
-                  <span className="text-2xl">🛏️</span>
-                  <span className="text-xs text-emerald-400 font-bold mt-1 writing-mode-vertical rotate-90 mt-4 opacity-70">NASA</span>
-                </div>
-                <div className="p-5 flex-1">
-                  <div className="flex items-center gap-2 mb-1">
-                    <h4 className="font-bold text-white text-base">Mousse à mémoire de forme</h4>
-                    <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/20">1966</span>
-                  </div>
-                  <p className="text-gray-400 text-sm leading-relaxed mb-3">
-                    Développée par la NASA pour absorber les chocs lors des décollages et protéger les astronautes,
-                    la mousse viscoélastique — dite "mousse à mémoire de forme" — a révolutionné notre façon de dormir.
-                    Ses propriétés uniques (elle épouse le corps puis reprend sa forme) en font aujourd'hui le matériau
-                    de référence dans les matelas haut de gamme, les sièges de voiture, les équipements médicaux
-                    anti-escarres et les casques de protection.
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    {['Matelas', 'Sièges auto', 'Casques sport', 'Fauteuils médicaux'].map(tag => (
-                      <span key={tag} className="text-xs px-2 py-0.5 rounded-full bg-white/5 text-gray-400 border border-white/10">{tag}</span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Invention 2 — Scratch (Velcro) */}
-            <div className="group rounded-xl border border-white/10 bg-white/3 hover:bg-white/8 hover:border-sky-400/30 transition-all duration-300 overflow-hidden">
-              <div className="flex items-start gap-0">
-                <div className="flex-shrink-0 w-14 flex flex-col items-center justify-start pt-5 pb-5 bg-sky-500/10 border-r border-white/10">
-                  <span className="text-2xl">👟</span>
-                  <span className="text-xs text-sky-400 font-bold mt-1 opacity-70">NASA</span>
-                </div>
-                <div className="p-5 flex-1">
-                  <div className="flex items-center gap-2 mb-1">
-                    <h4 className="font-bold text-white text-base">Velcro & fixations sans apesanteur</h4>
-                    <span className="text-xs px-2 py-0.5 rounded-full bg-sky-500/15 text-sky-400 border border-sky-500/20">Années 60</span>
-                  </div>
-                  <p className="text-gray-400 text-sm leading-relaxed mb-3">
-                    Dans l'espace, aucune vis ne peut être serrée à la main en apesanteur sans s'envoler. La NASA a
-                    massivement adopté le velcro (inventé en 1941 mais popularisé par le programme Apollo) pour fixer
-                    outils, équipements et vêtements à bord des capsules et de la Station spatiale. Cette adoption
-                    à grande échelle a lancé sa diffusion mondiale : chaussures, vêtements de sport, articles médicaux,
-                    sacs et même les couches pour bébés lui doivent leur fermeture rapide.
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    {['Chaussures', 'Vêtements', 'Équipement médical', 'Bagages'].map(tag => (
-                      <span key={tag} className="text-xs px-2 py-0.5 rounded-full bg-white/5 text-gray-400 border border-white/10">{tag}</span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Invention 3 — Capteurs photo CMOS */}
-            <div className="group rounded-xl border border-white/10 bg-white/3 hover:bg-white/8 hover:border-amber-400/30 transition-all duration-300 overflow-hidden">
-              <div className="flex items-start gap-0">
-                <div className="flex-shrink-0 w-14 flex flex-col items-center justify-start pt-5 pb-5 bg-amber-500/10 border-r border-white/10">
-                  <span className="text-2xl">📸</span>
-                  <span className="text-xs text-amber-400 font-bold mt-1 opacity-70">JPL</span>
-                </div>
-                <div className="p-5 flex-1">
-                  <div className="flex items-center gap-2 mb-1">
-                    <h4 className="font-bold text-white text-base">Capteur photo CMOS (smartphone)</h4>
-                    <span className="text-xs px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-400 border border-amber-500/20">1993</span>
-                  </div>
-                  <p className="text-gray-400 text-sm leading-relaxed mb-3">
-                    En 1993, le Jet Propulsion Laboratory (JPL) de la NASA développe un capteur d'image miniaturisé
-                    à faible consommation pour équiper les sondes spatiales : le capteur CMOS actif. Trop encombrants
-                    et énergivores, les capteurs CCD de l'époque ne convenaient pas aux contraintes de l'espace.
-                    Cette invention a ensuite été transférée vers l'industrie civile et constitue aujourd'hui le cœur
-                    de <strong className="text-white">tous les appareils photo de smartphones</strong> — soit des
-                    milliards de capteurs produits chaque année.
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    {['Smartphones', 'Appareils photo', 'Webcams', 'Caméras médicales'].map(tag => (
-                      <span key={tag} className="text-xs px-2 py-0.5 rounded-full bg-white/5 text-gray-400 border border-white/10">{tag}</span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Invention 4 — GPS */}
-            <div className="group rounded-xl border border-white/10 bg-white/3 hover:bg-white/8 hover:border-orange-400/30 transition-all duration-300 overflow-hidden">
-              <div className="flex items-start gap-0">
-                <div className="flex-shrink-0 w-14 flex flex-col items-center justify-start pt-5 pb-5 bg-orange-500/10 border-r border-white/10">
-                  <span className="text-2xl">📍</span>
-                  <span className="text-xs text-orange-400 font-bold mt-1 opacity-70">DOD</span>
-                </div>
-                <div className="p-5 flex-1">
-                  <div className="flex items-center gap-2 mb-1">
-                    <h4 className="font-bold text-white text-base">GPS / Géolocalisation</h4>
-                    <span className="text-xs px-2 py-0.5 rounded-full bg-orange-500/15 text-orange-400 border border-orange-500/20">1973</span>
-                  </div>
-                  <p className="text-gray-400 text-sm leading-relaxed mb-3">
-                    Conçu par le Département de la Défense américain pour guider missiles et troupes, le système GPS
-                    (24 satellites en orbite moyenne) a été ouvert au civil en 1983 après la catastrophe du vol
-                    Korean Air 007. Aujourd'hui, il est le fondement invisible de la navigation automobile, de la
-                    livraison à domicile, de l'agriculture de précision, des transactions boursières (synchronisation
-                    temporelle), des urgences médicales et bien sûr de toutes les cartes mobiles. L'Europe a développé
-                    son propre système souverain : <strong className="text-white">Galileo</strong>.
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    {['Navigation', 'Logistique', 'Agriculture', 'Sécurité civile', 'Finance'].map(tag => (
-                      <span key={tag} className="text-xs px-2 py-0.5 rounded-full bg-white/5 text-gray-400 border border-white/10">{tag}</span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Invention 5 — IRM */}
-            <div className="group rounded-xl border border-white/10 bg-white/3 hover:bg-white/8 hover:border-rose-400/30 transition-all duration-300 overflow-hidden">
-              <div className="flex items-start gap-0">
-                <div className="flex-shrink-0 w-14 flex flex-col items-center justify-start pt-5 pb-5 bg-rose-500/10 border-r border-white/10">
-                  <span className="text-2xl">🧲</span>
-                  <span className="text-xs text-rose-400 font-bold mt-1 opacity-70">NASA</span>
-                </div>
-                <div className="p-5 flex-1">
-                  <div className="flex items-center gap-2 mb-1">
-                    <h4 className="font-bold text-white text-base">IRM — Imagerie par Résonance Magnétique</h4>
-                    <span className="text-xs px-2 py-0.5 rounded-full bg-rose-500/15 text-rose-400 border border-rose-500/20">Années 70</span>
-                  </div>
-                  <p className="text-gray-400 text-sm leading-relaxed mb-3">
-                    Les algorithmes de traitement d'image développés par la NASA pour reconstituer des photos nettes
-                    à partir des signaux bruités envoyés par les sondes lunaires (programme Apollo) ont directement
-                    inspiré les premières machines IRM. Ces techniques de reconstruction numérique permettent de
-                    transformer un signal radiofréquence faible en image anatomique précise — sans rayonnement
-                    ionisant. Aujourd'hui, l'IRM est l'outil de diagnostic le plus puissant de la médecine moderne :
-                    tumeurs, accidents vasculaires, maladies neurologiques, lésions musculaires — elle voit ce
-                    qu'aucun autre examen ne peut révéler.
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    {['Neurologie', 'Oncologie', 'Cardiologie', 'Orthopédie', 'Diagnostic précoce'].map(tag => (
-                      <span key={tag} className="text-xs px-2 py-0.5 rounded-full bg-white/5 text-gray-400 border border-white/10">{tag}</span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Invention 6 — Céramique haute performance */}
-            <div className="group rounded-xl border border-white/10 bg-white/3 hover:bg-white/8 hover:border-cyan-400/30 transition-all duration-300 overflow-hidden">
-              <div className="flex items-start gap-0">
-                <div className="flex-shrink-0 w-14 flex flex-col items-center justify-start pt-5 pb-5 bg-cyan-500/10 border-r border-white/10">
-                  <span className="text-2xl">🔥</span>
-                  <span className="text-xs text-cyan-400 font-bold mt-1 opacity-70">NASA</span>
-                </div>
-                <div className="p-5 flex-1">
-                  <div className="flex items-center gap-2 mb-1">
-                    <h4 className="font-bold text-white text-base">Céramique haute performance</h4>
-                    <span className="text-xs px-2 py-0.5 rounded-full bg-cyan-500/15 text-cyan-400 border border-cyan-500/20">Années 70–80</span>
-                  </div>
-                  <p className="text-gray-400 text-sm leading-relaxed mb-3">
-                    Pour résister aux températures extrêmes de la rentrée atmosphérique (jusqu'à 1 600 °C), la NASA
-                    a développé des tuiles en céramique ultra-légère pour la navette spatiale — capables d'isoler si
-                    efficacement qu'on peut tenir une tuile chauffée à blanc à mains nues quelques secondes après
-                    l'avoir retirée du four. Ces recherches ont donné naissance à toute une famille de céramiques
-                    techniques aujourd'hui omniprésentes : revêtements de turbines d'avions, implants dentaires et
-                    osseux (zircone), plaques de cuisson vitrocéramiques, blindages légers, et systèmes de freinage
-                    haute performance pour véhicules de sport et trains à grande vitesse.
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    {['Implants dentaires', 'Plaques de cuisson', 'Turbines', 'Freinage TGV', 'Blindage'].map(tag => (
-                      <span key={tag} className="text-xs px-2 py-0.5 rounded-full bg-white/5 text-gray-400 border border-white/10">{tag}</span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </div>
+        <SpinOffBlock />
 
         {/* ── Stations Sol & Opérations ── */}
         <GroundStationsBlock />
