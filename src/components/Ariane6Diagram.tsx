@@ -70,7 +70,7 @@ const PARTS: Record<string, Part> = {
       <>
         L'Upper Liquid Propulsion Module est l'étage{' '}
         <a
-          href=https://www.futura-sciences.com/sciences/definitions/univers-etage-principal-cryogenique-3456/"
+          href="https://www.futura-sciences.com/sciences/definitions/univers-etage-principal-cryogenique-3456/"
           target="_blank"
           rel="noopener noreferrer"
           className="underline decoration-dotted underline-offset-2 hover:opacity-80 transition-opacity"
