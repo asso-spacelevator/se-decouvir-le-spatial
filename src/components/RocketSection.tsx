@@ -166,18 +166,46 @@ export function RocketSection({ onComplete, onHome, onBack }: RocketSectionProps
                 <path d="M8 5v14l11-7z" />
               </svg>
             </div>
-            <p className="text-sm font-semibold text-white">Replay — Vrai lancement Ariane 6</p>
+            <p className="text-sm font-semibold text-white">Replay — Vrai lancement Ariane 6 · VA262</p>
           </div>
-          <div className="bg-slate-950 px-5 py-3">
+          <div className="bg-slate-950 px-5 py-3 border-b border-white/8">
             <p className="text-sm text-gray-300 leading-relaxed">
               Ecoute les commentateurs, les opérateurs annonçant la trajectoire nominale et regarde un vrai lancement Ariane 6 !
             </p>
+          </div>
+          {/* Timestamps */}
+          <div className="bg-slate-950 px-5 py-3 border-b border-white/8">
+            <p className="text-xs text-gray-500 uppercase tracking-wider mb-3">Étapes clés de la mission</p>
+            <div className="flex flex-wrap gap-2">
+              {[
+                { label: 'Décollage',            t: 1805, tag: 'T+0:00',   color: 'text-amber-400  border-amber-500/30  bg-amber-500/10'  },
+                { label: 'Séparation boosters',  t: 1942, tag: 'T+2:17',   color: 'text-orange-400 border-orange-500/30 bg-orange-500/10' },
+                { label: 'Largage coiffe',       t: 2024, tag: 'T+3:39',   color: 'text-sky-400    border-sky-500/30    bg-sky-500/10'    },
+                { label: 'Coupure Vulcain',      t: 2260, tag: 'T+7:35',   color: 'text-red-400    border-red-500/30    bg-red-500/10'    },
+                { label: 'Séparation étages',    t: 2293, tag: 'T+8:08',   color: 'text-rose-400   border-rose-500/30   bg-rose-500/10'   },
+                { label: 'Allumage HM7B',        t: 2303, tag: 'T+8:18',   color: 'text-cyan-400   border-cyan-500/30   bg-cyan-500/10'   },
+                { label: 'Orbite de transfert',  t: 2915, tag: 'T+18:30',  color: 'text-blue-400   border-blue-500/30   bg-blue-500/10'   },
+                { label: 'Rallumage Vinci',      t: 5165, tag: 'T+56:00',  color: 'text-violet-400 border-violet-500/30 bg-violet-500/10' },
+                { label: 'Déploiement satellites', t: 5285, tag: 'T+58:00', color: 'text-green-400  border-green-500/30  bg-green-500/10'  },
+              ].map(({ label, t, tag, color }) => (
+                <a
+                  key={t}
+                  href={`https://www.youtube.com/watch?v=DhxJ6Z7u-YU&t=${t}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-xs font-medium transition-opacity hover:opacity-80 ${color}`}
+                >
+                  <span className="font-mono opacity-70">{tag}</span>
+                  <span>{label}</span>
+                </a>
+              ))}
+            </div>
           </div>
           <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
             <iframe
               className="absolute inset-0 w-full h-full"
               src="https://www.youtube.com/embed/DhxJ6Z7u-YU?start=1805"
-              title="Lancement Ariane 6 — Replay rideshare"
+              title="Lancement Ariane 6 — Replay rideshare VA262"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
             />
