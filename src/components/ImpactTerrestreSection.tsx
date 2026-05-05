@@ -647,14 +647,21 @@ export function ImpactTerrestreSection({ onComplete, onHome, onBack }: ImpactTer
           {/* Les grandes agences */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
             {[
-              { name: 'ESA', flag: '🇪🇺', color: 'from-blue-900/40 to-blue-800/20', border: 'border-blue-500/30', text: 'text-blue-300', desc: '22 États membres — Ariane, Copernicus, Galileo, James Webb' },
-              { name: 'NASA', flag: '🇺🇸', color: 'from-red-900/30 to-slate-900/20', border: 'border-red-500/30', text: 'text-red-300', desc: 'Artemis, James Webb, Perseverance, ISS' },
-              { name: 'JAXA', flag: '🇯🇵', color: 'from-rose-900/30 to-slate-900/20', border: 'border-rose-500/30', text: 'text-rose-300', desc: 'Module Kibô ISS, mission Hayabusa, lanceur H3' },
-              { name: 'Roscosmos', flag: '🇷🇺', color: 'from-slate-800/40 to-slate-900/20', border: 'border-slate-500/30', text: 'text-slate-300', desc: "Soyouz, Progress, segment russe de l'ISS" },
+              { name: 'ESA', flagCode: 'eu', color: 'from-blue-900/40 to-blue-800/20', border: 'border-blue-500/30', text: 'text-blue-300', desc: '22 États membres — Ariane, Copernicus, Galileo, James Webb' },
+              { name: 'NASA', flagCode: 'us', color: 'from-red-900/30 to-slate-900/20', border: 'border-red-500/30', text: 'text-red-300', desc: 'Artemis, James Webb, Perseverance, ISS' },
+              { name: 'JAXA', flagCode: 'jp', color: 'from-rose-900/30 to-slate-900/20', border: 'border-rose-500/30', text: 'text-rose-300', desc: 'Module Kibô ISS, mission Hayabusa, lanceur H3' },
+              { name: 'Roscosmos', flagCode: 'ru', color: 'from-slate-800/40 to-slate-900/20', border: 'border-slate-500/30', text: 'text-slate-300', desc: "Soyouz, Progress, segment russe de l'ISS" },
             ].map(a => (
               <div key={a.name} className={`bg-gradient-to-br ${a.color} rounded-xl p-4 border ${a.border}`}>
                 <div className="flex items-center gap-2 mb-2">
-                  <span className="text-xl">{a.flag}</span>
+                  <img
+                    src={`https://flagcdn.com/w40/${a.flagCode}.png`}
+                    srcSet={`https://flagcdn.com/w80/${a.flagCode}.png 2x`}
+                    width="24"
+                    height="18"
+                    alt={a.name}
+                    className="rounded-sm shadow-sm object-cover flex-shrink-0"
+                  />
                   <span className={`font-bold text-lg ${a.text}`}>{a.name}</span>
                 </div>
                 <p className="text-gray-400 text-xs leading-relaxed">{a.desc}</p>
@@ -666,9 +673,40 @@ export function ImpactTerrestreSection({ onComplete, onHome, onBack }: ImpactTer
           <div className="bg-white/5 rounded-xl border border-white/10 p-5 mb-6">
             <h4 className="text-white font-semibold text-sm mb-1">La Station Spatiale Internationale (ISS)</h4>
             <p className="text-gray-400 text-xs mb-4">Plus de 270 astronautes de 21 nationalités différentes ont séjourné à bord depuis 1998.</p>
-            <div className="flex flex-wrap gap-2 text-2xl mb-4">
-              {['🇺🇸','🇷🇺','🇯🇵','🇩🇪','🇫🇷','🇨🇦','🇮🇹','🇬🇧','🇳🇱','🇧🇪','🇸🇪','🇩🇰','🇳🇴','🇪🇸','🇨🇭','🇧🇷','🇰🇿','🇺🇦','🇸🇦','🇦🇪','🇰🇷'].map(f => (
-                <span key={f} className="hover:scale-125 transition-transform cursor-default select-none">{f}</span>
+            <div className="flex flex-wrap gap-2 mb-4">
+              {[
+                { code: 'us', label: 'États-Unis' },
+                { code: 'ru', label: 'Russie' },
+                { code: 'jp', label: 'Japon' },
+                { code: 'de', label: 'Allemagne' },
+                { code: 'fr', label: 'France' },
+                { code: 'ca', label: 'Canada' },
+                { code: 'it', label: 'Italie' },
+                { code: 'gb', label: 'Royaume-Uni' },
+                { code: 'nl', label: 'Pays-Bas' },
+                { code: 'be', label: 'Belgique' },
+                { code: 'se', label: 'Suède' },
+                { code: 'dk', label: 'Danemark' },
+                { code: 'no', label: 'Norvège' },
+                { code: 'es', label: 'Espagne' },
+                { code: 'ch', label: 'Suisse' },
+                { code: 'br', label: 'Brésil' },
+                { code: 'kz', label: 'Kazakhstan' },
+                { code: 'ua', label: 'Ukraine' },
+                { code: 'sa', label: 'Arabie Saoudite' },
+                { code: 'ae', label: 'Émirats arabes unis' },
+                { code: 'kr', label: 'Corée du Sud' },
+              ].map(({ code, label }) => (
+                <img
+                  key={code}
+                  src={`https://flagcdn.com/w40/${code}.png`}
+                  srcSet={`https://flagcdn.com/w80/${code}.png 2x`}
+                  width="28"
+                  height="21"
+                  alt={label}
+                  title={label}
+                  className="rounded-sm shadow-sm hover:scale-125 transition-transform cursor-default object-cover"
+                />
               ))}
             </div>
             <p className="text-gray-300 text-sm leading-relaxed">
