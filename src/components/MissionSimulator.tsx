@@ -299,7 +299,7 @@ export function MissionSimulator() {
             </div>
             <div className="w-full h-2 bg-white/8 rounded-full overflow-hidden">
               <div
-                className="h-full rounded-full transition-all"
+                className="h-full rounded-full"
                 style={{
                   width: `${progress * 100}%`,
                   background: completed
