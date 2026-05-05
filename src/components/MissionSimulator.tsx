@@ -1,24 +1,33 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { Play, Square, RotateCcw, Radio, AlertTriangle, CheckCircle2, Zap } from 'lucide-react';
+import { Play, Square, RotateCcw, Radio, AlertTriangle, CheckCircle2, Zap, Thermometer, Activity, Fuel } from 'lucide-react';
 import { TrajectoryView } from './TrajectoryView';
 
 interface Phase {
   id: string;
   label: string;
   shortLabel: string;
-  tStart: number;  // mission time in seconds
+  tStart: number;
   tEnd: number;
-  speedMultiplier: number;  // how fast we advance real time through this phase
+  speedMultiplier: number;
   color: string;
   bgColor: string;
   borderColor: string;
-  event: string;       // operator callout
-  detail: string;      // technical detail shown in log
+  event: string;
+  detail: string;
   altitude: number;    // km at end of phase
   velocity: number;    // m/s at end of phase
   critical: boolean;
+  // Telemetry at end of phase
+  tempEngine: number;  // °C
+  vibration: number;   // g (rms)
+  fuelPct: number;     // % remaining (combined propellant mass)
 }
 
+// Real Ariane 6 VA262 timeline (mission seconds from T+0)
+// T+0 = décollage, boosters sep T+219s, largage coiffe T+272s,
+// coupure Vulcain T+535s, sep étages T+540s, allumage HM7B/Vinci T+545s,
+// orbite transfert T+1110s (~T+18:30), rallumage Vinci T+4495s (~T+1h14:55),
+// déploiement satellites T+5395s (~T+1h29:55)
 const PHASES: Phase[] = [
   {
     id: 'ignition',
@@ -27,82 +36,115 @@ const PHASES: Phase[] = [
     tStart: 0, tEnd: 7,
     speedMultiplier: 1,
     color: 'text-amber-300', bgColor: 'bg-amber-500/15', borderColor: 'border-amber-500/40',
-    event: 'ALLUMAGE VULCAIN — T-0. Poussée nominale confirmée. Autorisation décollage.',
+    event: 'ALLUMAGE VULCAIN — T+0. Poussée nominale confirmée. Autorisation décollage.',
     detail: 'Vulcain 2.1 à pleine poussée (137 tf). Boosters P120C allumés simultanément. Poussée totale ~1 000 tf.',
-    altitude: 0.1, velocity: 200,
+    altitude: 0.05, velocity: 0,
     critical: true,
+    tempEngine: 3200, vibration: 8.5, fuelPct: 100,
   },
   {
     id: 'maxq',
     label: 'Max-Q — Pression dynamique max.',
     shortLabel: 'Max-Q',
-    tStart: 7, tEnd: 60,
+    tStart: 7, tEnd: 50,
     speedMultiplier: 3,
     color: 'text-red-300', bgColor: 'bg-red-500/15', borderColor: 'border-red-500/40',
-    event: 'MAX-Q — Pression dynamique maximale. Guidage en trajectoire réduite.',
-    detail: 'Passage de la zone de Max-Q (~45 s). Les moteurs throttlent légèrement pour protéger la structure.',
-    altitude: 12, velocity: 1350,
+    event: 'MAX-Q — Pression dynamique maximale (~T+45 s). Guidage en trajectoire réduite.',
+    detail: 'Passage de la zone de Max-Q à ~45 s. Les moteurs throttlent légèrement pour protéger la structure.',
+    altitude: 15, velocity: 1400,
     critical: true,
+    tempEngine: 3300, vibration: 12.0, fuelPct: 82,
   },
   {
     id: 'booster_sep',
     label: 'Séparation Boosters P120C',
     shortLabel: 'Sep. Boosters',
-    tStart: 60, tEnd: 135,
-    speedMultiplier: 4,
+    tStart: 50, tEnd: 219,
+    speedMultiplier: 5,
     color: 'text-orange-300', bgColor: 'bg-orange-500/15', borderColor: 'border-orange-500/40',
-    event: 'SÉPARATION BOOSTERS — T+130 s. P120C larguées à 75 km. Phase EPC seul.',
-    detail: 'Les boosters se séparent à ~75 km. L\'EPC et Vulcain 2.1 poursuivent seuls vers l\'espace.',
-    altitude: 75, velocity: 2800,
+    event: 'SÉPARATION BOOSTERS — T+3:39. P120C larguées à ~65 km. Phase EPC seul.',
+    detail: 'Les boosters P120C se séparent à 65 km. L\'EPC et Vulcain 2.1 poursuivent seuls vers l\'espace.',
+    altitude: 65, velocity: 2600,
     critical: true,
+    tempEngine: 3250, vibration: 6.0, fuelPct: 55,
   },
   {
     id: 'fairing_sep',
     label: 'Largage de la Coiffe',
     shortLabel: 'Largage coiffe',
-    tStart: 135, tEnd: 220,
+    tStart: 219, tEnd: 272,
     speedMultiplier: 5,
     color: 'text-blue-300', bgColor: 'bg-blue-500/15', borderColor: 'border-blue-500/40',
-    event: 'LARGAGE COIFFE — T+215 s. Pression dynamique nulle. Satellite exposé.',
-    detail: 'Séparation pyrotechnique de la coiffe à ~110 km. Le satellite est maintenant exposé au vide spatial.',
-    altitude: 110, velocity: 4100,
+    event: 'LARGAGE COIFFE — T+4:32. Pression dynamique nulle. Satellite exposé.',
+    detail: 'Séparation pyrotechnique de la coiffe à ~112 km. Le satellite est maintenant exposé au vide spatial.',
+    altitude: 112, velocity: 3500,
     critical: false,
+    tempEngine: 3200, vibration: 4.5, fuelPct: 42,
   },
   {
     id: 'epc_cutoff',
-    label: 'Coupure EPC — Séparation étage 1',
-    shortLabel: 'Coupure EPC',
-    tStart: 220, tEnd: 490,
+    label: 'Coupure Vulcain — Séparation EPC',
+    shortLabel: 'Coupure Vulcain',
+    tStart: 272, tEnd: 545,
     speedMultiplier: 8,
     color: 'text-cyan-300', bgColor: 'bg-cyan-500/15', borderColor: 'border-cyan-500/40',
-    event: 'COUPURE EPC — T+475 s. Étage principal séparé. Allumage ULPM / Vinci.',
-    detail: 'EPC épuisé après ~470 s. L\'étage supérieur ULPM et son moteur Vinci prennent le relais pour la mise sur orbite LEO.',
-    altitude: 200, velocity: 6900,
+    event: 'COUPURE VULCAIN — T+8:55. Séparation EPC T+9:00. Allumage étage supérieur T+9:05.',
+    detail: 'Vulcain 2.1 s\'éteint après ~535 s. L\'EPC se sépare 5 s plus tard. L\'étage supérieur (ULPM / Vinci) s\'allume aussitôt.',
+    altitude: 190, velocity: 6400,
     critical: true,
+    tempEngine: 200, vibration: 1.2, fuelPct: 72, // étage supérieur plein, EPC vide
   },
   {
-    id: 'leo_insert',
-    label: 'Injection orbite basse (LEO)',
+    id: 'upper_burn',
+    label: 'Injection orbite basse — Vinci',
     shortLabel: 'Injection LEO',
-    tStart: 490, tEnd: 900,
-    speedMultiplier: 12,
+    tStart: 545, tEnd: 1110,
+    speedMultiplier: 15,
     color: 'text-emerald-300', bgColor: 'bg-emerald-500/15', borderColor: 'border-emerald-500/40',
-    event: 'ORBITE LEO CONFIRMÉE — Vinci circularise l\'orbite à 400 km. Vitesse orbitale atteinte.',
-    detail: 'Le moteur Vinci circularise l\'orbite à 400 km d\'altitude. Vitesse orbitale ~7 700 m/s. Orbite basse terrestre (LEO) atteinte.',
-    altitude: 400, velocity: 7700,
+    event: 'ORBITE DE TRANSFERT CONFIRMÉE — T+18:30. Vinci circularise à ~300 km.',
+    detail: 'Le moteur Vinci (18 tf) propulse l\'étage supérieur vers l\'orbite basse. Vitesse orbitale ~7 700 m/s.',
+    altitude: 300, velocity: 7700,
     critical: false,
+    tempEngine: 2950, vibration: 2.1, fuelPct: 45,
+  },
+  {
+    id: 'coast',
+    label: 'Phase balistique — Dérive orbitale',
+    shortLabel: 'Dérive',
+    tStart: 1110, tEnd: 4495,
+    speedMultiplier: 60,
+    color: 'text-slate-300', bgColor: 'bg-slate-500/15', borderColor: 'border-slate-500/40',
+    event: 'PHASE BALISTIQUE — Dérive en orbite pendant ~56 min avant rallumage.',
+    detail: 'Vinci s\'est éteint. L\'étage dérive sur orbite elliptique. Systèmes en veille thermique.',
+    altitude: 295, velocity: 7720,
+    critical: false,
+    tempEngine: -180, vibration: 0.0, fuelPct: 45,
+  },
+  {
+    id: 'relight',
+    label: 'Rallumage Vinci — Orbite cible',
+    shortLabel: 'Rallumage Vinci',
+    tStart: 4495, tEnd: 4900,
+    speedMultiplier: 20,
+    color: 'text-sky-300', bgColor: 'bg-sky-500/15', borderColor: 'border-sky-500/40',
+    event: 'RALLUMAGE VINCI — T+1h14:55. Circularisation orbite cible.',
+    detail: 'Deuxième allumage Vinci pour circulariser l\'orbite définitive. Manœuvre d\'apogée.',
+    altitude: 520, velocity: 7600,
+    critical: true,
+    tempEngine: 2950, vibration: 2.0, fuelPct: 12,
   },
   {
     id: 'payload_sep',
-    label: 'Séparation Charge Utile',
-    shortLabel: 'Sep. Satellite',
-    tStart: 900, tEnd: 960,
-    speedMultiplier: 1,
+    label: 'Déploiement Satellites',
+    shortLabel: 'Déploiement',
+    tStart: 4900, tEnd: 5395,
+    speedMultiplier: 10,
     color: 'text-green-300', bgColor: 'bg-green-500/15', borderColor: 'border-green-500/40',
-    event: 'SÉPARATION CONFIRMÉE — Satellite en orbite LEO opérationnelle. Mission accomplie.',
-    detail: 'Le satellite se sépare de l\'adaptateur à 400 km. Déploiement panneaux solaires confirmé. Signal télémétrie acquis.',
-    altitude: 400, velocity: 7700,
+    event: 'DÉPLOIEMENT CONFIRMÉ — T+1h29:55. Satellites en orbite opérationnelle. Mission accomplie.',
+    detail: 'Séparation des satellites. Déploiement panneaux solaires confirmé. Signal télémétrie acquis.',
+    altitude: 520, velocity: 7600,
     critical: false,
+    tempEngine: 20, vibration: 0.3, fuelPct: 5,
   },
 ];
 
@@ -110,45 +152,92 @@ const TOTAL_MISSION_TIME = PHASES[PHASES.length - 1].tEnd;
 
 function formatMT(s: number): string {
   const abs = Math.abs(s);
-  const m = Math.floor(abs / 60);
+  const h = Math.floor(abs / 3600);
+  const m = Math.floor((abs % 3600) / 60);
   const sec = Math.floor(abs % 60);
   const sign = s < 0 ? '-' : '+';
+  if (h > 0) return `T${sign}${h}h${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
   return `T${sign}${m > 0 ? `${m}min ` : ''}${String(sec).padStart(2, '0')}s`;
 }
 
-function altitudeAt(t: number): number {
-  for (let i = PHASES.length - 1; i >= 0; i--) {
-    if (t >= PHASES[i].tStart) {
-      const p = PHASES[i];
-      const next = PHASES[i + 1];
-      const prevAlt = i > 0 ? PHASES[i - 1].altitude : 0;
-      const frac = (t - p.tStart) / (p.tEnd - p.tStart);
-      return Math.round(prevAlt + (p.altitude - prevAlt) * Math.min(frac, 1));
-    }
-  }
-  return 0;
+function lerp(a: number, b: number, t: number) {
+  return a + (b - a) * Math.min(Math.max(t, 0), 1);
 }
 
-function velocityAt(t: number): number {
-  for (let i = PHASES.length - 1; i >= 0; i--) {
-    if (t >= PHASES[i].tStart) {
-      const p = PHASES[i];
-      const prevV = i > 0 ? PHASES[i - 1].velocity : 0;
-      const frac = (t - p.tStart) / (p.tEnd - p.tStart);
-      return Math.round(prevV + (p.velocity - prevV) * Math.min(frac, 1));
-    }
-  }
-  return 0;
-}
-
-function currentPhaseIndex(t: number): number {
+function phaseIndexAt(t: number): number {
   for (let i = PHASES.length - 1; i >= 0; i--) {
     if (t >= PHASES[i].tStart) return i;
   }
   return 0;
 }
 
+function altitudeAt(t: number): number {
+  const i = phaseIndexAt(Math.max(t, 0));
+  const p = PHASES[i];
+  const prevAlt = i > 0 ? PHASES[i - 1].altitude : 0;
+  const frac = (t - p.tStart) / (p.tEnd - p.tStart);
+  return Math.round(lerp(prevAlt, p.altitude, frac));
+}
+
+function velocityAt(t: number): number {
+  const i = phaseIndexAt(Math.max(t, 0));
+  const p = PHASES[i];
+  const prevV = i > 0 ? PHASES[i - 1].velocity : 0;
+  const frac = (t - p.tStart) / (p.tEnd - p.tStart);
+  return Math.round(lerp(prevV, p.velocity, frac));
+}
+
+function tempAt(t: number): number {
+  const i = phaseIndexAt(Math.max(t, 0));
+  const p = PHASES[i];
+  const prev = i > 0 ? PHASES[i - 1].tempEngine : 20;
+  const frac = (t - p.tStart) / (p.tEnd - p.tStart);
+  return Math.round(lerp(prev, p.tempEngine, frac));
+}
+
+function vibrationAt(t: number): number {
+  const i = phaseIndexAt(Math.max(t, 0));
+  const p = PHASES[i];
+  const prev = i > 0 ? PHASES[i - 1].vibration : 0;
+  const frac = (t - p.tStart) / (p.tEnd - p.tStart);
+  return +lerp(prev, p.vibration, frac).toFixed(1);
+}
+
+function fuelAt(t: number): number {
+  const i = phaseIndexAt(Math.max(t, 0));
+  const p = PHASES[i];
+  const prev = i > 0 ? PHASES[i - 1].fuelPct : 100;
+  const frac = (t - p.tStart) / (p.tEnd - p.tStart);
+  return Math.round(lerp(prev, p.fuelPct, frac));
+}
+
 interface LogEntry { time: number; text: string; critical: boolean }
+
+function GaugeBar({ value, max, color, label, unit, icon: Icon }: {
+  value: number; max: number; color: string; label: string; unit: string;
+  icon: React.ElementType;
+}) {
+  const pct = Math.min(Math.max(value / max, 0), 1) * 100;
+  return (
+    <div className="bg-white/5 border border-white/8 rounded-xl p-3">
+      <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center gap-1.5">
+          <Icon className={`w-3.5 h-3.5 ${color}`} />
+          <span className="text-xs text-gray-500 uppercase tracking-wider">{label}</span>
+        </div>
+        <span className={`font-mono text-sm font-bold ${color}`}>
+          {value.toLocaleString('fr-FR')}{unit}
+        </span>
+      </div>
+      <div className="w-full h-1.5 bg-white/8 rounded-full overflow-hidden">
+        <div
+          className="h-full rounded-full transition-all duration-300"
+          style={{ width: `${pct}%`, background: 'currentColor' }}
+        />
+      </div>
+    </div>
+  );
+}
 
 export function MissionSimulator() {
   const [running, setRunning] = useState(false);
@@ -161,9 +250,7 @@ export function MissionSimulator() {
   const seenPhasesRef = useRef<Set<string>>(new Set());
 
   useEffect(() => {
-    if (logRef.current) {
-      logRef.current.scrollTop = logRef.current.scrollHeight;
-    }
+    if (logRef.current) logRef.current.scrollTop = logRef.current.scrollHeight;
   }, [log]);
 
   const tick = useCallback((now: number) => {
@@ -172,13 +259,13 @@ export function MissionSimulator() {
     lastRealRef.current = now;
 
     setMissionTime(prev => {
-      const phIdx = currentPhaseIndex(Math.max(prev, 0));
+      const phIdx = phaseIndexAt(Math.max(prev, 0));
       const phase = PHASES[phIdx];
       const speed = prev < 0 ? 1 : (phase?.speedMultiplier ?? 1);
       const next = prev + realDelta * speed;
 
-      const prevPhIdx = currentPhaseIndex(Math.max(prev, 0));
-      const nextPhIdx = currentPhaseIndex(Math.max(next, 0));
+      const prevPhIdx = phaseIndexAt(Math.max(prev, 0));
+      const nextPhIdx = phaseIndexAt(Math.max(next, 0));
       if ((next >= 0 && nextPhIdx !== prevPhIdx) || (prev < 0 && next >= 0)) {
         const entered = PHASES[nextPhIdx];
         if (entered && !seenPhasesRef.current.has(entered.id)) {
@@ -224,11 +311,18 @@ export function MissionSimulator() {
     setCompleted(false);
   };
 
-  const phIdx = currentPhaseIndex(Math.max(missionTime, 0));
+  const phIdx = phaseIndexAt(Math.max(missionTime, 0));
   const phase = missionTime >= 0 ? PHASES[phIdx] : null;
   const progress = Math.max(0, Math.min(1, missionTime / TOTAL_MISSION_TIME));
-  const alt = missionTime >= 0 ? altitudeAt(missionTime) : 0;
-  const vel = missionTime >= 0 ? velocityAt(missionTime) : 0;
+  const alt  = missionTime >= 0 ? altitudeAt(missionTime) : 0;
+  const vel  = missionTime >= 0 ? velocityAt(missionTime) : 0;
+  const temp = missionTime >= 0 ? tempAt(missionTime) : 20;
+  const vib  = missionTime >= 0 ? vibrationAt(missionTime) : 0;
+  const fuel = missionTime >= 0 ? fuelAt(missionTime) : 100;
+
+  const tempColor = temp > 2000 ? 'text-red-400' : temp > 500 ? 'text-orange-400' : temp < 0 ? 'text-sky-400' : 'text-gray-300';
+  const vibColor  = vib > 8 ? 'text-red-400' : vib > 4 ? 'text-orange-400' : 'text-emerald-400';
+  const fuelColor = fuel < 15 ? 'text-red-400' : fuel < 35 ? 'text-amber-400' : 'text-emerald-400';
 
   return (
     <div className="bg-slate-950 rounded-2xl border border-white/10 overflow-hidden">
@@ -269,151 +363,204 @@ export function MissionSimulator() {
       </div>
 
       <div className="p-5 flex flex-col gap-5">
-        {/* Trajectory */}
         <TrajectoryView missionTime={missionTime} phases={PHASES} totalTime={TOTAL_MISSION_TIME} completed={completed} />
 
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-5">
-        {/* Left: telemetry + progress */}
-        <div className="lg:col-span-3 flex flex-col gap-4">
-          {/* Mission clock + telemetry */}
-          <div className="grid grid-cols-3 gap-3">
-            <div className="bg-white/5 border border-white/8 rounded-xl p-3 text-center">
-              <p className="text-xs text-gray-500 mb-1 uppercase tracking-wider">Temps mission</p>
-              <p className="font-mono text-lg font-bold text-white">{formatMT(Math.round(missionTime))}</p>
-            </div>
-            <div className="bg-white/5 border border-white/8 rounded-xl p-3 text-center">
-              <p className="text-xs text-gray-500 mb-1 uppercase tracking-wider">Altitude</p>
-              <p className="font-mono text-lg font-bold text-sky-300">{alt.toLocaleString('fr-FR')} km</p>
-            </div>
-            <div className="bg-white/5 border border-white/8 rounded-xl p-3 text-center">
-              <p className="text-xs text-gray-500 mb-1 uppercase tracking-wider">Vitesse</p>
-              <p className="font-mono text-lg font-bold text-orange-300">{vel.toLocaleString('fr-FR')} m/s</p>
-            </div>
-          </div>
-
-          {/* Progress bar */}
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-xs text-gray-500">Progression de la mission</span>
-              <span className="text-xs font-mono text-gray-400">{Math.round(progress * 100)} %</span>
-            </div>
-            <div className="w-full h-2 bg-white/8 rounded-full overflow-hidden">
-              <div
-                className="h-full rounded-full"
-                style={{
-                  width: `${progress * 100}%`,
-                  background: completed
-                    ? 'linear-gradient(90deg, #10b981, #34d399)'
-                    : 'linear-gradient(90deg, #f59e0b, #ef4444)',
-                }}
-              />
-            </div>
-            {/* Phase markers */}
-            <div className="relative h-1 mt-1">
-              {PHASES.map(p => (
-                <div key={p.id}
-                  className="absolute top-0 w-px h-full bg-white/20"
-                  style={{ left: `${(p.tStart / TOTAL_MISSION_TIME) * 100}%` }}
-                />
-              ))}
-            </div>
-          </div>
-
-          {/* Current phase card */}
-          <div className={`rounded-xl border p-4 transition-all ${
-            phase
-              ? `${phase.bgColor} ${phase.borderColor}`
-              : 'bg-white/5 border-white/10'
-          }`}>
-            {phase ? (
-              <>
-                <div className="flex items-start justify-between gap-2 mb-2">
-                  <div className="flex items-center gap-2">
-                    {phase.critical
-                      ? <AlertTriangle className={`w-4 h-4 flex-shrink-0 ${phase.color}`} />
-                      : <Zap className={`w-4 h-4 flex-shrink-0 ${phase.color}`} />
-                    }
-                    <span className={`text-sm font-bold ${phase.color}`}>{phase.label}</span>
-                  </div>
-                  <span className="text-xs font-mono text-gray-500 flex-shrink-0">
-                    ×{phase.speedMultiplier} vitesse
-                  </span>
-                </div>
-                <p className="text-xs text-gray-300 leading-relaxed">{phase.detail}</p>
-              </>
-            ) : (
-              <div className="flex items-center gap-2 text-gray-500">
-                <Radio className="w-4 h-4" />
-                <span className="text-sm">
-                  {missionTime <= -10
-                    ? 'Préparation au lancement. Appuyez sur "Lancer" pour démarrer la séquence.'
-                    : `Compte à rebours : ${Math.abs(Math.round(missionTime))} s`}
-                </span>
+          {/* Left: telemetry + progress */}
+          <div className="lg:col-span-3 flex flex-col gap-4">
+            {/* Mission clock + altitude + velocity */}
+            <div className="grid grid-cols-3 gap-3">
+              <div className="bg-white/5 border border-white/8 rounded-xl p-3 text-center">
+                <p className="text-xs text-gray-500 mb-1 uppercase tracking-wider">Temps mission</p>
+                <p className="font-mono text-base font-bold text-white">{formatMT(Math.round(missionTime))}</p>
               </div>
-            )}
-          </div>
+              <div className="bg-white/5 border border-white/8 rounded-xl p-3 text-center">
+                <p className="text-xs text-gray-500 mb-1 uppercase tracking-wider">Altitude</p>
+                <p className="font-mono text-base font-bold text-sky-300">{alt.toLocaleString('fr-FR')} km</p>
+              </div>
+              <div className="bg-white/5 border border-white/8 rounded-xl p-3 text-center">
+                <p className="text-xs text-gray-500 mb-1 uppercase tracking-wider">Vitesse</p>
+                <p className="font-mono text-base font-bold text-orange-300">{vel.toLocaleString('fr-FR')} m/s</p>
+              </div>
+            </div>
 
-          {/* Phase list */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3 gap-1.5">
-            {PHASES.map((p, i) => {
-              const done = missionTime >= p.tEnd;
-              const active = phIdx === i && missionTime >= 0;
-              return (
-                <div key={p.id}
-                  className={`rounded-lg border px-2.5 py-2 transition-all ${
-                    done
-                      ? 'bg-white/5 border-white/10 opacity-60'
-                      : active
-                      ? `${p.bgColor} ${p.borderColor}`
-                      : 'bg-white/3 border-white/5 opacity-40'
-                  }`}
-                >
+            {/* Temperature / Vibration / Fuel */}
+            <div className="grid grid-cols-3 gap-3">
+              <div className="bg-white/5 border border-white/8 rounded-xl p-3">
+                <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-1.5">
-                    {done
-                      ? <CheckCircle2 className="w-3 h-3 text-emerald-400 flex-shrink-0" />
-                      : active
-                      ? <span className="w-2 h-2 rounded-full animate-pulse flex-shrink-0" style={{ backgroundColor: p.color.replace('text-', '').includes('-') ? undefined : undefined, background: 'currentColor' }} />
-                      : <span className="w-2 h-2 rounded-full bg-gray-700 flex-shrink-0" />
-                    }
-                    <span className={`text-xs font-medium truncate ${active ? p.color : done ? 'text-gray-400' : 'text-gray-600'}`}>
-                      {p.shortLabel}
+                    <Thermometer className={`w-3.5 h-3.5 ${tempColor}`} />
+                    <span className="text-xs text-gray-500 uppercase tracking-wider">Temp. moteur</span>
+                  </div>
+                </div>
+                <p className={`font-mono text-base font-bold ${tempColor}`}>
+                  {temp.toLocaleString('fr-FR')} °C
+                </p>
+                <div className="w-full h-1.5 bg-white/8 rounded-full overflow-hidden mt-2">
+                  <div
+                    className={`h-full rounded-full transition-all duration-300 ${
+                      temp > 2000 ? 'bg-red-400' : temp > 500 ? 'bg-orange-400' : temp < 0 ? 'bg-sky-400' : 'bg-gray-400'
+                    }`}
+                    style={{ width: `${Math.min(Math.abs(temp) / 3500 * 100, 100)}%` }}
+                  />
+                </div>
+              </div>
+
+              <div className="bg-white/5 border border-white/8 rounded-xl p-3">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-1.5">
+                    <Activity className={`w-3.5 h-3.5 ${vibColor}`} />
+                    <span className="text-xs text-gray-500 uppercase tracking-wider">Vibrations</span>
+                  </div>
+                </div>
+                <p className={`font-mono text-base font-bold ${vibColor}`}>{vib.toLocaleString('fr-FR')} g</p>
+                <div className="w-full h-1.5 bg-white/8 rounded-full overflow-hidden mt-2">
+                  <div
+                    className={`h-full rounded-full transition-all duration-300 ${
+                      vib > 8 ? 'bg-red-400' : vib > 4 ? 'bg-orange-400' : 'bg-emerald-400'
+                    }`}
+                    style={{ width: `${Math.min(vib / 14 * 100, 100)}%` }}
+                  />
+                </div>
+              </div>
+
+              <div className="bg-white/5 border border-white/8 rounded-xl p-3">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-1.5">
+                    <Fuel className={`w-3.5 h-3.5 ${fuelColor}`} />
+                    <span className="text-xs text-gray-500 uppercase tracking-wider">Carburant</span>
+                  </div>
+                </div>
+                <p className={`font-mono text-base font-bold ${fuelColor}`}>{fuel} %</p>
+                <div className="w-full h-1.5 bg-white/8 rounded-full overflow-hidden mt-2">
+                  <div
+                    className={`h-full rounded-full transition-all duration-300 ${
+                      fuel < 15 ? 'bg-red-400' : fuel < 35 ? 'bg-amber-400' : 'bg-emerald-400'
+                    }`}
+                    style={{ width: `${fuel}%` }}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Progress bar */}
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs text-gray-500">Progression de la mission</span>
+                <span className="text-xs font-mono text-gray-400">{Math.round(progress * 100)} %</span>
+              </div>
+              <div className="w-full h-2 bg-white/8 rounded-full overflow-hidden">
+                <div
+                  className="h-full rounded-full transition-all duration-75"
+                  style={{
+                    width: `${progress * 100}%`,
+                    background: completed
+                      ? 'linear-gradient(90deg, #10b981, #34d399)'
+                      : 'linear-gradient(90deg, #f59e0b, #ef4444)',
+                  }}
+                />
+              </div>
+              <div className="relative h-1 mt-1">
+                {PHASES.map(p => (
+                  <div key={p.id}
+                    className="absolute top-0 w-px h-full bg-white/20"
+                    style={{ left: `${(p.tStart / TOTAL_MISSION_TIME) * 100}%` }}
+                  />
+                ))}
+              </div>
+            </div>
+
+            {/* Current phase card */}
+            <div className={`rounded-xl border p-4 transition-all ${
+              phase ? `${phase.bgColor} ${phase.borderColor}` : 'bg-white/5 border-white/10'
+            }`}>
+              {phase ? (
+                <>
+                  <div className="flex items-start justify-between gap-2 mb-2">
+                    <div className="flex items-center gap-2">
+                      {phase.critical
+                        ? <AlertTriangle className={`w-4 h-4 flex-shrink-0 ${phase.color}`} />
+                        : <Zap className={`w-4 h-4 flex-shrink-0 ${phase.color}`} />
+                      }
+                      <span className={`text-sm font-bold ${phase.color}`}>{phase.label}</span>
+                    </div>
+                    <span className="text-xs font-mono text-gray-500 flex-shrink-0">
+                      ×{phase.speedMultiplier} vitesse
                     </span>
                   </div>
+                  <p className="text-xs text-gray-300 leading-relaxed">{phase.detail}</p>
+                </>
+              ) : (
+                <div className="flex items-center gap-2 text-gray-500">
+                  <Radio className="w-4 h-4" />
+                  <span className="text-sm">
+                    {missionTime <= -10
+                      ? 'Préparation au lancement. Appuyez sur "Lancer" pour démarrer la séquence.'
+                      : `Compte à rebours : ${Math.abs(Math.round(missionTime))} s`}
+                  </span>
                 </div>
-              );
-            })}
-          </div>
-        </div>
+              )}
+            </div>
 
-        {/* Right: mission log */}
-        <div className="lg:col-span-2 flex flex-col">
-          <div className="flex items-center gap-2 mb-2">
-            <Radio className="w-3.5 h-3.5 text-gray-500" />
-            <p className="text-xs text-gray-500 uppercase tracking-wider font-semibold">Journal de mission</p>
+            {/* Phase list */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3 gap-1.5">
+              {PHASES.map((p, i) => {
+                const done   = missionTime >= p.tEnd;
+                const active = phIdx === i && missionTime >= 0;
+                return (
+                  <div key={p.id}
+                    className={`rounded-lg border px-2.5 py-2 transition-all ${
+                      done   ? 'bg-white/5 border-white/10 opacity-60'
+                      : active ? `${p.bgColor} ${p.borderColor}`
+                      : 'bg-white/3 border-white/5 opacity-40'
+                    }`}
+                  >
+                    <div className="flex items-center gap-1.5">
+                      {done
+                        ? <CheckCircle2 className="w-3 h-3 text-emerald-400 flex-shrink-0" />
+                        : active
+                        ? <span className="w-2 h-2 rounded-full bg-current animate-pulse flex-shrink-0" />
+                        : <span className="w-2 h-2 rounded-full bg-gray-700 flex-shrink-0" />
+                      }
+                      <span className={`text-xs font-medium truncate ${active ? p.color : done ? 'text-gray-400' : 'text-gray-600'}`}>
+                        {p.shortLabel}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
-          <div
-            ref={logRef}
-            className="flex-1 bg-black/40 border border-white/8 rounded-xl p-3 overflow-y-auto font-mono text-xs space-y-2"
-            style={{ minHeight: 260, maxHeight: 340 }}
-          >
-            {log.length === 0 ? (
-              <p className="text-gray-600 italic">En attente de démarrage…</p>
-            ) : (
-              log.map((entry, i) => (
-                <div key={i} className={`flex gap-2 ${entry.critical ? 'text-amber-300' : 'text-emerald-400'}`}>
-                  <span className="text-gray-600 flex-shrink-0">{formatMT(entry.time)}</span>
-                  <span className="leading-relaxed">{entry.text}</span>
+
+          {/* Right: mission log */}
+          <div className="lg:col-span-2 flex flex-col">
+            <div className="flex items-center gap-2 mb-2">
+              <Radio className="w-3.5 h-3.5 text-gray-500" />
+              <p className="text-xs text-gray-500 uppercase tracking-wider font-semibold">Journal de mission</p>
+            </div>
+            <div
+              ref={logRef}
+              className="flex-1 bg-black/40 border border-white/8 rounded-xl p-3 overflow-y-auto font-mono text-xs space-y-2"
+              style={{ minHeight: 280, maxHeight: 380 }}
+            >
+              {log.length === 0 ? (
+                <p className="text-gray-600 italic">En attente de démarrage…</p>
+              ) : (
+                log.map((entry, i) => (
+                  <div key={i} className={`flex gap-2 ${entry.critical ? 'text-amber-300' : 'text-emerald-400'}`}>
+                    <span className="text-gray-600 flex-shrink-0">{formatMT(entry.time)}</span>
+                    <span className="leading-relaxed">{entry.text}</span>
+                  </div>
+                ))
+              )}
+              {completed && (
+                <div className="mt-2 pt-2 border-t border-white/10 flex items-center gap-2 text-green-400">
+                  <CheckCircle2 className="w-3.5 h-3.5" />
+                  <span className="font-bold">MISSION RÉUSSIE — Satellites en orbite.</span>
                 </div>
-              ))
-            )}
-            {completed && (
-              <div className="mt-2 pt-2 border-t border-white/10 flex items-center gap-2 text-green-400">
-                <CheckCircle2 className="w-3.5 h-3.5" />
-                <span className="font-bold">MISSION RÉUSSIE — Satellite en orbite.</span>
-              </div>
-            )}
+              )}
+            </div>
           </div>
-        </div>
         </div>
       </div>
     </div>
