@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { ExternalLink } from 'lucide-react';
 
 interface Source { label: string; url: string }
@@ -8,7 +8,7 @@ interface Part {
   label: string;
   shortLabel: string;
   accentColor: string;
-  description: React.ReactNode;
+  description: string;
   details: string[];
   stats: { label: string; value: string }[];
   sources: Source[];
@@ -35,7 +35,6 @@ const PARTS: Record<string, Part> = {
     ],
     sources: [
       { label: 'Ariane 6 : tout savoir — CNES', url:'https://cnes.fr/projets/ariane-6/modeles#:~:text=L%E2%80%99%C3%A9tage%20composite%20sup%C3%A9rieur' },
-      { label: 'Ariane 6 en détail — Futura Sciences', url: 'https://www.futura-sciences.com/sciences/dossiers/astronautique-ariane-6-futur-lanceur-europeen-1878/' },
     ],
   },
   payload: {
@@ -58,7 +57,6 @@ const PARTS: Record<string, Part> = {
     ],
     sources: [
       { label: 'Performances d\'Ariane 6 — ArianeGroup', url: 'https://www.arianespace.com/vehicle/ariane-6/' },
-      { label: 'Charge utile spatiale — Futura Sciences', url: 'https://www.futura-sciences.com/sciences/definitions/astronautique-charge-utile-2249/' },
     ],
   },
   upper: {
@@ -66,21 +64,7 @@ const PARTS: Record<string, Part> = {
     label: 'Étage Supérieur (ULPM)',
     shortLabel: 'Étage sup.',
     accentColor: '#67e8f9',
-    description: (
-      <>
-        L'Upper Liquid Propulsion Module est l'étage{' '}
-        <a
-          href="https://cnes.fr/projets/ariane-6/modeles#:~:text=L%E2%80%99%C3%A9tage%20sup%C3%A9rieur%20cryotechnique%20ULPM%20(Upper%20Liquid%20Propulsion%20Module)"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="underline decoration-dotted underline-offset-2 hover:opacity-80 transition-opacity"
-          style={{ color: '#67e8f9' }}
-        >
-          cryotechnique
-        </a>
-        {' '}qui assure la mise sur orbite précise. Son moteur Vinci, rallumable jusqu'à 5 fois, permet des missions à orbites multiples : il largue des satellites sur des orbites différentes au cours d'un même vol.
-      </>
-    ),
+    description: "L'Upper Liquid Propulsion Module est l'étage cryotechnique qui assure la mise sur orbite précise. Son moteur Vinci, rallumable jusqu'à 5 fois, permet des missions à orbites multiples : il largue des satellites sur des orbites différentes au cours d'un même vol.",
     details: [
       'Moteur Vinci (HM7B sur A62) : rallumable jusqu\'à 5 fois en vol',
       'Propergols cryotechniques : LH₂ (−253 °C) + LOX (−183 °C)',
@@ -117,7 +101,6 @@ const PARTS: Record<string, Part> = {
     ],
     sources: [
       { label: 'L\'EPC d\'Ariane 6 — ArianeGroup', url: 'https://cnes.fr/projets/ariane-6/modeles#:~:text=L%E2%80%99%C3%A9tage%20inf%C3%A9rieur%20cryotechnique%20LLPM%20(Lower%20Liquid%20Propulsion%20Module)' },
-      { label: 'Ariane 6, le lanceur européen — Futura Sciences', url: 'https://www.futura-sciences.com/sciences/dossiers/astronautique-ariane-6-futur-lanceur-europeen-1878/' },
     ],
   },
   boosters: {
@@ -140,7 +123,6 @@ const PARTS: Record<string, Part> = {
     ],
     sources: [
       { label: 'Les boosters P120C — CNES', url: 'https://cnes.fr/projets/ariane-6/modeles#:~:text=L%E2%80%99%C3%A9tage%20d%E2%80%99acc%C3%A9l%C3%A9ration%20%C3%A0%20poudre%20ESR%20(Equipped%20Solid%20Rocket)' },
-      { label: 'P120C, le booster commun — Futura Sciences', url: 'https://www.futura-sciences.com/sciences/actualites/astronautique-p120c-boosters-ariane-6-vega-c-prets-100761/' },
     ],
   },
   vulcain: {
@@ -163,7 +145,6 @@ const PARTS: Record<string, Part> = {
     ],
     sources: [
       { label: 'Vulcain 2.1 — ArianeGroup', url: 'https://cnes.fr/projets/ariane-6/modeles#:~:text=des%20mat%C3%A9riaux%20isolants.-,Le%20moteur%20Vulcain%202.1,-Le%20moteur%20Vulcain' },
-      { label: 'Le moteur Vulcain — Futura Sciences', url: 'https://www.futura-sciences.com/sciences/definitions/astronautique-vulcain-2398/' },
     ],
   },
 };
