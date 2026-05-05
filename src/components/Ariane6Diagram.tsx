@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { ExternalLink } from 'lucide-react';
 
 interface Source { label: string; url: string }
@@ -8,7 +8,7 @@ interface Part {
   label: string;
   shortLabel: string;
   accentColor: string;
-  description: string;
+  description: React.ReactNode;
   details: string[];
   stats: { label: string; value: string }[];
   sources: Source[];
@@ -66,8 +66,21 @@ const PARTS: Record<string, Part> = {
     label: 'Étage Supérieur (ULPM)',
     shortLabel: 'Étage sup.',
     accentColor: '#67e8f9',
-    description:
-      "L'Upper Liquid Propulsion Module est l'étage cryotechnique qui assure la mise sur orbite précise. Son moteur Vinci, rallumable jusqu'à 5 fois, permet des missions à orbites multiples : il largue des satellites sur des orbites différentes au cours d'un même vol.",
+    description: (
+      <>
+        L'Upper Liquid Propulsion Module est l'étage{' '}
+        <a
+          href="https://www.futura-sciences.com/sciences/definitions/astronautique-cryotechnique-1620/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="underline decoration-dotted underline-offset-2 hover:opacity-80 transition-opacity"
+          style={{ color: '#67e8f9' }}
+        >
+          cryotechnique
+        </a>
+        {' '}qui assure la mise sur orbite précise. Son moteur Vinci, rallumable jusqu'à 5 fois, permet des missions à orbites multiples : il largue des satellites sur des orbites différentes au cours d'un même vol.
+      </>
+    ),
     details: [
       'Moteur Vinci (HM7B sur A62) : rallumable jusqu\'à 5 fois en vol',
       'Propergols cryotechniques : LH₂ (−253 °C) + LOX (−183 °C)',
