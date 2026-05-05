@@ -185,8 +185,8 @@ export function RocketSection({ onComplete, onHome, onBack }: RocketSectionProps
                 { label: 'Séparation étages',    t: 2345, tag: 'T+9:00',   color: 'text-rose-400   border-rose-500/30   bg-rose-500/10'   },
                 { label: 'Allumage HM7B',        t: 2350, tag: 'T+9:05',   color: 'text-cyan-400   border-cyan-500/30   bg-cyan-500/10'   },
                 { label: 'Orbite de transfert',  t: 2915, tag: 'T+18:30',  color: 'text-blue-400   border-blue-500/30   bg-blue-500/10'   },
-                { label: 'Rallumage Vinci',      t: 5165, tag: 'T+56:00',  color: 'text-violet-400 border-violet-500/30 bg-violet-500/10' },
-                { label: 'Déploiement satellites', t: 5285, tag: 'T+58:00', color: 'text-green-400  border-green-500/30  bg-green-500/10'  },
+                { label: 'Rallumage Vinci',      t: 5940, tag: 'T+1h14:55', color: 'text-violet-400 border-violet-500/30 bg-violet-500/10' },
+                { label: 'Déploiement satellites', t: 7200, tag: 'T+1h31:55', color: 'text-green-400  border-green-500/30  bg-green-500/10'  },
               ].map(({ label, t, tag, color }) => (
                 <a
                   key={t}
