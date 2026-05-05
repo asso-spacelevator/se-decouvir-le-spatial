@@ -4,16 +4,36 @@ import { StartPage } from './components/StartPage';
 import { IntroductionPage } from './components/IntroductionPage';
 import { ImpactTerrestreSection } from './components/ImpactTerrestreSection';
 import { RocketSection } from './components/RocketSection';
+import { SocialReferencesSection } from './components/SocialReferencesSection';
+import { SessionBreakPage } from './components/SessionBreakPage';
 import { SatelliteSection } from './components/SatelliteSection';
 import { ExplorationSection } from './components/ExplorationSection';
-import { SocialReferencesSection } from './components/SocialReferencesSection';
-import { AssociationsSection } from './components/AssociationsSection';
-import { FAQSection } from './components/FAQSection';
-import { SchoolResourcesSection } from './components/SchoolResourcesSection';
-import { QuestionZone } from './components/QuestionZone';
+import { AccompagnementSection } from './components/AccompagnementSection';
+import { FAQQuestionsSection } from './components/FAQQuestionsSection';
 import { CompletionPage } from './components/CompletionPage';
 import { ProgressBar } from './components/ProgressBar';
 import type { Section } from './lib/supabase';
+
+const SESSION1_STEPS = [
+  { name: 'Impact Terre', icon: '🌍', section: 'impact_terrestre' as Section },
+  { name: 'Lanceurs', icon: '🚀', section: 'rockets' as Section },
+  { name: 'Social', icon: '📱', section: 'social' as Section },
+];
+
+const SESSION2_STEPS = [
+  { name: 'Orbite', icon: '🛰️', section: 'satellites' as Section },
+  { name: 'Au-delà', icon: '🌌', section: 'exploration' as Section },
+  { name: 'Accompagnement', icon: '🤝', section: 'accompagnement' as Section },
+  { name: 'FAQ & Questions', icon: '💬', section: 'faq_questions' as Section },
+];
+
+const sectionOrder: Section[] = [
+  'start', 'introduction',
+  'impact_terrestre', 'rockets', 'social',
+  'session_break',
+  'satellites', 'exploration', 'accompagnement', 'faq_questions',
+  'completed',
+];
 
 function AppContent() {
   const { session, loading, updateSection, completeSection } = useSession();
@@ -25,64 +45,33 @@ function AppContent() {
     }
   }, [session]);
 
-  const sectionOrder: Section[] = ['start', 'introduction', 'impact_terrestre', 'rockets', 'satellites', 'exploration', 'social', 'associations', 'faq', 'resources', 'questions', 'completed'];
-
-  const progressSteps = [
-    { name: 'Impact Terre', icon: '🌍' },
-    { name: 'Lanceurs', icon: '🚀' },
-    { name: 'Orbite', icon: '🛰️' },
-    { name: 'Au-delà', icon: '🌌' },
-    { name: 'Social', icon: '📱' },
-    { name: 'Accompagnement', icon: '🤝' },
-    { name: 'FAQ', icon: '💭' },
-    { name: 'Ressources', icon: '📚' },
-    { name: 'Questions', icon: '❓' }
-  ];
+  const isSession1 = SESSION1_STEPS.some(s => s.section === currentView);
+  const isSession2 = SESSION2_STEPS.some(s => s.section === currentView);
 
   const getCurrentStepIndex = () => {
-    const view = currentView;
-    if (view === 'start' || view === 'introduction' || view === 'completed') return -1;
-    if (view === 'impact_terrestre') return 0;
-    if (view === 'rockets') return 1;
-    if (view === 'satellites') return 2;
-    if (view === 'exploration') return 3;
-    if (view === 'social') return 4;
-    if (view === 'associations') return 5;
-    if (view === 'faq') return 6;
-    if (view === 'resources') return 7;
-    if (view === 'questions') return 8;
+    if (isSession1) return SESSION1_STEPS.findIndex(s => s.section === currentView);
+    if (isSession2) return SESSION2_STEPS.findIndex(s => s.section === currentView);
     return -1;
   };
 
-  const handleStartJourney = async () => {
-    setCurrentView('introduction');
-    await updateSection('introduction');
-  };
-
-  const handleIntroductionComplete = async () => {
-    setCurrentView('impact_terrestre');
-    await updateSection('impact_terrestre');
+  const navigate = async (section: Section) => {
+    setCurrentView(section);
+    await updateSection(section);
   };
 
   const handleSectionComplete = async (nextSection: Section) => {
     await completeSection(currentView);
-    setCurrentView(nextSection);
-    await updateSection(nextSection);
-  };
-
-  const handleRestart = async () => {
-    setCurrentView('start');
-    await updateSection('start');
+    await navigate(nextSection);
   };
 
   const handleBack = async () => {
     const currentIndex = sectionOrder.indexOf(currentView);
     if (currentIndex > 0) {
-      const previousSection = sectionOrder[currentIndex - 1];
-      setCurrentView(previousSection);
-      await updateSection(previousSection);
+      await navigate(sectionOrder[currentIndex - 1]);
     }
   };
+
+  const handleHome = async () => navigate('start');
 
   if (loading) {
     return (
@@ -92,89 +81,93 @@ function AppContent() {
     );
   }
 
+  const steps = isSession1 ? SESSION1_STEPS : SESSION2_STEPS;
+  const sessionLabel = isSession1 ? 'Session 1 / 2' : 'Session 2 / 2';
   const stepIndex = getCurrentStepIndex();
 
   return (
     <>
-      {stepIndex >= 0 && (
+      {(isSession1 || isSession2) && (
         <ProgressBar
           currentStep={stepIndex}
-          totalSteps={progressSteps.length}
-          steps={progressSteps}
+          totalSteps={steps.length}
+          steps={steps}
+          sessionLabel={sessionLabel}
         />
       )}
-      {currentView === 'start' && <StartPage onStart={handleStartJourney} />}
+
+      {currentView === 'start' && <StartPage onStart={() => navigate('introduction')} />}
+
       {currentView === 'introduction' && (
         <IntroductionPage
-          onContinue={handleIntroductionComplete}
-          onHome={handleRestart}
+          onContinue={() => navigate('impact_terrestre')}
+          onHome={handleHome}
           onBack={handleBack}
         />
       )}
+
+      {/* Session 1 */}
       {currentView === 'impact_terrestre' && (
         <ImpactTerrestreSection
           onComplete={() => handleSectionComplete('rockets')}
-          onHome={handleRestart}
+          onHome={handleHome}
           onBack={handleBack}
         />
       )}
       {currentView === 'rockets' && (
         <RocketSection
-          onComplete={() => handleSectionComplete('satellites')}
-          onHome={handleRestart}
-          onBack={handleBack}
-        />
-      )}
-      {currentView === 'satellites' && (
-        <SatelliteSection
-          onComplete={() => handleSectionComplete('exploration')}
-          onHome={handleRestart}
-          onBack={handleBack}
-        />
-      )}
-      {currentView === 'exploration' && (
-        <ExplorationSection
           onComplete={() => handleSectionComplete('social')}
-          onHome={handleRestart}
+          onHome={handleHome}
           onBack={handleBack}
         />
       )}
       {currentView === 'social' && (
         <SocialReferencesSection
-          onComplete={() => handleSectionComplete('associations')}
-          onHome={handleRestart}
+          onComplete={() => handleSectionComplete('session_break')}
+          onHome={handleHome}
           onBack={handleBack}
         />
       )}
-      {currentView === 'associations' && (
-        <AssociationsSection
-          onComplete={() => handleSectionComplete('faq')}
-          onHome={handleRestart}
+
+      {/* Pause entre les sessions */}
+      {currentView === 'session_break' && (
+        <SessionBreakPage
+          onContinue={() => navigate('satellites')}
+          onHome={handleHome}
+        />
+      )}
+
+      {/* Session 2 */}
+      {currentView === 'satellites' && (
+        <SatelliteSection
+          onComplete={() => handleSectionComplete('exploration')}
+          onHome={handleHome}
           onBack={handleBack}
         />
       )}
-      {currentView === 'faq' && (
-        <FAQSection
-          onComplete={() => handleSectionComplete('resources')}
-          onHome={handleRestart}
+      {currentView === 'exploration' && (
+        <ExplorationSection
+          onComplete={() => handleSectionComplete('accompagnement')}
+          onHome={handleHome}
           onBack={handleBack}
         />
       )}
-      {currentView === 'resources' && (
-        <SchoolResourcesSection
-          onComplete={() => handleSectionComplete('questions')}
-          onHome={handleRestart}
+      {currentView === 'accompagnement' && (
+        <AccompagnementSection
+          onComplete={() => handleSectionComplete('faq_questions')}
+          onHome={handleHome}
           onBack={handleBack}
         />
       )}
-      {currentView === 'questions' && (
-        <QuestionZone
+      {currentView === 'faq_questions' && (
+        <FAQQuestionsSection
           onComplete={() => handleSectionComplete('completed')}
-          onHome={handleRestart}
+          onHome={handleHome}
           onBack={handleBack}
         />
       )}
-      {currentView === 'completed' && <CompletionPage onRestart={handleRestart} />}
+
+      {currentView === 'completed' && <CompletionPage onRestart={handleHome} />}
     </>
   );
 }
