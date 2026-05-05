@@ -139,7 +139,7 @@ const PARTS: Record<string, Part> = {
       { label: 'Combustion', value: '~130 s' },
     ],
     sources: [
-      { label: 'Les boosters P120C — CNES', url: 'https://cnes.fr/actualites/ariane-6-tout-savoir-sur-le-lanceur-europeen' },
+      { label: 'Les boosters P120C — CNES', url: 'https://cnes.fr/projets/ariane-6/modeles#:~:text=L%E2%80%99%C3%A9tage%20d%E2%80%99acc%C3%A9l%C3%A9ration%20%C3%A0%20poudre%20ESR%20(Equipped%20Solid%20Rocket)' },
       { label: 'P120C, le booster commun — Futura Sciences', url: 'https://www.futura-sciences.com/sciences/actualites/astronautique-p120c-boosters-ariane-6-vega-c-prets-100761/' },
     ],
   },
