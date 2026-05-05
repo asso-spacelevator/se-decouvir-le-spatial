@@ -6,6 +6,7 @@ import { Navigation } from './Navigation';
 import { Quiz } from './Quiz';
 import { AvatarGuide } from './AvatarGuide';
 import { Ariane6Diagram } from './Ariane6Diagram';
+import { MissionSimulator } from './MissionSimulator';
 
 const ROCKET_LINES = [
   { speaker: 'boy' as const,  text: "On arrive aux lanceurs ! C'est la partie la plus spectaculaire — des millions de chevaux-vapeur au décollage." },
@@ -151,6 +152,10 @@ export function RocketSection({ onComplete, onHome, onBack }: RocketSectionProps
 
         <div className="mb-8">
           <Ariane6Diagram />
+        </div>
+
+        <div className="mb-8">
+          <MissionSimulator />
         </div>
 
         <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10 mb-8">
