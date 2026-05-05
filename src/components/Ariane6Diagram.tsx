@@ -34,7 +34,7 @@ const PARTS: Record<string, Part> = {
       { label: 'Séparation', value: '~110 km' },
     ],
     sources: [
-      { label: 'Ariane 6 : tout savoir — CNES', url: 'https://cnes.fr/actualites/ariane-6-tout-savoir-sur-le-lanceur-europeen' },
+      { label: 'Ariane 6 : tout savoir — CNES', url:'https://cnes.fr/projets/ariane-6/modeles#:~:text=L%E2%80%99%C3%A9tage%20composite%20sup%C3%A9rieur' },
       { label: 'Ariane 6 en détail — Futura Sciences', url: 'https://www.futura-sciences.com/sciences/dossiers/astronautique-ariane-6-futur-lanceur-europeen-1878/' },
     ],
   },
@@ -162,7 +162,7 @@ const PARTS: Record<string, Part> = {
       { label: 'T° chambre', value: '~3 300 °C' },
     ],
     sources: [
-      { label: 'Vulcain 2.1 — ArianeGroup', url: 'https://www.arianespace.com/vehicle/ariane-6/' },
+      { label: 'Vulcain 2.1 — ArianeGroup', url: 'https://cnes.fr/projets/ariane-6/modeles#:~:text=des%20mat%C3%A9riaux%20isolants.-,Le%20moteur%20Vulcain%202.1,-Le%20moteur%20Vulcain' },
       { label: 'Le moteur Vulcain — Futura Sciences', url: 'https://www.futura-sciences.com/sciences/definitions/astronautique-vulcain-2398/' },
     ],
   },
