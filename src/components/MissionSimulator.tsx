@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Play, Square, RotateCcw, Radio, AlertTriangle, CheckCircle2, Zap } from 'lucide-react';
+import { TrajectoryView } from './TrajectoryView';
 
 interface Phase {
   id: string;
@@ -267,7 +268,11 @@ export function MissionSimulator() {
         </div>
       </div>
 
-      <div className="p-5 grid grid-cols-1 lg:grid-cols-5 gap-5">
+      <div className="p-5 flex flex-col gap-5">
+        {/* Trajectory */}
+        <TrajectoryView missionTime={missionTime} phases={PHASES} totalTime={TOTAL_MISSION_TIME} completed={completed} />
+
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-5">
         {/* Left: telemetry + progress */}
         <div className="lg:col-span-3 flex flex-col gap-4">
           {/* Mission clock + telemetry */}
@@ -408,6 +413,7 @@ export function MissionSimulator() {
               </div>
             )}
           </div>
+        </div>
         </div>
       </div>
     </div>
