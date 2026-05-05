@@ -116,7 +116,7 @@ const PARTS: Record<string, Part> = {
       { label: 'Propergols', value: '~175 t' },
     ],
     sources: [
-      { label: 'L\'EPC d\'Ariane 6 — ArianeGroup', url: 'https://www.arianespace.com/vehicle/ariane-6/' },
+      { label: 'L\'EPC d\'Ariane 6 — ArianeGroup', url: 'https://cnes.fr/projets/ariane-6/modeles#:~:text=L%E2%80%99%C3%A9tage%20inf%C3%A9rieur%20cryotechnique%20LLPM%20(Lower%20Liquid%20Propulsion%20Module)' },
       { label: 'Ariane 6, le lanceur européen — Futura Sciences', url: 'https://www.futura-sciences.com/sciences/dossiers/astronautique-ariane-6-futur-lanceur-europeen-1878/' },
     ],
   },
