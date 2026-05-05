@@ -158,31 +158,30 @@ export function RocketSection({ onComplete, onHome, onBack }: RocketSectionProps
           <MissionSimulator />
         </div>
 
-        {/* Video replay link */}
-        <div className="mb-8">
-          <a
-            href="https://www.youtube.com/watch?v=6lGbFiIoziI"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-4 bg-white/4 hover:bg-white/8 border border-white/10 hover:border-white/20 rounded-xl px-5 py-4 transition-all group"
-          >
-            <div className="flex-shrink-0 w-10 h-10 rounded-full bg-red-500/15 border border-red-500/30 flex items-center justify-center group-hover:bg-red-500/25 transition-colors">
-              <svg className="w-4 h-4 text-red-400 ml-0.5" viewBox="0 0 24 24" fill="currentColor">
+        {/* Video replay */}
+        <div className="mb-8 rounded-xl overflow-hidden border border-white/10">
+          <div className="px-5 py-3 bg-white/4 border-b border-white/8 flex items-center gap-3">
+            <div className="w-7 h-7 rounded-full bg-red-500/15 border border-red-500/30 flex items-center justify-center flex-shrink-0">
+              <svg className="w-3 h-3 text-red-400 ml-0.5" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M8 5v14l11-7z" />
               </svg>
             </div>
-            <div className="min-w-0">
-              <p className="text-sm font-semibold text-white leading-snug">
-                Replay — Ariane 6 : Mission rideshare VA262
-              </p>
-              <p className="text-xs text-gray-500 mt-0.5">
-                Lancement complet en direct · ArianeGroup / ESA · YouTube
-              </p>
-            </div>
-            <svg className="w-4 h-4 text-gray-600 group-hover:text-gray-400 ml-auto flex-shrink-0 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" />
-            </svg>
-          </a>
+            <p className="text-sm font-semibold text-white">Replay — Vrai lancement Ariane 6</p>
+          </div>
+          <div className="bg-slate-950 px-5 py-3">
+            <p className="text-sm text-gray-300 leading-relaxed">
+              Ecoute les commentateurs, les opérateurs annonçant la trajectoire nominale et regarde un vrai lancement Ariane 6 !
+            </p>
+          </div>
+          <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
+            <iframe
+              className="absolute inset-0 w-full h-full"
+              src="https://www.youtube.com/embed/DhxJ6Z7u-YU?start=1805"
+              title="Lancement Ariane 6 — Replay rideshare"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          </div>
         </div>
 
         <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10 mb-8">
