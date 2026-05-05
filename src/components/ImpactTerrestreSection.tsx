@@ -789,10 +789,20 @@ export function ImpactTerrestreSection({ onComplete, onHome, onBack }: ImpactTer
                 </a>
               </div>
               {/* Artemis */}
-              <div className="bg-white/5 rounded-xl p-4 border border-white/10">
-                <p className="text-white font-semibold text-sm mb-1">Artémis / Lunar Gateway</p>
+              <div className="bg-white/5 rounded-xl p-4 border border-white/10 flex flex-col">
+                <p className="text-white font-semibold text-sm mb-1">Programme Artémis</p>
                 <p className="text-blue-300 text-xs mb-2">NASA · ESA · JAXA · CSA</p>
-                <p className="text-gray-400 text-xs leading-relaxed">Retour humain sur la Lune et future station orbitale lunaire pour préparer l'exploration de Mars.</p>
+                <p className="text-gray-400 text-xs leading-relaxed mb-3 flex-1">Retour humain sur la Lune et préparation de l'exploration de Mars. L'ESA contribue au module de service de la capsule Orion.</p>
+                <div className="flex flex-col gap-1.5">
+                  <a href="https://cnes.fr/actualites/programme-artemis-retour-dhumains-lune" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-xs text-cyan-400 hover:text-cyan-300 transition-colors group">
+                    <ExternalLink className="w-3 h-3 flex-shrink-0" />
+                    <span className="group-hover:underline">Programme Artémis — CNES</span>
+                  </a>
+                  <a href="https://cnes.fr/actualites/artemis-ii-un-nouveau-depart-vers-lune" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-xs text-cyan-400 hover:text-cyan-300 transition-colors group">
+                    <ExternalLink className="w-3 h-3 flex-shrink-0" />
+                    <span className="group-hover:underline">Artémis II : cap vers la Lune — CNES</span>
+                  </a>
+                </div>
               </div>
             </div>
           </div>
