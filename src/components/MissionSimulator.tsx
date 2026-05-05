@@ -153,15 +153,11 @@ export function MissionSimulator() {
   const [running, setRunning] = useState(false);
   const [missionTime, setMissionTime] = useState(-10);
   const [log, setLog] = useState<LogEntry[]>([]);
-  const [seenPhases, setSeenPhases] = useState<Set<string>>(new Set());
   const [completed, setCompleted] = useState(false);
   const rafRef = useRef<number | null>(null);
   const lastRealRef = useRef<number>(0);
   const logRef = useRef<HTMLDivElement>(null);
-
-  const addLog = useCallback((text: string, critical: boolean, t: number) => {
-    setLog(prev => [...prev, { time: t, text, critical }]);
-  }, []);
+  const seenPhasesRef = useRef<Set<string>>(new Set());
 
   useEffect(() => {
     if (logRef.current) {
@@ -175,20 +171,18 @@ export function MissionSimulator() {
     lastRealRef.current = now;
 
     setMissionTime(prev => {
-      // determine speed based on current phase
       const phIdx = currentPhaseIndex(Math.max(prev, 0));
       const phase = PHASES[phIdx];
       const speed = prev < 0 ? 1 : (phase?.speedMultiplier ?? 1);
       const next = prev + realDelta * speed;
 
-      // detect phase entry
       const prevPhIdx = currentPhaseIndex(Math.max(prev, 0));
       const nextPhIdx = currentPhaseIndex(Math.max(next, 0));
-      if (next >= 0 && nextPhIdx !== prevPhIdx || (prev < 0 && next >= 0)) {
+      if ((next >= 0 && nextPhIdx !== prevPhIdx) || (prev < 0 && next >= 0)) {
         const entered = PHASES[nextPhIdx];
-        if (entered && !seenPhases.has(entered.id)) {
-          setSeenPhases(s => new Set(s).add(entered.id));
-          addLog(entered.event, entered.critical, Math.round(next));
+        if (entered && !seenPhasesRef.current.has(entered.id)) {
+          seenPhasesRef.current.add(entered.id);
+          setLog(l => [...l, { time: Math.round(next), text: entered.event, critical: entered.critical }]);
         }
       }
 
@@ -201,7 +195,7 @@ export function MissionSimulator() {
     });
 
     rafRef.current = requestAnimationFrame(tick);
-  }, [addLog, seenPhases]);
+  }, []);
 
   useEffect(() => {
     if (running) {
@@ -217,7 +211,7 @@ export function MissionSimulator() {
     if (completed) return;
     setRunning(true);
     if (missionTime <= -10) {
-      addLog('Séquence de démarrage initialisée. Vérification systèmes en cours…', false, -10);
+      setLog([{ time: -10, text: 'Séquence de démarrage initialisée. Vérification systèmes en cours…', critical: false }]);
     }
   };
 
@@ -225,7 +219,7 @@ export function MissionSimulator() {
     setRunning(false);
     setMissionTime(-10);
     setLog([]);
-    setSeenPhases(new Set());
+    seenPhasesRef.current = new Set();
     setCompleted(false);
   };
 
