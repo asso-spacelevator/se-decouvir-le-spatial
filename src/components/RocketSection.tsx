@@ -181,7 +181,7 @@ export function RocketSection({ onComplete, onHome, onBack }: RocketSectionProps
                 { label: 'Décollage',            t: 1805, tag: 'T+0:00',   color: 'text-amber-400  border-amber-500/30  bg-amber-500/10'  },
                 { label: 'Séparation boosters',  t: 2024, tag: 'T+3:39',   color: 'text-orange-400 border-orange-500/30 bg-orange-500/10' },
                 { label: 'Largage coiffe',       t: 2077, tag: 'T+4:32',   color: 'text-sky-400    border-sky-500/30    bg-sky-500/10'    },
-                { label: 'Coupure Vulcain',      t: 2260, tag: 'T+7:35',   color: 'text-red-400    border-red-500/30    bg-red-500/10'    },
+                { label: 'Coupure Vulcain',      t: 2340, tag: 'T+8:55',   color: 'text-red-400    border-red-500/30    bg-red-500/10'    },
                 { label: 'Séparation étages',    t: 2293, tag: 'T+8:08',   color: 'text-rose-400   border-rose-500/30   bg-rose-500/10'   },
                 { label: 'Allumage HM7B',        t: 2303, tag: 'T+8:18',   color: 'text-cyan-400   border-cyan-500/30   bg-cyan-500/10'   },
                 { label: 'Orbite de transfert',  t: 2915, tag: 'T+18:30',  color: 'text-blue-400   border-blue-500/30   bg-blue-500/10'   },
