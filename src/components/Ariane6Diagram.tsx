@@ -94,7 +94,7 @@ const PARTS: Record<string, Part> = {
     ],
     sources: [
       { label: 'L\'étage supérieur Vinci — CNES', url: 'https://cnes.fr/projets/ariane-6/modeles#:~:text=L%E2%80%99%C3%A9tage%20sup%C3%A9rieur%20cryotechnique%20ULPM%20(Upper%20Liquid%20Propulsion%20Module)' },
-      { label: 'Moteur Vinci — Futura Sciences', url: 'https://www.futura-sciences.com/sciences/actualites/astronautique-moteur-vinci-ariane-6-passe-test-cle-73821/' },
+
     ],
   },
   core: {
