@@ -138,17 +138,49 @@ export function RocketSection({ onComplete, onHome, onBack }: RocketSectionProps
           <AvatarGuide lines={ROCKET_LINES} interval={4000} />
         </div>
 
-        <Subsection
-          title="Ariane 6 : La Nouvelle Génération"
-          content="Ariane 6 est le lanceur de nouvelle génération de l'Europe, conçu pour être plus flexible et économique qu'Ariane 5. Il peut placer jusqu'à 11,5 tonnes en orbite de transfert géostationnaire. Son premier vol a eu lieu en 2024, marquant une nouvelle ère pour l'accès européen à l'espace."
-          icon="🚀"
-        />
+        {/* Introduction : comment on lance des satellites */}
+        <div className="mb-8 rounded-2xl border border-orange-500/20 bg-white/4 overflow-hidden">
+          <div className="px-6 pt-6 pb-5">
+            <h3 className="text-2xl font-bold text-white mb-4">Comment on envoie un satellite dans l'espace ?</h3>
+            <div className="space-y-4 text-gray-300 leading-relaxed">
+              <p>
+                Pour placer un satellite en orbite, il faut lui faire atteindre une vitesse de <span className="text-orange-300 font-semibold">28 000 km/h</span> — environ 25 fois la vitesse d'une balle de fusil. La seule machine capable de cela, c'est un <span className="text-orange-300 font-semibold">lanceur</span> : c'est le vrai nom scientifique de ce qu'on appelle souvent « fusée ».
+              </p>
+              <p>
+                Un lanceur fonctionne par étages : chaque étage brûle son carburant puis se détache pour alléger le reste. Moins de masse à emporter, plus on peut aller vite et haut.
+              </p>
+            </div>
+          </div>
 
-        <Subsection
-          title="Fabrication de Pointe"
-          content="La construction d'un lanceur nécessite une précision extrême. Les composants sont fabriqués dans des salles blanches avec une tolérance au micromètre. Chaque soudure, chaque boulon doit être parfait car une seule défaillance peut être catastrophique. Plus de 10 000 pièces composent un lanceur moderne."
-          icon="⚙️"
-        />
+          {/* Chiffres clés */}
+          <div className="grid grid-cols-3 divide-x divide-white/8 border-t border-white/8">
+            {[
+              { value: '28 000', unit: 'km/h', label: 'Vitesse orbitale minimale' },
+              { value: '600+', unit: 'personnes', label: 'Sur le chantier de construction' },
+              { value: '6', unit: 'pays', label: 'Contribuent à Ariane 6' },
+            ].map(({ value, unit, label }) => (
+              <div key={label} className="px-5 py-4 text-center">
+                <p className="text-2xl font-bold text-orange-300">{value} <span className="text-base font-normal text-orange-400/70">{unit}</span></p>
+                <p className="text-xs text-gray-500 mt-1 leading-snug">{label}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Organisation industrielle */}
+          <div className="border-t border-white/8 px-6 py-5">
+            <p className="text-sm text-gray-400 mb-3">
+              Ariane 6 est le fruit direct de <span className="text-white font-medium">6 nations européennes</span>. Rien que la construction mobilise plus de 600 personnes sur le chantier, et plusieurs milliers pour la conception. Voici comment ce travail est réparti :
+            </p>
+            <div className="rounded-xl overflow-hidden border border-white/10">
+              <img
+                src="https://cnes.fr/sites/default/files/styles/native_format/public/2025-02/ariane-6-organisation-industrielle.png?itok=PAgtKtio"
+                alt="Organisation industrielle d'Ariane 6 — répartition entre les pays européens"
+                className="w-full object-contain bg-white"
+              />
+            </div>
+            <p className="text-xs text-gray-600 mt-2 text-center">Source : CNES — Organisation industrielle Ariane 6</p>
+          </div>
+        </div>
 
         <div className="mb-8">
           <Ariane6Diagram />
