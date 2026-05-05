@@ -23,7 +23,7 @@ const PARTS: Record<string, Part> = {
       'Se sépare en deux demi-coques à ~110 km d\'altitude',
       'Fabriquée en composites fibre de carbone / Kevlar',
       'Deux versions : ø4,5 m standard et ø5,4 m grandes charges',
-      'Pyrotechnie pour une séparation nette et simultanée',
+      "Au contact des couches denses de l'atmosphère, la structure subit des vibrations, des variations     thermiques brutales et des charges mécaniques intenses. La coiffe agit alors comme un bouclier qui protège la charge utile contre les effets potentiellement destructeurs du vent, des particules atmosphériques et du réchauffement par friction. Cette fonction de blindage s'étend également à la protection contre l'humidité et la pluie, éléments qui pourraient gravement endommager des équipements électroniques particulièrement sensibles. Seule l'intégrité de la coiffe garantit que le satellite ou l'expérience scientifique à son bord atteindra l'espace dans un état de fonctionnement optimal."
     ],
     stats: [
       { label: 'Diamètre', value: '4,5 ou 5,4 m' },
