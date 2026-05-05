@@ -70,7 +70,7 @@ const PARTS: Record<string, Part> = {
       <>
         L'Upper Liquid Propulsion Module est l'étage{' '}
         <a
-          href="https://www.futura-sciences.com/sciences/definitions/univers-etage-principal-cryogenique-3456/"
+          href="https://cnes.fr/projets/ariane-6/modeles#:~:text=L%E2%80%99%C3%A9tage%20sup%C3%A9rieur%20cryotechnique%20ULPM%20(Upper%20Liquid%20Propulsion%20Module)"
           target="_blank"
           rel="noopener noreferrer"
           className="underline decoration-dotted underline-offset-2 hover:opacity-80 transition-opacity"
