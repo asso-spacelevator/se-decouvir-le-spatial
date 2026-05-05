@@ -705,10 +705,33 @@ export function ImpactTerrestreSection({ onComplete, onHome, onBack }: ImpactTer
                 </a>
               </div>
               {/* ISS */}
-              <div className="bg-white/5 rounded-xl p-4 border border-white/10">
-                <p className="text-white font-semibold text-sm mb-1">Station Spatiale Internationale</p>
-                <p className="text-blue-300 text-xs mb-2">NASA · Roscosmos · ESA · JAXA · CSA</p>
-                <p className="text-gray-400 text-xs leading-relaxed">Laboratoire orbital habité en continu depuis novembre 2000. Symbole ultime de la coopération internationale.</p>
+              <div className="bg-white/5 rounded-xl p-4 border border-white/10 flex flex-col">
+                <p className="text-white font-semibold text-sm mb-2">Station Spatiale Internationale</p>
+                <div className="flex flex-wrap gap-2 mb-3">
+                  {[
+                    { flag: '🇺🇸', agency: 'NASA' },
+                    { flag: '🇷🇺', agency: 'Roscosmos' },
+                    { flag: '🇪🇺', agency: 'ESA' },
+                    { flag: '🇯🇵', agency: 'JAXA' },
+                    { flag: '🇨🇦', agency: 'CSA' },
+                  ].map(({ flag, agency }) => (
+                    <span key={agency} className="inline-flex items-center gap-1 bg-white/8 border border-white/10 rounded-md px-2 py-1 text-xs text-gray-300">
+                      <span className="text-base leading-none">{flag}</span>
+                      <span>{agency}</span>
+                    </span>
+                  ))}
+                </div>
+                <p className="text-gray-400 text-xs leading-relaxed mb-3 flex-1">Laboratoire orbital habité en continu depuis novembre 2000. Symbole ultime de la coopération internationale.</p>
+                <div className="flex flex-col gap-1.5">
+                  <a href="https://www.futura-sciences.com/sciences/definitions/astronautique-station-spatiale-internationale-2571/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-xs text-cyan-400 hover:text-cyan-300 transition-colors group">
+                    <ExternalLink className="w-3 h-3 flex-shrink-0" />
+                    <span className="group-hover:underline">Dossier ISS — Futura Sciences</span>
+                  </a>
+                  <a href="https://cnes.fr/dossiers/stations-orbitales" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-xs text-cyan-400 hover:text-cyan-300 transition-colors group">
+                    <ExternalLink className="w-3 h-3 flex-shrink-0" />
+                    <span className="group-hover:underline">Les stations orbitales — CNES</span>
+                  </a>
+                </div>
               </div>
               {/* ExoMars */}
               <div className="bg-white/5 rounded-xl p-4 border border-white/10 flex flex-col">
