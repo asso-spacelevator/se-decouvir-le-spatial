@@ -250,7 +250,8 @@ export function RocketSection({ onComplete, onHome, onBack }: RocketSectionProps
         </div>
 
         {/* Salles Blanches */}
-        <div className="mb-8 rounded-2xl border border-orange-500/20 bg-white/4 overflow-hidden">
+        <div className="mb-8 rounded-2xl border border-sky-500/20 bg-white/4 overflow-hidden">
+          {/* Header */}
           <div className="px-6 pt-6 pb-5">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-8 h-8 rounded-lg bg-sky-500/15 border border-sky-500/30 flex items-center justify-center flex-shrink-0">
@@ -260,25 +261,61 @@ export function RocketSection({ onComplete, onHome, onBack }: RocketSectionProps
               </div>
               <h3 className="text-2xl font-bold text-white">Les Salles Blanches</h3>
             </div>
-            <p className="text-gray-300 leading-relaxed mb-4">
-              Avant de voir la fusée décoller, chaque composant a été assemblé dans des conditions radicalement différentes du monde extérieur : la <span className="text-sky-300 font-semibold">salle blanche</span>. C'est une pièce dont l'air est filtré en permanence pour éliminer presque toutes les particules de poussière — un environnement plus propre qu'un bloc opératoire.
+            <p className="text-gray-300 leading-relaxed mb-3">
+              Avant de voir la fusée décoller, chaque satellite a été assemblé dans un endroit très particulier : la <span className="text-sky-300 font-semibold">salle blanche</span>. C'est une salle dont l'air est filtré en permanence — bien plus propre qu'un bloc opératoire — où les ingénieurs travaillent en combinaison intégrale pour ne laisser ni poussière, ni cheveu, ni particule de peau.
             </p>
             <p className="text-gray-300 leading-relaxed">
-              Un satellite contient des composants électroniques et des optiques d'une précision nanométrique. Une simple particule de 1 micron (100 fois plus fine qu'un cheveu) peut bloquer un capteur ou court-circuiter un circuit. Une seule trace de doigt sur un miroir de télescope peut fausser les mesures d'une mission scientifique entière.
+              Mais la poussière n'est pas le seul ennemi. L'<span className="text-sky-300 font-semibold">électricité statique</span> est tout aussi dangereuse : en frottant ta main sur un pull en laine, tu génères une décharge de plusieurs milliers de volts. Pour un humain, c'est juste une petite piqûre. Pour un composant électronique de satellite, c'est la destruction instantanée. C'est pourquoi tout dans la salle blanche est relié à la terre, et les techniciens portent des bracelets antistatiques en permanence.
             </p>
           </div>
 
-          {/* Règles de la salle blanche */}
+          {/* Galerie photos */}
           <div className="border-t border-white/8 px-6 py-5">
-            <p className="text-sm text-gray-400 uppercase tracking-wider font-semibold mb-4">Protocole d'entrée en salle blanche</p>
+            <p className="text-xs text-gray-500 uppercase tracking-wider font-semibold mb-3">Photos — Salles blanches ESA / Airbus</p>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="rounded-xl overflow-hidden border border-white/8 bg-slate-900 aspect-video">
+                <img
+                  src="https://www.esa.int/var/esa/storage/images/esa_multimedia/images/2022/09/formal_opening_of_estec_s_fv_cleanroom/24451621-1-eng-GB/Formal_opening_of_ESTEC_s_FV_cleanroom.jpg"
+                  alt="Salle blanche ESTEC — ESA"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="rounded-xl overflow-hidden border border-white/8 bg-slate-900 aspect-video">
+                <img
+                  src="https://www.esa.int/var/esa/storage/images/esa_multimedia/images/2014/01/life_physical_sciences_life_support_laboratory_clean_room/13476523-1-eng-GB/Life_Physical_Sciences_Life_Support_Laboratory_clean_room.jpg"
+                  alt="Technicien en combinaison salle blanche — ESA ESTEC"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="rounded-xl overflow-hidden border border-white/8 bg-slate-900 aspect-video">
+                <img
+                  src="https://www.esa.int/var/esa/storage/images/esa_multimedia/images/2021/10/webb_telescope_in_clean_room_at_europe_s_spaceport3/23733885-2-eng-GB/Webb_telescope_in_clean_room_at_Europe_s_Spaceport.jpg"
+                  alt="Télescope James Webb en salle blanche — Kourou"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="rounded-xl overflow-hidden border border-white/8 bg-slate-900 aspect-video">
+                <img
+                  src="https://www.esa.int/var/esa/storage/images/esa_multimedia/images/2022/09/esa_s_test_centre_expands/24451576-1-eng-GB/ESA_s_Test_Centre_expands.jpg"
+                  alt="Grande salle blanche ESA Test Centre — ESTEC"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </div>
+            <p className="text-xs text-gray-600 mt-2 text-right">Sources : ESA / Airbus Defence & Space</p>
+          </div>
+
+          {/* Règles */}
+          <div className="border-t border-white/8 px-6 py-5">
+            <p className="text-sm text-gray-400 uppercase tracking-wider font-semibold mb-4">Pourquoi autant de précautions ?</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {[
-                { icon: '👔', rule: 'Combinaison intégrale', detail: 'Combinaison, cagoule, surbottes et gants — aucune peau exposée à l\'air.' },
-                { icon: '💨', rule: 'Sas de décontamination', detail: 'Douche d\'air comprimé à l\'entrée pour chasser les particules résiduelles.' },
-                { icon: '🚫', rule: 'Zéro maquillage ni parfum', detail: 'Toute substance volatile peut contaminer les surfaces sensibles.' },
-                { icon: '📋', rule: 'Traçabilité totale', detail: 'Chaque outil entrant est répertorié — rien ne doit être oublié dans le satellite.' },
-                { icon: '🌡️', rule: 'Température et humidité constantes', detail: '21 °C ± 1 °C, humidité 45 % — les matériaux ne doivent pas se dilater.' },
-                { icon: '📊', rule: 'Classe ISO 7 à ISO 4', detail: 'Au maximum 352 000 particules >0,5 µm par m³ (ISO 7) jusqu\'à 1 000 particules (ISO 4).' },
+                { icon: '⚡', rule: 'Électricité statique', detail: 'En te frottant sur de la moquette, tu génères ~3 000 V. Un circuit de satellite supporte moins de 5 V avant d\'être détruit définitivement.' },
+                { icon: '🧤', rule: 'Combinaison antistatique', detail: 'La combinaison, les gants et le bracelet de poignet sont conducteurs pour évacuer en permanence toute charge électrique vers la terre.' },
+                { icon: '💨', rule: 'Sas de décontamination', detail: 'Douche d\'air comprimé à l\'entrée : elle chasse les particules accrochées à la combinaison avant d\'entrer.' },
+                { icon: '📋', rule: 'Traçabilité de chaque outil', detail: 'Chaque tournevis, chaque boulon entrant est répertorié. Rien ne doit être oublié à l\'intérieur du satellite.' },
+                { icon: '🌡️', rule: 'Température et humidité fixes', detail: '21 °C, humidité 45 % — les matériaux se dilatent avec la chaleur et l\'humidité favorise les courts-circuits.' },
+                { icon: '🚫', rule: 'Zéro maquillage ni parfum', detail: 'Les substances chimiques volatiles se déposent sur les optiques et les capteurs, les rendant inutilisables.' },
               ].map(({ icon, rule, detail }) => (
                 <div key={rule} className="flex gap-3 bg-white/4 border border-white/8 rounded-xl p-3">
                   <span className="text-xl flex-shrink-0 mt-0.5">{icon}</span>
@@ -291,12 +328,12 @@ export function RocketSection({ onComplete, onHome, onBack }: RocketSectionProps
             </div>
           </div>
 
-          {/* Chiffres clés salle blanche */}
+          {/* Chiffres clés */}
           <div className="grid grid-cols-3 divide-x divide-white/8 border-t border-white/8">
             {[
-              { value: '0,3 µm', label: 'Taille de la plus petite particule filtrée' },
-              { value: '20×', label: 'Plus propre qu\'un bloc opératoire standard' },
-              { value: '100 %', label: 'De l\'air renouvelé plusieurs fois par minute' },
+              { value: '3 000 V', label: 'Charge statique d\'un frottement ordinaire' },
+              { value: '< 5 V', label: 'Ce que supporte un circuit satellite' },
+              { value: '20×', label: 'Plus propre qu\'un bloc opératoire' },
             ].map(({ value, label }) => (
               <div key={label} className="px-5 py-4 text-center">
                 <p className="text-xl font-bold text-sky-300">{value}</p>
