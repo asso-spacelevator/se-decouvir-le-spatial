@@ -27,6 +27,9 @@ const SESSION2_STEPS = [
   { name: 'FAQ & Questions', icon: '💬', section: 'faq_questions' as Section },
 ];
 
+const SESSION1_SECTIONS: Section[] = ['introduction', 'impact_terrestre', 'rockets', 'social', 'session_break'];
+const SESSION2_SECTIONS: Section[] = ['satellites', 'exploration', 'accompagnement', 'faq_questions', 'completed'];
+
 const sectionOrder: Section[] = [
   'start', 'introduction',
   'impact_terrestre', 'rockets', 'social',
@@ -73,6 +76,18 @@ function AppContent() {
 
   const handleHome = async () => navigate('start');
 
+  // End of session 1 → back to home
+  const handleSession1End = async () => {
+    await completeSection(currentView);
+    await navigate('start');
+  };
+
+  // End of session 2 → completed page, then back to home
+  const handleSession2End = async () => {
+    await completeSection(currentView);
+    await navigate('completed');
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-slate-900 flex items-center justify-center">
@@ -96,7 +111,12 @@ function AppContent() {
         />
       )}
 
-      {currentView === 'start' && <StartPage onStart={() => navigate('introduction')} />}
+      {currentView === 'start' && (
+        <StartPage
+          onStartSession1={() => navigate('introduction')}
+          onStartSession2={() => navigate('satellites')}
+        />
+      )}
 
       {currentView === 'introduction' && (
         <IntroductionPage
@@ -129,10 +149,10 @@ function AppContent() {
         />
       )}
 
-      {/* Pause entre les sessions */}
+      {/* Fin de session 1 → retour accueil */}
       {currentView === 'session_break' && (
         <SessionBreakPage
-          onContinue={() => navigate('satellites')}
+          onContinue={handleHome}
           onHome={handleHome}
         />
       )}
@@ -161,7 +181,7 @@ function AppContent() {
       )}
       {currentView === 'faq_questions' && (
         <FAQQuestionsSection
-          onComplete={() => handleSectionComplete('completed')}
+          onComplete={handleSession2End}
           onHome={handleHome}
           onBack={handleBack}
         />
