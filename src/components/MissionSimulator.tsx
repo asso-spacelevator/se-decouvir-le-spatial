@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { Play, Square, RotateCcw, Radio, AlertTriangle, CheckCircle2, Zap, Thermometer, Activity, Fuel } from 'lucide-react';
+import { Play, Square, RotateCcw, Radio, AlertTriangle, CheckCircle2, Zap, Activity } from 'lucide-react';
 import { TrajectoryView } from './TrajectoryView';
 
 interface Phase {
@@ -343,13 +343,9 @@ export function MissionSimulator() {
   const progress = Math.max(0, Math.min(1, missionTime / TOTAL_MISSION_TIME));
   const alt  = missionTime >= 0 ? altitudeAt(missionTime) : 0;
   const vel  = missionTime >= 0 ? velocityAt(missionTime) : 0;
-  const temp = missionTime >= 0 ? tempAt(missionTime) : 20;
   const vib  = missionTime >= 0 ? vibrationAt(missionTime) : 0;
-  const fuel = missionTime >= 0 ? fuelAt(missionTime) : 100;
 
-  const tempColor = temp > 2000 ? 'text-red-400' : temp > 500 ? 'text-orange-400' : temp < 0 ? 'text-sky-400' : 'text-gray-300';
-  const vibColor  = vib > 8 ? 'text-red-400' : vib > 4 ? 'text-orange-400' : 'text-emerald-400';
-  const fuelColor = fuel < 15 ? 'text-red-400' : fuel < 35 ? 'text-amber-400' : 'text-emerald-400';
+  const vibColor = vib > 8 ? 'text-red-400' : vib > 4 ? 'text-orange-400' : 'text-emerald-400';
 
   return (
     <div className="bg-slate-950 rounded-2xl border border-white/10 overflow-hidden">
@@ -411,62 +407,22 @@ export function MissionSimulator() {
               </div>
             </div>
 
-            {/* Temperature / Vibration / Fuel */}
-            <div className="grid grid-cols-3 gap-3">
-              <div className="bg-white/5 border border-white/8 rounded-xl p-3">
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-1.5">
-                    <Thermometer className={`w-3.5 h-3.5 ${tempColor}`} />
-                    <span className="text-xs text-gray-500 uppercase tracking-wider">Temp. moteur</span>
-                  </div>
+            {/* Vibrations */}
+            <div className="bg-white/5 border border-white/8 rounded-xl p-3">
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-1.5">
+                  <Activity className={`w-3.5 h-3.5 ${vibColor}`} />
+                  <span className="text-xs text-gray-500 uppercase tracking-wider">Vibrations</span>
                 </div>
-                <p className={`font-mono text-base font-bold ${tempColor}`}>
-                  {temp.toLocaleString('fr-FR')} °C
-                </p>
-                <div className="w-full h-1.5 bg-white/8 rounded-full overflow-hidden mt-2">
-                  <div
-                    className={`h-full rounded-full transition-all duration-300 ${
-                      temp > 2000 ? 'bg-red-400' : temp > 500 ? 'bg-orange-400' : temp < 0 ? 'bg-sky-400' : 'bg-gray-400'
-                    }`}
-                    style={{ width: `${Math.min(Math.abs(temp) / 3500 * 100, 100)}%` }}
-                  />
-                </div>
+                <span className={`font-mono text-sm font-bold ${vibColor}`}>{vib.toLocaleString('fr-FR')} g</span>
               </div>
-
-              <div className="bg-white/5 border border-white/8 rounded-xl p-3">
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-1.5">
-                    <Activity className={`w-3.5 h-3.5 ${vibColor}`} />
-                    <span className="text-xs text-gray-500 uppercase tracking-wider">Vibrations</span>
-                  </div>
-                </div>
-                <p className={`font-mono text-base font-bold ${vibColor}`}>{vib.toLocaleString('fr-FR')} g</p>
-                <div className="w-full h-1.5 bg-white/8 rounded-full overflow-hidden mt-2">
-                  <div
-                    className={`h-full rounded-full transition-all duration-300 ${
-                      vib > 8 ? 'bg-red-400' : vib > 4 ? 'bg-orange-400' : 'bg-emerald-400'
-                    }`}
-                    style={{ width: `${Math.min(vib / 14 * 100, 100)}%` }}
-                  />
-                </div>
-              </div>
-
-              <div className="bg-white/5 border border-white/8 rounded-xl p-3">
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-1.5">
-                    <Fuel className={`w-3.5 h-3.5 ${fuelColor}`} />
-                    <span className="text-xs text-gray-500 uppercase tracking-wider">Carburant</span>
-                  </div>
-                </div>
-                <p className={`font-mono text-base font-bold ${fuelColor}`}>{fuel} %</p>
-                <div className="w-full h-1.5 bg-white/8 rounded-full overflow-hidden mt-2">
-                  <div
-                    className={`h-full rounded-full transition-all duration-300 ${
-                      fuel < 15 ? 'bg-red-400' : fuel < 35 ? 'bg-amber-400' : 'bg-emerald-400'
-                    }`}
-                    style={{ width: `${fuel}%` }}
-                  />
-                </div>
+              <div className="w-full h-1.5 bg-white/8 rounded-full overflow-hidden">
+                <div
+                  className={`h-full rounded-full transition-all duration-300 ${
+                    vib > 8 ? 'bg-red-400' : vib > 4 ? 'bg-orange-400' : 'bg-emerald-400'
+                  }`}
+                  style={{ width: `${Math.min(vib / 14 * 100, 100)}%` }}
+                />
               </div>
             </div>
 
