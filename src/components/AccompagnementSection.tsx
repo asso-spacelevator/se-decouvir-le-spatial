@@ -61,49 +61,103 @@ const associations: Association[] = [
     icon: '🔬'
   },
   {
-    name: 'GIFAS Jeunes',
-    description: 'Branche jeunesse du Groupement des Industries Françaises Aéronautiques et Spatiales',
-    website: 'https://www.gifas.fr/',
-    email: 'communication@gifas.fr',
-    focus: 'Lycéens et étudiants',
-    howTheyHelp: 'Rencontres avec des professionnels, visites d\'entreprises aérospatiales, conférences métiers, informations sur les formations et débouchés, mentorat par des ingénieurs',
-    icon: '✈️'
+    name: 'Elles bougent',
+    description: 'Mentorat et interventions en lycée pour encourager les filles vers les sciences et l\'ingénierie',
+    website: 'https://www.ellesbougent.com',
+    email: '',
+    focus: 'Lycéennes',
+    howTheyHelp: 'Interventions de femmes ingénieures en lycée, événements de rencontres, mentorat individuel, modèles féminins dans les sciences',
+    icon: '👩‍🔬'
   },
   {
-    name: 'Espace dans ma Ville',
-    description: 'Programme du CNES pour démocratiser l\'accès à la culture spatiale',
-    website: 'https://cnes.fr/',
-    email: 'contact.cnes@cnes.fr',
-    focus: 'Tous publics, surtout jeunes en zones prioritaires',
-    howTheyHelp: 'Ateliers mobiles, animations gratuites, expositions itinérantes, interventions en établissements scolaires, prêt de matériel pédagogique, formations pour enseignants',
+    name: 'Femmes & Sciences',
+    description: 'Promotion des carrières scientifiques féminines',
+    website: 'https://www.femmesetsciences.fr',
+    email: '',
+    focus: 'Lycéennes, étudiantes, femmes',
+    howTheyHelp: 'Conférences, mentorat, événements de networking, promotion des parcours scientifiques pour les filles',
+    icon: '🌟'
+  },
+  {
+    name: 'Girls Can Code',
+    description: 'Initiation des collégiennes à la programmation et aux métiers du numérique',
+    website: 'https://girlscancode.fr',
+    email: '',
+    focus: 'Collégiennes',
+    howTheyHelp: 'Stages de programmation, ateliers ludiques, découverte des métiers du numérique et de l\'informatique',
+    icon: '💻'
+  },
+  {
+    name: 'Eureka',
+    description: 'Mentorat, ressources, événements et vulgarisation scientifique pour jeunes',
+    website: 'https://association-eureka.fr/',
+    email: '',
+    focus: 'Lycéens et étudiants',
+    howTheyHelp: 'Mentorat individuel, ressources d\'orientation, événements de vulgarisation scientifique, mise en réseau',
+    icon: '💡'
+  },
+  {
+    name: 'Article 1',
+    description: 'Programme de mentorat pour accompagner l\'orientation vers les études supérieures',
+    website: 'https://www.mentoratverslesup.dema1n.org/',
+    email: '',
+    focus: 'Lycéens vers le supérieur',
+    howTheyHelp: 'Binômes lycéen / étudiant, accompagnement personnalisé sur l\'orientation, choix de formations, dossiers d\'admission',
+    icon: '🎓'
+  },
+  {
+    name: '1 jeune 1 mentor',
+    description: 'Dispositif national de mentorat pour les 5-30 ans',
+    website: 'https://www.1jeune1mentor.fr/',
+    email: '',
+    focus: 'Jeunes de 5 à 30 ans',
+    howTheyHelp: 'Mise en relation avec un mentor pour parcours scolaire et professionnel, plateforme nationale soutenue par l\'État',
+    icon: '🤝'
+  },
+  {
+    name: 'Télémaque',
+    description: 'Programme d\'égalité des chances avec double mentorat école / entreprise',
+    website: 'https://www.telemaque.org/',
+    email: '',
+    focus: 'Collégiens et lycéens',
+    howTheyHelp: 'Double mentorat par un enseignant et un professionnel d\'entreprise, accompagnement sur 2 ans, réseau d\'anciens',
+    icon: '🏫'
+  },
+  {
+    name: 'ProPulse',
+    description: 'Lycéens accompagnés par des étudiants de grandes écoles pour leur orientation',
+    website: 'https://propulse-association.fr/',
+    email: '',
+    focus: 'Lycéens',
+    howTheyHelp: 'Tutorat par des étudiants de grandes écoles, aide aux devoirs, préparation aux concours, conseils d\'orientation',
     icon: '🚀'
   },
   {
-    name: 'Les Petits Débrouillards',
-    description: 'Réseau d\'éducation populaire à la science et par la science',
-    website: 'https://www.lespetitsdebrouillards.org/',
-    email: 'national@lespetitsdebrouillards.org',
-    focus: 'Jeunes de 4 à 18 ans',
-    howTheyHelp: 'Ateliers expérimentaux sur l\'espace, clubs scientifiques, animations périscolaires, stages vacances, projets collaboratifs',
-    icon: '🧪'
+    name: 'Association Tremplin',
+    description: 'Accès des lycéens aux études scientifiques avec le soutien de grandes écoles',
+    website: 'http://www.association-tremplin.org',
+    email: '',
+    focus: 'Lycéens',
+    howTheyHelp: 'Accompagnement vers les classes préparatoires et grandes écoles, soutien scolaire, mentorat par des élèves-ingénieurs',
+    icon: '📐'
   },
   {
-    name: 'Astronautes & Co',
-    description: 'Association créée par des passionnés pour partager la culture spatiale',
-    website: 'https://astronautes.co/',
-    email: 'contact@astronautes.co',
-    focus: 'Collégiens, lycéens et étudiants',
-    howTheyHelp: 'Conférences inspirantes, mentorat par des professionnels du spatial, organisation d\'événements spatiaux, mise en relation avec des acteurs de l\'industrie, accompagnement d\'orientation',
-    icon: '👨‍🚀'
+    name: 'Les maths en scène',
+    description: 'Faire découvrir les mathématiques autrement, de façon vivante et créative',
+    website: 'https://lesmathsenscene.fr',
+    email: '',
+    focus: 'Collégiens, lycéens',
+    howTheyHelp: 'Spectacles, ateliers et événements pour réconcilier les jeunes avec les mathématiques',
+    icon: '🎭'
   },
   {
-    name: 'ANSTJ',
-    description: 'Association Nationale Sciences Techniques Jeunesse — réseau d\'éducation scientifique',
-    website: 'https://www.anstj.fr/',
-    email: 'contact@anstj.fr',
-    focus: 'Jeunes de 7 à 25 ans',
-    howTheyHelp: 'Clubs scientifiques dans toute la France, projets spatiaux (CanSat, ballons sondes), séjours scientifiques, concours nationaux, accompagnement technique de projets étudiants',
-    icon: '🎓'
+    name: 'Fondation CGénial',
+    description: 'Passerelle entre entreprises innovantes et jeunes pour déclencher des vocations scientifiques',
+    website: 'https://www.cgenial.org',
+    email: '',
+    focus: 'Collégiens, lycéens',
+    howTheyHelp: 'Interventions d\'ingénieurs et chercheurs en classe, Concours C\'Génial, immersions en entreprise',
+    icon: '🔭'
   },
 ];
 
