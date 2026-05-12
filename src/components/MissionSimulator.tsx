@@ -12,6 +12,9 @@ interface Phase {
   color: string;
   bgColor: string;
   borderColor: string;
+  /** Annonce affichée AU DÉBUT de la phase (ce qui va se passer) */
+  announce: string;
+  /** Événement affiché À LA FIN de la phase (ce qui vient de se passer) */
   event: string;
   detail: string;
   altitude: number;    // km at end of phase
@@ -36,7 +39,8 @@ const PHASES: Phase[] = [
     tStart: 0, tEnd: 7,
     speedMultiplier: 1,
     color: 'text-amber-300', bgColor: 'bg-amber-500/15', borderColor: 'border-amber-500/40',
-    event: 'ALLUMAGE VULCAIN — T+0. Poussée nominale confirmée. Autorisation décollage.',
+    announce: 'ALLUMAGE VULCAIN — Poussée nominale confirmée. Décollage imminent.',
+    event: 'DÉCOLLAGE — T+0s. Ariane 6 quitte le pas de tir. Poussée totale ~1 000 tf.',
     detail: 'Vulcain 2.1 à pleine poussée (137 tf). Boosters P120C allumés simultanément. Poussée totale ~1 000 tf.',
     altitude: 0.05, velocity: 0,
     critical: true,
@@ -49,7 +53,8 @@ const PHASES: Phase[] = [
     tStart: 7, tEnd: 50,
     speedMultiplier: 3,
     color: 'text-red-300', bgColor: 'bg-red-500/15', borderColor: 'border-red-500/40',
-    event: 'MAX-Q — Pression aérodynamique maximale (~T+45 s). Les moteurs réduisent légèrement leur poussée.',
+    announce: 'Montée en puissance. MAX-Q dans ~38 s — la pression aérodynamique va atteindre son maximum.',
+    event: 'MAX-Q FRANCHI — T+45s. Pression aérodynamique maximale passée. Les moteurs reprennent leur pleine poussée.',
     detail: 'C\'est le moment le plus critique pour la structure : la fusée va vite mais l\'air est encore dense. La pression exercée sur la coque atteint son maximum. Les moteurs réduisent brièvement leur poussée pour ne pas dépasser les limites structurelles.',
     altitude: 15, velocity: 1400,
     critical: true,
@@ -62,7 +67,8 @@ const PHASES: Phase[] = [
     tStart: 50, tEnd: 219,
     speedMultiplier: 5,
     color: 'text-orange-300', bgColor: 'bg-orange-500/15', borderColor: 'border-orange-500/40',
-    event: 'SÉPARATION BOOSTERS — T+3:39. P120C larguées à ~75 km. Étage central seul.',
+    announce: 'Les boosters P120C épuisent leur carburant. Séparation prévue dans ~2 min 49 s à ~75 km.',
+    event: 'SÉPARATION BOOSTERS — T+3:39. P120C larguées à 75 km d\'altitude. Étage central seul.',
     detail: 'Les deux boosters à propergol solide ont épuisé leur carburant et se détachent à 75 km d\'altitude. Leur rôle était d\'apporter la poussée supplémentaire nécessaire au décollage. L\'étage central (EPC) et son moteur Vulcain 2.1 continuent seuls.',
     altitude: 75, velocity: 2600,
     critical: true,
@@ -75,7 +81,8 @@ const PHASES: Phase[] = [
     tStart: 219, tEnd: 272,
     speedMultiplier: 5,
     color: 'text-blue-300', bgColor: 'bg-blue-500/15', borderColor: 'border-blue-500/40',
-    event: 'LARGAGE COIFFE — T+4:32. Plus de frottements atmosphériques. Satellite exposé.',
+    announce: 'Au-dessus de 100 km : plus d\'atmosphère. Largage de la coiffe dans ~53 s.',
+    event: 'LARGAGE COIFFE — T+4:32. Coiffe éjectée à 112 km. Satellite exposé au vide spatial.',
     detail: 'La coiffe (nez de la fusée) protégeait le satellite pendant la traversée de l\'atmosphère. Au-delà de 100 km il n\'y a plus d\'air — elle est éjectée par charges pyrotechniques pour alléger la fusée.',
     altitude: 112, velocity: 3500,
     critical: false,
@@ -88,11 +95,12 @@ const PHASES: Phase[] = [
     tStart: 272, tEnd: 545,
     speedMultiplier: 8,
     color: 'text-cyan-300', bgColor: 'bg-cyan-500/15', borderColor: 'border-cyan-500/40',
-    event: 'COUPURE VULCAIN — T+8:55. Séparation EPC T+9:00. Allumage 2e étage T+9:05.',
+    announce: 'L\'EPC approche de l\'épuisement carburant. Coupure Vulcain et séparation prévues dans ~4 min 33 s.',
+    event: 'COUPURE VULCAIN — T+8:55. EPC séparé T+9:00. Allumage Vinci (2e étage) T+9:05.',
     detail: 'L\'étage central (EPC) a épuisé ses 170 tonnes de propergol cryogénique. Vulcain 2.1 s\'éteint, l\'EPC se détache 5 secondes plus tard. Le 2e étage (ULPM) allume aussitôt son moteur Vinci pour finaliser la mise en orbite.',
     altitude: 190, velocity: 6400,
     critical: true,
-    tempEngine: 200, vibration: 1.2, fuelPct: 72, // étage supérieur plein, EPC vide
+    tempEngine: 200, vibration: 1.2, fuelPct: 72,
   },
   {
     id: 'upper_burn',
@@ -101,7 +109,8 @@ const PHASES: Phase[] = [
     tStart: 545, tEnd: 1110,
     speedMultiplier: 15,
     color: 'text-emerald-300', bgColor: 'bg-emerald-500/15', borderColor: 'border-emerald-500/40',
-    event: 'ORBITE DE TRANSFERT — T+18:30. Vinci place l\'étage sur une ellipse périgée ~200 km / apogée 400 km.',
+    announce: 'Vinci allumé. Mise en orbite de transfert en cours — durée ~9 min 25 s.',
+    event: 'ORBITE DE TRANSFERT ATTEINTE — T+18:30. Ellipse périgée 200 km / apogée 400 km établie.',
     detail: 'Le premier allumage Vinci établit une orbite de transfert elliptique : le périgée (point bas) est à environ 200 km, l\'apogée (point haut) à 400 km. L\'étage n\'est pas encore en orbite circulaire finale — il faudra un deuxième allumage à l\'apogée.',
     altitude: 200, velocity: 7800,
     critical: false,
@@ -114,7 +123,8 @@ const PHASES: Phase[] = [
     tStart: 1110, tEnd: 4495,
     speedMultiplier: 60,
     color: 'text-slate-300', bgColor: 'bg-slate-500/15', borderColor: 'border-slate-500/40',
-    event: 'PHASE BALISTIQUE — Moteur éteint. L\'étage dérive sur l\'orbite elliptique vers l\'apogée à 400 km (~56 min).',
+    announce: 'Vinci éteint. L\'étage dérive librement vers l\'apogée à 400 km. Rallumage dans ~56 min.',
+    event: 'APOGÉE ATTEINT — T+1h14:55. L\'étage est au point haut de l\'ellipse. Rallumage Vinci imminent.',
     detail: 'Vinci s\'est éteint. L\'étage monte librement vers l\'apogée de l\'ellipse à 400 km — là où il sera le plus lent, et où le deuxième allumage sera le plus efficace pour circulariser. Les systèmes passent en veille thermique : -180 °C à l\'ombre, +120 °C face au Soleil.',
     altitude: 400, velocity: 7570,
     critical: false,
@@ -127,7 +137,8 @@ const PHASES: Phase[] = [
     tStart: 4495, tEnd: 4513,
     speedMultiplier: 2,
     color: 'text-sky-300', bgColor: 'bg-sky-500/15', borderColor: 'border-sky-500/40',
-    event: 'RALLUMAGE VINCI — T+1h14:55. Manœuvre d\'apogée : circularisation à 400 km. Durée ~18 s.',
+    announce: 'RALLUMAGE VINCI — Manœuvre d\'apogée : circularisation à 400 km. Durée ~18 s.',
+    event: 'CIRCULARISATION CONFIRMÉE — T+1h15:13. Orbite circulaire à 400 km atteinte.',
     detail: 'Deuxième allumage du moteur Vinci, très court : environ 18 secondes. C\'est la manœuvre de Hohmann à l\'apogée — une courte impulsion suffit pour transformer l\'ellipse en orbite circulaire à 400 km. C\'est la dernière impulsion propulsive de la mission.',
     altitude: 400, velocity: 7669,
     critical: true,
@@ -140,7 +151,8 @@ const PHASES: Phase[] = [
     tStart: 4513, tEnd: 5395,
     speedMultiplier: 10,
     color: 'text-green-300', bgColor: 'bg-green-500/15', borderColor: 'border-green-500/40',
-    event: 'SÉPARATION CONFIRMÉE — T+1h29:55. Satellites en orbite circulaire à 400 km. Signal télémétrie acquis.',
+    announce: 'Séparation des satellites en cours. Déploiement des panneaux solaires attendu dans ~14 min.',
+    event: 'SÉPARATION CONFIRMÉE — T+1h29:55. Satellites en orbite à 400 km. Signal télémétrie acquis.',
     detail: 'Les satellites se séparent de l\'adaptateur et déploient leurs panneaux solaires. Ils sont en orbite circulaire à 400 km — leur orbite opérationnelle définitive. Le centre de contrôle acquiert leur signal de télémétrie : mission accomplie.',
     altitude: 400, velocity: 7669,
     critical: false,
@@ -211,7 +223,7 @@ function fuelAt(t: number): number {
   return Math.round(lerp(prev, p.fuelPct, frac));
 }
 
-interface LogEntry { time: number; text: string; critical: boolean }
+interface LogEntry { time: number; text: string; critical: boolean; type?: 'announce' | 'event' }
 
 function GaugeBar({ value, max, color, label, unit, icon: Icon }: {
   value: number; max: number; color: string; label: string; unit: string;
@@ -264,14 +276,29 @@ export function MissionSimulator() {
       const speed = prev < 0 ? 1 : (phase?.speedMultiplier ?? 1);
       const next = prev + realDelta * speed;
 
+      const newEntries: LogEntry[] = [];
+
+      // Announce: emitted when entering a phase (at tStart)
       const prevPhIdx = phaseIndexAt(Math.max(prev, 0));
       const nextPhIdx = phaseIndexAt(Math.max(next, 0));
       if ((next >= 0 && nextPhIdx !== prevPhIdx) || (prev < 0 && next >= 0)) {
         const entered = PHASES[nextPhIdx];
-        if (entered && !seenPhasesRef.current.has(entered.id)) {
-          seenPhasesRef.current.add(entered.id);
-          setLog(l => [...l, { time: Math.round(next), text: entered.event, critical: entered.critical }]);
+        if (entered && !seenPhasesRef.current.has(`announce_${entered.id}`)) {
+          seenPhasesRef.current.add(`announce_${entered.id}`);
+          newEntries.push({ time: Math.round(next), text: entered.announce, critical: false, type: 'announce' });
         }
+      }
+
+      // Event: emitted when a phase ends (at tEnd)
+      for (const p of PHASES) {
+        if (prev < p.tEnd && next >= p.tEnd && !seenPhasesRef.current.has(`event_${p.id}`)) {
+          seenPhasesRef.current.add(`event_${p.id}`);
+          newEntries.push({ time: Math.round(p.tEnd), text: p.event, critical: p.critical, type: 'event' });
+        }
+      }
+
+      if (newEntries.length > 0) {
+        setLog(l => [...l, ...newEntries]);
       }
 
       if (next >= TOTAL_MISSION_TIME) {
@@ -547,9 +574,23 @@ export function MissionSimulator() {
                 <p className="text-gray-600 italic">En attente de démarrage…</p>
               ) : (
                 log.map((entry, i) => (
-                  <div key={i} className={`flex gap-2 ${entry.critical ? 'text-amber-300' : 'text-emerald-400'}`}>
+                  <div key={i} className={`flex gap-2 ${
+                    entry.type === 'announce'
+                      ? 'text-sky-400/80'
+                      : entry.critical
+                      ? 'text-amber-300'
+                      : 'text-emerald-400'
+                  }`}>
                     <span className="text-gray-600 flex-shrink-0">{formatMT(entry.time)}</span>
-                    <span className="leading-relaxed">{entry.text}</span>
+                    <span className="leading-relaxed">
+                      {entry.type === 'announce' && (
+                        <span className="text-sky-600 mr-1">▶</span>
+                      )}
+                      {entry.type === 'event' && (
+                        <span className="mr-1">✓</span>
+                      )}
+                      {entry.text}
+                    </span>
                   </div>
                 ))
               )}
