@@ -186,6 +186,127 @@ export function RocketSection({ onComplete, onHome, onBack }: RocketSectionProps
           <Ariane6Diagram />
         </div>
 
+        {/* Défis Techniques Majeurs */}
+        <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10 mb-8">
+          <h3 className="text-2xl font-semibold mb-4">Les Défis Techniques Majeurs</h3>
+          <p className="text-gray-300 mb-6">
+            Sélectionnez un défi pour découvrir comment les ingénieurs le résolvent :
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            {challenges.map((challenge, index) => (
+              <button
+                key={index}
+                onClick={() => handleChallengeSelect(index)}
+                className={`p-6 rounded-xl border-2 transition-all text-left ${
+                  selectedChallenge === index
+                    ? 'border-orange-400 bg-orange-500/20 scale-105'
+                    : 'border-white/10 bg-white/5 hover:border-orange-400/50 hover:bg-white/10'
+                }`}
+              >
+                <h4 className="font-bold text-lg mb-2">{challenge.name}</h4>
+                <p className="text-sm text-gray-400">{challenge.problem}</p>
+              </button>
+            ))}
+          </div>
+
+          {selectedChallenge !== null && (
+            <div className="bg-gradient-to-br from-orange-500/10 to-red-500/10 border border-orange-400/30 rounded-xl p-6 space-y-4">
+              <div>
+                <h4 className="font-semibold text-orange-400 mb-2">Solution Actuelle</h4>
+                <p className="text-gray-200">{challenges[selectedChallenge].solution}</p>
+              </div>
+              <div>
+                <h4 className="font-semibold text-orange-400 mb-2">Le Saviez-vous ?</h4>
+                <p className="text-gray-200">{challenges[selectedChallenge].innovation}</p>
+              </div>
+              {challenges[selectedChallenge].funFact && (
+                <div className="bg-orange-500/10 border border-orange-400/20 rounded-lg p-4">
+                  <p className="text-orange-100">{challenges[selectedChallenge].funFact}</p>
+                </div>
+              )}
+              {challenges[selectedChallenge].videoTitle && (
+                <div>
+                  <h4 className="font-semibold text-orange-400 mb-3">{challenges[selectedChallenge].videoTitle}</h4>
+                  {challenges[selectedChallenge].videoUrl ? (
+                    <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
+                      <iframe
+                        className="absolute top-0 left-0 w-full h-full rounded-lg"
+                        src={challenges[selectedChallenge].videoUrl}
+                        title="Video"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      />
+                    </div>
+                  ) : (
+                    <div className="bg-orange-500/10 border border-orange-400/30 rounded-lg p-8 text-center">
+                      <p className="text-gray-400 italic">Vidéo à venir</p>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Salles Blanches */}
+        <div className="mb-8 rounded-2xl border border-orange-500/20 bg-white/4 overflow-hidden">
+          <div className="px-6 pt-6 pb-5">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-8 h-8 rounded-lg bg-sky-500/15 border border-sky-500/30 flex items-center justify-center flex-shrink-0">
+                <svg className="w-4 h-4 text-sky-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15M14.25 3.104c.251.023.501.05.75.082M19.8 15l-1.578 1.578A2.25 2.25 0 0116.5 18h-9a2.25 2.25 0 01-1.59-.659L3.8 15m16 0l-2.07-2.07M3.8 15l2.07-2.07" />
+                </svg>
+              </div>
+              <h3 className="text-2xl font-bold text-white">Les Salles Blanches</h3>
+            </div>
+            <p className="text-gray-300 leading-relaxed mb-4">
+              Avant de voir la fusée décoller, chaque composant a été assemblé dans des conditions radicalement différentes du monde extérieur : la <span className="text-sky-300 font-semibold">salle blanche</span>. C'est une pièce dont l'air est filtré en permanence pour éliminer presque toutes les particules de poussière — un environnement plus propre qu'un bloc opératoire.
+            </p>
+            <p className="text-gray-300 leading-relaxed">
+              Un satellite contient des composants électroniques et des optiques d'une précision nanométrique. Une simple particule de 1 micron (100 fois plus fine qu'un cheveu) peut bloquer un capteur ou court-circuiter un circuit. Une seule trace de doigt sur un miroir de télescope peut fausser les mesures d'une mission scientifique entière.
+            </p>
+          </div>
+
+          {/* Règles de la salle blanche */}
+          <div className="border-t border-white/8 px-6 py-5">
+            <p className="text-sm text-gray-400 uppercase tracking-wider font-semibold mb-4">Protocole d'entrée en salle blanche</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {[
+                { icon: '👔', rule: 'Combinaison intégrale', detail: 'Combinaison, cagoule, surbottes et gants — aucune peau exposée à l\'air.' },
+                { icon: '💨', rule: 'Sas de décontamination', detail: 'Douche d\'air comprimé à l\'entrée pour chasser les particules résiduelles.' },
+                { icon: '🚫', rule: 'Zéro maquillage ni parfum', detail: 'Toute substance volatile peut contaminer les surfaces sensibles.' },
+                { icon: '📋', rule: 'Traçabilité totale', detail: 'Chaque outil entrant est répertorié — rien ne doit être oublié dans le satellite.' },
+                { icon: '🌡️', rule: 'Température et humidité constantes', detail: '21 °C ± 1 °C, humidité 45 % — les matériaux ne doivent pas se dilater.' },
+                { icon: '📊', rule: 'Classe ISO 7 à ISO 4', detail: 'Au maximum 352 000 particules >0,5 µm par m³ (ISO 7) jusqu\'à 1 000 particules (ISO 4).' },
+              ].map(({ icon, rule, detail }) => (
+                <div key={rule} className="flex gap-3 bg-white/4 border border-white/8 rounded-xl p-3">
+                  <span className="text-xl flex-shrink-0 mt-0.5">{icon}</span>
+                  <div>
+                    <p className="text-sm font-semibold text-white">{rule}</p>
+                    <p className="text-xs text-gray-400 mt-0.5 leading-snug">{detail}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Chiffres clés salle blanche */}
+          <div className="grid grid-cols-3 divide-x divide-white/8 border-t border-white/8">
+            {[
+              { value: '0,3 µm', label: 'Taille de la plus petite particule filtrée' },
+              { value: '20×', label: 'Plus propre qu\'un bloc opératoire standard' },
+              { value: '100 %', label: 'De l\'air renouvelé plusieurs fois par minute' },
+            ].map(({ value, label }) => (
+              <div key={label} className="px-5 py-4 text-center">
+                <p className="text-xl font-bold text-sky-300">{value}</p>
+                <p className="text-xs text-gray-500 mt-1 leading-snug">{label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Simulateur de Mission */}
         <div className="mb-4">
           <MissionSimulator />
         </div>
@@ -242,68 +363,6 @@ export function RocketSection({ onComplete, onHome, onBack }: RocketSectionProps
               allowFullScreen
             />
           </div>
-        </div>
-
-        <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10 mb-8">
-          <h3 className="text-2xl font-semibold mb-4">Les Défis Techniques Majeurs</h3>
-          <p className="text-gray-300 mb-6">
-            Sélectionnez un défi pour découvrir comment les ingénieurs le résolvent :
-          </p>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-            {challenges.map((challenge, index) => (
-              <button
-                key={index}
-                onClick={() => handleChallengeSelect(index)}
-                className={`p-6 rounded-xl border-2 transition-all text-left ${
-                  selectedChallenge === index
-                    ? 'border-orange-400 bg-orange-500/20 scale-105'
-                    : 'border-white/10 bg-white/5 hover:border-orange-400/50 hover:bg-white/10'
-                }`}
-              >
-                <h4 className="font-bold text-lg mb-2">{challenge.name}</h4>
-                <p className="text-sm text-gray-400">{challenge.problem}</p>
-              </button>
-            ))}
-          </div>
-
-          {selectedChallenge !== null && (
-            <div className="bg-gradient-to-br from-orange-500/10 to-red-500/10 border border-orange-400/30 rounded-xl p-6 space-y-4">
-              <div>
-                <h4 className="font-semibold text-orange-400 mb-2">💡 Solution Actuelle</h4>
-                <p className="text-gray-200">{challenges[selectedChallenge].solution}</p>
-              </div>
-              <div>
-                <h4 className="font-semibold text-orange-400 mb-2">🔬 Le Saviez-vous ?</h4>
-                <p className="text-gray-200">{challenges[selectedChallenge].innovation}</p>
-              </div>
-              {challenges[selectedChallenge].funFact && (
-                <div className="bg-orange-500/10 border border-orange-400/20 rounded-lg p-4">
-                  <p className="text-orange-100">{challenges[selectedChallenge].funFact}</p>
-                </div>
-              )}
-              {challenges[selectedChallenge].videoTitle && (
-                <div>
-                  <h4 className="font-semibold text-orange-400 mb-3">📹 {challenges[selectedChallenge].videoTitle}</h4>
-                  {challenges[selectedChallenge].videoUrl ? (
-                    <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
-                      <iframe
-                        className="absolute top-0 left-0 w-full h-full rounded-lg"
-                        src={challenges[selectedChallenge].videoUrl}
-                        title="Video"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
-                      />
-                    </div>
-                  ) : (
-                    <div className="bg-orange-500/10 border border-orange-400/30 rounded-lg p-8 text-center">
-                      <p className="text-gray-400 italic">Vidéo à venir</p>
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-          )}
         </div>
 
         <Quiz
