@@ -19,31 +19,40 @@ interface AvatarGuideProps {
 export function GirlAvatar({ talking, size = 80 }: { talking: boolean; size?: number }) {
   return (
     <svg viewBox="0 0 120 160" width={size} height={(size * 160) / 120} xmlns="http://www.w3.org/2000/svg">
-      <rect x="30" y="95" width="60" height="65" rx="10" fill="#E91E8C" />
-      <path d="M50 95 Q60 108 70 95" fill="#C2185B" />
+      {/* Body — cuivre/or nacelle spatiale */}
+      <rect x="30" y="95" width="60" height="65" rx="10" fill="#B5651D" />
+      <path d="M50 95 Q60 108 70 95" fill="#8B4513" />
+      {/* Neck */}
       <rect x="52" y="82" width="16" height="16" rx="4" fill="#FDBCB4" />
+      {/* Head */}
       <ellipse cx="60" cy="65" rx="28" ry="30" fill="#FDBCB4" />
+      {/* Hair — brun chaud */}
       <ellipse cx="60" cy="42" rx="30" ry="14" fill="#4A2C0A" />
       <ellipse cx="34" cy="62" rx="8" ry="18" fill="#4A2C0A" />
       <ellipse cx="86" cy="62" rx="8" ry="18" fill="#4A2C0A" />
       <ellipse cx="86" cy="50" rx="6" ry="18" fill="#4A2C0A" transform="rotate(20,86,50)" />
+      {/* Eyes */}
       <ellipse cx="50" cy="64" rx="5" ry="6" fill="white" />
       <ellipse cx="70" cy="64" rx="5" ry="6" fill="white" />
       <ellipse cx="51" cy="65" rx="3" ry="4" fill="#2C1A0E" />
       <ellipse cx="71" cy="65" rx="3" ry="4" fill="#2C1A0E" />
       <circle cx="52" cy="64" r="1" fill="white" />
       <circle cx="72" cy="64" r="1" fill="white" />
+      {/* Eyebrows */}
       <path d="M44 57 Q50 54 56 57" stroke="#4A2C0A" strokeWidth="2" fill="none" strokeLinecap="round" />
       <path d="M64 57 Q70 54 76 57" stroke="#4A2C0A" strokeWidth="2" fill="none" strokeLinecap="round" />
-      <ellipse cx="43" cy="72" rx="7" ry="4" fill="#F48FB1" opacity="0.5" />
-      <ellipse cx="77" cy="72" rx="7" ry="4" fill="#F48FB1" opacity="0.5" />
+      {/* Cheeks — reflet cuivré doux */}
+      <ellipse cx="43" cy="72" rx="7" ry="4" fill="#D4845A" opacity="0.45" />
+      <ellipse cx="77" cy="72" rx="7" ry="4" fill="#D4845A" opacity="0.45" />
+      {/* Mouth */}
       {talking ? (
-        <ellipse cx="60" cy="80" rx="8" ry="5" fill="#C62828" />
+        <ellipse cx="60" cy="80" rx="8" ry="5" fill="#8B4513" />
       ) : (
-        <path d="M52 79 Q60 85 68 79" stroke="#C62828" strokeWidth="2" fill="none" strokeLinecap="round" />
+        <path d="M52 79 Q60 85 68 79" stroke="#8B4513" strokeWidth="2" fill="none" strokeLinecap="round" />
       )}
-      <rect x="10" y="100" width="22" height="12" rx="6" fill="#E91E8C" />
-      <rect x="88" y="100" width="22" height="12" rx="6" fill="#E91E8C" />
+      {/* Arms */}
+      <rect x="10" y="100" width="22" height="12" rx="6" fill="#B5651D" />
+      <rect x="88" y="100" width="22" height="12" rx="6" fill="#B5651D" />
       <ellipse cx="20" cy="106" rx="7" ry="6" fill="#FDBCB4" />
       <ellipse cx="100" cy="106" rx="7" ry="6" fill="#FDBCB4" />
     </svg>
@@ -53,28 +62,36 @@ export function GirlAvatar({ talking, size = 80 }: { talking: boolean; size?: nu
 export function BoyAvatar({ talking, size = 80 }: { talking: boolean; size?: number }) {
   return (
     <svg viewBox="0 0 120 160" width={size} height={(size * 160) / 120} xmlns="http://www.w3.org/2000/svg">
-      <rect x="28" y="95" width="64" height="65" rx="10" fill="#1565C0" />
-      <path d="M48 95 L60 110 L72 95" fill="white" />
-      <path d="M60 110 L60 130" stroke="#90CAF9" strokeWidth="3" />
+      {/* Body — graphite foncé avec liseré acier-bleu (câble de l'élévateur) */}
+      <rect x="28" y="95" width="64" height="65" rx="10" fill="#1C2A3A" />
+      <path d="M48 95 L60 110 L72 95" fill="#2E4A6A" />
+      <path d="M60 110 L60 130" stroke="#4A9EBF" strokeWidth="3" />
+      {/* Neck */}
       <rect x="52" y="82" width="16" height="16" rx="4" fill="#D4A373" />
+      {/* Head */}
       <ellipse cx="60" cy="65" rx="28" ry="30" fill="#D4A373" />
-      <ellipse cx="60" cy="40" rx="29" ry="12" fill="#1A1A2E" />
-      <path d="M32 50 Q30 40 36 36 Q50 30 60 32 Q70 30 84 36 Q90 40 88 50" fill="#1A1A2E" />
+      {/* Hair — noir bleuté nuit spatiale */}
+      <ellipse cx="60" cy="40" rx="29" ry="12" fill="#0D1B2A" />
+      <path d="M32 50 Q30 40 36 36 Q50 30 60 32 Q70 30 84 36 Q90 40 88 50" fill="#0D1B2A" />
+      {/* Eyes */}
       <ellipse cx="50" cy="64" rx="5" ry="6" fill="white" />
       <ellipse cx="70" cy="64" rx="5" ry="6" fill="white" />
-      <ellipse cx="51" cy="65" rx="3" ry="4" fill="#1A1A2E" />
-      <ellipse cx="71" cy="65" rx="3" ry="4" fill="#1A1A2E" />
+      <ellipse cx="51" cy="65" rx="3" ry="4" fill="#0D1B2A" />
+      <ellipse cx="71" cy="65" rx="3" ry="4" fill="#0D1B2A" />
       <circle cx="52" cy="64" r="1" fill="white" />
       <circle cx="72" cy="64" r="1" fill="white" />
-      <path d="M44 56 Q50 53 56 56" stroke="#1A1A2E" strokeWidth="2.5" fill="none" strokeLinecap="round" />
-      <path d="M64 56 Q70 53 76 56" stroke="#1A1A2E" strokeWidth="2.5" fill="none" strokeLinecap="round" />
+      {/* Eyebrows */}
+      <path d="M44 56 Q50 53 56 56" stroke="#0D1B2A" strokeWidth="2.5" fill="none" strokeLinecap="round" />
+      <path d="M64 56 Q70 53 76 56" stroke="#0D1B2A" strokeWidth="2.5" fill="none" strokeLinecap="round" />
+      {/* Mouth */}
       {talking ? (
-        <ellipse cx="60" cy="80" rx="8" ry="5" fill="#8B4513" />
+        <ellipse cx="60" cy="80" rx="8" ry="5" fill="#5D3A1A" />
       ) : (
-        <path d="M52 79 Q60 85 68 79" stroke="#8B4513" strokeWidth="2" fill="none" strokeLinecap="round" />
+        <path d="M52 79 Q60 85 68 79" stroke="#5D3A1A" strokeWidth="2" fill="none" strokeLinecap="round" />
       )}
-      <rect x="8" y="100" width="22" height="12" rx="6" fill="#1565C0" />
-      <rect x="90" y="100" width="22" height="12" rx="6" fill="#1565C0" />
+      {/* Arms */}
+      <rect x="8" y="100" width="22" height="12" rx="6" fill="#1C2A3A" />
+      <rect x="90" y="100" width="22" height="12" rx="6" fill="#1C2A3A" />
       <ellipse cx="18" cy="106" rx="7" ry="6" fill="#D4A373" />
       <ellipse cx="102" cy="106" rx="7" ry="6" fill="#D4A373" />
     </svg>
@@ -114,7 +131,7 @@ export function AvatarGuide({ lines, autoPlay = true, interval = 3500, className
       {/* Girl */}
       <div className={`flex flex-col items-center gap-1 transition-all duration-300 ${isGirl ? 'scale-105' : 'scale-90 opacity-50'}`}>
         <GirlAvatar talking={isGirl && talking} size={64} />
-        <span className="text-pink-300 text-xs font-semibold">Léa</span>
+        <span className="text-amber-400 text-xs font-semibold">Léa</span>
       </div>
 
       {/* Bubble */}
@@ -126,19 +143,19 @@ export function AvatarGuide({ lines, autoPlay = true, interval = 3500, className
         <div
           className={`relative w-full rounded-2xl px-4 py-3 text-sm font-medium leading-relaxed text-white border ${
             isGirl
-              ? 'bg-pink-900/30 border-pink-500/40'
-              : 'bg-blue-900/30 border-blue-500/40'
+              ? 'bg-amber-900/25 border-amber-600/40'
+              : 'bg-slate-800/50 border-sky-700/40'
           }`}
         >
           {/* tail toward active speaker */}
           <div
             className={`absolute bottom-4 w-3 h-3 rotate-45 ${
               isGirl
-                ? '-left-1.5 bg-pink-900/30 border-l border-b border-pink-500/40'
-                : '-right-1.5 bg-blue-900/30 border-r border-b border-blue-500/40'
+                ? '-left-1.5 bg-amber-900/25 border-l border-b border-amber-600/40'
+                : '-right-1.5 bg-slate-800/50 border-r border-b border-sky-700/40'
             }`}
           />
-          <span className={`font-bold mr-1 ${isGirl ? 'text-pink-300' : 'text-blue-300'}`}>
+          <span className={`font-bold mr-1 ${isGirl ? 'text-amber-400' : 'text-sky-300'}`}>
             {isGirl ? 'Léa :' : 'Noah :'}
           </span>
           {current.text}
@@ -148,7 +165,7 @@ export function AvatarGuide({ lines, autoPlay = true, interval = 3500, className
       {/* Boy */}
       <div className={`flex flex-col items-center gap-1 transition-all duration-300 ${!isGirl ? 'scale-105' : 'scale-90 opacity-50'}`}>
         <BoyAvatar talking={!isGirl && talking} size={64} />
-        <span className="text-blue-300 text-xs font-semibold">Noah</span>
+        <span className="text-sky-300 text-xs font-semibold">Noah</span>
       </div>
     </div>
   );
