@@ -285,7 +285,7 @@ export function SocialReferencesSection({ onComplete, onHome, onBack }: SocialRe
               </>
             ) : (
               <>
-                Continuer vers l'Accompagnement 🤝
+                Pause entre les sessions
                 <ChevronRight className="w-5 h-5" />
               </>
             )}

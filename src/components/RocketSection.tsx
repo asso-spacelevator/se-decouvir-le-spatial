@@ -442,7 +442,7 @@ export function RocketSection({ onComplete, onHome, onBack }: RocketSectionProps
               </>
             ) : (
               <>
-                Continuer vers l'Orbite 🛰️
+                Continuer vers les Réseaux Sociaux 📱
                 <ChevronRight className="w-5 h-5" />
               </>
             )}

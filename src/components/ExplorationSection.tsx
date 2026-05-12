@@ -259,7 +259,7 @@ export function ExplorationSection({ onComplete, onHome, onBack }: ExplorationSe
               </>
             ) : (
               <>
-                Continuer vers les Réseaux Sociaux 📱
+                Continuer vers l'Accompagnement 🤝
                 <ChevronRight className="w-5 h-5" />
               </>
             )}
