@@ -278,19 +278,32 @@ export function MissionSimulator() {
 
       const newEntries: LogEntry[] = [];
 
-      // Announce: emitted when entering a phase (at tStart)
+      // T-1s: allumage Vulcain (annonce pendant le compte à rebours)
+      if (prev < -1 && next >= -1 && !seenPhasesRef.current.has('vulcain_ignition')) {
+        seenPhasesRef.current.add('vulcain_ignition');
+        newEntries.push({ time: -1, text: 'ALLUMAGE VULCAIN — Poussée nominale confirmée. Décollage dans 1 s.', critical: true, type: 'announce' });
+      }
+
+      // T+0: décollage
+      if (prev < 0 && next >= 0 && !seenPhasesRef.current.has('liftoff')) {
+        seenPhasesRef.current.add('liftoff');
+        newEntries.push({ time: 0, text: 'DÉCOLLAGE — Ariane 6 quitte le pas de tir. Poussée totale ~1 000 tf.', critical: true, type: 'event' });
+      }
+
+      // Announce: emitted when entering a phase (at tStart), skip ignition (handled above)
       const prevPhIdx = phaseIndexAt(Math.max(prev, 0));
       const nextPhIdx = phaseIndexAt(Math.max(next, 0));
-      if ((next >= 0 && nextPhIdx !== prevPhIdx) || (prev < 0 && next >= 0)) {
+      if (next >= 0 && nextPhIdx !== prevPhIdx) {
         const entered = PHASES[nextPhIdx];
-        if (entered && !seenPhasesRef.current.has(`announce_${entered.id}`)) {
+        if (entered && entered.id !== 'ignition' && !seenPhasesRef.current.has(`announce_${entered.id}`)) {
           seenPhasesRef.current.add(`announce_${entered.id}`);
           newEntries.push({ time: Math.round(next), text: entered.announce, critical: false, type: 'announce' });
         }
       }
 
-      // Event: emitted when a phase ends (at tEnd)
+      // Event: emitted when a phase ends (at tEnd), skip ignition (décollage already logged at T+0)
       for (const p of PHASES) {
+        if (p.id === 'ignition') continue;
         if (prev < p.tEnd && next >= p.tEnd && !seenPhasesRef.current.has(`event_${p.id}`)) {
           seenPhasesRef.current.add(`event_${p.id}`);
           newEntries.push({ time: Math.round(p.tEnd), text: p.event, critical: p.critical, type: 'event' });
@@ -538,15 +551,7 @@ export function MissionSimulator() {
                       : 'text-emerald-400'
                   }`}>
                     <span className="text-gray-600 flex-shrink-0">{formatMT(entry.time)}</span>
-                    <span className="leading-relaxed">
-                      {entry.type === 'announce' && (
-                        <span className="text-sky-600 mr-1">▶</span>
-                      )}
-                      {entry.type === 'event' && (
-                        <span className="mr-1">✓</span>
-                      )}
-                      {entry.text}
-                    </span>
+                    <span className="leading-relaxed">{entry.text}</span>
                   </div>
                 ))
               )}
