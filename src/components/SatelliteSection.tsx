@@ -5,7 +5,6 @@ import { Subsection } from './Subsection';
 import { Navigation } from './Navigation';
 import { Quiz } from './Quiz';
 import { AvatarGuide } from './AvatarGuide';
-import { OrbitalAnimation } from './OrbitalAnimation';
 import { SatelliteLabelGame } from './SatelliteLabelGame';
 import { SatelliteTimeline } from './SatelliteTimeline';
 import { SatelliteDistribution } from './SatelliteDistribution';
@@ -231,11 +230,6 @@ export function SatelliteSection({ onComplete, onHome, onBack }: SatelliteSectio
           content="Un satellite est conçu pour 10 à 15 ans. Le facteur limitant n'est généralement pas la panne des instruments, mais l'épuisement du carburant de contrôle d'attitude et de station-keeping. À l'issue de sa vie, il doit être mis sur une orbite cimetière (GEO) ou désorbité pour brûler dans l'atmosphère (LEO) : c'est une exigence réglementaire pour éviter la prolifération des débris spatiaux. Aujourd'hui, plus de 27 000 objets de plus de 10 cm sont suivis en orbite."
           icon="♻️"
         />
-
-        {/* Orbital animation */}
-        <div className="mb-8">
-          <OrbitalAnimation />
-        </div>
 
         {/* Satellite label game */}
         <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10 mb-8">
