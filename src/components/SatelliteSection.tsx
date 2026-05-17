@@ -6,6 +6,7 @@ import { Navigation } from './Navigation';
 import { Quiz } from './Quiz';
 import { AvatarGuide } from './AvatarGuide';
 import { OrbitalAnimation } from './OrbitalAnimation';
+import { SatelliteLabelGame } from './SatelliteLabelGame';
 
 const SAT_LINES = [
   { speaker: 'boy' as const,  text: "On sait que les satellites sont utiles — mais comment est-ce qu'on les construit et où les place-t-on ?" },
@@ -155,6 +156,11 @@ export function SatelliteSection({ onComplete, onHome, onBack }: SatelliteSectio
         {/* Orbital animation */}
         <div className="mb-8">
           <OrbitalAnimation />
+        </div>
+
+        {/* Satellite label game */}
+        <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10 mb-8">
+          <SatelliteLabelGame />
         </div>
 
         <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10 mb-8">
