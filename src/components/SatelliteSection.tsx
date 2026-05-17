@@ -7,6 +7,8 @@ import { Quiz } from './Quiz';
 import { AvatarGuide } from './AvatarGuide';
 import { OrbitalAnimation } from './OrbitalAnimation';
 import { SatelliteLabelGame } from './SatelliteLabelGame';
+import { SatelliteTimeline } from './SatelliteTimeline';
+import { SatelliteDistribution } from './SatelliteDistribution';
 
 const SAT_LINES = [
   { speaker: 'boy' as const,  text: "On sait que les satellites sont utiles — mais comment est-ce qu'on les construit et où les place-t-on ?" },
@@ -135,11 +137,88 @@ export function SatelliteSection({ onComplete, onHome, onBack }: SatelliteSectio
           <AvatarGuide lines={SAT_LINES} interval={4000} />
         </div>
 
-        <Subsection
-          title="Anatomie d'un Satellite"
-          content="Un satellite est composé de deux grandes parties : la plateforme (structure, alimentation électrique via panneaux solaires, batteries, systèmes de contrôle thermique et d'attitude) et la charge utile (les instruments scientifiques ou de communication qui réalisent la mission). La masse varie de quelques kilos pour un CubeSat à plus de 6 tonnes pour un satellite GEO de télécommunications. Chaque composant doit résister au vide, aux radiations, aux variations thermiques extrêmes et aux vibrations du lancement."
-          icon="🔩"
-        />
+        {/* Frise chronologique */}
+        <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10 mb-8">
+          <div className="flex items-center gap-3 mb-2">
+            <span className="text-2xl">📅</span>
+            <h3 className="text-2xl font-bold text-white">70 ans de satellites</h3>
+          </div>
+          <p className="text-gray-400 text-sm mb-6">
+            De Spoutnik en 1957 à plus de 7 500 satellites actifs aujourd'hui — une révolution en quelques décennies.
+          </p>
+          <SatelliteTimeline />
+        </div>
+
+        {/* Anatomie — contenu CNES */}
+        <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10 mb-8">
+          <div className="flex items-center gap-3 mb-5">
+            <span className="text-2xl">🔩</span>
+            <h3 className="text-2xl font-bold text-white">Anatomie d'un satellite</h3>
+          </div>
+          <p className="text-sm text-gray-400 mb-6 leading-relaxed">
+            Chaque satellite a une mission unique, mais tous partagent la même architecture fondamentale en deux parties — selon le dossier CNES.
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            {/* Plateforme */}
+            <div className="bg-blue-500/8 border border-blue-500/20 rounded-xl p-5">
+              <h4 className="font-bold text-blue-300 mb-2 flex items-center gap-2">
+                <span>🏗️</span> La Plateforme (Bus)
+              </h4>
+              <p className="text-sm text-gray-300 leading-relaxed mb-3">
+                La plateforme fournit toutes les ressources nécessaires au fonctionnement du satellite. Elle regroupe les <strong className="text-white">servitudes</strong> qui assurent :
+              </p>
+              <ul className="text-sm text-gray-300 space-y-1">
+                {['Navigation & contrôle d\'attitude', 'Propulsion (réservoirs + moteurs-fusées)', 'Communications avec la Terre', 'Gestion thermique (-150°C à +150°C)', 'Alimentation électrique (batteries)'].map(item => (
+                  <li key={item} className="flex items-start gap-2">
+                    <span className="text-blue-400 flex-shrink-0 mt-0.5">▸</span>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            {/* Charge utile */}
+            <div className="bg-teal-500/8 border border-teal-500/20 rounded-xl p-5">
+              <h4 className="font-bold text-teal-300 mb-2 flex items-center gap-2">
+                <span>🎯</span> La Charge Utile
+              </h4>
+              <p className="text-sm text-gray-300 leading-relaxed mb-3">
+                La charge utile, c'est <strong className="text-white">le passager à bord</strong> — les instruments qui réalisent la vraie mission :
+              </p>
+              <ul className="text-sm text-gray-300 space-y-1">
+                {['Appareil de prise de vue (optique, radar)', 'Altimètre (mesure le niveau des océans)', 'Télescope (observation de l\'Univers)', 'Transpondeur de télécommunications', 'Horloge atomique (navigation GNSS)'].map(item => (
+                  <li key={item} className="flex items-start gap-2">
+                    <span className="text-teal-400 flex-shrink-0 mt-0.5">▸</span>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+          {/* Panneaux solaires */}
+          <div className="bg-amber-500/8 border border-amber-500/20 rounded-xl p-5 mb-4">
+            <h4 className="font-bold text-amber-300 mb-2 flex items-center gap-2">
+              <span>☀️</span> Panneaux Solaires — l'énergie autonome
+            </h4>
+            <p className="text-sm text-gray-300 leading-relaxed">
+              Chaque satellite produit sa propre énergie. La taille des panneaux dépend de la distance au Soleil : les panneaux de la sonde <strong className="text-white">Juice</strong> (ESA, en route vers Jupiter) font <strong className="text-white">27 m de long</strong> — plus grands qu'un terrain de tennis ! À 800 millions de km du Soleil, la lumière est 25 fois plus faible qu'en orbite terrestre.
+            </p>
+          </div>
+          {/* Matériaux */}
+          <div className="bg-white/4 border border-white/10 rounded-xl p-5">
+            <h4 className="font-bold text-gray-200 mb-2 flex items-center gap-2">
+              <span>🛡️</span> Matériaux & Survie dans l'espace
+            </h4>
+            <p className="text-sm text-gray-400 leading-relaxed">
+              Chaque composant est conçu pour résister aux <strong className="text-white">débris et micro-météorites</strong>, aux <strong className="text-white">grands écarts de température</strong> (de -150°C à +150°C en quelques minutes), aux <strong className="text-white">radiations</strong> et aux vibrations du lancement. La couverture dorée caractéristique des satellites est une <strong className="text-white">couverture thermique multi-couches</strong> — elle régule la température comme une thermos.
+            </p>
+          </div>
+          <div className="mt-4 text-right">
+            <a href="https://cnes.fr/dossiers/satellites" target="_blank" rel="noopener noreferrer"
+              className="text-xs text-cyan-400 hover:text-cyan-300 underline">
+              Source : CNES — Dossier Les Satellites ↗
+            </a>
+          </div>
+        </div>
 
         <Subsection
           title="La Mécanique Orbitale : pourquoi les satellites ne tombent-ils pas ?"
@@ -161,6 +240,18 @@ export function SatelliteSection({ onComplete, onHome, onBack }: SatelliteSectio
         {/* Satellite label game */}
         <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10 mb-8">
           <SatelliteLabelGame />
+        </div>
+
+        {/* Distribution par catégories */}
+        <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10 mb-8">
+          <div className="flex items-center gap-3 mb-2">
+            <span className="text-2xl">📊</span>
+            <h3 className="text-2xl font-bold text-white">Qui orbite là-haut ?</h3>
+          </div>
+          <p className="text-gray-400 text-sm mb-6">
+            Répartition des 7 500 satellites actifs par usage et par orbite.
+          </p>
+          <SatelliteDistribution />
         </div>
 
         <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10 mb-8">
