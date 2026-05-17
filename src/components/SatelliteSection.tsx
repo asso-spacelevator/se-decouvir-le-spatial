@@ -225,11 +225,175 @@ export function SatelliteSection({ onComplete, onHome, onBack }: SatelliteSectio
           icon="🌐"
         />
 
-        <Subsection
-          title="Durée de Vie et Fin de Mission"
-          content="Un satellite est conçu pour 10 à 15 ans. Le facteur limitant n'est généralement pas la panne des instruments, mais l'épuisement du carburant de contrôle d'attitude et de station-keeping. À l'issue de sa vie, il doit être mis sur une orbite cimetière (GEO) ou désorbité pour brûler dans l'atmosphère (LEO) : c'est une exigence réglementaire pour éviter la prolifération des débris spatiaux. Aujourd'hui, plus de 27 000 objets de plus de 10 cm sont suivis en orbite."
-          icon="♻️"
-        />
+        {/* Fin de mission & débris spatiaux */}
+        <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10 mb-8">
+          <div className="flex items-center gap-3 mb-2">
+            <span className="text-2xl">♻️</span>
+            <h3 className="text-2xl font-bold text-white">Fin de mission & débris spatiaux</h3>
+          </div>
+          <p className="text-sm text-gray-400 mb-6 leading-relaxed">
+            Un satellite est conçu pour <strong className="text-white">5 à 15 ans</strong>. Le facteur limitant n'est généralement pas la panne des instruments, mais l'épuisement du <strong className="text-white">carburant (ergol)</strong> qui leur permet de se maintenir en orbite. Ce qui arrive ensuite est devenu un enjeu mondial.
+          </p>
+
+          {/* Chiffres clés */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+            {[
+              { value: '34 000', label: 'débris > 10 cm suivis', color: 'text-red-400' },
+              { value: '900 000', label: 'objets > 1 cm estimés', color: 'text-orange-400' },
+              { value: '128 M', label: 'fragments > 1 mm', color: 'text-amber-400' },
+              { value: '200', label: 'alertes collision/an (CNES)', color: 'text-cyan-400' },
+            ].map(stat => (
+              <div key={stat.label} className="bg-white/5 border border-white/10 rounded-xl p-4 text-center">
+                <div className={`text-2xl font-black ${stat.color}`}>{stat.value}</div>
+                <div className="text-[11px] text-gray-400 mt-1 leading-tight">{stat.label}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* Causes */}
+          <div className="bg-red-500/8 border border-red-500/20 rounded-xl p-5 mb-4">
+            <h4 className="font-bold text-red-300 mb-3">D'où viennent les débris ?</h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm text-gray-300">
+              {[
+                'Étages supérieurs de fusées abandonnés en orbite',
+                'Satellites en fin de vie non désorbités',
+                'Explosions de réservoirs ou batteries résiduelles',
+                'Destructions intentionnelles (ex : Chine 2007 → 3 527 débris)',
+                'Dégradation de matériaux (panneaux solaires, revêtements)',
+                'Collisions générant de nouveaux fragments',
+              ].map(cause => (
+                <div key={cause} className="flex items-start gap-2">
+                  <span className="text-red-400 flex-shrink-0 mt-0.5">▸</span>
+                  {cause}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Syndrome de Kessler */}
+          <div className="bg-orange-500/8 border border-orange-500/20 rounded-xl p-5 mb-4">
+            <h4 className="font-bold text-orange-300 mb-2">Le Syndrome de Kessler</h4>
+            <p className="text-sm text-gray-300 leading-relaxed">
+              Théorisé en <strong className="text-white">1978</strong> par le scientifique NASA Donald Kessler : une collision génère des débris qui provoquent d'autres collisions, en cascade, jusqu'à rendre certaines orbites <strong className="text-white">inutilisables pour des siècles</strong>. Les débris se déplacent à <strong className="text-white">7 à 16 km/s</strong> — 10 fois la vitesse d'une balle de fusil. Un centimètre de métal à cette vitesse est <strong className="text-white">létal pour un satellite</strong>.
+            </p>
+          </div>
+
+          {/* Fin de vie : deux options */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <div className="bg-blue-500/8 border border-blue-500/20 rounded-xl p-5">
+              <h4 className="font-bold text-blue-300 mb-2">LEO — Désorbitation</h4>
+              <p className="text-sm text-gray-300 leading-relaxed">
+                Les satellites en orbite basse sont guidés vers l'atmosphère où ils <strong className="text-white">se désintègrent</strong> à la rentrée. La loi française LOS impose depuis <strong className="text-white">2024</strong> (1re mondiale) une rentrée dans un délai de <strong className="text-white">3× la durée de mission</strong>, avec un plafond de 25 ans.
+              </p>
+            </div>
+            <div className="bg-amber-500/8 border border-amber-500/20 rounded-xl p-5">
+              <h4 className="font-bold text-amber-300 mb-2">GEO — Orbite cimetière</h4>
+              <p className="text-sm text-gray-300 leading-relaxed">
+                Les satellites géostationnaires sont poussés ~300 km <strong className="text-white">au-dessus du GEO</strong>, sur une orbite "cimetière". Obligatoire : <strong className="text-white">passivation complète</strong> (vidage des réservoirs, décharge des batteries) pour éviter les explosions qui créent des milliers de nouveaux débris.
+              </p>
+            </div>
+          </div>
+
+          {/* Les éboueurs de l'espace — vidéo */}
+          <div className="bg-gradient-to-br from-cyan-500/10 to-teal-500/10 border border-cyan-500/20 rounded-xl p-5 mb-4">
+            <h4 className="font-bold text-cyan-300 mb-1 flex items-center gap-2">
+              <span>🛸</span> Les éboueurs de l'espace
+            </h4>
+            <p className="text-sm text-gray-300 leading-relaxed mb-4">
+              Des missions dites d'<strong className="text-white">Active Debris Removal (ADR)</strong> — "remorqueurs orbitaux" ou "éboueurs de l'espace" — sont en cours de développement. Elles doivent s'approcher d'un débris, synchroniser leur trajectoire, capturer l'objet, puis le déorbiter. Une opération complexe dont la faisabilité technique et juridique reste à démontrer.
+            </p>
+            {/* YouTube embed */}
+            <div className="relative w-full rounded-xl overflow-hidden" style={{ paddingBottom: '56.25%' }}>
+              <iframe
+                className="absolute inset-0 w-full h-full"
+                src="https://www.youtube.com/embed/_dFmgoCO1ww"
+                title="C'est pour quand les éboueurs de l'espace ? — CNES"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            </div>
+            <p className="text-xs text-gray-500 mt-2 text-center">
+              "C'est pour quand les éboueurs de l'espace ?" — CNES / Prodigima Films, avril 2024 (5 min 33)
+            </p>
+          </div>
+
+          {/* Solutions CNES pour dépolluer */}
+          <div className="bg-white/4 border border-white/10 rounded-xl p-5 mb-4">
+            <h4 className="font-bold text-white mb-3">Les idées pour dépolluer l'espace (CNES)</h4>
+            <div className="space-y-3">
+              {[
+                {
+                  icon: '💥',
+                  title: 'Passivation en fin de vie',
+                  desc: 'Vider tous les réservoirs et décharger les batteries avant d\'abandonner le satellite — obligatoire depuis la loi LOS 2008. Évite les explosions qui multiplient le nombre de débris.',
+                  color: 'text-red-300',
+                },
+                {
+                  icon: '🪂',
+                  title: 'Kits de désorbitation',
+                  desc: 'Équipements attachables qui déploient une voile de freinage atmosphérique, raccourcissant drastiquement la durée de vie orbitale après la mission.',
+                  color: 'text-amber-300',
+                },
+                {
+                  icon: '🤖',
+                  title: 'Capture active (ADR)',
+                  desc: 'Missions dédiées au ramassage de gros débris : ClearSpace-1 (ESA, déorbitera un étage Vega de 112 kg), ADRAS-J (Astroscale, Japon, lancé fév. 2024).',
+                  color: 'text-cyan-300',
+                },
+                {
+                  icon: '🔧',
+                  title: 'Satellites réparables & ravitaillables',
+                  desc: 'Concevoir les satellites avec des poignées de capture, des vannes de carburant standardisées et des interfaces de service pour les réparer ou les ravitailler en orbite — prolongeant leur durée de vie.',
+                  color: 'text-blue-300',
+                },
+                {
+                  icon: '📡',
+                  title: 'CAESAR — surveillance 24h/24',
+                  desc: 'Service CNES d\'analyse des risques de collision. Émet ~200 alertes par an. Seuil d\'alerte : 0,05% de probabilité de collision. Disponible gratuitement pour tous les opérateurs.',
+                  color: 'text-green-300',
+                },
+                {
+                  icon: '🌑',
+                  title: 'Réduction de la pollution lumineuse',
+                  desc: 'Nouveaux matériaux et positionnements orbitaux pour réduire la brillance des satellites — un enjeu croissant avec les méga-constellations qui perturbent les observations astronomiques.',
+                  color: 'text-violet-300',
+                },
+              ].map(sol => (
+                <div key={sol.title} className="flex items-start gap-3">
+                  <span className="text-xl flex-shrink-0 mt-0.5">{sol.icon}</span>
+                  <div>
+                    <span className={`text-sm font-semibold ${sol.color}`}>{sol.title}</span>
+                    <p className="text-xs text-gray-400 leading-relaxed mt-0.5">{sol.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* T4SC */}
+          <div className="bg-teal-500/8 border border-teal-500/20 rounded-xl p-5">
+            <h4 className="font-bold text-teal-300 mb-2">Tech For Space Care (T4SC) — le programme CNES</h4>
+            <p className="text-sm text-gray-300 leading-relaxed mb-3">
+              Lancé en 2022 pour 5 ans, T4SC aide les acteurs français du spatial à développer des technologies conformes aux nouvelles règles. Objectif : déployer des prototypes sur des satellites de démonstration d'ici <strong className="text-white">2026</strong>.
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {['Surveillance orbitale', 'Passivation autonome', 'Résistance aux micro-débris', 'Réparation en orbite', 'Désorbitation accélérée', 'Propulsion anti-collision', 'Extension de mission'].map(theme => (
+                <span key={theme} className="text-[11px] px-2.5 py-1 bg-teal-500/15 border border-teal-500/25 text-teal-300 rounded-full">{theme}</span>
+              ))}
+            </div>
+          </div>
+
+          <div className="mt-4 flex flex-wrap gap-4 justify-end">
+            <a href="https://cnes.fr/dossiers/debris-spatiaux" target="_blank" rel="noopener noreferrer"
+              className="text-xs text-cyan-400 hover:text-cyan-300 underline">
+              Source : CNES — Dossier Débris Spatiaux ↗
+            </a>
+            <a href="https://cnes.fr/projets/t4sc" target="_blank" rel="noopener noreferrer"
+              className="text-xs text-cyan-400 hover:text-cyan-300 underline">
+              CNES T4SC ↗
+            </a>
+          </div>
+        </div>
 
         {/* Satellite label game */}
         <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10 mb-8">
