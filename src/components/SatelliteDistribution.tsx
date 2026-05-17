@@ -275,6 +275,77 @@ export function SatelliteDistribution() {
         </div>
       </div>
 
+      {/* 4 orbit type cards */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        {[
+          {
+            name: 'LEO',
+            full: 'Low Earth Orbit',
+            altitude: '160 – 2 000 km',
+            period: '~90 min',
+            color: '#22d3ee',
+            bg: 'bg-cyan-500/8',
+            border: 'border-cyan-500/25',
+            icon: '🌍',
+            use: 'Constellations, observation, ISS',
+            detail: 'Orbite la plus peuplée. Faible latence, mais nécessite des constellations pour la couverture globale.',
+          },
+          {
+            name: 'MEO',
+            full: 'Medium Earth Orbit',
+            altitude: '2 000 – 35 786 km',
+            period: '2 – 24 h',
+            color: '#3b82f6',
+            bg: 'bg-blue-500/8',
+            border: 'border-blue-500/25',
+            icon: '🧭',
+            use: 'GPS, Galileo, GLONASS',
+            detail: 'Idéale pour la navigation. Traverse les ceintures de Van Allen — composants durcis aux radiations.',
+          },
+          {
+            name: 'GEO',
+            full: 'Géostationnaire',
+            altitude: '35 786 km',
+            period: '24 h (fixe)',
+            color: '#f59e0b',
+            bg: 'bg-amber-500/8',
+            border: 'border-amber-500/25',
+            icon: '📡',
+            use: 'Télécom, météo, TV',
+            detail: 'Immobile dans le ciel — pas besoin de bouger l\'antenne. Une seule orbite circulaire, très convoitée.',
+          },
+          {
+            name: 'SSO',
+            full: 'Héliosynchrone',
+            altitude: '400 – 1 000 km',
+            period: '~100 min',
+            color: '#10b981',
+            bg: 'bg-emerald-500/8',
+            border: 'border-emerald-500/25',
+            icon: '🌿',
+            use: 'Observation terrestre, météo',
+            detail: 'Passe toujours à la même heure solaire locale. Éclairage constant pour comparer des images dans le temps.',
+          },
+        ].map(orbit => (
+          <div
+            key={orbit.name}
+            className={`${orbit.bg} border ${orbit.border} rounded-xl p-4 flex flex-col gap-2`}
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-lg">{orbit.icon}</span>
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-white/8 text-gray-400">{orbit.period}</span>
+            </div>
+            <div>
+              <span className="text-base font-bold" style={{ color: orbit.color }}>{orbit.name}</span>
+              <p className="text-[10px] text-gray-500 leading-tight">{orbit.full}</p>
+            </div>
+            <p className="text-[11px] font-mono text-gray-400">{orbit.altitude}</p>
+            <p className="text-[11px] text-gray-300 font-medium leading-tight">{orbit.use}</p>
+            <p className="text-[10px] text-gray-500 leading-relaxed hidden md:block">{orbit.detail}</p>
+          </div>
+        ))}
+      </div>
+
       {/* Orbit breakdown summary */}
       <div className="bg-white/5 border border-white/10 rounded-2xl p-5">
         <h4 className="text-sm font-semibold text-gray-300 mb-4">Répartition par orbite (toutes catégories)</h4>
