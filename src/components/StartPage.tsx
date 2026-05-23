@@ -11,7 +11,7 @@ const DIALOGUE = [
   { speaker: 'girl' as const, text: "Salut ! Moi c'est Léa. Tu veux découvrir l'industrie spatiale ?" },
   { speaker: 'boy' as const,  text: "Et moi c'est Noah ! On va t'emmener dans un voyage interactif." },
   { speaker: 'girl' as const, text: "Deux sessions indépendantes — commence par celle qui t'intéresse !" },
-  { speaker: 'boy' as const,  text: "Environ 20 minutes par session, et tu repartiras avec plein d'idées." },
+  { speaker: 'boy' as const,  text: "A la fin de ces deux sections, on espère que tu repartiras avec plein d'idées." },
 ];
 
 export function StartPage({ onStartSession1, onStartSession2 }: StartPageProps) {
@@ -113,7 +113,6 @@ export function StartPage({ onStartSession1, onStartSession2 }: StartPageProps) 
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <span className="text-xs font-bold text-blue-400 bg-blue-400/10 border border-blue-400/20 rounded-full px-3 py-1">Session 1</span>
-                <span className="text-xs text-gray-500">~20 min</span>
               </div>
               <ChevronRight className="w-5 h-5 text-gray-500 group-hover:text-blue-400 group-hover:translate-x-1 transition-all" />
             </div>
@@ -137,7 +136,6 @@ export function StartPage({ onStartSession1, onStartSession2 }: StartPageProps) 
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <span className="text-xs font-bold text-teal-400 bg-teal-400/10 border border-teal-400/20 rounded-full px-3 py-1">Session 2</span>
-                <span className="text-xs text-gray-500">~20 min</span>
               </div>
               <ChevronRight className="w-5 h-5 text-gray-500 group-hover:text-teal-400 group-hover:translate-x-1 transition-all" />
             </div>
@@ -154,7 +152,22 @@ export function StartPage({ onStartSession1, onStartSession2 }: StartPageProps) 
           </button>
         </div>
 
-        <p className="text-gray-600 text-xs text-center mt-6">Gratuit · Interactif · Les sessions sont indépendantes</p>
+        {/* Partner logos */}
+        <div className="flex items-center justify-center gap-8 mt-8">
+          <img
+            src="/logos/space-elevator.png"
+            alt="Space Elevator"
+            className="object-contain opacity-80 hover:opacity-100 transition-opacity"
+            style={{ minWidth: '85px', height: '60px' }}
+          />
+          <img
+            src="/logos/ile-de-france.png"
+            alt="Région Île-de-France"
+            className="object-contain opacity-80 hover:opacity-100 transition-opacity"
+            style={{ minWidth: '85px', height: '60px' }}
+          />
+        </div>
+        <p className="text-gray-600 text-xs text-center mt-3">Par l'association Space Elevator avec le soutien de la Région Ile de France</p>
       </div>
     </div>
   );
