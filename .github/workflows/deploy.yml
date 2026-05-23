@@ -27,6 +27,9 @@ jobs:
 
       - run: npm ci
 
+      - name: Typecheck & lint
+        run: npm run typecheck && npm run lint
+
       - name: Build
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}

@@ -27,9 +27,6 @@ const SESSION2_STEPS = [
   { name: 'FAQ & Questions', icon: '💬', section: 'faq_questions' as Section },
 ];
 
-const SESSION1_SECTIONS: Section[] = ['introduction', 'impact_terrestre', 'rockets', 'social', 'session_break'];
-const SESSION2_SECTIONS: Section[] = ['satellites', 'exploration', 'accompagnement', 'faq_questions', 'completed'];
-
 const sectionOrder: Section[] = [
   'start', 'introduction',
   'impact_terrestre', 'rockets', 'social',
@@ -75,12 +72,6 @@ function AppContent() {
   };
 
   const handleHome = async () => navigate('start');
-
-  // End of session 1 → back to home
-  const handleSession1End = async () => {
-    await completeSection(currentView);
-    await navigate('start');
-  };
 
   // End of session 2 → completed page, then back to home
   const handleSession2End = async () => {

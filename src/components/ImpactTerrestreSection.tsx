@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Earth, ChevronRight, CheckCircle, Radio, Globe, ExternalLink, FileText } from 'lucide-react';
 import { useSession } from '../contexts/SessionContext';
-import { Subsection } from './Subsection';
 import { Navigation } from './Navigation';
 import { Quiz } from './Quiz';
 import { AvatarGuide } from './AvatarGuide';

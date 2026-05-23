@@ -199,14 +199,6 @@ function velocityAt(t: number): number {
   return Math.round(lerp(prevV, p.velocity, frac));
 }
 
-function tempAt(t: number): number {
-  const i = phaseIndexAt(Math.max(t, 0));
-  const p = PHASES[i];
-  const prev = i > 0 ? PHASES[i - 1].tempEngine : 20;
-  const frac = (t - p.tStart) / (p.tEnd - p.tStart);
-  return Math.round(lerp(prev, p.tempEngine, frac));
-}
-
 function vibrationAt(t: number): number {
   const i = phaseIndexAt(Math.max(t, 0));
   const p = PHASES[i];
@@ -215,41 +207,7 @@ function vibrationAt(t: number): number {
   return +lerp(prev, p.vibration, frac).toFixed(1);
 }
 
-function fuelAt(t: number): number {
-  const i = phaseIndexAt(Math.max(t, 0));
-  const p = PHASES[i];
-  const prev = i > 0 ? PHASES[i - 1].fuelPct : 100;
-  const frac = (t - p.tStart) / (p.tEnd - p.tStart);
-  return Math.round(lerp(prev, p.fuelPct, frac));
-}
-
 interface LogEntry { time: number; text: string; critical: boolean; type?: 'announce' | 'event' }
-
-function GaugeBar({ value, max, color, label, unit, icon: Icon }: {
-  value: number; max: number; color: string; label: string; unit: string;
-  icon: React.ElementType;
-}) {
-  const pct = Math.min(Math.max(value / max, 0), 1) * 100;
-  return (
-    <div className="bg-white/5 border border-white/8 rounded-xl p-3">
-      <div className="flex items-center justify-between mb-2">
-        <div className="flex items-center gap-1.5">
-          <Icon className={`w-3.5 h-3.5 ${color}`} />
-          <span className="text-xs text-gray-500 uppercase tracking-wider">{label}</span>
-        </div>
-        <span className={`font-mono text-sm font-bold ${color}`}>
-          {value.toLocaleString('fr-FR')}{unit}
-        </span>
-      </div>
-      <div className="w-full h-1.5 bg-white/8 rounded-full overflow-hidden">
-        <div
-          className="h-full rounded-full transition-all duration-300"
-          style={{ width: `${pct}%`, background: 'currentColor' }}
-        />
-      </div>
-    </div>
-  );
-}
 
 export function MissionSimulator() {
   const [running, setRunning] = useState(false);
