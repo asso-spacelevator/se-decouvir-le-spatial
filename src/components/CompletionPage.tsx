@@ -1,5 +1,4 @@
-import { Trophy, Home, Award, Star } from 'lucide-react';
-import { useSession } from '../contexts/SessionContext';
+import { Trophy, Home, Star } from 'lucide-react';
 import { AvatarGuide } from './AvatarGuide';
 
 interface CompletionPageProps {
@@ -7,19 +6,6 @@ interface CompletionPageProps {
 }
 
 export function CompletionPage({ onRestart }: CompletionPageProps) {
-  const { getTotalQuizScore } = useSession();
-  const totalScore = getTotalQuizScore();
-  const maxPossibleScore = 40;
-  const scorePercentage = Math.round((totalScore / maxPossibleScore) * 100);
-
-  const getScoreMessage = () => {
-    if (scorePercentage >= 90) return { text: 'Excellent !', color: 'text-green-400', emoji: '🌟' };
-    if (scorePercentage >= 70) return { text: 'Très bien !', color: 'text-blue-400', emoji: '⭐' };
-    if (scorePercentage >= 50) return { text: 'Bien joué !', color: 'text-cyan-400', emoji: '✨' };
-    return { text: 'Continuez à apprendre !', color: 'text-purple-400', emoji: '💫' };
-  };
-
-  const scoreMessage = getScoreMessage();
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-900 via-indigo-900 to-slate-900 flex items-center justify-center relative overflow-hidden">
       <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAKICAKICAKICAKICAKICAKICAKICAKICAKICAKICAK')]"></div>
@@ -37,37 +23,6 @@ export function CompletionPage({ onRestart }: CompletionPageProps) {
           Félicitations d'avoir complété votre voyage à travers l'industrie spatiale européenne.
           Vous avez exploré les enjeux géopolitiques, les lanceurs, les satellites, l'exploration spatiale et bien plus encore.
         </p>
-
-        <div className="bg-gradient-to-r from-cyan-500/10 to-blue-500/10 backdrop-blur-sm rounded-2xl p-8 border border-cyan-500/20 mb-8">
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <Award className="w-8 h-8 text-cyan-400" />
-            <h3 className="text-3xl font-bold text-white">Votre Score Quiz</h3>
-          </div>
-
-          <div className="text-center mb-4">
-            <div className="text-6xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent mb-2">
-              {totalScore}
-            </div>
-            <p className="text-gray-400">points sur {maxPossibleScore} possibles</p>
-          </div>
-
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <div className="flex-1 h-4 bg-gray-700 rounded-full overflow-hidden max-w-md">
-              <div
-                className="h-full bg-gradient-to-r from-cyan-500 to-blue-500 transition-all duration-1000 ease-out"
-                style={{ width: `${Math.max(0, scorePercentage)}%` }}
-              />
-            </div>
-            <span className="text-lg font-semibold text-cyan-400">{scorePercentage}%</span>
-          </div>
-
-          <div className="text-center">
-            <p className={`text-2xl font-semibold ${scoreMessage.color} flex items-center justify-center gap-2`}>
-              <span>{scoreMessage.emoji}</span>
-              {scoreMessage.text}
-            </p>
-          </div>
-        </div>
 
         <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10 mb-8">
           <h3 className="text-2xl font-semibold text-white mb-4">Ce Que Vous Avez Exploré</h3>

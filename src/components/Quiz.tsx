@@ -17,16 +17,14 @@ interface QuizQuestion {
 
 interface QuizProps {
   questions: QuizQuestion[];
-  onScoreUpdate: (points: number) => void;
   onComplete?: () => void;
 }
 
-export function Quiz({ questions, onScoreUpdate, onComplete }: QuizProps) {
+export function Quiz({ questions, onComplete }: QuizProps) {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [showFeedback, setShowFeedback] = useState(false);
   const [answeredQuestions, setAnsweredQuestions] = useState<Set<number>>(new Set());
-  const [score, setScore] = useState(0);
 
   const currentQuestion = questions[currentQuestionIndex];
   const isLastQuestion = currentQuestionIndex === questions.length - 1;
@@ -44,10 +42,6 @@ export function Quiz({ questions, onScoreUpdate, onComplete }: QuizProps) {
     setShowFeedback(true);
     setAnsweredQuestions(new Set([...answeredQuestions, currentQuestionIndex]));
 
-    const points = isCorrect ? 10 : -5;
-    const newScore = score + points;
-    setScore(newScore);
-    onScoreUpdate(points);
   };
 
   const handleNextQuestion = () => {

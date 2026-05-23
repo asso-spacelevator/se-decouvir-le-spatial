@@ -19,7 +19,7 @@ interface ExplorationSectionProps {
 }
 
 export function ExplorationSection({ onComplete, onHome, onBack }: ExplorationSectionProps) {
-  const { saveResponse, getResponses, saveQuizScore } = useSession();
+  const { saveResponse, getResponses } = useSession();
   const [responses, setResponses] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
   const [selectedTopic, setSelectedTopic] = useState<number | null>(null);
@@ -107,13 +107,6 @@ export function ExplorationSection({ onComplete, onHome, onBack }: ExplorationSe
     await saveResponse('exploration', id, value);
   };
 
-  const handleQuizScoreUpdate = async (points: number) => {
-    const currentQuestion = quizQuestions.find(() => true);
-    if (currentQuestion) {
-      await saveQuizScore('exploration', currentQuestion.id, points, points > 0);
-    }
-  };
-
   const handleQuizComplete = () => {
     setQuizCompleted(true);
   };
@@ -125,7 +118,7 @@ export function ExplorationSection({ onComplete, onHome, onBack }: ExplorationSe
     }, 1500);
   };
 
-  const canSubmit = quizCompleted && selectedTopic !== null && responses['dream']?.trim().length > 0;
+  const canSubmit = import.meta.env.DEV || (quizCompleted && selectedTopic !== null && responses['dream']?.trim().length > 0);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-900 via-purple-950 to-slate-900 text-white py-16 px-6">
@@ -221,7 +214,6 @@ export function ExplorationSection({ onComplete, onHome, onBack }: ExplorationSe
 
         <Quiz
           questions={quizQuestions}
-          onScoreUpdate={handleQuizScoreUpdate}
           onComplete={handleQuizComplete}
         />
 

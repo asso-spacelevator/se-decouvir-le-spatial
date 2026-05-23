@@ -367,11 +367,10 @@ interface ImpactTerrestreSectionProps {
 }
 
 export function ImpactTerrestreSection({ onComplete, onHome, onBack }: ImpactTerrestreSectionProps) {
-  const { saveResponse, getResponses, saveQuizScore } = useSession();
+  const { saveResponse, getResponses } = useSession();
   const [responses, setResponses] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
   const [quizCompleted, setQuizCompleted] = useState(false);
-  const [currentQuizIndex, setCurrentQuizIndex] = useState(0);
 
   useEffect(() => {
     const loadResponses = async () => {
@@ -438,12 +437,6 @@ export function ImpactTerrestreSection({ onComplete, onHome, onBack }: ImpactTer
     await saveResponse('impact_terrestre', id, value);
   };
 
-  const handleQuizScoreUpdate = async (points: number) => {
-    const questionId = quizQuestions[currentQuizIndex]?.id ?? 'impact_q0';
-    await saveQuizScore('impact_terrestre', questionId, points, points > 0);
-    setCurrentQuizIndex(prev => prev + 1);
-  };
-
   const handleQuizComplete = () => {
     setQuizCompleted(true);
   };
@@ -455,7 +448,7 @@ export function ImpactTerrestreSection({ onComplete, onHome, onBack }: ImpactTer
     }, 1500);
   };
 
-  const canSubmit = quizCompleted && responses['q1']?.trim().length > 0;
+  const canSubmit = import.meta.env.DEV || (quizCompleted && responses['q1']?.trim().length > 0);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-900 to-emerald-950 text-white py-16 px-6">
@@ -837,7 +830,6 @@ export function ImpactTerrestreSection({ onComplete, onHome, onBack }: ImpactTer
 
         <Quiz
           questions={quizQuestions}
-          onScoreUpdate={handleQuizScoreUpdate}
           onComplete={handleQuizComplete}
         />
 

@@ -38,7 +38,7 @@ export function IntroductionPage({ onContinue, onHome, onBack }: IntroductionPag
   };
 
   const filledWords = words.filter(w => w.trim().length > 0).length;
-  const canContinue = filledWords >= 3;
+  const canContinue = import.meta.env.DEV || filledWords >= 3;
 
   return (
     <div className="min-h-screen relative overflow-hidden">

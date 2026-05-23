@@ -22,7 +22,7 @@ interface SatelliteSectionProps {
 }
 
 export function SatelliteSection({ onComplete, onHome, onBack }: SatelliteSectionProps) {
-  const { saveResponse, getResponses, saveQuizScore } = useSession();
+  const { saveResponse, getResponses } = useSession();
   const [responses, setResponses] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
   const [selectedOrbit, setSelectedOrbit] = useState<number | null>(null);
@@ -102,10 +102,6 @@ export function SatelliteSection({ onComplete, onHome, onBack }: SatelliteSectio
     await saveResponse('satellites', id, value);
   };
 
-  const handleQuizScoreUpdate = async (points: number) => {
-    await saveQuizScore('satellites', 'satellite_q1', points, points > 0);
-  };
-
   const handleQuizComplete = () => {
     setQuizCompleted(true);
   };
@@ -117,7 +113,7 @@ export function SatelliteSection({ onComplete, onHome, onBack }: SatelliteSectio
     }, 1500);
   };
 
-  const canSubmit = quizCompleted && selectedOrbit !== null && responses['mission_idea']?.trim().length > 0;
+  const canSubmit = import.meta.env.DEV || (quizCompleted && selectedOrbit !== null && responses['mission_idea']?.trim().length > 0);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-900 via-cyan-950 to-slate-900 text-white py-16 px-6">
@@ -463,7 +459,6 @@ export function SatelliteSection({ onComplete, onHome, onBack }: SatelliteSectio
 
         <Quiz
           questions={quizQuestions}
-          onScoreUpdate={handleQuizScoreUpdate}
           onComplete={handleQuizComplete}
         />
 
