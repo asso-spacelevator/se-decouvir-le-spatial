@@ -118,7 +118,7 @@ export function ExplorationSection({ onComplete, onHome, onBack }: ExplorationSe
     }, 1500);
   };
 
-  const canSubmit = quizCompleted && selectedTopic !== null && responses['dream']?.trim().length > 0;
+  const canSubmit = import.meta.env.DEV || (quizCompleted && selectedTopic !== null && responses['dream']?.trim().length > 0);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-900 via-purple-950 to-slate-900 text-white py-16 px-6">

@@ -166,9 +166,9 @@ export function FAQQuestionsSection({ onComplete, onHome, onBack }: FAQQuestions
 
             <button
               onClick={handleFAQComplete}
-              disabled={selectedFAQ === null}
+              disabled={!import.meta.env.DEV && selectedFAQ === null}
               className={`w-full py-4 rounded-lg font-semibold text-lg transition-all duration-300 flex items-center justify-center gap-2 ${
-                selectedFAQ !== null
+                import.meta.env.DEV || selectedFAQ !== null
                   ? 'bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white'
                   : 'bg-gray-700 text-gray-400 cursor-not-allowed'
               }`}
@@ -238,9 +238,9 @@ export function FAQQuestionsSection({ onComplete, onHome, onBack }: FAQQuestions
 
                 <button
                   onClick={handleSubmit}
-                  disabled={!questionText.trim()}
+                  disabled={!import.meta.env.DEV && !questionText.trim()}
                   className={`w-full py-4 rounded-lg font-semibold text-lg transition-all duration-300 flex items-center justify-center gap-2 ${
-                    questionText.trim()
+                    import.meta.env.DEV || questionText.trim()
                       ? 'bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white'
                       : 'bg-gray-700 text-gray-400 cursor-not-allowed'
                   }`}

@@ -236,7 +236,7 @@ export function AccompagnementSection({ onComplete, onHome, onBack }: Accompagne
     setTimeout(() => onComplete(), 1500);
   };
 
-  const canSubmit = responses['interested']?.trim().length > 0;
+  const canSubmit = import.meta.env.DEV || (responses['interested']?.trim().length > 0);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-900 via-teal-950 to-slate-900 text-white py-16 px-6">

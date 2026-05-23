@@ -112,7 +112,7 @@ export function SocialReferencesSection({ onComplete, onHome, onBack }: SocialRe
     }, 1500);
   };
 
-  const canSubmit = responses['favorite']?.trim().length > 0;
+  const canSubmit = import.meta.env.DEV || (responses['favorite']?.trim().length > 0);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-900 via-pink-950 to-slate-900 text-white py-16 px-6">

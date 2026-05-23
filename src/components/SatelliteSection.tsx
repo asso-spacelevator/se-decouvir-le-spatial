@@ -113,7 +113,7 @@ export function SatelliteSection({ onComplete, onHome, onBack }: SatelliteSectio
     }, 1500);
   };
 
-  const canSubmit = quizCompleted && selectedOrbit !== null && responses['mission_idea']?.trim().length > 0;
+  const canSubmit = import.meta.env.DEV || (quizCompleted && selectedOrbit !== null && responses['mission_idea']?.trim().length > 0);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-900 via-cyan-950 to-slate-900 text-white py-16 px-6">
