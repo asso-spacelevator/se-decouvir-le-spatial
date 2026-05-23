@@ -45,9 +45,12 @@ render it in `App.tsx`.
 
 ### Session persistence (`src/contexts/SessionContext.tsx`)
 
-`SessionProvider` wraps the entire app and creates/restores an anonymous
-Supabase row in `student_sessions` keyed by
-`localStorage['space_education_session_id']`. It exposes:
+`SessionProvider` wraps the entire app. On boot it calls
+`supabase.auth.signInAnonymously()` (no-op if a JWT is already cached in
+localStorage by supabase-js) and then finds or creates the `student_sessions`
+row where `user_id = auth.uid()`. The legacy
+`localStorage['space_education_session_id']` key is removed on first load.
+It exposes:
 
 - `updateSection` / `completeSection` — section state
 - `saveResponse` / `getResponses` — per-(section, question_id) free-text
@@ -66,16 +69,27 @@ rather than calling `saveResponse` directly from components.
 
 ### Database (`supabase/migrations/`)
 
-Four tables, all with anonymous RLS policies (anyone can insert/select/update):
+Four tables, all gated by RLS policies that require a JWT and scope every
+row to `auth.uid()` via `student_sessions.user_id`. The `anon` Postgres role
+has no privileges on these tables — visitors must hold a real (anonymous)
+JWT obtained via `supabase.auth.signInAnonymously()`. See
+`20260523205052_anonymous_signin_rls.sql` for the policy definitions.
 
-- `student_sessions` — one row per browser, identified via localStorage
+- `student_sessions` — one row per `auth.users` row (unique index on
+  `user_id`); columns include `current_section` and `completed_sections` jsonb
 - `student_responses` — keyed by `(session_id, section, question_id)`;
   `useSectionState` enforces upsert semantics in the client (no DB unique
   constraint)
 - `student_questions` — categorized free-form questions
-  (`career | technical | geopolitics | general`)
+  (`career | technical | geopolitics | general`); INSERT-only from clients
+- `quiz_scores` — append-only per-answer log (correct/incorrect only, no
+  points); INSERT-only from clients
 
-Migration filenames use `YYYYMMDDHHMMSS_description.sql`.
+Migration filenames use `YYYYMMDDHHMMSS_description.sql`. Anonymous Sign-Ins
+must be enabled on the Supabase project; `supabase/config.toml` sets
+`enable_anonymous_sign_ins = true`. Local dev picks this up automatically;
+hosted projects sync it via `supabase config push` (a separate command from
+`supabase db push`, which only handles migrations).
 
 ### Conventions
 
