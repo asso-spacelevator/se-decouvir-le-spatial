@@ -19,6 +19,11 @@ export function SessionProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     initializeSession();
+
+    const { data: subscription } = supabase.auth.onAuthStateChange((event) => {
+      if (event === 'SIGNED_OUT') setSession(null);
+    });
+    return () => subscription.subscription.unsubscribe();
   }, []);
 
   useEffect(() => {
@@ -32,31 +37,47 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   }, [session]);
 
   const initializeSession = async () => {
-    const savedSessionId = localStorage.getItem('space_education_session_id');
+    localStorage.removeItem('space_education_session_id');
 
-    if (savedSessionId) {
-      const { data, error } = await supabase
-        .from('student_sessions')
-        .select('*')
-        .eq('id', savedSessionId)
-        .maybeSingle();
-
-      if (data && !error) {
-        setSession(data);
+    let { data: { session: authSession } } = await supabase.auth.getSession();
+    if (!authSession) {
+      const { data, error } = await supabase.auth.signInAnonymously();
+      if (error || !data.session) {
+        console.error('Anonymous sign-in failed', error);
         setLoading(false);
         return;
       }
+      authSession = data.session;
+    }
+    const userId = authSession.user.id;
+
+    const { data: existing } = await supabase
+      .from('student_sessions')
+      .select('*')
+      .eq('user_id', userId)
+      .maybeSingle();
+
+    if (existing) {
+      setSession(existing);
+      setLoading(false);
+      return;
     }
 
-    const { data: newSession, error } = await supabase
+    const { data: created, error } = await supabase
       .from('student_sessions')
-      .insert({})
+      .insert({ user_id: userId })
       .select()
       .single();
 
-    if (newSession && !error) {
-      setSession(newSession);
-      localStorage.setItem('space_education_session_id', newSession.id);
+    if (created && !error) {
+      setSession(created);
+    } else {
+      const { data: retry } = await supabase
+        .from('student_sessions')
+        .select('*')
+        .eq('user_id', userId)
+        .maybeSingle();
+      if (retry) setSession(retry);
     }
 
     setLoading(false);

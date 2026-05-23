@@ -8,7 +8,7 @@ left off.
 ## Stack
 
 - **Frontend**: React 18, TypeScript, Vite, Tailwind CSS, `lucide-react` icons
-- **Backend**: Supabase (Postgres + RLS, anonymous-only policies)
+- **Backend**: Supabase (Postgres + RLS scoped to `auth.uid()` via anonymous JWTs)
 - **Tooling**: ESLint flat config
 
 ## Prerequisites
@@ -29,6 +29,19 @@ cp .env.example .env
 You now need a Supabase project (either local or hosted) to fill in `.env`.
 
 ## Running the Supabase backend
+
+The app requires **Anonymous Sign-Ins** to be enabled. Without it, the first
+page load fails with `AuthApiError: Anonymous sign-ins are disabled`. The
+checked-in `supabase/config.toml` already sets
+`enable_anonymous_sign_ins = true`; you just need to apply it:
+
+- **Local**: nothing to do — `supabase start` / `supabase db reset` picks it
+  up automatically.
+- **Hosted**: run `supabase config push` after `supabase link` to sync the
+  config.toml to the linked project. (`supabase db push` only handles
+  migrations; auth settings need the separate `config push`.) You can also
+  toggle the setting manually in the dashboard at Authentication → Providers
+  → Anonymous Sign-Ins.
 
 ### Option A — local Supabase (recommended for development)
 

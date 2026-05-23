@@ -13,6 +13,7 @@ export type Section = 'start' | 'introduction' | 'impact_terrestre' | 'rockets' 
 
 export interface StudentSession {
   id: string;
+  user_id: string;
   created_at: string;
   last_active: string;
   current_section: Section;
