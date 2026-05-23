@@ -146,7 +146,7 @@ function draw(
     const t = (s / 300) * totalTime;
     const alt = altAt(t, phases);
     const { cx, cy } = toCanvas(t / totalTime, alt / maxAlt);
-    firstGhost ? ctx.moveTo(cx, cy) : ctx.lineTo(cx, cy);
+    if (firstGhost) { ctx.moveTo(cx, cy); } else { ctx.lineTo(cx, cy); }
     firstGhost = false;
   }
   ctx.strokeStyle = 'rgba(255,255,255,0.07)';
@@ -163,7 +163,7 @@ function draw(
       const t = (s / steps) * tNow;
       const alt = altAt(t, phases);
       const { cx, cy } = toCanvas(t / totalTime, alt / maxAlt);
-      first ? ctx.moveTo(cx, cy) : ctx.lineTo(cx, cy);
+      if (first) { ctx.moveTo(cx, cy); } else { ctx.lineTo(cx, cy); }
       first = false;
     }
     const grad = ctx.createLinearGradient(PAD_L, 0, PAD_L + (tNow / totalTime) * plotW, 0);

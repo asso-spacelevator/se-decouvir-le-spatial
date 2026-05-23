@@ -1,4 +1,4 @@
-name: Build & deploy to GitHub Pages
+name: Deploy to GitHub Pages
 
 on:
   push:
@@ -15,8 +15,16 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
+  test:
+    uses: ./.github/workflows/test.yml
+    secrets: inherit
+
+  deploy:
+    needs: test
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
 
@@ -39,12 +47,5 @@ jobs:
         with:
           path: dist
 
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
       - id: deployment
         uses: actions/deploy-pages@v4

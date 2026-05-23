@@ -199,7 +199,7 @@ export function AccompagnementSection({ onComplete, onHome, onBack }: Accompagne
       const savedResponses = await getResponses('accompagnement');
       setResponses(savedResponses);
       if (savedResponses.searchRegion) setSearchRegion(savedResponses.searchRegion);
-      if (savedResponses.activeTab) setActiveTab(savedResponses.activeTab as any);
+      if (savedResponses.activeTab) setActiveTab(savedResponses.activeTab as 'associations' | 'ressources');
 
       const { data: mentoring } = await supabase.from('mentoring_platforms').select('*').order('name');
       if (mentoring) setMentoringPlatforms(mentoring);

@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { CheckCircle, XCircle, RotateCcw, ChevronDown, ChevronUp, Info, Trophy, Zap } from 'lucide-react';
 
 /* ─── Data ──────────────────────────────────────────────────── */
@@ -173,7 +173,6 @@ function ScientificSVG({ size = 200 }: { size?: number }) {
 function CubeSatSVG({ size = 200 }: { size?: number }) {
   // Scale down for realism (CubeSat is TINY)
   const scale = size * 0.45;
-  const offset = (size - scale) / 2;
   return (
     <svg viewBox="0 0 200 180" width={size} height={size * 0.9} className="drop-shadow-lg">
       {/* Isometric cube body */}
@@ -367,11 +366,7 @@ function ScaleComparison() {
 
 /* ─── Main game component ─────────────────────────────────────── */
 
-interface SatelliteLabelGameProps {
-  onComplete?: () => void;
-}
-
-export function SatelliteLabelGame({ onComplete }: SatelliteLabelGameProps) {
+export function SatelliteLabelGame() {
   // Shuffle satellites order for display
   const [displayOrder] = useState(() => [...SATELLITES].sort(() => Math.random() - 0.5));
   // Shuffle labels for drag

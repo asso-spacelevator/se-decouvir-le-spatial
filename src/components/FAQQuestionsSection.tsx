@@ -39,7 +39,6 @@ const exampleQuestions = [
 
 export function FAQQuestionsSection({ onComplete, onHome, onBack }: FAQQuestionsSectionProps) {
   const { saveResponse, getResponses, submitQuestion } = useSession();
-  const [responses, setResponses] = useState<Record<string, string>>({});
   const [selectedFAQ, setSelectedFAQ] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState<'faq' | 'poser'>('faq');
   const [category, setCategory] = useState<'career' | 'technical' | 'geopolitics' | 'general'>('general');
@@ -50,10 +49,9 @@ export function FAQQuestionsSection({ onComplete, onHome, onBack }: FAQQuestions
   useEffect(() => {
     const loadResponses = async () => {
       const saved = await getResponses('faq_questions');
-      setResponses(saved);
       if (saved.selectedFAQ) setSelectedFAQ(parseInt(saved.selectedFAQ));
-      if (saved.activeTab) setActiveTab(saved.activeTab as any);
-      if (saved.category) setCategory(saved.category as any);
+      if (saved.activeTab) setActiveTab(saved.activeTab as 'faq' | 'poser');
+      if (saved.category) setCategory(saved.category as 'career' | 'technical' | 'geopolitics' | 'general');
       if (saved.questionText) setQuestionText(saved.questionText);
       if (saved.isAnonymous) setIsAnonymous(saved.isAnonymous === 'true');
     };
@@ -71,7 +69,7 @@ export function FAQQuestionsSection({ onComplete, onHome, onBack }: FAQQuestions
   };
 
   const handleCategoryChange = async (cat: string) => {
-    setCategory(cat as any);
+    setCategory(cat as 'career' | 'technical' | 'geopolitics' | 'general');
     await saveResponse('faq_questions', 'category', cat);
   };
 

@@ -447,7 +447,7 @@ export function OrbitalAnimation() {
             {/* Inclination angle annotations when orbit is active */}
             {activeOrbit !== null && visibleOrbits.includes(activeOrbit) && (() => {
               const orbit = ORBITS[activeOrbit];
-              const { rx, rotateDeg } = orbitEllipseParams(orbit.radius, orbit.inclination);
+              const { rotateDeg } = orbitEllipseParams(orbit.radius, orbit.inclination);
               const rotRad = (rotateDeg * Math.PI) / 180;
               // Draw arc showing inclination angle from equator
               const arcR = 28;
