@@ -21,7 +21,7 @@ interface RocketSectionProps {
 }
 
 export function RocketSection({ onComplete, onHome, onBack }: RocketSectionProps) {
-  const { saveResponse, getResponses, saveQuizScore } = useSession();
+  const { saveResponse, getResponses } = useSession();
   const [responses, setResponses] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
   const [selectedChallenge, setSelectedChallenge] = useState<number | null>(null);
@@ -99,13 +99,6 @@ export function RocketSection({ onComplete, onHome, onBack }: RocketSectionProps
   const handleResponseChange = async (id: string, value: string) => {
     setResponses(prev => ({ ...prev, [id]: value }));
     await saveResponse('rockets', id, value);
-  };
-
-  const handleQuizScoreUpdate = async (points: number) => {
-    const currentQuestion = quizQuestions.find(() => true);
-    if (currentQuestion) {
-      await saveQuizScore('rockets', currentQuestion.id, points, points > 0);
-    }
   };
 
   const handleQuizComplete = () => {
@@ -404,7 +397,6 @@ export function RocketSection({ onComplete, onHome, onBack }: RocketSectionProps
 
         <Quiz
           questions={quizQuestions}
-          onScoreUpdate={handleQuizScoreUpdate}
           onComplete={handleQuizComplete}
         />
 

@@ -367,11 +367,10 @@ interface ImpactTerrestreSectionProps {
 }
 
 export function ImpactTerrestreSection({ onComplete, onHome, onBack }: ImpactTerrestreSectionProps) {
-  const { saveResponse, getResponses, saveQuizScore } = useSession();
+  const { saveResponse, getResponses } = useSession();
   const [responses, setResponses] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
   const [quizCompleted, setQuizCompleted] = useState(false);
-  const [currentQuizIndex, setCurrentQuizIndex] = useState(0);
 
   useEffect(() => {
     const loadResponses = async () => {
@@ -436,12 +435,6 @@ export function ImpactTerrestreSection({ onComplete, onHome, onBack }: ImpactTer
   const handleResponseChange = async (id: string, value: string) => {
     setResponses(prev => ({ ...prev, [id]: value }));
     await saveResponse('impact_terrestre', id, value);
-  };
-
-  const handleQuizScoreUpdate = async (points: number) => {
-    const questionId = quizQuestions[currentQuizIndex]?.id ?? 'impact_q0';
-    await saveQuizScore('impact_terrestre', questionId, points, points > 0);
-    setCurrentQuizIndex(prev => prev + 1);
   };
 
   const handleQuizComplete = () => {
@@ -837,7 +830,6 @@ export function ImpactTerrestreSection({ onComplete, onHome, onBack }: ImpactTer
 
         <Quiz
           questions={quizQuestions}
-          onScoreUpdate={handleQuizScoreUpdate}
           onComplete={handleQuizComplete}
         />
 

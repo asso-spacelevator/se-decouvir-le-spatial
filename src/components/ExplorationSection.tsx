@@ -19,7 +19,7 @@ interface ExplorationSectionProps {
 }
 
 export function ExplorationSection({ onComplete, onHome, onBack }: ExplorationSectionProps) {
-  const { saveResponse, getResponses, saveQuizScore } = useSession();
+  const { saveResponse, getResponses } = useSession();
   const [responses, setResponses] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
   const [selectedTopic, setSelectedTopic] = useState<number | null>(null);
@@ -105,13 +105,6 @@ export function ExplorationSection({ onComplete, onHome, onBack }: ExplorationSe
   const handleResponseChange = async (id: string, value: string) => {
     setResponses(prev => ({ ...prev, [id]: value }));
     await saveResponse('exploration', id, value);
-  };
-
-  const handleQuizScoreUpdate = async (points: number) => {
-    const currentQuestion = quizQuestions.find(() => true);
-    if (currentQuestion) {
-      await saveQuizScore('exploration', currentQuestion.id, points, points > 0);
-    }
   };
 
   const handleQuizComplete = () => {
@@ -221,7 +214,6 @@ export function ExplorationSection({ onComplete, onHome, onBack }: ExplorationSe
 
         <Quiz
           questions={quizQuestions}
-          onScoreUpdate={handleQuizScoreUpdate}
           onComplete={handleQuizComplete}
         />
 

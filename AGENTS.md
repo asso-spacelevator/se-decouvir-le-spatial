@@ -53,8 +53,6 @@ Supabase row in `student_sessions` keyed by
 - `saveResponse` / `getResponses` — per-(section, question_id) free-text
   answers, upsert-style
 - `submitQuestion` — appends to `student_questions` (FAQ Zone)
-- `saveQuizScore` / `getTotalQuizScore` — `quiz_scores` rows + running
-  `total_quiz_score` on the session
 
 A 30-second `setInterval` pings `last_active`.
 
@@ -76,8 +74,6 @@ Four tables, all with anonymous RLS policies (anyone can insert/select/update):
   constraint)
 - `student_questions` — categorized free-form questions
   (`career | technical | geopolitics | general`)
-- `quiz_scores` — append-only per-answer log, mirrored as `total_quiz_score` on
-  the session
 
 Migration filenames use `YYYYMMDDHHMMSS_description.sql`.
 

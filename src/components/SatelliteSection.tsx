@@ -22,7 +22,7 @@ interface SatelliteSectionProps {
 }
 
 export function SatelliteSection({ onComplete, onHome, onBack }: SatelliteSectionProps) {
-  const { saveResponse, getResponses, saveQuizScore } = useSession();
+  const { saveResponse, getResponses } = useSession();
   const [responses, setResponses] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
   const [selectedOrbit, setSelectedOrbit] = useState<number | null>(null);
@@ -100,10 +100,6 @@ export function SatelliteSection({ onComplete, onHome, onBack }: SatelliteSectio
   const handleResponseChange = async (id: string, value: string) => {
     setResponses(prev => ({ ...prev, [id]: value }));
     await saveResponse('satellites', id, value);
-  };
-
-  const handleQuizScoreUpdate = async (points: number) => {
-    await saveQuizScore('satellites', 'satellite_q1', points, points > 0);
   };
 
   const handleQuizComplete = () => {
@@ -463,7 +459,6 @@ export function SatelliteSection({ onComplete, onHome, onBack }: SatelliteSectio
 
         <Quiz
           questions={quizQuestions}
-          onScoreUpdate={handleQuizScoreUpdate}
           onComplete={handleQuizComplete}
         />
 
