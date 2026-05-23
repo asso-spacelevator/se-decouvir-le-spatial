@@ -6,7 +6,7 @@
   student's responses, questions, quiz scores, and session progress.
 
   After: every read/write requires a JWT and is scoped to the row owner via
-  student_sessions.user_id = auth.uid(). The anon Postgres role loses all
+  student_sessions.user_id = (select auth.uid()). The anon Postgres role loses all
   privileges on the four student-data tables; only authenticated users
   (including anonymous sign-ins, which still produce a real JWT) can reach
   them, and only their own data.
@@ -50,21 +50,21 @@ DROP POLICY IF EXISTS "Users can read questions"      ON public.student_question
 DROP POLICY IF EXISTS "Anyone can create quiz scores" ON public.quiz_scores;
 DROP POLICY IF EXISTS "Users can read quiz scores"    ON public.quiz_scores;
 
--- 4. New policies. All TO authenticated, all scoped to auth.uid().
+-- 4. New policies. All TO authenticated, all scoped to (select auth.uid()).
 
 -- student_sessions: own row only.
 CREATE POLICY "session_select_own" ON public.student_sessions
   FOR SELECT TO authenticated
-  USING (user_id = auth.uid());
+  USING (user_id = (select auth.uid()));
 
 CREATE POLICY "session_insert_own" ON public.student_sessions
   FOR INSERT TO authenticated
-  WITH CHECK (user_id = auth.uid());
+  WITH CHECK (user_id = (select auth.uid()));
 
 CREATE POLICY "session_update_own" ON public.student_sessions
   FOR UPDATE TO authenticated
-  USING (user_id = auth.uid())
-  WITH CHECK (user_id = auth.uid());
+  USING (user_id = (select auth.uid()))
+  WITH CHECK (user_id = (select auth.uid()));
 
 -- student_responses: only via your own session. UPDATE is required because
 -- SessionContext.saveResponse upserts via select-then-update-or-insert.
@@ -74,7 +74,7 @@ CREATE POLICY "response_select_own" ON public.student_responses
     EXISTS (
       SELECT 1 FROM public.student_sessions s
       WHERE s.id = student_responses.session_id
-        AND s.user_id = auth.uid()
+        AND s.user_id = (select auth.uid())
     )
   );
 
@@ -84,7 +84,7 @@ CREATE POLICY "response_insert_own" ON public.student_responses
     EXISTS (
       SELECT 1 FROM public.student_sessions s
       WHERE s.id = student_responses.session_id
-        AND s.user_id = auth.uid()
+        AND s.user_id = (select auth.uid())
     )
   );
 
@@ -94,14 +94,14 @@ CREATE POLICY "response_update_own" ON public.student_responses
     EXISTS (
       SELECT 1 FROM public.student_sessions s
       WHERE s.id = student_responses.session_id
-        AND s.user_id = auth.uid()
+        AND s.user_id = (select auth.uid())
     )
   )
   WITH CHECK (
     EXISTS (
       SELECT 1 FROM public.student_sessions s
       WHERE s.id = student_responses.session_id
-        AND s.user_id = auth.uid()
+        AND s.user_id = (select auth.uid())
     )
   );
 
@@ -113,7 +113,7 @@ CREATE POLICY "question_insert_own" ON public.student_questions
     EXISTS (
       SELECT 1 FROM public.student_sessions s
       WHERE s.id = student_questions.session_id
-        AND s.user_id = auth.uid()
+        AND s.user_id = (select auth.uid())
     )
   );
 
@@ -125,7 +125,7 @@ CREATE POLICY "quiz_insert_own" ON public.quiz_scores
     EXISTS (
       SELECT 1 FROM public.student_sessions s
       WHERE s.id = quiz_scores.session_id
-        AND s.user_id = auth.uid()
+        AND s.user_id = (select auth.uid())
     )
   );
 
