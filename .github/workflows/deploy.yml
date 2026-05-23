@@ -1,9 +1,8 @@
-name: Build & deploy to GitHub Pages
+name: Deploy to GitHub Pages
 
 on:
   push:
     branches: [main]
-  pull_request:
   workflow_dispatch:
 
 permissions:
@@ -12,12 +11,20 @@ permissions:
   id-token: write
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: pages
   cancel-in-progress: true
 
 jobs:
-  verify:
+  test:
+    uses: ./.github/workflows/test.yml
+    secrets: inherit
+
+  deploy:
+    needs: test
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
 
@@ -28,30 +35,17 @@ jobs:
 
       - run: npm ci
 
-      - name: Typecheck & lint
-        run: npm run typecheck && npm run lint
-
       - name: Build
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
         run: npm run build -- --base="/${{ github.event.repository.name }}/"
 
-      - if: github.ref == 'refs/heads/main'
-        uses: actions/configure-pages@v5
+      - uses: actions/configure-pages@v5
 
-      - if: github.ref == 'refs/heads/main'
-        uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
 
-  deploy:
-    if: github.ref == 'refs/heads/main'
-    needs: verify
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
       - id: deployment
         uses: actions/deploy-pages@v4
