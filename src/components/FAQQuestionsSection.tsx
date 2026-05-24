@@ -1,12 +1,20 @@
-import { useState, useEffect } from 'react';
-import { MessageCircle, Mail, Send, CheckCircle, ChevronRight } from 'lucide-react';
+import { useState, useEffect, type ReactNode } from 'react';
+import { MessageCircle, Send, CheckCircle, Briefcase, Wrench, Globe, ChevronDown } from 'lucide-react';
 import { useSession } from '../contexts/SessionContext';
-import { Navigation } from './Navigation';
+import { SectionCanvas, SectionTopBar, SectionProgress, ChapterShell } from './ChapterShell';
+
+const TOTAL_CHAPTERS = 2;
 
 interface FAQItem {
   question: string;
   answer: string;
   answeredBy: string;
+}
+
+interface FAQCategory {
+  id: 'career' | 'technical' | 'geopolitics' | 'general';
+  label: string;
+  icon: ReactNode;
 }
 
 interface FAQQuestionsSectionProps {
@@ -16,258 +24,215 @@ interface FAQQuestionsSectionProps {
 }
 
 const faqItems: FAQItem[] = [
-  { question: 'Le spatial, c\'est un monde fermé ?', answer: '[Réponse à venir - à collecter auprès des professionnels interviewés]', answeredBy: 'À compléter' },
-  { question: 'Le spatial, c\'est que pour les gens très intelligents ?', answer: '[Réponse à venir - à collecter auprès des professionnels interviewés]', answeredBy: 'À compléter' },
-  { question: 'Faut-il forcément faire une grande école pour travailler dans le spatial ?', answer: '[Réponse à venir - à collecter auprès des professionnels interviewés]', answeredBy: 'À compléter' },
-  { question: 'Quels sont les métiers accessibles dans le spatial ?', answer: '[Réponse à venir - à collecter auprès des professionnels interviewés]', answeredBy: 'À compléter' },
-  { question: 'Comment se former au spatial en France ?', answer: '[Réponse à venir - à collecter auprès des professionnels interviewés]', answeredBy: 'À compléter' },
-  { question: 'Y a-t-il de la place pour les femmes dans le spatial ?', answer: '[Réponse à venir - à collecter auprès des professionnels interviewés]', answeredBy: 'À compléter' },
+  { question: 'Le spatial, c\'est un monde fermé ?', answer: '[Réponse à venir — à collecter auprès des professionnels interviewés]', answeredBy: 'À compléter' },
+  { question: 'Le spatial, c\'est que pour les gens très intelligents ?', answer: '[Réponse à venir — à collecter auprès des professionnels interviewés]', answeredBy: 'À compléter' },
+  { question: 'Faut-il forcément faire une grande école pour travailler dans le spatial ?', answer: '[Réponse à venir — à collecter auprès des professionnels interviewés]', answeredBy: 'À compléter' },
+  { question: 'Quels sont les métiers accessibles dans le spatial ?', answer: '[Réponse à venir — à collecter auprès des professionnels interviewés]', answeredBy: 'À compléter' },
+  { question: 'Comment se former au spatial en France ?', answer: '[Réponse à venir — à collecter auprès des professionnels interviewés]', answeredBy: 'À compléter' },
+  { question: 'Y a-t-il de la place pour les femmes dans le spatial ?', answer: '[Réponse à venir — à collecter auprès des professionnels interviewés]', answeredBy: 'À compléter' },
 ];
 
-const categories = [
-  { id: 'career', label: 'Carrière et Orientation', icon: '💼' },
-  { id: 'technical', label: 'Questions Techniques', icon: '🔧' },
-  { id: 'geopolitics', label: 'Géopolitique et Stratégie', icon: '🌍' },
-  { id: 'general', label: 'Questions Générales', icon: '💬' },
+const categories: FAQCategory[] = [
+  { id: 'career', label: 'Carrière et Orientation', icon: <Briefcase className="w-4 h-4" /> },
+  { id: 'technical', label: 'Questions Techniques', icon: <Wrench className="w-4 h-4" /> },
+  { id: 'geopolitics', label: 'Géopolitique et Stratégie', icon: <Globe className="w-4 h-4" /> },
+  { id: 'general', label: 'Questions Générales', icon: <MessageCircle className="w-4 h-4" /> },
 ];
 
 const exampleQuestions = [
-  'Quels cursus mènent à une carrière dans l\'industrie spatiale ?',
-  'Comment Ariane 6 se compare-t-elle aux lanceurs de SpaceX ?',
-  'Quelles sont les opportunités de carrière à l\'ESA ?',
+  "Quels cursus mènent à une carrière dans l'industrie spatiale ?",
+  "Comment Ariane 6 se compare-t-elle aux lanceurs de SpaceX ?",
+  "Quelles sont les opportunités de carrière à l'ESA ?",
 ];
 
-export function FAQQuestionsSection({ onComplete, onHome, onBack }: FAQQuestionsSectionProps) {
+export function FAQQuestionsSection({ onComplete, onHome }: FAQQuestionsSectionProps) {
   const { saveResponse, getResponses, submitQuestion } = useSession();
+  const [chapter, setChapter] = useState(0);
+  const [hydrated, setHydrated] = useState(false);
   const [selectedFAQ, setSelectedFAQ] = useState<number | null>(null);
-  const [activeTab, setActiveTab] = useState<'faq' | 'poser'>('faq');
-  const [category, setCategory] = useState<'career' | 'technical' | 'geopolitics' | 'general'>('general');
+  const [category, setCategory] = useState<FAQCategory['id']>('general');
   const [questionText, setQuestionText] = useState('');
   const [isAnonymous, setIsAnonymous] = useState(true);
-  const [submitted, setSubmitted] = useState(false);
+  const [questionSubmitted, setQuestionSubmitted] = useState(false);
 
   useEffect(() => {
-    const loadResponses = async () => {
+    (async () => {
       const saved = await getResponses('faq_questions');
-      if (saved.selectedFAQ) setSelectedFAQ(parseInt(saved.selectedFAQ));
-      if (saved.activeTab) setActiveTab(saved.activeTab as 'faq' | 'poser');
-      if (saved.category) setCategory(saved.category as 'career' | 'technical' | 'geopolitics' | 'general');
+      if (saved.chapter) setChapter(Math.min(parseInt(saved.chapter, 10) || 0, TOTAL_CHAPTERS - 1));
+      if (saved.selectedFAQ !== undefined && saved.selectedFAQ !== '') setSelectedFAQ(parseInt(saved.selectedFAQ, 10));
+      if (saved.category) setCategory(saved.category as FAQCategory['id']);
       if (saved.questionText) setQuestionText(saved.questionText);
       if (saved.isAnonymous) setIsAnonymous(saved.isAnonymous === 'true');
-    };
-    loadResponses();
+      if (saved.questionSubmitted === 'true') setQuestionSubmitted(true);
+      setHydrated(true);
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const goTo = async (i: number) => {
+    if (i < 0 || i >= TOTAL_CHAPTERS) return;
+    setChapter(i);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (hydrated) await saveResponse('faq_questions', 'chapter', String(i));
+  };
+
   const handleFAQSelect = async (index: number) => {
-    setSelectedFAQ(index);
-    await saveResponse('faq_questions', 'selectedFAQ', String(index));
+    const next = selectedFAQ === index ? null : index;
+    setSelectedFAQ(next);
+    if (hydrated) await saveResponse('faq_questions', 'selectedFAQ', next !== null ? String(next) : '');
   };
 
-  const handleTabChange = async (tab: 'faq' | 'poser') => {
-    setActiveTab(tab);
-    await saveResponse('faq_questions', 'activeTab', tab);
-  };
-
-  const handleCategoryChange = async (cat: string) => {
-    setCategory(cat as 'career' | 'technical' | 'geopolitics' | 'general');
-    await saveResponse('faq_questions', 'category', cat);
+  const handleCategoryChange = async (cat: FAQCategory['id']) => {
+    setCategory(cat);
+    if (hydrated) await saveResponse('faq_questions', 'category', cat);
   };
 
   const handleQuestionTextChange = async (text: string) => {
     setQuestionText(text);
-    await saveResponse('faq_questions', 'questionText', text);
+    if (hydrated) await saveResponse('faq_questions', 'questionText', text);
   };
 
   const handleAnonymousChange = async (isAnon: boolean) => {
     setIsAnonymous(isAnon);
-    await saveResponse('faq_questions', 'isAnonymous', String(isAnon));
+    if (hydrated) await saveResponse('faq_questions', 'isAnonymous', String(isAnon));
   };
 
   const handleSubmit = async () => {
-    if (questionText.trim()) {
-      await submitQuestion(category, questionText, isAnonymous);
-      setSubmitted(true);
-      setTimeout(() => onComplete(), 2000);
-    }
-  };
-
-  const handleFAQComplete = async () => {
-    await saveResponse('faq_questions', 'faqDone', 'true');
-    setActiveTab('poser');
+    if (!questionText.trim()) return;
+    await submitQuestion(category, questionText, isAnonymous);
+    setQuestionSubmitted(true);
+    if (hydrated) await saveResponse('faq_questions', 'questionSubmitted', 'true');
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white py-16 px-6">
-      <Navigation onHome={onHome} onBack={onBack} showBack={true} />
+    <SectionCanvas>
+      <SectionTopBar label="Session 2 · Chapitre 4 sur 4 · Zone FAQ" onHome={onHome} />
+      <SectionProgress current={chapter} total={TOTAL_CHAPTERS} onGoTo={goTo} />
 
-      <div className="max-w-4xl mx-auto mt-20">
-        <div className="flex items-center gap-4 mb-8">
-          <MessageCircle className="w-12 h-12 text-sky-400" />
-          <div>
-            <div className="text-sm text-sky-400 font-semibold uppercase tracking-wider">FAQ & Questions</div>
-            <h2 className="text-4xl font-bold">Vos questions sur le spatial</h2>
-          </div>
-        </div>
+      <div className="relative z-[1] max-w-[1120px] mx-auto px-8 pt-14 pb-24">
 
-        {/* Tabs */}
-        <div className="flex gap-2 mb-8 bg-white/5 rounded-xl p-1 border border-white/10">
-          {([
-            { id: 'faq', label: 'Questions fréquentes', icon: <MessageCircle className="w-4 h-4" /> },
-            { id: 'poser', label: 'Poser une question', icon: <Mail className="w-4 h-4" /> },
-          ] as const).map(({ id, label, icon }) => (
-            <button
-              key={id}
-              onClick={() => handleTabChange(id)}
-              className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-medium transition-all ${
-                activeTab === id ? 'bg-sky-500/20 text-sky-300 border border-sky-500/30' : 'text-gray-400 hover:text-white'
-              }`}
-            >
-              {icon}
-              {label}
-            </button>
-          ))}
-        </div>
-
-        {activeTab === 'faq' && (
-          <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10 mb-6">
-            <p className="text-gray-300 mb-6 text-lg">
-              Des professionnels du spatial répondent aux questions que vous vous posez :
-            </p>
-            <div className="space-y-3 mb-6">
+        {/* ── Ch 0 : Questions fréquentes ── */}
+        {chapter === 0 && (
+          <ChapterShell
+            kicker="01" title="Questions fréquentes"
+            titlePrefix="Des professionnels répondent"
+            titleAccent="à vos questions."
+            lede="Clique sur une question pour voir la réponse d'un expert du secteur spatial."
+            onPrev={null} onNext={() => goTo(1)} nextEnabled={selectedFAQ !== null}
+            nextLabel={selectedFAQ !== null ? "Continue · Pose ta question →" : "Sélectionne une question d'abord"}
+          >
+            <div className="space-y-2">
               {faqItems.map((item, index) => (
-                <button
-                  key={index}
-                  onClick={() => handleFAQSelect(index)}
-                  className={`w-full p-5 rounded-xl border-2 transition-all text-left ${
-                    selectedFAQ === index
-                      ? 'border-sky-400 bg-sky-500/15 scale-[1.01]'
-                      : 'border-white/10 bg-white/5 hover:border-sky-400/50 hover:bg-white/8'
-                  }`}
-                >
-                  <h4 className="font-bold text-white">{item.question}</h4>
-                </button>
+                <div key={index} className="bg-white/[0.04] border border-white/10 rounded-2xl overflow-hidden">
+                  <button
+                    onClick={() => handleFAQSelect(index)}
+                    className={`w-full flex items-center justify-between gap-3 p-5 text-left transition-colors ${
+                      selectedFAQ === index ? 'border-b border-white/10' : ''
+                    }`}
+                  >
+                    <h4 className={`font-semibold text-[14px] transition-colors ${selectedFAQ === index ? 'text-magenta' : 'text-white'}`}>
+                      {item.question}
+                    </h4>
+                    <ChevronDown className={`w-4 h-4 flex-shrink-0 text-white/40 transition-transform ${selectedFAQ === index ? 'rotate-180' : ''}`} />
+                  </button>
+
+                  {selectedFAQ === index && (
+                    <div className="px-5 pb-5 pt-4">
+                      <p className="text-[13px] text-white/70 leading-relaxed mb-2">{item.answer}</p>
+                      <p className="text-[11px] text-white/40 italic">— {item.answeredBy}</p>
+                      <div className="mt-3 bg-white/[0.03] border border-white/8 rounded-lg px-4 py-2.5">
+                        <p className="text-[11px] text-white/40">Les réponses complètes seront ajoutées après la collecte des interviews.</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
               ))}
             </div>
-
-            {selectedFAQ !== null && (
-              <div className="bg-gradient-to-br from-sky-500/10 to-blue-500/10 border border-sky-400/30 rounded-xl p-6 space-y-4 mb-6">
-                <h4 className="font-semibold text-sky-400 text-lg">{faqItems[selectedFAQ].question}</h4>
-                <div className="bg-sky-500/10 border border-sky-400/20 rounded-lg p-6">
-                  <p className="text-gray-300 leading-relaxed mb-3">{faqItems[selectedFAQ].answer}</p>
-                  <p className="text-sm text-sky-300 italic">— {faqItems[selectedFAQ].answeredBy}</p>
-                </div>
-                <div className="bg-sky-500/10 border border-sky-400/20 rounded-lg p-4 text-center">
-                  <p className="text-sm text-sky-200">Les réponses complètes seront ajoutées après la collecte des interviews</p>
-                </div>
-              </div>
-            )}
-
-            <button
-              onClick={handleFAQComplete}
-              disabled={!import.meta.env.DEV && selectedFAQ === null}
-              className={`w-full py-4 rounded-lg font-semibold text-lg transition-all duration-300 flex items-center justify-center gap-2 ${
-                import.meta.env.DEV || selectedFAQ !== null
-                  ? 'bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white'
-                  : 'bg-gray-700 text-gray-400 cursor-not-allowed'
-              }`}
-            >
-              Poser ma propre question <ChevronRight className="w-5 h-5" />
-            </button>
-          </div>
+          </ChapterShell>
         )}
 
-        {activeTab === 'poser' && (
-          <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10 mb-6">
-            <h3 className="text-2xl font-semibold mb-3">Obtenez des réponses d'experts</h3>
-            <p className="text-gray-300 mb-8 leading-relaxed">
-              Soumettez votre question — des professionnels de l'industrie spatiale y répondront.
-            </p>
-
-            {!submitted ? (
-              <>
-                <div className="mb-6">
-                  <label className="block text-gray-300 mb-3 font-medium">Catégorie</label>
-                  <div className="grid md:grid-cols-2 gap-3">
+        {/* ── Ch 1 : Pose ta question ── */}
+        {chapter === 1 && (
+          <ChapterShell
+            kicker="02" title="Pose ta question"
+            titlePrefix="Une question pour les"
+            titleAccent="professionnels ?"
+            lede="Soumets ta question — des experts de l'industrie spatiale y répondront. C'est facultatif : tu peux aussi passer directement à la fin du parcours."
+            onPrev={() => goTo(0)} onNext={onComplete} nextEnabled={true}
+            nextLabel="Terminer le parcours →"
+          >
+            {!questionSubmitted ? (
+              <div className="space-y-6">
+                <div>
+                  <p className="text-[13px] font-medium text-white/70 mb-3">Catégorie</p>
+                  <div className="grid md:grid-cols-2 gap-2">
                     {categories.map(cat => (
                       <button
                         key={cat.id}
                         onClick={() => handleCategoryChange(cat.id)}
-                        className={`p-4 rounded-lg border transition-all text-left ${
+                        className={`flex items-center gap-3 p-4 rounded-xl border text-left text-[13px] font-medium transition-all ${
                           category === cat.id
-                            ? 'bg-sky-500/20 border-sky-400'
-                            : 'bg-white/5 border-white/10 hover:border-white/30'
+                            ? 'bg-magenta/10 border-magenta text-magenta'
+                            : 'bg-white/[0.04] border-white/10 text-white/70 hover:border-white/30 hover:text-white'
                         }`}
                       >
-                        <span className="text-2xl mr-3">{cat.icon}</span>
-                        <span className="font-medium">{cat.label}</span>
+                        <span className={category === cat.id ? 'text-magenta' : 'text-white/40'}>{cat.icon}</span>
+                        {cat.label}
                       </button>
                     ))}
                   </div>
                 </div>
 
-                <div className="mb-6">
-                  <label className="block text-gray-300 mb-3 font-medium">Votre question</label>
+                <div>
+                  <label className="block text-[13px] font-medium text-white/70 mb-3">Ta question</label>
                   <textarea
                     value={questionText}
                     onChange={e => handleQuestionTextChange(e.target.value)}
-                    placeholder="Tapez votre question ici..."
-                    className="w-full bg-white/5 border border-white/10 rounded-lg p-4 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-sky-500 resize-none"
+                    placeholder="Tape ta question ici..."
+                    className="w-full bg-white/[0.04] border border-white/10 rounded-lg px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-magenta focus:ring-2 focus:ring-magenta/20 resize-none text-[14px]"
                     rows={5}
                     maxLength={4000}
                   />
-                  <div className="mt-3 text-sm text-gray-400">
+                  <div className="mt-3 text-[12px] text-white/40">
                     <span className="font-medium">Inspiration :</span>
-                    <ul className="mt-2 space-y-1 ml-4">
-                      {exampleQuestions.map((q, i) => <li key={i} className="text-gray-500">• {q}</li>)}
+                    <ul className="mt-1.5 space-y-1 ml-4">
+                      {exampleQuestions.map((q, i) => <li key={i}>· {q}</li>)}
                     </ul>
                   </div>
                 </div>
 
-                <div className="mb-6">
-                  <label className="flex items-center gap-3 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={isAnonymous}
-                      onChange={e => handleAnonymousChange(e.target.checked)}
-                      className="w-5 h-5 rounded border-white/10 bg-white/5 focus:ring-2 focus:ring-sky-500"
-                    />
-                    <span className="text-gray-300">Soumettre de façon anonyme</span>
-                  </label>
-                </div>
+                <label className="flex items-center gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={isAnonymous}
+                    onChange={e => handleAnonymousChange(e.target.checked)}
+                    className="w-4 h-4 rounded border-white/20 bg-white/[0.04] accent-magenta focus:ring-2 focus:ring-magenta"
+                  />
+                  <span className="text-[13px] text-white/65">Soumettre de façon anonyme</span>
+                </label>
 
                 <button
                   onClick={handleSubmit}
-                  disabled={!import.meta.env.DEV && !questionText.trim()}
-                  className={`w-full py-4 rounded-lg font-semibold text-lg transition-all duration-300 flex items-center justify-center gap-2 ${
-                    import.meta.env.DEV || questionText.trim()
-                      ? 'bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white'
-                      : 'bg-gray-700 text-gray-400 cursor-not-allowed'
-                  }`}
+                  disabled={!questionText.trim()}
+                  className="inline-flex items-center gap-2 px-5 py-3.5 bg-magenta hover:bg-magenta-700 text-white text-[14px] font-semibold rounded-lg transition disabled:bg-white/10 disabled:text-white/40 disabled:cursor-not-allowed"
                 >
-                  <Send className="w-5 h-5" /> Soumettre la question
+                  <Send className="w-4 h-4" /> Soumettre la question
                 </button>
-              </>
+              </div>
             ) : (
-              <div className="text-center py-12">
-                <CheckCircle className="w-16 h-16 text-green-400 mx-auto mb-4" />
-                <h3 className="text-2xl font-bold text-green-400 mb-2">Question soumise !</h3>
-                <p className="text-gray-300">Merci. Les experts examineront votre question et répondront très bientôt.</p>
+              <div className="text-center py-10">
+                <div className="w-16 h-16 mx-auto mb-5 bg-magenta/15 rounded-full grid place-items-center">
+                  <CheckCircle className="w-8 h-8 text-magenta" />
+                </div>
+                <h3 className="font-bold text-magenta text-[22px] mb-2">Question soumise.</h3>
+                <p className="text-[14px] text-white/60 max-w-sm mx-auto leading-relaxed">
+                  Merci. Les experts examineront ta question et répondront très bientôt.
+                </p>
               </div>
             )}
-          </div>
-        )}
-
-        {!submitted && (
-          <div className="text-center">
-            <button
-              onClick={onComplete}
-              className="px-8 py-3 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-all border border-white/20"
-            >
-              Terminer le parcours
-            </button>
-          </div>
+          </ChapterShell>
         )}
       </div>
-    </div>
+    </SectionCanvas>
   );
 }

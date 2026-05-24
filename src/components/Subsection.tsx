@@ -52,7 +52,7 @@ export function Subsection({ title, content, videoUrl, icon }: SubsectionProps) 
                 />
               ) : (
                 <>
-                  <div className="absolute inset-0 bg-gradient-to-br from-blue-600 to-purple-600 opacity-20"></div>
+                  <div className="absolute inset-0 bg-magenta opacity-20"></div>
                   <button
                     onClick={() => setShowVideo(true)}
                     className="absolute inset-0 flex items-center justify-center hover:opacity-80 transition-opacity"

@@ -38,7 +38,7 @@ const PHASES: Phase[] = [
     shortLabel: 'Allumage',
     tStart: 0, tEnd: 7,
     speedMultiplier: 1,
-    color: 'text-amber-300', bgColor: 'bg-amber-500/15', borderColor: 'border-amber-500/40',
+    color: 'text-magenta', bgColor: 'bg-magenta/15', borderColor: 'border-magenta/40',
     announce: 'ALLUMAGE VULCAIN — Poussée nominale confirmée. Décollage imminent.',
     event: 'DÉCOLLAGE — T+0s. Ariane 6 quitte le pas de tir. Poussée totale ~1 000 tf.',
     detail: 'Vulcain 2.1 à pleine poussée (137 tf). Boosters P120C allumés simultanément. Poussée totale ~1 000 tf.',
@@ -52,7 +52,7 @@ const PHASES: Phase[] = [
     shortLabel: 'Max-Q',
     tStart: 7, tEnd: 50,
     speedMultiplier: 3,
-    color: 'text-red-300', bgColor: 'bg-red-500/15', borderColor: 'border-red-500/40',
+    color: 'text-magenta', bgColor: 'bg-magenta/15', borderColor: 'border-magenta/40',
     announce: 'Montée en puissance. MAX-Q dans ~38 s — la pression aérodynamique va atteindre son maximum.',
     event: 'MAX-Q FRANCHI — T+45s. Pression aérodynamique maximale passée. Les moteurs reprennent leur pleine poussée.',
     detail: 'C\'est le moment le plus critique pour la structure : la fusée va vite mais l\'air est encore dense. La pression exercée sur la coque atteint son maximum. Les moteurs réduisent brièvement leur poussée pour ne pas dépasser les limites structurelles.',
@@ -66,7 +66,7 @@ const PHASES: Phase[] = [
     shortLabel: 'Sep. Boosters',
     tStart: 50, tEnd: 219,
     speedMultiplier: 5,
-    color: 'text-orange-300', bgColor: 'bg-orange-500/15', borderColor: 'border-orange-500/40',
+    color: 'text-magenta', bgColor: 'bg-magenta/15', borderColor: 'border-magenta/40',
     announce: 'Les boosters P120C épuisent leur carburant. Séparation prévue dans ~2 min 49 s à ~75 km.',
     event: 'SÉPARATION BOOSTERS — T+3:39. P120C larguées à 75 km d\'altitude. Étage central seul.',
     detail: 'Les deux boosters à propergol solide ont épuisé leur carburant et se détachent à 75 km d\'altitude. Leur rôle était d\'apporter la poussée supplémentaire nécessaire au décollage. L\'étage central (EPC) et son moteur Vulcain 2.1 continuent seuls.',
@@ -80,7 +80,7 @@ const PHASES: Phase[] = [
     shortLabel: 'Largage coiffe',
     tStart: 219, tEnd: 272,
     speedMultiplier: 5,
-    color: 'text-blue-300', bgColor: 'bg-blue-500/15', borderColor: 'border-blue-500/40',
+    color: 'text-magenta', bgColor: 'bg-magenta/15', borderColor: 'border-magenta/40',
     announce: 'Au-dessus de 100 km : plus d\'atmosphère. Largage de la coiffe dans ~53 s.',
     event: 'LARGAGE COIFFE — T+4:32. Coiffe éjectée à 112 km. Satellite exposé au vide spatial.',
     detail: 'La coiffe (nez de la fusée) protégeait le satellite pendant la traversée de l\'atmosphère. Au-delà de 100 km il n\'y a plus d\'air — elle est éjectée par charges pyrotechniques pour alléger la fusée.',
@@ -94,7 +94,7 @@ const PHASES: Phase[] = [
     shortLabel: 'Coupure Vulcain',
     tStart: 272, tEnd: 545,
     speedMultiplier: 8,
-    color: 'text-cyan-300', bgColor: 'bg-cyan-500/15', borderColor: 'border-cyan-500/40',
+    color: 'text-magenta', bgColor: 'bg-magenta/15', borderColor: 'border-magenta/40',
     announce: 'L\'EPC approche de l\'épuisement carburant. Coupure Vulcain et séparation prévues dans ~4 min 33 s.',
     event: 'COUPURE VULCAIN — T+8:55. EPC séparé T+9:00. Allumage Vinci (2e étage) T+9:05.',
     detail: 'L\'étage central (EPC) a épuisé ses 170 tonnes de propergol cryogénique. Vulcain 2.1 s\'éteint, l\'EPC se détache 5 secondes plus tard. Le 2e étage (ULPM) allume aussitôt son moteur Vinci pour finaliser la mise en orbite.',
@@ -108,7 +108,7 @@ const PHASES: Phase[] = [
     shortLabel: 'Orbite transfert',
     tStart: 545, tEnd: 1110,
     speedMultiplier: 15,
-    color: 'text-emerald-300', bgColor: 'bg-emerald-500/15', borderColor: 'border-emerald-500/40',
+    color: 'text-magenta', bgColor: 'bg-magenta/15', borderColor: 'border-magenta/40',
     announce: 'Vinci allumé. Mise en orbite de transfert en cours — durée ~9 min 25 s.',
     event: 'ORBITE DE TRANSFERT ATTEINTE — T+18:30. Ellipse périgée 200 km / apogée 400 km établie.',
     detail: 'Le premier allumage Vinci établit une orbite de transfert elliptique : le périgée (point bas) est à environ 200 km, l\'apogée (point haut) à 400 km. L\'étage n\'est pas encore en orbite circulaire finale — il faudra un deuxième allumage à l\'apogée.',
@@ -122,7 +122,7 @@ const PHASES: Phase[] = [
     shortLabel: 'Dérive',
     tStart: 1110, tEnd: 4495,
     speedMultiplier: 60,
-    color: 'text-slate-300', bgColor: 'bg-slate-500/15', borderColor: 'border-slate-500/40',
+    color: 'text-magenta', bgColor: 'bg-magenta/15', borderColor: 'border-magenta/40',
     announce: 'Vinci éteint. L\'étage dérive librement vers l\'apogée à 400 km. Rallumage dans ~56 min.',
     event: 'APOGÉE ATTEINT — T+1h14:55. L\'étage est au point haut de l\'ellipse. Rallumage Vinci imminent.',
     detail: 'Vinci s\'est éteint. L\'étage monte librement vers l\'apogée de l\'ellipse à 400 km — là où il sera le plus lent, et où le deuxième allumage sera le plus efficace pour circulariser. Les systèmes passent en veille thermique : -180 °C à l\'ombre, +120 °C face au Soleil.',
@@ -136,7 +136,7 @@ const PHASES: Phase[] = [
     shortLabel: 'Rallumage Vinci',
     tStart: 4495, tEnd: 4513,
     speedMultiplier: 2,
-    color: 'text-sky-300', bgColor: 'bg-sky-500/15', borderColor: 'border-sky-500/40',
+    color: 'text-magenta', bgColor: 'bg-magenta/15', borderColor: 'border-magenta/40',
     announce: 'RALLUMAGE VINCI — Manœuvre d\'apogée : circularisation à 400 km. Durée ~18 s.',
     event: 'CIRCULARISATION CONFIRMÉE — T+1h15:13. Orbite circulaire à 400 km atteinte.',
     detail: 'Deuxième allumage du moteur Vinci, très court : environ 18 secondes. C\'est la manœuvre de Hohmann à l\'apogée — une courte impulsion suffit pour transformer l\'ellipse en orbite circulaire à 400 km. C\'est la dernière impulsion propulsive de la mission.',
@@ -150,7 +150,7 @@ const PHASES: Phase[] = [
     shortLabel: 'Déploiement',
     tStart: 4513, tEnd: 5395,
     speedMultiplier: 10,
-    color: 'text-green-300', bgColor: 'bg-green-500/15', borderColor: 'border-green-500/40',
+    color: 'text-magenta', bgColor: 'bg-magenta/15', borderColor: 'border-magenta/40',
     announce: 'Séparation des satellites en cours. Déploiement des panneaux solaires attendu dans ~14 min.',
     event: 'SÉPARATION CONFIRMÉE — T+1h29:55. Satellites en orbite à 400 km. Signal télémétrie acquis.',
     detail: 'Les satellites se séparent de l\'adaptateur et déploient leurs panneaux solaires. Ils sont en orbite circulaire à 400 km — leur orbite opérationnelle définitive. Le centre de contrôle acquiert leur signal de télémétrie : mission accomplie.',
@@ -316,17 +316,17 @@ export function MissionSimulator() {
   const vel  = missionTime >= 0 ? velocityAt(missionTime) : 0;
   const vib  = missionTime >= 0 ? vibrationAt(missionTime) : 0;
 
-  const vibColor = vib > 8 ? 'text-red-400' : vib > 4 ? 'text-orange-400' : 'text-emerald-400';
+  const vibColor = vib > 8 ? 'text-red-400' : 'text-magenta';
 
   return (
-    <div className="bg-slate-950 rounded-2xl border border-white/10 overflow-hidden">
+    <div className="bg-deepspace rounded-2xl border border-white/10 overflow-hidden">
       {/* Header */}
       <div className="px-6 pt-5 pb-3 border-b border-white/8 flex items-center justify-between gap-4 flex-wrap">
         <div>
           <div className="flex items-center gap-2 mb-0.5">
-            <Radio className="w-4 h-4 text-emerald-400" />
+            <Radio className="w-4 h-4 text-magenta" />
             <h3 className="text-lg font-bold text-white tracking-tight">Simulateur de Mission</h3>
-            <span className="text-xs font-mono text-emerald-400 bg-emerald-400/10 border border-emerald-400/20 px-2 py-0.5 rounded">
+            <span className="text-xs font-mono text-magenta bg-magenta/10 border border-magenta/20 px-2 py-0.5 rounded">
               {running ? 'EN VOL' : completed ? 'MISSION ACCOMPLIE' : 'EN ATTENTE'}
             </span>
           </div>
@@ -338,8 +338,8 @@ export function MissionSimulator() {
               onClick={running ? () => setRunning(false) : handleStart}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
                 running
-                  ? 'bg-red-500/20 border border-red-500/40 text-red-300 hover:bg-red-500/30'
-                  : 'bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 hover:bg-emerald-500/30'
+                  ? 'bg-magenta/15 border border-magenta/40 text-magenta hover:bg-magenta/25'
+                  : 'bg-magenta/15 border border-magenta/40 text-magenta hover:bg-magenta/25'
               }`}
             >
               {running ? <Square className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
@@ -370,11 +370,11 @@ export function MissionSimulator() {
               </div>
               <div className="bg-white/5 border border-white/8 rounded-xl p-3 text-center">
                 <p className="text-xs text-gray-500 mb-1 uppercase tracking-wider">Altitude</p>
-                <p className="font-mono text-base font-bold text-sky-300">{alt.toLocaleString('fr-FR')} km</p>
+                <p className="font-mono text-base font-bold text-magenta">{alt.toLocaleString('fr-FR')} km</p>
               </div>
               <div className="bg-white/5 border border-white/8 rounded-xl p-3 text-center">
                 <p className="text-xs text-gray-500 mb-1 uppercase tracking-wider">Vitesse</p>
-                <p className="font-mono text-base font-bold text-orange-300">{vel.toLocaleString('fr-FR')} m/s</p>
+                <p className="font-mono text-base font-bold text-magenta">{vel.toLocaleString('fr-FR')} m/s</p>
               </div>
             </div>
 
@@ -390,7 +390,7 @@ export function MissionSimulator() {
               <div className="w-full h-1.5 bg-white/8 rounded-full overflow-hidden">
                 <div
                   className={`h-full rounded-full transition-all duration-300 ${
-                    vib > 8 ? 'bg-red-400' : vib > 4 ? 'bg-orange-400' : 'bg-emerald-400'
+                    vib > 8 ? 'bg-red-400' : 'bg-magenta'
                   }`}
                   style={{ width: `${Math.min(vib / 14 * 100, 100)}%` }}
                 />
@@ -408,9 +408,7 @@ export function MissionSimulator() {
                   className="h-full rounded-full transition-all duration-75"
                   style={{
                     width: `${progress * 100}%`,
-                    background: completed
-                      ? 'linear-gradient(90deg, #10b981, #34d399)'
-                      : 'linear-gradient(90deg, #f59e0b, #ef4444)',
+                    background: '#c8257a',
                   }}
                 />
               </div>
@@ -471,7 +469,7 @@ export function MissionSimulator() {
                   >
                     <div className="flex items-center gap-1.5">
                       {done
-                        ? <CheckCircle2 className="w-3 h-3 text-emerald-400 flex-shrink-0" />
+                        ? <CheckCircle2 className="w-3 h-3 text-magenta flex-shrink-0" />
                         : active
                         ? <span className="w-2 h-2 rounded-full bg-current animate-pulse flex-shrink-0" />
                         : <span className="w-2 h-2 rounded-full bg-gray-700 flex-shrink-0" />
@@ -503,10 +501,10 @@ export function MissionSimulator() {
                 log.map((entry, i) => (
                   <div key={i} className={`flex gap-2 ${
                     entry.type === 'announce'
-                      ? 'text-sky-400/80'
+                      ? 'text-magenta/70'
                       : entry.critical
-                      ? 'text-amber-300'
-                      : 'text-emerald-400'
+                      ? 'text-white'
+                      : 'text-magenta'
                   }`}>
                     <span className="text-gray-600 flex-shrink-0">{formatMT(entry.time)}</span>
                     <span className="leading-relaxed">{entry.text}</span>
@@ -514,7 +512,7 @@ export function MissionSimulator() {
                 ))
               )}
               {completed && (
-                <div className="mt-2 pt-2 border-t border-white/10 flex items-center gap-2 text-green-400">
+                <div className="mt-2 pt-2 border-t border-white/10 flex items-center gap-2 text-magenta">
                   <CheckCircle2 className="w-3.5 h-3.5" />
                   <span className="font-bold">MISSION RÉUSSIE — Satellites en orbite.</span>
                 </div>

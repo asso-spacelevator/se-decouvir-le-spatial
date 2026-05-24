@@ -7,18 +7,13 @@ interface ProgressBarProps {
 
 export function ProgressBar({ currentStep, totalSteps, steps, sessionLabel }: ProgressBarProps) {
   const progress = ((currentStep + 1) / totalSteps) * 100;
-  const isSession2 = sessionLabel === 'Session 2 / 2';
 
   return (
-    <div className="fixed top-0 left-0 right-0 bg-slate-900/95 backdrop-blur-sm border-b border-slate-700/60 z-50">
+    <div className="sticky top-0 left-0 right-0 bg-deepspace/95 backdrop-blur-sm border-b border-white/10 z-50">
       {/* Barre de progression */}
-      <div className="h-0.5 bg-slate-800">
+      <div className="h-0.5 bg-white/[0.04]">
         <div
-          className={`h-full transition-all duration-500 ${
-            isSession2
-              ? 'bg-gradient-to-r from-teal-400 via-sky-500 to-blue-500'
-              : 'bg-gradient-to-r from-orange-400 via-amber-400 to-yellow-400'
-          }`}
+          className="h-full bg-magenta transition-all duration-500"
           style={{ width: `${progress}%` }}
         />
       </div>
@@ -27,9 +22,7 @@ export function ProgressBar({ currentStep, totalSteps, steps, sessionLabel }: Pr
         <div className="flex items-center gap-6">
           {/* Label de session */}
           {sessionLabel && (
-            <span className={`text-xs font-semibold tracking-widest uppercase flex-shrink-0 ${
-              isSession2 ? 'text-teal-400' : 'text-amber-400'
-            }`}>
+            <span className="text-xs font-semibold tracking-widest uppercase flex-shrink-0 text-magenta">
               {sessionLabel}
             </span>
           )}
@@ -42,12 +35,10 @@ export function ProgressBar({ currentStep, totalSteps, steps, sessionLabel }: Pr
                   <div
                     className={`w-9 h-9 rounded-full flex items-center justify-center text-base transition-all duration-300 ${
                       index === currentStep
-                        ? isSession2
-                          ? 'bg-teal-500/25 border-2 border-teal-400 text-teal-200 scale-110 shadow-lg shadow-teal-500/20'
-                          : 'bg-amber-500/25 border-2 border-amber-400 text-amber-200 scale-110 shadow-lg shadow-amber-500/20'
+                        ? 'bg-magenta/25 border-2 border-magenta text-white scale-110 shadow-lg shadow-magenta/20'
                         : index < currentStep
-                        ? 'bg-green-500/20 border border-green-500/50 text-green-400'
-                        : 'bg-slate-800 border border-slate-700 text-slate-500'
+                        ? 'bg-magenta/15 border border-magenta/30 text-magenta'
+                        : 'bg-white/5 border border-white/10 text-gray-500'
                     }`}
                   >
                     {step.icon}
@@ -57,19 +48,19 @@ export function ProgressBar({ currentStep, totalSteps, steps, sessionLabel }: Pr
                       index === currentStep
                         ? 'text-white font-semibold'
                         : index < currentStep
-                        ? 'text-green-400'
-                        : 'text-slate-500'
+                        ? 'text-magenta'
+                        : 'text-gray-500'
                     }`}
                   >
                     {step.name}
                   </span>
                 </div>
                 {index < steps.length - 1 && (
-                  <div className="flex-1 h-px mx-2 bg-slate-700/60">
+                  <div className="flex-1 h-px mx-2 bg-white/10">
                     <div
                       className={`h-full transition-all duration-500 ${
                         index < currentStep
-                          ? 'bg-green-500 w-full'
+                          ? 'bg-magenta w-full'
                           : 'w-0'
                       }`}
                     />

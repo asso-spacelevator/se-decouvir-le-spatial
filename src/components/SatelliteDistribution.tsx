@@ -303,18 +303,18 @@ export function SatelliteDistribution() {
       </div>
 
       {/* Satellite Xplorer link */}
-      <div className="bg-gradient-to-r from-cyan-500/10 to-blue-500/10 border border-cyan-500/20 rounded-2xl p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="bg-magenta/10 border border-magenta/20 rounded-2xl p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h4 className="font-bold text-white mb-1">Explorer en temps réel</h4>
           <p className="text-sm text-gray-300">
-            <strong className="text-cyan-400">Satellite Xplorer</strong> montre tous les satellites actuellement en orbite en 3D, en temps réel. Filtre par usage, pays, orbite.
+            <strong className="text-magenta">Satellite Xplorer</strong> montre tous les satellites actuellement en orbite en 3D, en temps réel. Filtre par usage, pays, orbite.
           </p>
         </div>
         <a
           href="https://satellitexplorer.nasaspaceflight.com"
           target="_blank"
           rel="noopener noreferrer"
-          className="flex-shrink-0 flex items-center gap-2 px-5 py-3 bg-cyan-500 hover:bg-cyan-400 text-slate-900 font-bold text-sm rounded-xl transition-all hover:scale-105 shadow-lg shadow-cyan-500/20"
+          className="flex-shrink-0 flex items-center gap-2 px-5 py-3 bg-magenta hover:bg-magenta-700 text-white font-bold text-sm rounded-xl transition-all hover:scale-105 shadow-lg shadow-magenta/20"
         >
           Ouvrir Satellite Xplorer
           <ExternalLink className="w-4 h-4" />

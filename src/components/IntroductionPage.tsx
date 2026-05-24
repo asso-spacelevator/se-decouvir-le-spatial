@@ -20,9 +20,9 @@ const QUOTES_DATA = [
     source: "NASA broadcast, mission Apollo 11 — 21 juillet 1969",
     imageQuestion: `${import.meta.env.BASE_URL}citations/neil2.jpg`,
     imagePortrait: `${import.meta.env.BASE_URL}citations/neil1.jpg`,
-    bgColor: 'from-yellow-800/40 to-amber-900/40',
-    borderColor: 'border-yellow-500/40',
-    accentColor: 'text-yellow-300',
+    bgColor: 'bg-magenta/5',
+    borderColor: 'border-magenta/30',
+    accentColor: 'text-magenta',
   },
   {
     id: 'tsiolkovsky',
@@ -32,9 +32,9 @@ const QUOTES_DATA = [
     source: "K. Tsiolkovsky, lettre à un correspondant, 1911",
     imageQuestion: `${import.meta.env.BASE_URL}citations/KonstantinTsiolkowsky2.jpg`,
     imagePortrait: `${import.meta.env.BASE_URL}citations/KonstantinTsiolkovsk.jpg`,
-    bgColor: 'from-blue-800/40 to-indigo-900/40',
-    borderColor: 'border-blue-500/40',
-    accentColor: 'text-blue-300',
+    bgColor: 'bg-magenta/5',
+    borderColor: 'border-magenta/30',
+    accentColor: 'text-magenta',
   },
   {
     id: 'sagan',
@@ -44,9 +44,9 @@ const QUOTES_DATA = [
     source: "Carl Sagan, Pale Blue Dot: A Vision of the Human Future in Space, 1994",
     imageQuestion: `${import.meta.env.BASE_URL}citations/CarlSagan2.jpg`,
     imagePortrait: `${import.meta.env.BASE_URL}citations/CarlSagan.jpg`,
-    bgColor: 'from-teal-800/40 to-cyan-900/40',
-    borderColor: 'border-teal-500/40',
-    accentColor: 'text-teal-300',
+    bgColor: 'bg-magenta/5',
+    borderColor: 'border-magenta/30',
+    accentColor: 'text-magenta',
   },
   {
     id: 'hawking',
@@ -56,9 +56,9 @@ const QUOTES_DATA = [
     source: "Stephen Hawking, discours à l'Université de Cambridge, 2009",
     imageQuestion: `${import.meta.env.BASE_URL}citations/hawkings%202.jpg`,
     imagePortrait: `${import.meta.env.BASE_URL}citations/hawkings1.webp`,
-    bgColor: 'from-purple-800/40 to-violet-900/40',
-    borderColor: 'border-purple-500/40',
-    accentColor: 'text-purple-300',
+    bgColor: 'bg-magenta/5',
+    borderColor: 'border-magenta/30',
+    accentColor: 'text-magenta',
   },
 ];
 
@@ -127,18 +127,18 @@ export function IntroductionPage({ onContinue, onHome, onBack }: IntroductionPag
       <div className="relative z-10">
         <Navigation onHome={onHome} onBack={onBack} showBack={true} />
 
-        <div className="max-w-5xl mx-auto px-6 py-20 mt-12">
+        <div className="max-w-5xl mx-auto px-6 py-12">
           <div className="text-center mb-10">
             <div className="flex justify-center mb-6">
               <div className="relative">
-                <Star className="w-20 h-20 text-yellow-300 animate-pulse" />
-                <Rocket className="w-12 h-12 text-blue-400 absolute top-0 right-0 transform translate-x-4 -translate-y-2" />
+                <Star className="w-20 h-20 text-magenta animate-pulse" />
+                <Rocket className="w-12 h-12 text-magenta absolute top-0 right-0 transform translate-x-4 -translate-y-2" />
               </div>
             </div>
             <h1 className="text-5xl md:text-6xl font-bold text-white mb-4">
               Bienvenue dans l'Univers du Spatial
             </h1>
-            <p className="text-2xl text-blue-200">
+            <p className="text-2xl text-gray-300">
               Un voyage éducatif pour découvrir les merveilles du spatial
             </p>
           </div>
@@ -151,7 +151,7 @@ export function IntroductionPage({ onContinue, onHome, onBack }: IntroductionPag
           <div className="grid md:grid-cols-3 gap-6 mb-16">
             <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/20  transition-transform">
               <div className="flex justify-center mb-4">
-                <Rocket className="w-16 h-16 text-orange-400" />
+                <Rocket className="w-16 h-16 text-magenta" />
               </div>
               <h3 className="text-2xl font-bold text-white mb-3 text-center">Explorer</h3>
               <p className="text-gray-200 text-center">
@@ -161,7 +161,7 @@ export function IntroductionPage({ onContinue, onHome, onBack }: IntroductionPag
 
             <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/20 transition-transform">
               <div className="flex justify-center mb-4">
-                <Satellite className="w-16 h-16 text-cyan-400" />
+                <Satellite className="w-16 h-16 text-magenta" />
               </div>
               <h3 className="text-2xl font-bold text-white mb-3 text-center">Apprendre</h3>
               <p className="text-gray-200 text-center">
@@ -171,7 +171,7 @@ export function IntroductionPage({ onContinue, onHome, onBack }: IntroductionPag
 
             <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/20  transition-transform">
               <div className="flex justify-center mb-4">
-                <Globe className="w-16 h-16 text-green-400" />
+                <Globe className="w-16 h-16 text-magenta" />
               </div>
               <h3 className="text-2xl font-bold text-white mb-3 text-center">Connecter</h3>
               <p className="text-gray-200 text-center">
@@ -180,15 +180,15 @@ export function IntroductionPage({ onContinue, onHome, onBack }: IntroductionPag
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-blue-900/40 to-slate-900/40 backdrop-blur-md rounded-2xl p-10 border border-white/20 mb-12">
+          <div className="bg-magenta/5 backdrop-blur-md rounded-2xl p-10 border border-magenta/20 mb-12">
             <h2 className="text-3xl font-bold text-white mb-6 text-center">
               Ce que vous allez découvrir
             </h2>
             <div className="grid md:grid-cols-2 gap-6">
               <div className="flex gap-4">
                 <div className="flex-shrink-0">
-                  <div className="w-12 h-12 rounded-full bg-blue-500/30 flex items-center justify-center border border-blue-400">
-                    <span className="text-xl font-bold text-blue-300">1</span>
+                  <div className="w-12 h-12 rounded-full bg-magenta/20 flex items-center justify-center border border-magenta">
+                    <span className="text-xl font-bold text-magenta">1</span>
                   </div>
                 </div>
                 <div>
@@ -201,8 +201,8 @@ export function IntroductionPage({ onContinue, onHome, onBack }: IntroductionPag
 
               <div className="flex gap-4">
                 <div className="flex-shrink-0">
-                  <div className="w-12 h-12 rounded-full bg-cyan-500/30 flex items-center justify-center border border-cyan-400">
-                    <span className="text-xl font-bold text-cyan-300">2</span>
+                  <div className="w-12 h-12 rounded-full bg-magenta/20 flex items-center justify-center border border-magenta">
+                    <span className="text-xl font-bold text-magenta">2</span>
                   </div>
                 </div>
                 <div>
@@ -215,8 +215,8 @@ export function IntroductionPage({ onContinue, onHome, onBack }: IntroductionPag
 
               <div className="flex gap-4">
                 <div className="flex-shrink-0">
-                  <div className="w-12 h-12 rounded-full bg-teal-500/30 flex items-center justify-center border border-teal-400">
-                    <span className="text-xl font-bold text-teal-300">3</span>
+                  <div className="w-12 h-12 rounded-full bg-magenta/20 flex items-center justify-center border border-magenta">
+                    <span className="text-xl font-bold text-magenta">3</span>
                   </div>
                 </div>
                 <div>
@@ -229,8 +229,8 @@ export function IntroductionPage({ onContinue, onHome, onBack }: IntroductionPag
 
               <div className="flex gap-4">
                 <div className="flex-shrink-0">
-                  <div className="w-12 h-12 rounded-full bg-green-500/30 flex items-center justify-center border border-green-400">
-                    <span className="text-xl font-bold text-green-300">4</span>
+                  <div className="w-12 h-12 rounded-full bg-magenta/20 flex items-center justify-center border border-magenta">
+                    <span className="text-xl font-bold text-magenta">4</span>
                   </div>
                 </div>
                 <div>
@@ -246,7 +246,7 @@ export function IntroductionPage({ onContinue, onHome, onBack }: IntroductionPag
           {/* Citation matching activity */}
           <div className="mb-12">
             <h2 className="text-3xl font-bold text-white mb-3 text-center">Des citations qui ont marqué l'histoire</h2>
-            <p className="text-blue-200 text-center mb-8">Relie chaque citation à la personne qui l'a prononcée !</p>
+            <p className="text-gray-300 text-center mb-8">Relie chaque citation à la personne qui l'a prononcée !</p>
 
             <div className="grid gap-4 mb-6">
               {QUOTES_DATA.map((q) => {
@@ -255,7 +255,7 @@ export function IntroductionPage({ onContinue, onHome, onBack }: IntroductionPag
                 const isWrong = quoteChecked && !!selected && selected !== q.author;
 
                 return (
-                  <div key={q.id} className={`bg-gradient-to-br ${q.bgColor} backdrop-blur-sm rounded-2xl p-6 border ${q.borderColor} transition-all duration-500`}>
+                  <div key={q.id} className={`${q.bgColor} backdrop-blur-sm rounded-2xl p-6 border ${q.borderColor} transition-all duration-500`}>
                     <div className="flex flex-col md:flex-row gap-5">
                       {/* Scene image — visible during question */}
                       <div className="flex-shrink-0 md:w-48">
@@ -329,14 +329,14 @@ export function IntroductionPage({ onContinue, onHome, onBack }: IntroductionPag
                   Vérifier mes réponses
                 </button>
                 {quoteChecked && !quoteVerified && (
-                  <p className="text-amber-400 mt-3 text-sm">Certaines réponses sont incorrectes. Réessaie !</p>
+                  <p className="text-magenta mt-3 text-sm">Certaines réponses sont incorrectes. Réessaie !</p>
                 )}
               </div>
             )}
 
             {quoteVerified && (
               <div className="text-center mt-4">
-                <div className="inline-flex items-center gap-2 bg-green-500/20 text-green-300 border border-green-400/30 rounded-full px-6 py-3">
+                <div className="inline-flex items-center gap-2 bg-magenta/20 text-magenta border border-magenta/30 rounded-full px-6 py-3">
                   <CheckCircle className="w-5 h-5" />
                   <span className="font-semibold">Bravo ! Toutes les citations sont correctement associées !</span>
                 </div>
@@ -347,7 +347,7 @@ export function IntroductionPage({ onContinue, onHome, onBack }: IntroductionPag
           {/* Intro avant question */}
           <div className="text-center mb-6">
             <h2 className="text-2xl font-bold text-white mb-2">Avant de commencer…</h2>
-            <p className="text-blue-200 text-lg">
+            <p className="text-gray-300 text-lg">
               Pour mieux te connaître, dis-nous ce qui te vient à l'esprit quand on parle de spatial.
             </p>
           </div>
@@ -360,14 +360,14 @@ export function IntroductionPage({ onContinue, onHome, onBack }: IntroductionPag
             <div className="flex flex-wrap gap-3 justify-center">
               {words.map((word, i) => (
                 <div key={i} className="flex items-center gap-2">
-                  <span className="text-xs font-bold text-blue-400 w-4 text-center">{i + 1}</span>
+                  <span className="text-xs font-bold text-magenta w-4 text-center">{i + 1}</span>
                   <input
                     type="text"
                     value={word}
                     onChange={(e) => handleWordChange(i, e.target.value)}
                     placeholder={`Mot ${i + 1}`}
                     maxLength={30}
-                    className="w-36 bg-white border border-white/20 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
+                    className="w-36 bg-white border border-white/20 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-magenta/50 focus:border-magenta/50 transition-all"
                   />
                 </div>
               ))}
@@ -380,7 +380,7 @@ export function IntroductionPage({ onContinue, onHome, onBack }: IntroductionPag
               disabled={!canContinue}
               className={`group px-12 py-5 rounded-full font-bold text-xl transition-all duration-300 flex items-center gap-3 mx-auto ${
                 canContinue
-                  ? 'bg-gradient-to-r from-blue-500 to-teal-500 hover:from-blue-600 hover:to-teal-600 text-white transform hover:scale-105 shadow-lg hover:shadow-2xl'
+                  ? 'bg-magenta hover:bg-magenta-700 text-white transform hover:scale-105 shadow-lg hover:shadow-2xl'
                   : 'bg-gray-700 text-gray-400 cursor-not-allowed'
               }`}
             >
@@ -388,7 +388,7 @@ export function IntroductionPage({ onContinue, onHome, onBack }: IntroductionPag
               <ChevronRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
             </button>
             {!canContinue && (
-              <p className="text-amber-400 mt-3 text-sm">
+              <p className="text-magenta mt-3 text-sm">
                 Écris au moins 3 mots pour continuer ({filledWords}/3)
               </p>
             )}

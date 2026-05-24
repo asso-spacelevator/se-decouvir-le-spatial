@@ -1,17 +1,12 @@
 import { useState, useEffect } from 'react';
-import { Rocket, ChevronRight, CheckCircle } from 'lucide-react';
+import { CheckCircle } from 'lucide-react';
 import { useSession } from '../contexts/SessionContext';
-import { Navigation } from './Navigation';
 import { Quiz } from './Quiz';
-import { AvatarGuide } from './AvatarGuide';
 import { Ariane6Diagram } from './Ariane6Diagram';
 import { MissionSimulator } from './MissionSimulator';
+import { SectionCanvas, SectionTopBar, SectionProgress, ChapterShell, ChapterRecap } from './ChapterShell';
 
-const ROCKET_LINES = [
-  { speaker: 'boy' as const,  text: "On arrive aux lanceurs ! C'est la partie la plus spectaculaire — des millions de chevaux-vapeur au décollage." },
-  { speaker: 'girl' as const, text: "Les ingénieurs doivent résoudre des défis dingues : 3000°C, précision au millimètre, poids minimal." },
-  { speaker: 'boy' as const,  text: "Choisis un défi qui t'intéresse et explore comment les équipes l'ont relevé !" },
-];
+const TOTAL_CHAPTERS = 7;
 
 interface RocketSectionProps {
   onComplete: () => void;
@@ -19,428 +14,387 @@ interface RocketSectionProps {
   onBack: () => void;
 }
 
-export function RocketSection({ onComplete, onHome, onBack }: RocketSectionProps) {
+const challenges = [
+  {
+    name: 'Températures Extrêmes',
+    problem: "Les moteurs de lanceur peuvent atteindre 3 000 °C, tandis que l'espace oscille entre -150 °C et +150 °C.",
+    solution: "Utilisation de matériaux composites céramiques ultra-résistants et de systèmes de refroidissement actifs avec circulation d'hydrogène liquide.",
+    innovation: "Les boucliers thermiques modernes supportent des gradients de 3 000 °C sur quelques centimètres d'épaisseur.",
+    funFact: "Le nez d'un lanceur lors de la rentrée atmosphérique chauffe tellement qu'il crée un plasma — un quatrième état de la matière — qui bloque temporairement les communications radio.",
+  },
+  {
+    name: 'Puissance Colossale',
+    problem: "Il faut générer plus de 1 000 tonnes de poussée pour vaincre la gravité terrestre.",
+    solution: "Moteurs à combustion d'hydrogène et oxygène liquides, brûlant 300 kg de carburant par seconde.",
+    innovation: "Un seul moteur Vulcain 2.1 produit une puissance équivalente à 1 500 voitures de F1 combinées.",
+    funFact: "Si on pouvait canaliser toute la puissance d'un moteur de lanceur dans une ampoule, elle brillerait 190 fois plus fort que le Soleil vu depuis la Terre.",
+  },
+  {
+    name: 'Précision Absolue',
+    problem: "Une erreur de 0,1° lors du lancement peut manquer la cible orbitale de milliers de kilomètres.",
+    solution: "Systèmes de guidage inertiel couplés au GPS, avec corrections en temps réel toutes les millisecondes.",
+    innovation: "Les gyroscopes laser actuels détectent des rotations de l'ordre du milliardième de degré.",
+    funFact: "La précision requise est équivalente à lancer une fléchette depuis Paris et toucher le centre d'une cible à New York.",
+  },
+  {
+    name: 'Légèreté Maximale',
+    problem: "Chaque kilogramme de structure en trop réduit la charge utile possible.",
+    solution: "Alliages aluminium-lithium et composites carbone ultra-légers, avec optimisation par intelligence artificielle.",
+    innovation: "Les nouveaux matériaux permettent un rapport résistance/poids 5 fois supérieur à l'acier.",
+    funFact: "Économiser 1 kg sur la structure d'un lanceur peut permettre de placer 100 kg supplémentaires en orbite.",
+  },
+];
+
+const quizQuestions = [
+  {
+    id: 'rocket_q1',
+    question: 'Quelle est la température maximale que peuvent atteindre les moteurs de lanceur ?',
+    options: [
+      { id: 'a', text: '500 °C', isCorrect: false },
+      { id: 'b', text: '1 500 °C', isCorrect: false },
+      { id: 'c', text: '3 000 °C', isCorrect: true },
+      { id: 'd', text: '5 000 °C', isCorrect: false },
+    ],
+    explanation: "Les moteurs de lanceur peuvent atteindre 3 000 °C. Des matériaux composites céramiques et des systèmes de refroidissement actifs sont indispensables.",
+  },
+  {
+    id: 'rocket_q2',
+    question: "Combien de pays contribuent à la construction d'Ariane 6 ?",
+    options: [
+      { id: 'a', text: '2', isCorrect: false },
+      { id: 'b', text: '4', isCorrect: false },
+      { id: 'c', text: '6', isCorrect: true },
+      { id: 'd', text: '12', isCorrect: false },
+    ],
+    explanation: "Ariane 6 est le fruit de la coopération de 6 nations européennes. Plus de 600 personnes travaillent sur le chantier de construction.",
+  },
+];
+
+const CLEAN_ROOM_RULES = [
+  { rule: 'Électricité statique', detail: "En te frottant sur de la moquette, tu génères ~3 000 V. Un circuit satellite supporte moins de 5 V avant destruction." },
+  { rule: 'Combinaison antistatique', detail: "La combinaison, les gants et le bracelet sont conducteurs pour évacuer toute charge vers la terre en permanence." },
+  { rule: 'Sas de décontamination', detail: "Douche d'air comprimé à l'entrée : elle chasse les particules accrochées à la combinaison." },
+  { rule: 'Traçabilité de chaque outil', detail: "Chaque tournevis et boulon entrant est répertorié. Rien ne doit être oublié à l'intérieur du satellite." },
+  { rule: 'Température et humidité fixes', detail: "21 °C, humidité 45 % — les matériaux se dilatent avec la chaleur et l'humidité favorise les courts-circuits." },
+  { rule: 'Zéro maquillage ni parfum', detail: "Les substances chimiques volatiles se déposent sur les optiques et capteurs, les rendant inutilisables." },
+];
+
+export function RocketSection({ onComplete, onHome }: RocketSectionProps) {
   const { saveResponse, getResponses } = useSession();
-  const [responses, setResponses] = useState<Record<string, string>>({});
-  const [submitted, setSubmitted] = useState(false);
+  const [chapter, setChapter] = useState(0);
+  const [hydrated, setHydrated] = useState(false);
   const [selectedChallenge, setSelectedChallenge] = useState<number | null>(null);
   const [quizCompleted, setQuizCompleted] = useState(false);
+  const [reflection, setReflection] = useState('');
 
   useEffect(() => {
-    const loadResponses = async () => {
-      const savedResponses = await getResponses('rockets');
-      setResponses(savedResponses);
-      if (savedResponses.selectedChallenge) {
-        setSelectedChallenge(parseInt(savedResponses.selectedChallenge));
-      }
-    };
-    loadResponses();
+    (async () => {
+      const r = await getResponses('rockets');
+      if (r.chapter) setChapter(Math.min(parseInt(r.chapter, 10) || 0, TOTAL_CHAPTERS - 1));
+      if (r.selectedChallenge) setSelectedChallenge(parseInt(r.selectedChallenge, 10));
+      if (r.quizCompleted === 'true') setQuizCompleted(true);
+      if (r.reflection) setReflection(r.reflection);
+      setHydrated(true);
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const challenges = [
-    {
-      name: 'Températures Extrêmes',
-      problem: 'Les moteurs de lanceur peuvent atteindre 3 000°C, tandis que l\'espace oscille entre -150°C et +150°C',
-      solution: 'Utilisation de matériaux composites céramiques ultra-résistants et de systèmes de refroidissement actifs avec circulation d\'hydrogène liquide',
-      innovation: 'Les boucliers thermiques modernes peuvent supporter des gradients de 3 000°C sur quelques centimètres d\'épaisseur',
-      funFact: '🔥 Fun Fact : Le nez d\'un lanceur lors de la rentrée atmosphérique chauffe tellement qu\'il crée un plasma - un quatrième état de la matière - qui bloque temporairement les communications radio !',
-      videoUrl: '',
-      videoTitle: 'Interview : Ingénieur en Matériaux Thermiques'
-    },
-    {
-      name: 'Puissance Colossale',
-      problem: 'Il faut générer plus de 1 000 tonnes de poussée pour vaincre la gravité terrestre',
-      solution: 'Moteurs à combustion d\'hydrogène et oxygène liquides, brûlant 300 kg de carburant par seconde',
-      innovation: 'Un seul moteur Vulcain 2.1 produit une puissance équivalente à 1 500 voitures de F1 combinées',
-      funFact: '💪 Fun Fact : Si vous pouviez canaliser toute la puissance d\'un moteur de lanceur dans une ampoule, elle brillerait 190 fois plus fort que le Soleil vu depuis la Terre !',
-      videoUrl: '',
-      videoTitle: 'Interview : Ingénieur en Propulsion Spatiale'
-    },
-    {
-      name: 'Précision Absolue',
-      problem: 'Une erreur de 0,1° lors du lancement peut manquer la cible orbitale de milliers de kilomètres',
-      solution: 'Systèmes de guidage inertiel couplés au GPS, avec corrections en temps réel toutes les millisecondes',
-      innovation: 'Les gyroscopes laser actuels détectent des rotations de l\'ordre du milliardième de degré',
-      funFact: '🎯 Fun Fact : La précision requise est équivalente à lancer une fléchette depuis Paris et toucher le centre d\'une cible à New York !',
-      videoUrl: '',
-      videoTitle: 'Interview : Spécialiste en Guidage et Navigation'
-    },
-    {
-      name: 'Légèreté Maximale',
-      problem: 'Chaque kilogramme de structure en trop réduit la charge utile possible',
-      solution: 'Alliages aluminium-lithium et composites carbone ultra-légers, avec optimisation par intelligence artificielle',
-      innovation: 'Les nouveaux matériaux permettent un rapport résistance/poids 5 fois supérieur à l\'acier',
-      funFact: '⚖️ Fun Fact : Économiser 1 kg sur la structure d\'un lanceur peut permettre de placer 100 kg supplémentaires en orbite. C\'est pourquoi chaque boulon est optimisé !',
-      videoUrl: '',
-      videoTitle: 'Interview : Ingénieur en Structures Spatiales'
-    }
-  ];
-
-  const quizQuestions = [
-    {
-      id: 'rocket_q1',
-      question: 'Quelle est la température maximale que peuvent atteindre les moteurs de lanceur ?',
-      options: [
-        { id: 'a', text: '500°C', isCorrect: false },
-        { id: 'b', text: '1 500°C', isCorrect: false },
-        { id: 'c', text: '3 000°C', isCorrect: true },
-        { id: 'd', text: '5 000°C', isCorrect: false }
-      ],
-      explanation: 'Les moteurs de lanceur peuvent atteindre des températures extrêmes de 3 000°C. Des matériaux composites céramiques ultra-résistants et des systèmes de refroidissement actifs sont nécessaires pour gérer ces températures.'
-    }
-  ];
-
-  const handleChallengeSelect = async (index: number) => {
-    setSelectedChallenge(index);
-    await saveResponse('rockets', 'selectedChallenge', String(index));
+  const goTo = async (i: number) => {
+    if (i < 0 || i >= TOTAL_CHAPTERS) return;
+    setChapter(i);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (hydrated) await saveResponse('rockets', 'chapter', String(i));
   };
 
-  const handleResponseChange = async (id: string, value: string) => {
-    setResponses(prev => ({ ...prev, [id]: value }));
-    await saveResponse('rockets', id, value);
+  const handleChallengeSelect = async (i: number) => {
+    setSelectedChallenge(i);
+    if (hydrated) await saveResponse('rockets', 'selectedChallenge', String(i));
   };
 
-  const handleQuizComplete = () => {
+  const handleReflectionChange = async (v: string) => {
+    setReflection(v);
+    if (hydrated) await saveResponse('rockets', 'reflection', v);
+  };
+
+  const handleQuizComplete = async () => {
     setQuizCompleted(true);
+    if (hydrated) await saveResponse('rockets', 'quizCompleted', 'true');
+    goTo(6);
   };
-
-  const handleSubmit = async () => {
-    setSubmitted(true);
-    setTimeout(() => {
-      onComplete();
-    }, 1500);
-  };
-
-  const canSubmit = import.meta.env.DEV || (quizCompleted && selectedChallenge !== null && responses['reflection']?.trim().length > 0);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-orange-950 to-slate-900 text-white py-16 px-6">
-      <Navigation onHome={onHome} onBack={onBack} showBack={true} />
+    <SectionCanvas>
+      <SectionTopBar label="Session 1 · Chapitre 2 sur 3 · Lanceurs et Ariane 6" onHome={onHome} />
+      <SectionProgress current={chapter} total={TOTAL_CHAPTERS} onGoTo={goTo} />
 
-      <div className="max-w-4xl mx-auto mt-20">
-        <div className="flex items-center gap-4 mb-6">
-          <Rocket className="w-12 h-12 text-orange-400" />
-          <div>
-            <div className="text-sm text-orange-400 font-semibold uppercase tracking-wider">🚀 Vers l'Orbite</div>
-            <h2 className="text-4xl font-bold">Les Lanceurs : Défis et Innovation</h2>
-          </div>
-        </div>
+      <div className="relative z-[1] max-w-[1120px] mx-auto px-8 pt-14 pb-24">
 
-        <div className="mb-8 bg-white/5 backdrop-blur-sm rounded-2xl p-4 border border-orange-500/20">
-          <AvatarGuide lines={ROCKET_LINES} interval={4000} />
-        </div>
-
-        {/* Introduction : comment on lance des satellites */}
-        <div className="mb-8 rounded-2xl border border-orange-500/20 bg-white/4 overflow-hidden">
-          <div className="px-6 pt-6 pb-5">
-            <h3 className="text-2xl font-bold text-white mb-4">Comment on envoie un satellite dans l'espace ?</h3>
-            <div className="space-y-4 text-gray-300 leading-relaxed">
-              <p>
-                Pour placer un satellite en orbite, il faut lui faire atteindre une vitesse de <span className="text-orange-300 font-semibold">28 000 km/h</span> — environ 25 fois la vitesse d'une balle de fusil. La seule machine capable de cela, c'est un <span className="text-orange-300 font-semibold">lanceur</span> : c'est le vrai nom scientifique de ce qu'on appelle souvent « fusée ».
-              </p>
-              <p>
-                Un lanceur fonctionne par étages : chaque étage brûle son carburant puis se détache pour alléger le reste. Moins de masse à emporter, plus on peut aller vite et haut.
-              </p>
-            </div>
-          </div>
-
-          {/* Chiffres clés */}
-          <div className="grid grid-cols-3 divide-x divide-white/8 border-t border-white/8">
-            {[
-              { value: '28 000', unit: 'km/h', label: 'Vitesse orbitale minimale' },
-              { value: '600+', unit: 'personnes', label: 'Sur le chantier de construction' },
-              { value: '6', unit: 'pays', label: 'Contribuent à Ariane 6' },
-            ].map(({ value, unit, label }) => (
-              <div key={label} className="px-5 py-4 text-center">
-                <p className="text-2xl font-bold text-orange-300">{value} <span className="text-base font-normal text-orange-400/70">{unit}</span></p>
-                <p className="text-xs text-gray-500 mt-1 leading-snug">{label}</p>
+        {/* ── Ch 1 : La fusée pas à pas ── */}
+        {chapter === 0 && (
+          <ChapterShell
+            kicker="01" title="La fusée pas à pas"
+            titlePrefix="Comment on envoie un satellite"
+            titleAccent="dans l'espace ?"
+            lede="Pour placer un satellite en orbite, il faut lui faire atteindre 28 000 km/h — 25 fois la vitesse d'une balle de fusil. La seule machine capable de cela est un lanceur."
+            onPrev={null} onNext={() => goTo(1)} nextEnabled={true}
+            nextLabel="Continue · Ariane 6 décortiquée →"
+          >
+            <div className="rounded-2xl border border-white/10 bg-white/[0.04] overflow-hidden">
+              <div className="px-6 pt-6 pb-5 space-y-3 text-white/75 leading-relaxed text-[15px]">
+                <p>Un lanceur fonctionne par <span className="text-white font-semibold">étages</span> : chaque étage brûle son carburant puis se détache pour alléger le reste. Moins de masse à emporter, plus on peut aller vite et haut.</p>
               </div>
-            ))}
-          </div>
-
-          {/* Organisation industrielle */}
-          <div className="border-t border-white/8 px-6 py-5">
-            <p className="text-sm text-gray-400 mb-3">
-              Ariane 6 est le fruit direct de <span className="text-white font-medium">6 nations européennes</span>. Rien que la construction mobilise plus de 600 personnes sur le chantier, et plusieurs milliers pour la conception. Voici comment ce travail est réparti :
-            </p>
-            <div className="rounded-xl overflow-hidden border border-white/10">
-              <img
-                src="https://cnes.fr/sites/default/files/styles/native_format/public/2025-02/ariane-6-organisation-industrielle.png?itok=PAgtKtio"
-                alt="Organisation industrielle d'Ariane 6 — répartition entre les pays européens"
-                className="w-full object-contain bg-white"
-              />
-            </div>
-            <p className="text-xs text-gray-600 mt-2 text-center">Source : CNES — Organisation industrielle Ariane 6</p>
-          </div>
-        </div>
-
-        <div className="mb-8">
-          <Ariane6Diagram />
-        </div>
-
-        {/* Défis Techniques Majeurs */}
-        <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10 mb-8">
-          <h3 className="text-2xl font-semibold mb-4">Les Défis Techniques Majeurs</h3>
-          <p className="text-gray-300 mb-6">
-            Sélectionnez un défi pour découvrir comment les ingénieurs le résolvent :
-          </p>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-            {challenges.map((challenge, index) => (
-              <button
-                key={index}
-                onClick={() => handleChallengeSelect(index)}
-                className={`p-6 rounded-xl border-2 transition-all text-left ${
-                  selectedChallenge === index
-                    ? 'border-orange-400 bg-orange-500/20 scale-105'
-                    : 'border-white/10 bg-white/5 hover:border-orange-400/50 hover:bg-white/10'
-                }`}
-              >
-                <h4 className="font-bold text-lg mb-2">{challenge.name}</h4>
-                <p className="text-sm text-gray-400">{challenge.problem}</p>
-              </button>
-            ))}
-          </div>
-
-          {selectedChallenge !== null && (
-            <div className="bg-gradient-to-br from-orange-500/10 to-red-500/10 border border-orange-400/30 rounded-xl p-6 space-y-4">
-              <div>
-                <h4 className="font-semibold text-orange-400 mb-2">Solution Actuelle</h4>
-                <p className="text-gray-200">{challenges[selectedChallenge].solution}</p>
+              <div className="grid grid-cols-3 divide-x divide-white/10 border-t border-white/10">
+                {[
+                  { value: '28 000', unit: 'km/h', label: 'Vitesse orbitale minimale' },
+                  { value: '600+', unit: 'personnes', label: 'Sur le chantier de construction' },
+                  { value: '6', unit: 'pays', label: 'Contribuent à Ariane 6' },
+                ].map(({ value, unit, label }) => (
+                  <div key={label} className="px-5 py-4 text-center">
+                    <p className="text-[28px] font-bold text-magenta leading-none">{value} <span className="text-[13px] font-normal text-magenta/70">{unit}</span></p>
+                    <p className="text-[11px] text-white/45 mt-1.5 leading-snug uppercase tracking-[0.08em]">{label}</p>
+                  </div>
+                ))}
               </div>
-              <div>
-                <h4 className="font-semibold text-orange-400 mb-2">Le Saviez-vous ?</h4>
-                <p className="text-gray-200">{challenges[selectedChallenge].innovation}</p>
-              </div>
-              {challenges[selectedChallenge].funFact && (
-                <div className="bg-orange-500/10 border border-orange-400/20 rounded-lg p-4">
-                  <p className="text-orange-100">{challenges[selectedChallenge].funFact}</p>
+              <div className="border-t border-white/10 px-6 py-5">
+                <p className="text-[13px] text-white/55 mb-3">Ariane 6 est le fruit direct de <span className="text-white font-medium">6 nations européennes</span>. Voici comment le travail est réparti :</p>
+                <div className="rounded-xl overflow-hidden border border-white/10">
+                  <img
+                    src="https://cnes.fr/sites/default/files/styles/native_format/public/2025-02/ariane-6-organisation-industrielle.png?itok=PAgtKtio"
+                    alt="Organisation industrielle Ariane 6"
+                    className="w-full object-contain bg-white"
+                  />
                 </div>
-              )}
-              {challenges[selectedChallenge].videoTitle && (
-                <div>
-                  <h4 className="font-semibold text-orange-400 mb-3">{challenges[selectedChallenge].videoTitle}</h4>
-                  {challenges[selectedChallenge].videoUrl ? (
-                    <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
-                      <iframe
-                        className="absolute top-0 left-0 w-full h-full rounded-lg"
-                        src={challenges[selectedChallenge].videoUrl}
-                        title="Video"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
-                      />
-                    </div>
-                  ) : (
-                    <div className="bg-orange-500/10 border border-orange-400/30 rounded-lg p-8 text-center">
-                      <p className="text-gray-400 italic">Vidéo à venir</p>
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-
-        {/* Salles Blanches */}
-        <div className="mb-8 rounded-2xl border border-sky-500/20 bg-white/4 overflow-hidden">
-          {/* Header */}
-          <div className="px-6 pt-6 pb-5">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-8 h-8 rounded-lg bg-sky-500/15 border border-sky-500/30 flex items-center justify-center flex-shrink-0">
-                <svg className="w-4 h-4 text-sky-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15M14.25 3.104c.251.023.501.05.75.082M19.8 15l-1.578 1.578A2.25 2.25 0 0116.5 18h-9a2.25 2.25 0 01-1.59-.659L3.8 15m16 0l-2.07-2.07M3.8 15l2.07-2.07" />
-                </svg>
-              </div>
-              <h3 className="text-2xl font-bold text-white">Les Salles Blanches</h3>
-            </div>
-            <p className="text-gray-300 leading-relaxed mb-3">
-              Avant de voir la fusée décoller, chaque satellite a été assemblé dans un endroit très particulier : la <span className="text-sky-300 font-semibold">salle blanche</span>. C'est une salle dont l'air est filtré en permanence — bien plus propre qu'un bloc opératoire — où les ingénieurs travaillent en combinaison intégrale pour ne laisser ni poussière, ni cheveu, ni particule de peau.
-            </p>
-            <p className="text-gray-300 leading-relaxed">
-              Mais la poussière n'est pas le seul ennemi. L'<span className="text-sky-300 font-semibold">électricité statique</span> est tout aussi dangereuse : en frottant ta main sur un pull en laine, tu génères une décharge de plusieurs milliers de volts. Pour un humain, c'est juste une petite piqûre. Pour un composant électronique de satellite, c'est la destruction instantanée. C'est pourquoi tout dans la salle blanche est relié à la terre, et les techniciens portent des bracelets antistatiques en permanence.
-            </p>
-          </div>
-
-          {/* Galerie photos */}
-          <div className="border-t border-white/8 px-6 py-5">
-            <p className="text-xs text-gray-500 uppercase tracking-wider font-semibold mb-3">Photos — Salles blanches ESA / Airbus</p>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="rounded-xl overflow-hidden border border-white/8 bg-slate-900 aspect-video">
-                <img
-                  src="https://www.esa.int/var/esa/storage/images/esa_multimedia/images/2022/09/formal_opening_of_estec_s_fv_cleanroom/24451621-1-eng-GB/Formal_opening_of_ESTEC_s_FV_cleanroom.jpg"
-                  alt="Salle blanche ESTEC — ESA"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="rounded-xl overflow-hidden border border-white/8 bg-slate-900 aspect-video">
-                <img
-                  src="https://www.esa.int/var/esa/storage/images/esa_multimedia/images/2014/01/life_physical_sciences_life_support_laboratory_clean_room/13476523-1-eng-GB/Life_Physical_Sciences_Life_Support_Laboratory_clean_room.jpg"
-                  alt="Technicien en combinaison salle blanche — ESA ESTEC"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="rounded-xl overflow-hidden border border-white/8 bg-slate-900 aspect-video">
-                <img
-                  src="https://www.esa.int/var/esa/storage/images/esa_multimedia/images/2021/10/webb_telescope_in_clean_room_at_europe_s_spaceport3/23733885-2-eng-GB/Webb_telescope_in_clean_room_at_Europe_s_Spaceport.jpg"
-                  alt="Télescope James Webb en salle blanche — Kourou"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="rounded-xl overflow-hidden border border-white/8 bg-slate-900 aspect-video">
-                <img
-                  src="https://www.esa.int/var/esa/storage/images/esa_multimedia/images/2022/09/esa_s_test_centre_expands/24451576-1-eng-GB/ESA_s_Test_Centre_expands.jpg"
-                  alt="Grande salle blanche ESA Test Centre — ESTEC"
-                  className="w-full h-full object-cover"
-                />
+                <p className="text-[11px] italic text-white/35 mt-2 text-center">Source : CNES — Organisation industrielle Ariane 6</p>
               </div>
             </div>
-            <p className="text-xs text-gray-600 mt-2 text-right">Sources : ESA / Airbus Defence & Space</p>
-          </div>
+          </ChapterShell>
+        )}
 
-          {/* Règles */}
-          <div className="border-t border-white/8 px-6 py-5">
-            <p className="text-sm text-gray-400 uppercase tracking-wider font-semibold mb-4">Pourquoi autant de précautions ?</p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {[
-                { icon: '⚡', rule: 'Électricité statique', detail: 'En te frottant sur de la moquette, tu génères ~3 000 V. Un circuit de satellite supporte moins de 5 V avant d\'être détruit définitivement.' },
-                { icon: '🧤', rule: 'Combinaison antistatique', detail: 'La combinaison, les gants et le bracelet de poignet sont conducteurs pour évacuer en permanence toute charge électrique vers la terre.' },
-                { icon: '💨', rule: 'Sas de décontamination', detail: 'Douche d\'air comprimé à l\'entrée : elle chasse les particules accrochées à la combinaison avant d\'entrer.' },
-                { icon: '📋', rule: 'Traçabilité de chaque outil', detail: 'Chaque tournevis, chaque boulon entrant est répertorié. Rien ne doit être oublié à l\'intérieur du satellite.' },
-                { icon: '🌡️', rule: 'Température et humidité fixes', detail: '21 °C, humidité 45 % — les matériaux se dilatent avec la chaleur et l\'humidité favorise les courts-circuits.' },
-                { icon: '🚫', rule: 'Zéro maquillage ni parfum', detail: 'Les substances chimiques volatiles se déposent sur les optiques et les capteurs, les rendant inutilisables.' },
-              ].map(({ icon, rule, detail }) => (
-                <div key={rule} className="flex gap-3 bg-white/4 border border-white/8 rounded-xl p-3">
-                  <span className="text-xl flex-shrink-0 mt-0.5">{icon}</span>
+        {/* ── Ch 2 : Ariane 6 décortiquée ── */}
+        {chapter === 1 && (
+          <ChapterShell
+            kicker="02" title="Ariane 6 décortiquée"
+            titlePrefix="Anatomie du lanceur,"
+            titleAccent="de haut en bas."
+            lede="Explore chaque composant d'Ariane 6 : étages, moteurs, coiffe. Clique sur les éléments du diagramme pour en savoir plus."
+            onPrev={() => goTo(0)} onNext={() => goTo(2)} nextEnabled={true}
+            nextLabel="Continue · Les défis de l'ingénieur →"
+          >
+            <Ariane6Diagram />
+          </ChapterShell>
+        )}
+
+        {/* ── Ch 3 : Défis techniques ── */}
+        {chapter === 2 && (
+          <ChapterShell
+            kicker="03" title="Les défis de l'ingénieur"
+            titlePrefix="Quel problème les équipes ont-elles dû"
+            titleAccent="résoudre ?"
+            lede="Sélectionne un défi pour découvrir comment les ingénieurs l'ont résolu. Chaque contrainte a généré une innovation qui profite aujourd'hui à d'autres secteurs."
+            onPrev={() => goTo(1)} onNext={() => goTo(3)} nextEnabled={selectedChallenge !== null}
+            nextLabel={selectedChallenge !== null ? "Continue · Les salles blanches →" : "Sélectionne un défi d'abord"}
+          >
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {challenges.map((c, i) => (
+                  <button
+                    key={i}
+                    onClick={() => handleChallengeSelect(i)}
+                    className={`p-6 rounded-2xl border text-left transition-all ${
+                      selectedChallenge === i
+                        ? 'border-magenta bg-magenta/10'
+                        : 'border-white/10 bg-white/[0.04] hover:border-magenta/50 hover:bg-white/[0.07] hover:-translate-y-0.5'
+                    }`}
+                  >
+                    <h4 className="font-bold text-[17px] mb-2">{c.name}</h4>
+                    <p className="text-[13px] text-white/60 leading-[1.5]">{c.problem}</p>
+                  </button>
+                ))}
+              </div>
+              {selectedChallenge !== null && (
+                <div className="bg-magenta/[0.06] border border-magenta/25 rounded-2xl p-6 space-y-4 animate-[chapterIn_320ms_cubic-bezier(.2,0,0,1)]">
                   <div>
-                    <p className="text-sm font-semibold text-white">{rule}</p>
-                    <p className="text-xs text-gray-400 mt-0.5 leading-snug">{detail}</p>
+                    <h4 className="font-semibold text-magenta text-[11px] uppercase tracking-[0.12em] mb-2">Solution actuelle</h4>
+                    <p className="text-white/80 leading-relaxed text-[14px]">{challenges[selectedChallenge].solution}</p>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-magenta text-[11px] uppercase tracking-[0.12em] mb-2">Innovation clé</h4>
+                    <p className="text-white/80 leading-relaxed text-[14px]">{challenges[selectedChallenge].innovation}</p>
+                  </div>
+                  <div className="bg-white/[0.04] border border-white/10 rounded-xl px-5 py-4">
+                    <p className="text-[13px] text-white/70 leading-[1.55]">{challenges[selectedChallenge].funFact}</p>
                   </div>
                 </div>
-              ))}
+              )}
             </div>
-          </div>
+          </ChapterShell>
+        )}
 
-          {/* Chiffres clés */}
-          <div className="grid grid-cols-3 divide-x divide-white/8 border-t border-white/8">
-            {[
-              { value: '3 000 V', label: 'Charge statique d\'un frottement ordinaire' },
-              { value: '< 5 V', label: 'Ce que supporte un circuit satellite' },
-              { value: '20×', label: 'Plus propre qu\'un bloc opératoire' },
-            ].map(({ value, label }) => (
-              <div key={label} className="px-5 py-4 text-center">
-                <p className="text-xl font-bold text-sky-300">{value}</p>
-                <p className="text-xs text-gray-500 mt-1 leading-snug">{label}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Simulateur de Mission */}
-        <div className="mb-4">
-          <MissionSimulator />
-        </div>
-
-        {/* Video replay */}
-        <div className="mb-8 rounded-xl overflow-hidden border border-white/10">
-          <div className="px-5 py-3 bg-white/4 border-b border-white/8 flex items-center gap-3">
-            <div className="w-7 h-7 rounded-full bg-red-500/15 border border-red-500/30 flex items-center justify-center flex-shrink-0">
-              <svg className="w-3 h-3 text-red-400 ml-0.5" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M8 5v14l11-7z" />
-              </svg>
-            </div>
-            <p className="text-sm font-semibold text-white">Replay — Vrai lancement Ariane 6 · VA262</p>
-          </div>
-          <div className="bg-slate-950 px-5 py-3 border-b border-white/8">
-            <p className="text-sm text-gray-300 leading-relaxed">
-              Ecoute les commentateurs, les opérateurs annonçant la trajectoire nominale et regarde un vrai lancement Ariane 6 !
-            </p>
-          </div>
-          {/* Timestamps */}
-          <div className="bg-slate-950 px-5 py-3 border-b border-white/8">
-            <p className="text-xs text-gray-500 uppercase tracking-wider mb-3">Étapes clés de la mission</p>
-            <div className="flex flex-wrap gap-2">
-              {[
-                { label: 'Décollage',            t: 1805, tag: 'T+0:00',   color: 'text-amber-400  border-amber-500/30  bg-amber-500/10'  },
-                { label: 'Séparation boosters',  t: 2024, tag: 'T+3:39',   color: 'text-orange-400 border-orange-500/30 bg-orange-500/10' },
-                { label: 'Largage coiffe',       t: 2077, tag: 'T+4:32',   color: 'text-sky-400    border-sky-500/30    bg-sky-500/10'    },
-                { label: 'Coupure Vulcain',      t: 2340, tag: 'T+8:55',   color: 'text-red-400    border-red-500/30    bg-red-500/10'    },
-                { label: 'Séparation étages',    t: 2345, tag: 'T+9:00',   color: 'text-rose-400   border-rose-500/30   bg-rose-500/10'   },
-                { label: 'Allumage HM7B',        t: 2350, tag: 'T+9:05',   color: 'text-cyan-400   border-cyan-500/30   bg-cyan-500/10'   },
-                { label: 'Orbite de transfert',  t: 2915, tag: 'T+18:30',  color: 'text-blue-400   border-blue-500/30   bg-blue-500/10'   },
-                { label: 'Rallumage Vinci',      t: 5940, tag: 'T+1h14:55', color: 'text-violet-400 border-violet-500/30 bg-violet-500/10' },
-                { label: 'Déploiement satellites', t: 7200, tag: 'T+1h31:55', color: 'text-green-400  border-green-500/30  bg-green-500/10'  },
-              ].map(({ label, t, tag, color }) => (
-                <a
-                  key={t}
-                  href={`https://www.youtube.com/watch?v=DhxJ6Z7u-YU&t=${t}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-xs font-medium transition-opacity hover:opacity-80 ${color}`}
-                >
-                  <span className="font-mono opacity-70">{tag}</span>
-                  <span>{label}</span>
-                </a>
-              ))}
-            </div>
-          </div>
-          <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
-            <iframe
-              className="absolute inset-0 w-full h-full"
-              src="https://www.youtube.com/embed/DhxJ6Z7u-YU?start=1805"
-              title="Lancement Ariane 6 — Replay rideshare VA262"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            />
-          </div>
-        </div>
-
-        <Quiz
-          questions={quizQuestions}
-          onComplete={handleQuizComplete}
-        />
-
-        <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10 mt-8">
-          <h3 className="text-2xl font-semibold mb-6">Votre Réflexion</h3>
-
-          <div className="mb-6">
-            <label className="block text-gray-300 mb-3 font-medium">
-              Selon vous, quel est le défi le plus impressionnant à surmonter pour construire un lanceur, et pourquoi ?
-            </label>
-            <textarea
-              value={responses['reflection'] || ''}
-              onChange={(e) => handleResponseChange('reflection', e.target.value)}
-              placeholder="Partagez vos réflexions sur l'ingénierie des lanceurs..."
-              className="w-full bg-white/5 border border-white/10 rounded-lg p-4 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none"
-              rows={4}
-              maxLength={4000}
-            />
-          </div>
-
-          <button
-            onClick={handleSubmit}
-            disabled={!canSubmit || submitted}
-            className={`w-full py-4 rounded-lg font-semibold text-lg transition-all duration-300 flex items-center justify-center gap-2 ${
-              submitted
-                ? 'bg-green-600 text-white'
-                : canSubmit
-                ? 'bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white'
-                : 'bg-gray-700 text-gray-400 cursor-not-allowed'
-            }`}
+        {/* ── Ch 4 : Salles blanches ── */}
+        {chapter === 3 && (
+          <ChapterShell
+            kicker="04" title="Les salles blanches"
+            titlePrefix="Le satellite est assemblé ici,"
+            titleAccent="avant le décollage."
+            lede="Avant de voir la fusée décoller, chaque satellite a été assemblé dans un endroit très particulier. Plus propre qu'un bloc opératoire, la salle blanche protège les composants de la poussière et de l'électricité statique."
+            onPrev={() => goTo(2)} onNext={() => goTo(4)} nextEnabled={true}
+            nextLabel="Continue · La séquence de lancement →"
           >
-            {submitted ? (
-              <>
-                <CheckCircle className="w-5 h-5" />
-                Réponses sauvegardées !
-              </>
-            ) : (
-              <>
-                Continuer vers les Réseaux Sociaux 📱
-                <ChevronRight className="w-5 h-5" />
-              </>
-            )}
-          </button>
-        </div>
+            <div className="space-y-6">
+              <div className="grid grid-cols-2 gap-3">
+                {[
+                  { src: "https://www.esa.int/var/esa/storage/images/esa_multimedia/images/2022/09/formal_opening_of_estec_s_fv_cleanroom/24451621-1-eng-GB/Formal_opening_of_ESTEC_s_FV_cleanroom.jpg", alt: "Salle blanche ESTEC — ESA" },
+                  { src: "https://www.esa.int/var/esa/storage/images/esa_multimedia/images/2014/01/life_physical_sciences_life_support_laboratory_clean_room/13476523-1-eng-GB/Life_Physical_Sciences_Life_Support_Laboratory_clean_room.jpg", alt: "Technicien en combinaison — ESA" },
+                  { src: "https://www.esa.int/var/esa/storage/images/esa_multimedia/images/2021/10/webb_telescope_in_clean_room_at_europe_s_spaceport3/23733885-2-eng-GB/Webb_telescope_in_clean_room_at_Europe_s_Spaceport.jpg", alt: "James Webb en salle blanche — Kourou" },
+                  { src: "https://www.esa.int/var/esa/storage/images/esa_multimedia/images/2022/09/esa_s_test_centre_expands/24451576-1-eng-GB/ESA_s_Test_Centre_expands.jpg", alt: "Grande salle blanche ESA" },
+                ].map(({ src, alt }) => (
+                  <div key={alt} className="rounded-xl overflow-hidden border border-white/10 aspect-video bg-black/30">
+                    <img src={src} alt={alt} className="w-full h-full object-cover" />
+                  </div>
+                ))}
+              </div>
+              <p className="text-[11px] italic text-white/35 text-right">Sources : ESA / Airbus Defence & Space</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {CLEAN_ROOM_RULES.map(({ rule, detail }) => (
+                  <div key={rule} className="bg-white/[0.04] border border-white/10 rounded-xl p-4">
+                    <p className="text-[13px] font-semibold text-white mb-1">{rule}</p>
+                    <p className="text-[12px] text-white/55 leading-[1.5]">{detail}</p>
+                  </div>
+                ))}
+              </div>
+              <div className="grid grid-cols-3 divide-x divide-white/10 border border-white/10 rounded-2xl overflow-hidden">
+                {[
+                  { value: '3 000 V', label: "Charge statique d'un frottement ordinaire" },
+                  { value: '< 5 V', label: 'Ce que supporte un circuit satellite' },
+                  { value: '20×', label: "Plus propre qu'un bloc opératoire" },
+                ].map(({ value, label }) => (
+                  <div key={label} className="px-5 py-4 text-center">
+                    <p className="text-[22px] font-bold text-magenta">{value}</p>
+                    <p className="text-[11px] text-white/45 mt-1 uppercase tracking-[0.08em] leading-snug">{label}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </ChapterShell>
+        )}
+
+        {/* ── Ch 5 : Séquence de lancement ── */}
+        {chapter === 4 && (
+          <ChapterShell
+            kicker="05" title="La séquence de lancement"
+            titlePrefix="Chaque étape compte,"
+            titleAccent="de la mise à feu au déploiement."
+            lede="Regarde un vrai lancement Ariane 6 (mission VA262) et retrouve les étapes clés. Le simulateur te permet ensuite de revivre chaque décision de mission."
+            onPrev={() => goTo(3)} onNext={() => goTo(5)} nextEnabled={true}
+            nextLabel="Continue · Quiz éclair →"
+          >
+            <div className="space-y-6">
+              <div className="rounded-xl overflow-hidden border border-white/10">
+                <div className="px-5 py-3 bg-white/[0.04] border-b border-white/10 flex items-center gap-3">
+                  <div className="w-7 h-7 rounded-full bg-magenta/15 border border-magenta/30 grid place-items-center flex-shrink-0">
+                    <svg className="w-3 h-3 text-magenta ml-0.5" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
+                  </div>
+                  <p className="text-[13px] font-semibold">Replay — Vrai lancement Ariane 6 · VA262</p>
+                </div>
+                <div className="bg-black/40 px-5 py-3 border-b border-white/10">
+                  <p className="text-[11px] font-semibold tracking-[0.12em] uppercase text-white/40 mb-3">Étapes clés</p>
+                  <div className="flex flex-wrap gap-2">
+                    {[
+                      { label: 'Décollage', t: 1805, tag: 'T+0:00' },
+                      { label: 'Séparation boosters', t: 2024, tag: 'T+3:39' },
+                      { label: 'Largage coiffe', t: 2077, tag: 'T+4:32' },
+                      { label: 'Coupure Vulcain', t: 2340, tag: 'T+8:55' },
+                      { label: 'Orbite de transfert', t: 2915, tag: 'T+18:30' },
+                      { label: 'Déploiement satellites', t: 7200, tag: 'T+1h31:55' },
+                    ].map(({ label, t, tag }) => (
+                      <a
+                        key={t}
+                        href={`https://www.youtube.com/watch?v=DhxJ6Z7u-YU&t=${t}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-magenta/30 bg-magenta/10 text-[11px] font-medium text-magenta hover:bg-magenta/20 transition"
+                      >
+                        <span className="font-mono opacity-70">{tag}</span>
+                        <span>{label}</span>
+                      </a>
+                    ))}
+                  </div>
+                </div>
+                <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
+                  <iframe
+                    className="absolute inset-0 w-full h-full"
+                    src="https://www.youtube.com/embed/DhxJ6Z7u-YU?start=1805"
+                    title="Lancement Ariane 6 — Replay rideshare VA262"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  />
+                </div>
+              </div>
+              <MissionSimulator />
+            </div>
+          </ChapterShell>
+        )}
+
+        {/* ── Ch 6 : Quiz + Réflexion ── */}
+        {chapter === 5 && !quizCompleted && (
+          <ChapterShell
+            kicker="06" title="Quiz éclair"
+            titlePrefix="Deux questions pour"
+            titleAccent="valider le chapitre."
+            lede="Une réponse par question. Pas de mauvaise réponse définitive — l'objectif c'est d'apprendre."
+            onPrev={() => goTo(4)} onNext={() => {}} nextEnabled={false}
+            nextLabel="Réponds aux questions d'abord"
+          >
+            <Quiz questions={quizQuestions} onComplete={handleQuizComplete} />
+          </ChapterShell>
+        )}
+
+        {chapter === 5 && quizCompleted && (
+          <ChapterShell
+            kicker="06" title="Réflexion"
+            titlePrefix="Quel est le défi le plus impressionnant"
+            titleAccent="à retenir ?"
+            lede="Prends un moment pour formuler ta réponse. Elle sera transmise aux équipes de Space Elevator."
+            onPrev={() => goTo(4)} onNext={() => goTo(6)} nextEnabled={reflection.trim().length > 0}
+            nextLabel={reflection.trim().length > 0 ? "Terminer le chapitre →" : "Écris ta réflexion d'abord"}
+          >
+            <div>
+              <label className="block text-[13px] font-medium text-white/70 mb-3">
+                Selon toi, quel est le défi le plus impressionnant à surmonter pour construire un lanceur, et pourquoi ?
+              </label>
+              <textarea
+                value={reflection}
+                onChange={e => handleReflectionChange(e.target.value)}
+                placeholder="Partage tes réflexions sur l'ingénierie des lanceurs..."
+                className="w-full bg-white/[0.04] border border-white/10 rounded-lg px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-magenta focus:ring-2 focus:ring-magenta/20 resize-none text-[14px]"
+                rows={5}
+                maxLength={4000}
+              />
+              {reflection.trim().length > 0 && (
+                <div className="flex items-center gap-2 text-[13px] text-magenta mt-3">
+                  <CheckCircle className="w-4 h-4" /> Réflexion enregistrée
+                </div>
+              )}
+            </div>
+          </ChapterShell>
+        )}
+
+        {/* ── Récap ── */}
+        {chapter === 6 && (
+          <ChapterRecap
+            chapterLabel="Lanceurs"
+            summary="Tu as exploré comment on quitte la Terre, les défis techniques des lanceurs, les salles blanches et la séquence d'un vrai lancement Ariane 6."
+            stats={[
+              { v: selectedChallenge !== null ? challenges[selectedChallenge].name : '—', t: 'défi technique exploré' },
+              { v: quizCompleted ? '2 / 2' : '0 / 2', t: 'questions du quiz' },
+            ]}
+            nextTitle="Réseaux Sociaux"
+            nextDesc="Découvre les comptes et ressources pour rester connecté à l'actualité spatiale."
+            onContinue={onComplete}
+            onPrev={() => goTo(5)}
+          />
+        )}
       </div>
-    </div>
+    </SectionCanvas>
   );
 }

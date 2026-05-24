@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
-import { ChevronLeft, ChevronRight, Home, Trophy } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Trophy } from 'lucide-react';
 import { useSession } from '../contexts/SessionContext';
+import { ChapterShell, SectionTopBar, SectionProgress } from './ChapterShell';
 
 /* ════════════════════════════════════════════════════════════════
  *  ImpactTerrestreSection — chapter-based interactive flow
@@ -76,63 +77,11 @@ export function ImpactTerrestreSection({ onComplete, onHome }: ImpactTerrestreSe
         <div className="absolute -top-32 right-24 w-[400px] h-[400px] rounded-full opacity-5 bg-magenta blur-[100px]" />
       </div>
 
-      {/* Top bar */}
-      <div className="sticky top-0 z-20 backdrop-blur-md bg-deepspace/80 border-b border-white/5">
-        <div className="max-w-[1240px] mx-auto px-8 py-4 grid grid-cols-[auto_1fr_auto] items-center gap-8">
-          <img
-            src={`${import.meta.env.BASE_URL}logos/space-elevator.png`}
-            alt="Space Elevator"
-            className="h-8 block"
-          />
-          <div className="text-center text-[12px] font-medium tracking-[0.16em] uppercase text-white/60">
-            <span className="text-white font-semibold mr-2">Session 1</span>
-            Chapitre 1 sur 3 · L'espace au quotidien
-          </div>
-          <button
-            onClick={onHome}
-            className="inline-flex items-center gap-1.5 border border-white/10 hover:border-white/30 rounded-lg px-3 py-1.5 text-[12px] font-medium text-white/70 hover:text-white transition-colors"
-          >
-            <Home className="w-3.5 h-3.5" /> Accueil
-          </button>
-        </div>
-      </div>
-
-      {/* Progress bar */}
-      <div className="sticky top-[57px] z-10 backdrop-blur-md bg-deepspace/75 border-b border-white/5">
-        <div className="max-w-[1240px] mx-auto px-8 py-3.5 flex items-center gap-3.5">
-          <div className="text-[11px] font-semibold tracking-[0.16em] uppercase text-white/55 whitespace-nowrap">
-            Page <span className="text-magenta">{String(chapter + 1).padStart(2, '0')}</span> sur 06
-          </div>
-          <div className="flex-1 h-1 bg-white/10 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-gradient-to-r from-magenta to-magenta-700 transition-all duration-500"
-              style={{ width: `${((chapter + 1) / TOTAL_CHAPTERS) * 100}%` }}
-            />
-          </div>
-          <div className="flex gap-1.5">
-            {Array.from({ length: TOTAL_CHAPTERS }).map((_, i) => {
-              const isCurrent = i === chapter;
-              const isDone = i < chapter;
-              return (
-                <button
-                  key={i}
-                  onClick={() => goTo(i)}
-                  className={
-                    'w-6 h-6 rounded-full grid place-items-center text-[11px] font-bold transition-all ' +
-                    (isCurrent
-                      ? 'bg-magenta text-white scale-110 shadow-[0_0_0_3px_rgba(200,37,122,0.25)]'
-                      : isDone
-                        ? 'bg-magenta/15 text-magenta border border-magenta'
-                        : 'bg-white/5 text-white/55 border border-white/10')
-                  }
-                >
-                  {i + 1}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      </div>
+      <SectionTopBar
+        label="Session 1 · Chapitre 1 sur 3 · L'espace au quotidien"
+        onHome={onHome}
+      />
+      <SectionProgress current={chapter} total={TOTAL_CHAPTERS} onGoTo={goTo} />
 
       {/* Stage */}
       <div className="relative z-[1] max-w-[1120px] mx-auto px-8 pt-14 pb-24">
@@ -206,60 +155,6 @@ export function ImpactTerrestreSection({ onComplete, onHome }: ImpactTerrestreSe
         )}
       </div>
     </div>
-  );
-}
-
-/* ─────────────────────────────────────────────────────────
- *  ChapterShell — common chrome around each chapter
- * ────────────────────────────────────────────────────────*/
-interface ChapterShellProps {
-  kicker: string;
-  title: string;
-  titleAccent: string;
-  titlePrefix?: string;
-  lede: string;
-  onPrev: (() => void) | null;
-  onNext: () => void;
-  nextEnabled: boolean;
-  nextLabel: string;
-  children: React.ReactNode;
-}
-function ChapterShell(props: ChapterShellProps) {
-  return (
-    <section className="animate-[chapterIn_480ms_cubic-bezier(.2,0,0,1)]">
-      <div className="flex flex-col gap-2 mb-7">
-        <div className="inline-flex items-center gap-3 text-[12px] font-semibold tracking-[0.16em] uppercase text-magenta">
-          <span className="bg-magenta text-white rounded-full px-2.5 py-0.5 text-[11px] font-bold">{props.kicker}</span>
-          {props.title}
-        </div>
-        <h1 className="font-display font-bold uppercase tracking-[0.04em] text-[clamp(32px,4vw,52px)] leading-[1.08] m-0">
-          {props.titlePrefix && <>{props.titlePrefix}<br/></>}
-          <span className="text-magenta">{props.titleAccent}</span>
-        </h1>
-        <p className="text-[16px] text-white/70 max-w-[720px] leading-[1.55] m-0 mt-2">{props.lede}</p>
-      </div>
-
-      {props.children}
-
-      <div className="mt-12 pt-6 border-t border-white/10 flex items-center justify-between gap-4">
-        {props.onPrev ? (
-          <button
-            onClick={props.onPrev}
-            className="inline-flex items-center gap-2 rounded-lg px-5 py-3.5 text-[14px] font-semibold border border-white/10 text-white/70 hover:border-white/30 hover:text-white transition"
-          >
-            <ChevronLeft className="w-4 h-4" /> Précédent
-          </button>
-        ) : <div />}
-
-        <button
-          onClick={props.onNext}
-          disabled={!props.nextEnabled}
-          className="inline-flex items-center gap-2 rounded-lg px-5 py-3.5 text-[14px] font-semibold bg-magenta text-white hover:bg-magenta-700 disabled:bg-white/10 disabled:text-white/40 disabled:cursor-not-allowed transition"
-        >
-          {props.nextLabel}
-        </button>
-      </div>
-    </section>
   );
 }
 

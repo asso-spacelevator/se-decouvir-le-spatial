@@ -11,21 +11,7 @@ import { ExplorationSection } from './components/ExplorationSection';
 import { AccompagnementSection } from './components/AccompagnementSection';
 import { FAQQuestionsSection } from './components/FAQQuestionsSection';
 import { CompletionPage } from './components/CompletionPage';
-import { ProgressBar } from './components/ProgressBar';
 import type { Section } from './lib/supabase';
-
-const SESSION1_STEPS = [
-  { name: 'Impact Terre', icon: '🌍', section: 'impact_terrestre' as Section },
-  { name: 'Lanceurs', icon: '🚀', section: 'rockets' as Section },
-  { name: 'Social', icon: '📱', section: 'social' as Section },
-];
-
-const SESSION2_STEPS = [
-  { name: 'Orbite', icon: '🛰️', section: 'satellites' as Section },
-  { name: 'Au-delà', icon: '🌌', section: 'exploration' as Section },
-  { name: 'Accompagnement', icon: '🤝', section: 'accompagnement' as Section },
-  { name: 'FAQ & Questions', icon: '💬', section: 'faq_questions' as Section },
-];
 
 const sectionOrder: Section[] = [
   'start', 'introduction',
@@ -45,14 +31,6 @@ function AppContent() {
     }
   }, [session]);
 
-  const isSession1 = SESSION1_STEPS.some(s => s.section === currentView);
-  const isSession2 = SESSION2_STEPS.some(s => s.section === currentView);
-
-  const getCurrentStepIndex = () => {
-    if (isSession1) return SESSION1_STEPS.findIndex(s => s.section === currentView);
-    if (isSession2) return SESSION2_STEPS.findIndex(s => s.section === currentView);
-    return -1;
-  };
 
   const navigate = async (section: Section) => {
     setCurrentView(section);
@@ -87,20 +65,8 @@ function AppContent() {
     );
   }
 
-  const steps = isSession1 ? SESSION1_STEPS : SESSION2_STEPS;
-  const sessionLabel = isSession1 ? 'Session 1 / 2' : 'Session 2 / 2';
-  const stepIndex = getCurrentStepIndex();
-
   return (
-    <>
-      {(isSession1 || isSession2) && (
-        <ProgressBar
-          currentStep={stepIndex}
-          totalSteps={steps.length}
-          steps={steps}
-          sessionLabel={sessionLabel}
-        />
-      )}
+    <div className="min-h-screen bg-deepspace">
 
       {currentView === 'start' && (
         <StartPage
@@ -179,7 +145,7 @@ function AppContent() {
       )}
 
       {currentView === 'completed' && <CompletionPage onRestart={handleHome} />}
-    </>
+    </div>
   );
 }
 

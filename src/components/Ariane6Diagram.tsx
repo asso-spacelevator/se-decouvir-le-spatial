@@ -202,7 +202,7 @@ export function Ariane6Diagram() {
   const glow = (id: PartId) => isActive(id) ? `drop-shadow(0 0 6px ${PARTS[id].accentColor}88)` : 'none';
 
   return (
-    <div className="bg-slate-950 rounded-2xl border border-white/10 overflow-hidden">
+    <div className="bg-deepspace rounded-2xl border border-white/10 overflow-hidden">
       <div className="px-6 pt-6 pb-2">
         <h3 className="text-xl font-bold text-white">Ariane 6 — Schéma Interactif</h3>
         <p className="text-sm text-gray-400 mt-1">Cliquez sur un composant pour découvrir son rôle et ses sources.</p>

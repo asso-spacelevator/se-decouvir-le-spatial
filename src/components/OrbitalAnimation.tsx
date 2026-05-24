@@ -256,7 +256,7 @@ export function OrbitalAnimation() {
     : null;
 
   return (
-    <div className="bg-slate-950 rounded-2xl border border-white/10 overflow-hidden">
+    <div className="bg-deepspace rounded-2xl border border-white/10 overflow-hidden">
       <div className="px-6 pt-6 pb-2">
         <h3 className="text-xl font-bold text-white">Les 4 Types d'Orbites</h3>
         <p className="text-sm text-gray-400 mt-1">
@@ -549,7 +549,7 @@ export function OrbitalAnimation() {
                 <h4 className="font-bold text-white text-lg">{selectedSatData.name}</h4>
               </div>
               <div className="grid grid-cols-2 gap-2 mb-3">
-                <div className="rounded-lg overflow-hidden bg-slate-800">
+                <div className="rounded-lg overflow-hidden bg-white/[0.04]">
                   <img
                     src={selectedSatData.image}
                     alt={`${selectedSatData.name} satellite`}
@@ -558,7 +558,7 @@ export function OrbitalAnimation() {
                   />
                   <p className="text-xs text-center text-gray-500 py-1">Satellite</p>
                 </div>
-                <div className="rounded-lg overflow-hidden bg-slate-800">
+                <div className="rounded-lg overflow-hidden bg-white/[0.04]">
                   <img
                     src={selectedSatData.missionImage}
                     alt={`${selectedSatData.name} mission`}

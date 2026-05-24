@@ -284,7 +284,7 @@ export function TrajectoryView({ missionTime, phases, totalTime, completed }: Pr
   }, []);
 
   return (
-    <div className="w-full rounded-xl border border-white/8 overflow-hidden bg-slate-950" style={{ height: 220 }}>
+    <div className="w-full rounded-xl border border-white/8 overflow-hidden bg-deepspace" style={{ height: 220 }}>
       <canvas ref={canvasRef} className="w-full h-full" style={{ display: 'block' }} />
     </div>
   );

@@ -83,7 +83,7 @@ export function Quiz({ questions, onComplete }: QuizProps) {
                     : showIncorrect
                     ? 'border-red-500 bg-red-500/20 animate-shake'
                     : isSelected
-                    ? 'border-cyan-500 bg-cyan-500/10'
+                    ? 'border-magenta bg-magenta/10'
                     : 'border-white/10 bg-white/5 hover:border-white/30 hover:bg-white/10'
                 } ${showFeedback ? 'cursor-not-allowed' : 'cursor-pointer'}`}
               >
@@ -149,7 +149,7 @@ export function Quiz({ questions, onComplete }: QuizProps) {
             disabled={!selectedAnswer}
             className={`flex-1 py-3 rounded-lg font-semibold transition-all duration-300 ${
               selectedAnswer
-                ? 'bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white'
+                ? 'bg-magenta hover:bg-magenta-700 text-white'
                 : 'bg-gray-700 text-gray-400 cursor-not-allowed'
             }`}
           >
@@ -158,7 +158,7 @@ export function Quiz({ questions, onComplete }: QuizProps) {
         ) : (
           <button
             onClick={handleNextQuestion}
-            className="flex-1 py-3 rounded-lg font-semibold bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white transition-all duration-300"
+            className="flex-1 py-3 rounded-lg font-semibold bg-magenta hover:bg-magenta-700 text-white transition-all duration-300"
           >
             {isLastQuestion ? 'Terminer le Quiz' : 'Question Suivante'}
           </button>

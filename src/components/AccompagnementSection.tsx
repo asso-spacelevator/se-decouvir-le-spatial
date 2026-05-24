@@ -1,8 +1,14 @@
-import { useState, useEffect } from 'react';
-import { Users, ChevronRight, CheckCircle, ExternalLink, Mail, UserSearch, BookOpen, Wrench, Trophy, Search, Lightbulb, Heart } from 'lucide-react';
+import { useState, useEffect, type ReactNode } from 'react';
+import {
+  Users, ExternalLink, Mail, UserSearch, BookOpen, Wrench, Trophy, Search,
+  Lightbulb, Heart, Atom, Star, Monitor, GraduationCap, Building2, Rocket,
+  TrendingUp, Calculator, Telescope, Globe, ChevronRight, Package, Satellite,
+} from 'lucide-react';
 import { useSession } from '../contexts/SessionContext';
-import { Navigation } from './Navigation';
 import { supabase } from '../lib/supabase';
+import { SectionCanvas, SectionTopBar, SectionProgress, ChapterShell, ChapterRecap } from './ChapterShell';
+
+const TOTAL_CHAPTERS = 5;
 
 interface Association {
   name: string;
@@ -11,7 +17,7 @@ interface Association {
   email: string;
   focus: string;
   howTheyHelp: string;
-  icon: string;
+  icon: ReactNode;
 }
 
 interface Resource {
@@ -20,7 +26,6 @@ interface Resource {
   type: 'intervention' | 'diy' | 'competition' | 'kit';
   provider: string;
   url?: string;
-  icon: string;
 }
 
 interface MentoringPlatform {
@@ -53,129 +58,135 @@ interface AccompagnementSectionProps {
 const associations: Association[] = [
   {
     name: 'Planète Sciences',
-    description: 'Association d\'éducation populaire aux sciences et techniques, leader en France',
+    icon: <Atom className="w-5 h-5" />,
+    description: "Association d'éducation populaire aux sciences et techniques, leader en France",
     website: 'https://www.planete-sciences.org/',
     email: 'contact@planete-sciences.org',
     focus: 'Jeunes de 8 à 25 ans',
-    howTheyHelp: 'Clubs scientifiques, ateliers en classe, camps spatiaux, Concours de Lanceurs à Eau, accompagnement de projets (lanceurs expérimentaux, ballons stratosphériques), formation d\'animateurs',
-    icon: '🔬'
+    howTheyHelp: "Clubs scientifiques, ateliers en classe, camps spatiaux, Concours de Lanceurs à Eau, accompagnement de projets (lanceurs expérimentaux, ballons stratosphériques), formation d'animateurs",
   },
   {
     name: 'Elles bougent',
-    description: 'Mentorat et interventions en lycée pour encourager les filles vers les sciences et l\'ingénierie',
+    icon: <Users className="w-5 h-5" />,
+    description: "Mentorat et interventions en lycée pour encourager les filles vers les sciences et l'ingénierie",
     website: 'https://www.ellesbougent.com',
     email: '',
     focus: 'Lycéennes',
-    howTheyHelp: 'Interventions de femmes ingénieures en lycée, événements de rencontres, mentorat individuel, modèles féminins dans les sciences',
-    icon: '👩‍🔬'
+    howTheyHelp: "Interventions de femmes ingénieures en lycée, événements de rencontres, mentorat individuel, modèles féminins dans les sciences",
   },
   {
     name: 'Femmes & Sciences',
+    icon: <Star className="w-5 h-5" />,
     description: 'Promotion des carrières scientifiques féminines',
     website: 'https://www.femmesetsciences.fr',
     email: '',
     focus: 'Lycéennes, étudiantes, femmes',
-    howTheyHelp: 'Conférences, mentorat, événements de networking, promotion des parcours scientifiques pour les filles',
-    icon: '🌟'
+    howTheyHelp: "Conférences, mentorat, événements de networking, promotion des parcours scientifiques pour les filles",
   },
   {
     name: 'Girls Can Code',
+    icon: <Monitor className="w-5 h-5" />,
     description: 'Initiation des collégiennes à la programmation et aux métiers du numérique',
     website: 'https://girlscancode.fr',
     email: '',
     focus: 'Collégiennes',
-    howTheyHelp: 'Stages de programmation, ateliers ludiques, découverte des métiers du numérique et de l\'informatique',
-    icon: '💻'
+    howTheyHelp: "Stages de programmation, ateliers ludiques, découverte des métiers du numérique et de l'informatique",
   },
   {
     name: 'Eureka',
+    icon: <Lightbulb className="w-5 h-5" />,
     description: 'Mentorat, ressources, événements et vulgarisation scientifique pour jeunes',
     website: 'https://association-eureka.fr/',
     email: '',
     focus: 'Lycéens et étudiants',
-    howTheyHelp: 'Mentorat individuel, ressources d\'orientation, événements de vulgarisation scientifique, mise en réseau',
-    icon: '💡'
+    howTheyHelp: "Mentorat individuel, ressources d'orientation, événements de vulgarisation scientifique, mise en réseau",
   },
   {
     name: 'Article 1',
-    description: 'Programme de mentorat pour accompagner l\'orientation vers les études supérieures',
+    icon: <GraduationCap className="w-5 h-5" />,
+    description: "Programme de mentorat pour accompagner l'orientation vers les études supérieures",
     website: 'https://www.mentoratverslesup.dema1n.org/',
     email: '',
     focus: 'Lycéens vers le supérieur',
-    howTheyHelp: 'Binômes lycéen / étudiant, accompagnement personnalisé sur l\'orientation, choix de formations, dossiers d\'admission',
-    icon: '🎓'
+    howTheyHelp: "Binômes lycéen / étudiant, accompagnement personnalisé sur l'orientation, choix de formations, dossiers d'admission",
   },
   {
     name: '1 jeune 1 mentor',
+    icon: <Heart className="w-5 h-5" />,
     description: 'Dispositif national de mentorat pour les 5-30 ans',
     website: 'https://www.1jeune1mentor.fr/',
     email: '',
     focus: 'Jeunes de 5 à 30 ans',
-    howTheyHelp: 'Mise en relation avec un mentor pour parcours scolaire et professionnel, plateforme nationale soutenue par l\'État',
-    icon: '🤝'
+    howTheyHelp: "Mise en relation avec un mentor pour parcours scolaire et professionnel, plateforme nationale soutenue par l'État",
   },
   {
     name: 'Télémaque',
-    description: 'Programme d\'égalité des chances avec double mentorat école / entreprise',
+    icon: <Building2 className="w-5 h-5" />,
+    description: "Programme d'égalité des chances avec double mentorat école / entreprise",
     website: 'https://www.telemaque.org/',
     email: '',
     focus: 'Collégiens et lycéens',
-    howTheyHelp: 'Double mentorat par un enseignant et un professionnel d\'entreprise, accompagnement sur 2 ans, réseau d\'anciens',
-    icon: '🏫'
+    howTheyHelp: "Double mentorat par un enseignant et un professionnel d'entreprise, accompagnement sur 2 ans, réseau d'anciens",
   },
   {
     name: 'ProPulse',
-    description: 'Lycéens accompagnés par des étudiants de grandes écoles pour leur orientation',
+    icon: <Rocket className="w-5 h-5" />,
+    description: "Lycéens accompagnés par des étudiants de grandes écoles pour leur orientation",
     website: 'https://propulse-association.fr/',
     email: '',
     focus: 'Lycéens',
-    howTheyHelp: 'Tutorat par des étudiants de grandes écoles, aide aux devoirs, préparation aux concours, conseils d\'orientation',
-    icon: '🚀'
+    howTheyHelp: "Tutorat par des étudiants de grandes écoles, aide aux devoirs, préparation aux concours, conseils d'orientation",
   },
   {
     name: 'Association Tremplin',
-    description: 'Accès des lycéens aux études scientifiques avec le soutien de grandes écoles',
+    icon: <TrendingUp className="w-5 h-5" />,
+    description: "Accès des lycéens aux études scientifiques avec le soutien de grandes écoles",
     website: 'http://www.association-tremplin.org',
     email: '',
     focus: 'Lycéens',
-    howTheyHelp: 'Accompagnement vers les classes préparatoires et grandes écoles, soutien scolaire, mentorat par des élèves-ingénieurs',
-    icon: '📐'
+    howTheyHelp: "Accompagnement vers les classes préparatoires et grandes écoles, soutien scolaire, mentorat par des élèves-ingénieurs",
   },
   {
     name: 'Les maths en scène',
-    description: 'Faire découvrir les mathématiques autrement, de façon vivante et créative',
+    icon: <Calculator className="w-5 h-5" />,
+    description: "Faire découvrir les mathématiques autrement, de façon vivante et créative",
     website: 'https://lesmathsenscene.fr',
     email: '',
     focus: 'Collégiens, lycéens',
-    howTheyHelp: 'Spectacles, ateliers et événements pour réconcilier les jeunes avec les mathématiques',
-    icon: '🎭'
+    howTheyHelp: "Spectacles, ateliers et événements pour réconcilier les jeunes avec les mathématiques",
   },
   {
     name: 'Fondation CGénial',
-    description: 'Passerelle entre entreprises innovantes et jeunes pour déclencher des vocations scientifiques',
+    icon: <Telescope className="w-5 h-5" />,
+    description: "Passerelle entre entreprises innovantes et jeunes pour déclencher des vocations scientifiques",
     website: 'https://www.cgenial.org',
     email: '',
     focus: 'Collégiens, lycéens',
-    howTheyHelp: 'Interventions d\'ingénieurs et chercheurs en classe, Concours C\'Génial, immersions en entreprise',
-    icon: '🔭'
+    howTheyHelp: "Interventions d'ingénieurs et chercheurs en classe, Concours C'Génial, immersions en entreprise",
   },
 ];
 
 const resources: Resource[] = [
-  { name: 'Interventions Planète Sciences', description: 'Ateliers et interventions dans les établissements scolaires', type: 'intervention', provider: 'Planète Sciences', url: 'https://www.planete-sciences.org/', icon: '🎓' },
-  { name: 'Mallettes Pédagogiques CNES', description: 'Kits éducatifs complets sur différents thèmes spatiaux', type: 'kit', provider: 'CNES', url: 'https://cnes.fr/fr/education', icon: '🧰' },
-  { name: 'Construction de Lanceurs à Eau', description: 'Projet DIY pour comprendre la propulsion', type: 'diy', provider: 'Communauté', icon: '🚀' },
-  { name: 'Concours C\'Génial', description: 'Concours scientifique pour collégiens et lycéens', type: 'competition', provider: 'C\'Génial', url: 'https://www.cgenial.org/', icon: '🏆' },
-  { name: 'Fabrication de Satellites en Carton', description: 'Comprendre les composants d\'un satellite', type: 'diy', provider: 'Communauté', icon: '🛰️' },
-  { name: 'Défis Espace de l\'ESA', description: 'Challenges éducatifs proposés par l\'Agence Spatiale Européenne', type: 'competition', provider: 'ESA', url: 'https://www.esa.int/Education', icon: '🌍' },
+  { name: 'Interventions Planète Sciences', description: 'Ateliers et interventions dans les établissements scolaires', type: 'intervention', provider: 'Planète Sciences', url: 'https://www.planete-sciences.org/' },
+  { name: 'Mallettes Pédagogiques CNES', description: 'Kits éducatifs complets sur différents thèmes spatiaux', type: 'kit', provider: 'CNES', url: 'https://cnes.fr/fr/education' },
+  { name: 'Construction de Lanceurs à Eau', description: 'Projet DIY pour comprendre la propulsion', type: 'diy', provider: 'Communauté' },
+  { name: "Concours C'Génial", description: 'Concours scientifique pour collégiens et lycéens', type: 'competition', provider: "C'Génial", url: 'https://www.cgenial.org/' },
+  { name: 'Fabrication de Satellites en Carton', description: "Comprendre les composants d'un satellite", type: 'diy', provider: 'Communauté' },
+  { name: "Défis Espace de l'ESA", description: "Challenges éducatifs proposés par l'Agence Spatiale Européenne", type: 'competition', provider: 'ESA', url: 'https://www.esa.int/Education' },
 ];
 
-const typeLabels = { intervention: 'Interventions en Classe', diy: 'Projets DIY', competition: 'Concours', kit: 'Mallettes Pédagogiques' };
-const typeIcons = {
+const typeLabels: Record<Resource['type'], string> = {
+  intervention: 'Interventions en Classe',
+  diy: 'Projets DIY',
+  competition: 'Concours',
+  kit: 'Mallettes Pédagogiques',
+};
+
+const typeIcons: Record<Resource['type'], ReactNode> = {
   intervention: <BookOpen className="w-5 h-5" />,
   diy: <Wrench className="w-5 h-5" />,
   competition: <Trophy className="w-5 h-5" />,
-  kit: <BookOpen className="w-5 h-5" />,
+  kit: <Package className="w-5 h-5" />,
 };
 
 const regions = [
@@ -184,35 +195,55 @@ const regions = [
   'Nouvelle-Aquitaine', 'Occitanie', 'Pays de la Loire', "Provence-Alpes-Côte d'Azur",
 ];
 
-export function AccompagnementSection({ onComplete, onHome, onBack }: AccompagnementSectionProps) {
+const sciCategoryLabels: Record<string, string> = {
+  general_science: 'Sciences Générales',
+  space: 'Associations Spatiales',
+  girls_in_stem: 'Encourager les Jeunes Filles dans les Sciences',
+};
+
+export function AccompagnementSection({ onComplete, onHome }: AccompagnementSectionProps) {
   const { saveResponse, getResponses } = useSession();
-  const [responses, setResponses] = useState<Record<string, string>>({});
-  const [submitted, setSubmitted] = useState(false);
-  const [activeTab, setActiveTab] = useState<'associations' | 'ressources'>('associations');
+  const [chapter, setChapter] = useState(0);
+  const [hydrated, setHydrated] = useState(false);
   const [searchRegion, setSearchRegion] = useState('');
+  const [interested, setInterested] = useState('');
   const [mentoringPlatforms, setMentoringPlatforms] = useState<MentoringPlatform[]>([]);
   const [scientificAssociations, setScientificAssociations] = useState<ScientificAssociation[]>([]);
   const [regionalAssociations, setRegionalAssociations] = useState<ScientificAssociation[]>([]);
 
   useEffect(() => {
-    const loadData = async () => {
-      const savedResponses = await getResponses('accompagnement');
-      setResponses(savedResponses);
-      if (savedResponses.searchRegion) setSearchRegion(savedResponses.searchRegion);
-      if (savedResponses.activeTab) setActiveTab(savedResponses.activeTab as 'associations' | 'ressources');
+    (async () => {
+      const r = await getResponses('accompagnement');
+      if (r.chapter) setChapter(Math.min(parseInt(r.chapter, 10) || 0, TOTAL_CHAPTERS - 1));
+      if (r.searchRegion) setSearchRegion(r.searchRegion);
+      if (r.interested) setInterested(r.interested);
 
       const { data: mentoring } = await supabase.from('mentoring_platforms').select('*').order('name');
       if (mentoring) setMentoringPlatforms(mentoring);
 
       const { data: assocs } = await supabase.from('scientific_associations').select('*').order('name');
       if (assocs) setScientificAssociations(assocs);
-    };
-    loadData();
+
+      if (r.searchRegion) {
+        const { data } = await supabase.from('scientific_associations').select('*').eq('category', 'mediation').eq('region', r.searchRegion);
+        if (data) setRegionalAssociations(data);
+      }
+
+      setHydrated(true);
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const goTo = async (i: number) => {
+    if (i < 0 || i >= TOTAL_CHAPTERS) return;
+    setChapter(i);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (hydrated) await saveResponse('accompagnement', 'chapter', String(i));
+  };
 
   const handleRegionSearch = async (region: string) => {
     setSearchRegion(region);
-    await saveResponse('accompagnement', 'searchRegion', region);
+    if (hydrated) await saveResponse('accompagnement', 'searchRegion', region);
     if (region) {
       const { data } = await supabase.from('scientific_associations').select('*').eq('category', 'mediation').eq('region', region);
       if (data) setRegionalAssociations(data);
@@ -221,288 +252,273 @@ export function AccompagnementSection({ onComplete, onHome, onBack }: Accompagne
     }
   };
 
-  const handleResponseChange = async (id: string, value: string) => {
-    setResponses(prev => ({ ...prev, [id]: value }));
-    await saveResponse('accompagnement', id, value);
+  const handleInterestedChange = async (v: string) => {
+    setInterested(v);
+    if (hydrated) await saveResponse('accompagnement', 'interested', v);
   };
-
-  const handleTabChange = async (tab: 'associations' | 'ressources') => {
-    setActiveTab(tab);
-    await saveResponse('accompagnement', 'activeTab', tab);
-  };
-
-  const handleSubmit = async () => {
-    setSubmitted(true);
-    setTimeout(() => onComplete(), 1500);
-  };
-
-  const canSubmit = import.meta.env.DEV || (responses['interested']?.trim().length > 0);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-teal-950 to-slate-900 text-white py-16 px-6">
-      <Navigation onHome={onHome} onBack={onBack} showBack={true} />
+    <SectionCanvas>
+      <SectionTopBar label="Session 2 · Chapitre 3 sur 4 · Accompagnement" onHome={onHome} />
+      <SectionProgress current={chapter} total={TOTAL_CHAPTERS} onGoTo={goTo} />
 
-      <div className="max-w-4xl mx-auto mt-20">
-        <div className="flex items-center gap-4 mb-8">
-          <Users className="w-12 h-12 text-teal-400" />
-          <div>
-            <div className="text-sm text-teal-400 font-semibold uppercase tracking-wider">Accompagnement</div>
-            <h2 className="text-4xl font-bold">Ressources & Associations</h2>
-          </div>
-        </div>
+      <div className="relative z-[1] max-w-[1120px] mx-auto px-8 pt-14 pb-24">
 
-        {/* Tabs */}
-        <div className="flex gap-2 mb-8 bg-white/5 rounded-xl p-1 border border-white/10">
-          {([
-            { id: 'associations', label: 'Associations', icon: <Users className="w-4 h-4" /> },
-            { id: 'ressources', label: 'Ressources pédagogiques', icon: <BookOpen className="w-4 h-4" /> },
-          ] as const).map(({ id, label, icon }) => (
-            <button
-              key={id}
-              onClick={() => handleTabChange(id)}
-              className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-medium transition-all ${
-                activeTab === id ? 'bg-teal-500/20 text-teal-300 border border-teal-500/30' : 'text-gray-400 hover:text-white'
-              }`}
-            >
-              {icon}
-              {label}
-            </button>
-          ))}
-        </div>
-
-        {activeTab === 'associations' && (
-          <>
-            <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10 mb-8">
-              <p className="text-gray-300 mb-6 text-lg">
-                De nombreuses associations peuvent vous accompagner dans votre découverte du spatial :
-              </p>
-              <div className="space-y-4">
-                {associations.map((association, index) => (
-                  <div key={index} className="bg-gradient-to-br from-teal-500/10 to-cyan-500/10 border border-teal-400/30 rounded-xl p-6">
-                    <div className="flex items-start gap-4 mb-4">
-                      <div className="text-4xl">{association.icon}</div>
-                      <div className="flex-1">
-                        <h3 className="text-xl font-bold text-white mb-1">{association.name}</h3>
-                        <p className="text-gray-300 mb-1">{association.description}</p>
-                        <p className="text-teal-400 text-sm font-semibold">Public : {association.focus}</p>
-                      </div>
-                    </div>
-                    <div className="bg-teal-500/10 border border-teal-400/20 rounded-lg p-4 mb-4">
-                      <h4 className="font-semibold text-teal-300 mb-2">Comment ils accompagnent les jeunes :</h4>
-                      <p className="text-gray-200 text-sm leading-relaxed">{association.howTheyHelp}</p>
-                    </div>
-                    <div className="flex flex-wrap gap-3">
-                      {association.website && (
-                        <a href={association.website} target="_blank" rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 px-4 py-2 bg-teal-500/20 hover:bg-teal-500/30 border border-teal-400/40 rounded-lg text-sm text-teal-300 transition-colors">
-                          <ExternalLink className="w-4 h-4" /> Site web
-                        </a>
-                      )}
-                      {association.email && (
-                        <a href={`mailto:${association.email}`}
-                          className="inline-flex items-center gap-2 px-4 py-2 bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-400/40 rounded-lg text-sm text-cyan-300 transition-colors">
-                          <Mail className="w-4 h-4" /> Contact
-                        </a>
-                      )}
+        {/* ── Ch 0 : Associations ── */}
+        {chapter === 0 && (
+          <ChapterShell
+            kicker="01" title="Associations"
+            titlePrefix="Des acteurs engagés pour"
+            titleAccent="t'accompagner."
+            lede="Ces associations peuvent t'aider à explorer le spatial, trouver un mentor, ou rejoindre un projet scientifique. Clique sur une fiche pour visiter leur site."
+            onPrev={null} onNext={() => goTo(1)} nextEnabled={true}
+            nextLabel="Continue · Ressources →"
+          >
+            <div className="space-y-3 mb-8">
+              {associations.map((a, i) => (
+                <div key={i} className="bg-white/[0.04] border border-white/10 rounded-2xl p-5">
+                  <div className="flex items-start gap-4 mb-3">
+                    <span className="text-magenta flex-shrink-0 mt-0.5">{a.icon}</span>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-white text-[15px] mb-0.5">{a.name}</h3>
+                      <p className="text-[12px] text-white/55 mb-1">{a.description}</p>
+                      <p className="text-[11px] text-magenta font-semibold">Public : {a.focus}</p>
                     </div>
                   </div>
-                ))}
-              </div>
+                  <div className="bg-magenta/[0.06] border border-magenta/20 rounded-lg p-3 mb-3">
+                    <p className="text-[12px] text-white/70 leading-relaxed">{a.howTheyHelp}</p>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {a.website && (
+                      <a href={a.website} target="_blank" rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-magenta/10 hover:bg-magenta/20 border border-magenta/30 rounded-lg text-[12px] text-magenta transition">
+                        <ExternalLink className="w-3.5 h-3.5" /> Site web
+                      </a>
+                    )}
+                    {a.email && (
+                      <a href={`mailto:${a.email}`}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-magenta/10 hover:bg-magenta/20 border border-magenta/30 rounded-lg text-[12px] text-magenta transition">
+                        <Mail className="w-3.5 h-3.5" /> Contact
+                      </a>
+                    )}
+                  </div>
+                </div>
+              ))}
             </div>
 
-            {/* MyJobGlasses */}
-            <div className="bg-gradient-to-br from-blue-500/10 to-cyan-500/10 border border-blue-400/30 rounded-2xl p-8 mb-8">
-              <div className="flex items-start gap-4 mb-5">
-                <UserSearch className="w-10 h-10 text-blue-400 flex-shrink-0 mt-1" />
-                <div>
-                  <h3 className="text-2xl font-bold text-white mb-2">MyJobGlasses — Rencontrez des Professionnels</h3>
-                  <p className="text-gray-300 leading-relaxed">
-                    Échangez directement avec des professionnels du secteur spatial. Des ambassadeurs partagent leur quotidien et conseillent sur les parcours.
+            <div className="bg-white/[0.04] border border-magenta/25 rounded-2xl p-6">
+              <div className="flex items-start gap-4">
+                <UserSearch className="w-6 h-6 text-magenta flex-shrink-0 mt-0.5" />
+                <div className="flex-1">
+                  <h3 className="font-semibold text-white text-[16px] mb-1.5">MyJobGlasses · Rencontre des professionnels</h3>
+                  <p className="text-[13px] text-white/65 leading-relaxed mb-4">
+                    Échange directement avec des professionnels du secteur spatial. Des ambassadeurs partagent leur quotidien et conseillent sur les parcours.
                   </p>
+                  <a
+                    href="https://www.myjobglasses.com/rencontrez-des-ambassadeurs/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-5 py-3 bg-magenta hover:bg-magenta-700 rounded-lg text-white text-[13px] font-semibold transition"
+                  >
+                    <ExternalLink className="w-4 h-4" />
+                    Découvrir les ambassadeurs
+                    <ChevronRight className="w-4 h-4" />
+                  </a>
                 </div>
               </div>
-              <a href="https://www.myjobglasses.com/rencontrez-des-ambassadeurs/" target="_blank" rel="noopener noreferrer"
-                className="inline-flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 rounded-xl text-white font-semibold transition-all hover:scale-105">
-                <ExternalLink className="w-5 h-5" />
-                Découvrir les ambassadeurs
-                <ChevronRight className="w-5 h-5" />
-              </a>
             </div>
-          </>
+          </ChapterShell>
         )}
 
-        {activeTab === 'ressources' && (
-          <>
-            <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10 mb-8">
-              <p className="text-gray-300 mb-6 text-lg">
-                Toutes les ressources disponibles pour apporter l'espace dans votre classe :
-              </p>
-              <div className="space-y-8">
-                {(['intervention', 'kit', 'diy', 'competition'] as const).map((type) => (
+        {/* ── Ch 1 : Ressources pédagogiques ── */}
+        {chapter === 1 && (
+          <ChapterShell
+            kicker="02" title="Ressources pédagogiques"
+            titlePrefix="Tous les outils pour"
+            titleAccent="apprendre et s'engager."
+            lede="Interventions en classe, kits clé en main, projets DIY, concours — et des plateformes de mentorat soutenues par l'État."
+            onPrev={() => goTo(0)} onNext={() => goTo(2)} nextEnabled={true}
+            nextLabel="Continue · Par région →"
+          >
+            <div className="space-y-8 mb-8">
+              {(['intervention', 'kit', 'diy', 'competition'] as const).map(type => {
+                const filtered = resources.filter(r => r.type === type);
+                if (!filtered.length) return null;
+                return (
                   <div key={type}>
-                    <h3 className="text-lg font-semibold text-teal-400 mb-3 flex items-center gap-2">
-                      {typeIcons[type]} {typeLabels[type]}
+                    <h3 className="text-[11px] font-semibold tracking-[0.14em] uppercase text-white/45 mb-3 flex items-center gap-2">
+                      <span className="text-magenta">{typeIcons[type]}</span>
+                      {typeLabels[type]}
                     </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {resources.filter(r => r.type === type).map((resource, i) => (
-                        <div key={i} className="bg-gradient-to-br from-teal-500/10 to-emerald-500/10 border border-teal-400/30 rounded-xl p-5">
-                          <div className="text-3xl mb-2">{resource.icon}</div>
-                          <h4 className="font-bold text-white mb-1">{resource.name}</h4>
-                          <p className="text-gray-300 text-sm mb-1">{resource.description}</p>
-                          <p className="text-teal-400 text-xs mb-3">Proposé par : {resource.provider}</p>
-                          {resource.url && (
-                            <a href={resource.url} target="_blank" rel="noopener noreferrer"
-                              className="inline-flex items-center gap-2 text-sm text-teal-300 hover:text-teal-200 transition-colors">
-                              <ExternalLink className="w-4 h-4" /> En savoir plus
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      {filtered.map((res, i) => (
+                        <div key={i} className="bg-white/[0.04] border border-white/10 rounded-2xl p-5">
+                          <h4 className="font-semibold text-white text-[14px] mb-1">{res.name}</h4>
+                          <p className="text-[12px] text-white/55 mb-1">{res.description}</p>
+                          <p className="text-[11px] text-magenta/70 mb-3">Proposé par : {res.provider}</p>
+                          {res.url && (
+                            <a href={res.url} target="_blank" rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1.5 text-[12px] text-magenta hover:underline">
+                              <ExternalLink className="w-3.5 h-3.5" /> En savoir plus
                             </a>
                           )}
                         </div>
                       ))}
                     </div>
                   </div>
-                ))}
-              </div>
+                );
+              })}
             </div>
 
-            {/* Plateformes de mentorat */}
             {mentoringPlatforms.length > 0 && (
-              <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10 mb-8">
-                <h3 className="text-2xl font-semibold mb-4 flex items-center gap-2">
-                  <Users className="w-7 h-7 text-blue-400" /> Plateformes de Mentorat
+              <div className="mb-8">
+                <h3 className="text-[11px] font-semibold tracking-[0.14em] uppercase text-white/45 mb-4 flex items-center gap-2">
+                  <Users className="w-4 h-4 text-magenta" /> Plateformes de mentorat
                 </h3>
-                <p className="text-gray-300 mb-5 text-sm">
+                <p className="text-[13px] text-white/55 mb-4">
                   Soutenu par le programme gouvernemental "1 jeune 1 mentor", qui accompagne déjà plus de 150 000 jeunes en France.
                 </p>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-                  {mentoringPlatforms.map(platform => (
-                    <a key={platform.id} href={platform.url} target="_blank" rel="noopener noreferrer"
-                      className="bg-gradient-to-br from-blue-500/10 to-cyan-500/10 border border-blue-400/30 rounded-xl p-5 hover:scale-[1.02] transition-transform">
-                      <h4 className="font-bold text-white mb-2 flex items-center gap-2">
-                        <Users className="w-5 h-5 text-blue-400" /> {platform.name}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {mentoringPlatforms.map(p => (
+                    <a key={p.id} href={p.url} target="_blank" rel="noopener noreferrer"
+                      className="bg-white/[0.04] border border-white/10 rounded-2xl p-5 hover:border-magenta hover:-translate-y-0.5 transition-all group">
+                      <h4 className="font-semibold text-white group-hover:text-magenta transition-colors text-[14px] mb-2 flex items-center gap-2">
+                        <Users className="w-4 h-4 text-magenta flex-shrink-0" /> {p.name}
                       </h4>
-                      <div className="space-y-1 text-sm">
-                        <p className="text-blue-300"><strong>Public:</strong> {platform.target_audience}</p>
-                        <p className="text-gray-300"><strong>Domaine:</strong> {platform.domain}</p>
-                        <p className="text-gray-400 text-xs">Soutenu par: {platform.supporters}</p>
-                      </div>
-                      <div className="mt-3 flex items-center gap-2 text-blue-300 text-sm">
-                        <ExternalLink className="w-4 h-4" /> Découvrir
+                      <p className="text-[12px] text-magenta/80 mb-0.5">Public : {p.target_audience}</p>
+                      <p className="text-[12px] text-white/55 mb-0.5">Domaine : {p.domain}</p>
+                      {p.supporters && <p className="text-[11px] text-white/35">Soutenu par : {p.supporters}</p>}
+                      <div className="mt-3 flex items-center gap-1.5 text-magenta text-[12px]">
+                        <ExternalLink className="w-3.5 h-3.5" /> Découvrir
                       </div>
                     </a>
                   ))}
                 </div>
-
-                {scientificAssociations.length > 0 && (
-                  <>
-                    <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
-                      <Lightbulb className="w-6 h-6 text-yellow-400" /> Associations Scientifiques
-                    </h3>
-                    <div className="space-y-5">
-                      {[
-                        { key: 'general_science', label: 'Sciences Générales', color: 'green' },
-                        { key: 'space', label: 'Associations Spatiales', color: 'blue' },
-                        { key: 'girls_in_stem', label: 'Encourager les Jeunes Filles dans les Sciences', color: 'pink' },
-                      ].map(({ key, label, color }) => {
-                        const filtered = scientificAssociations.filter(a => a.category === key);
-                        if (!filtered.length) return null;
-                        return (
-                          <div key={key}>
-                            <h4 className={`text-lg font-semibold text-${color}-400 mb-3 flex items-center gap-2`}>
-                              {key === 'girls_in_stem' && <Heart className="w-5 h-5" />}
-                              {label}
-                            </h4>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                              {filtered.map(assoc => (
-                                <a key={assoc.id} href={assoc.url} target="_blank" rel="noopener noreferrer"
-                                  className={`bg-gradient-to-br from-${color}-500/10 to-${color}-600/10 border border-${color}-400/30 rounded-xl p-5 hover:scale-[1.02] transition-transform`}>
-                                  <h5 className="font-bold text-white mb-2">{assoc.name}</h5>
-                                  <div className="space-y-1 text-sm">
-                                    {assoc.domain && <p className={`text-${color}-300`}><strong>Domaine:</strong> {assoc.domain}</p>}
-                                    {assoc.target_audience && <p className="text-gray-300"><strong>Public:</strong> {assoc.target_audience}</p>}
-                                    {assoc.supporters && <p className="text-gray-400 text-xs">Soutenu par: {assoc.supporters}</p>}
-                                  </div>
-                                  <div className={`mt-3 flex items-center gap-2 text-${color}-300 text-sm`}>
-                                    <ExternalLink className="w-4 h-4" /> En savoir plus
-                                  </div>
-                                </a>
-                              ))}
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </>
-                )}
               </div>
             )}
 
-            {/* Médiation par région */}
-            <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10 mb-8">
-              <h3 className="text-xl font-semibold mb-3 flex items-center gap-2">
-                <Search className="w-6 h-6 text-teal-400" /> Médiation Scientifique par Région
-              </h3>
-              <p className="text-gray-300 mb-4 text-sm">Trouvez les centres de médiation scientifique dans votre région :</p>
-              <select
-                value={searchRegion}
-                onChange={e => handleRegionSearch(e.target.value)}
-                className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:ring-2 focus:ring-teal-500 mb-4"
-              >
-                <option value="">-- Choisir une région --</option>
-                {regions.map(r => <option key={r} value={r}>{r}</option>)}
-              </select>
-              {searchRegion && regionalAssociations.length > 0 && (
-                <div className="bg-teal-500/10 border border-teal-400/30 rounded-lg p-5 space-y-3">
-                  {regionalAssociations.map(assoc => (
-                    <a key={assoc.id} href={assoc.url} target="_blank" rel="noopener noreferrer"
-                      className="block bg-teal-500/20 border border-teal-400/40 rounded-lg p-4 hover:bg-teal-500/30 transition-colors">
-                      <h5 className="font-bold text-white mb-1">{assoc.name}</h5>
-                      <p className="text-teal-300 text-sm flex items-center gap-2"><ExternalLink className="w-4 h-4" /> Visiter le site</p>
-                    </a>
-                  ))}
+            {scientificAssociations.length > 0 && (
+              <div>
+                <h3 className="text-[11px] font-semibold tracking-[0.14em] uppercase text-white/45 mb-4 flex items-center gap-2">
+                  <Lightbulb className="w-4 h-4 text-magenta" /> Associations scientifiques
+                </h3>
+                <div className="space-y-6">
+                  {(['general_science', 'space', 'girls_in_stem'] as const).map(key => {
+                    const filtered = scientificAssociations.filter(a => a.category === key);
+                    if (!filtered.length) return null;
+                    return (
+                      <div key={key}>
+                        <h4 className="text-[13px] font-semibold text-white/70 mb-3 flex items-center gap-2">
+                          {key === 'girls_in_stem' && <Heart className="w-4 h-4 text-magenta" />}
+                          {key === 'space' && <Satellite className="w-4 h-4 text-magenta" />}
+                          {key === 'general_science' && <Globe className="w-4 h-4 text-magenta" />}
+                          {sciCategoryLabels[key]}
+                        </h4>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                          {filtered.map(a => (
+                            <a key={a.id} href={a.url} target="_blank" rel="noopener noreferrer"
+                              className="bg-white/[0.04] border border-white/10 rounded-2xl p-5 hover:border-magenta hover:-translate-y-0.5 transition-all group">
+                              <h5 className="font-semibold text-white group-hover:text-magenta transition-colors text-[14px] mb-2">{a.name}</h5>
+                              {a.domain && <p className="text-[12px] text-magenta/80 mb-0.5">Domaine : {a.domain}</p>}
+                              {a.target_audience && <p className="text-[12px] text-white/55 mb-0.5">Public : {a.target_audience}</p>}
+                              {a.supporters && <p className="text-[11px] text-white/35">Soutenu par : {a.supporters}</p>}
+                              <div className="mt-3 flex items-center gap-1.5 text-magenta text-[12px]">
+                                <ExternalLink className="w-3.5 h-3.5" /> En savoir plus
+                              </div>
+                            </a>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
-              )}
-              {searchRegion && regionalAssociations.length === 0 && (
-                <div className="bg-yellow-500/10 border border-yellow-400/30 rounded-lg p-5">
-                  <p className="text-yellow-300 text-sm">Aucun centre trouvé pour cette région dans notre base de données.</p>
-                </div>
-              )}
-            </div>
-          </>
+              </div>
+            )}
+          </ChapterShell>
         )}
 
-        {/* Réponse libre + bouton */}
-        <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10">
-          <h3 className="text-2xl font-semibold mb-6">Vos besoins</h3>
-          <div className="mb-6">
-            <label className="block text-gray-300 mb-3 font-medium">
-              Quelle association ou ressource vous intéresse le plus, et pourquoi ?
-            </label>
-            <textarea
-              value={responses['interested'] || ''}
-              onChange={e => handleResponseChange('interested', e.target.value)}
-              placeholder="Partagez vos centres d'intérêt et vos besoins..."
-              className="w-full bg-white/5 border border-white/10 rounded-lg p-4 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-teal-500 resize-none"
-              rows={4}
-              maxLength={4000}
-            />
-          </div>
-          <button
-            onClick={handleSubmit}
-            disabled={!canSubmit || submitted}
-            className={`w-full py-4 rounded-lg font-semibold text-lg transition-all duration-300 flex items-center justify-center gap-2 ${
-              submitted ? 'bg-green-600 text-white' : canSubmit
-                ? 'bg-gradient-to-r from-teal-500 to-cyan-600 hover:from-teal-600 hover:to-cyan-700 text-white'
-                : 'bg-gray-700 text-gray-400 cursor-not-allowed'
-            }`}
+        {/* ── Ch 2 : Par région ── */}
+        {chapter === 2 && (
+          <ChapterShell
+            kicker="03" title="Par région"
+            titlePrefix="La médiation scientifique"
+            titleAccent="près de chez toi."
+            lede="Trouve les centres de médiation scientifique dans ta région pour aller plus loin localement."
+            onPrev={() => goTo(1)} onNext={() => goTo(3)} nextEnabled={true}
+            nextLabel="Continue · Vos besoins →"
           >
-            {submitted ? (
-              <><CheckCircle className="w-5 h-5" /> Réponses sauvegardées !</>
-            ) : (
-              <>Continuer vers FAQ & Questions <ChevronRight className="w-5 h-5" /></>
+            <div className="flex items-center gap-2 mb-4">
+              <Search className="w-4 h-4 text-magenta flex-shrink-0" />
+              <label className="text-[13px] font-medium text-white/70">Choisis ta région</label>
+            </div>
+            <select
+              value={searchRegion}
+              onChange={e => handleRegionSearch(e.target.value)}
+              className="w-full bg-white/[0.04] border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-magenta focus:ring-2 focus:ring-magenta/20 mb-4 text-[14px]"
+            >
+              <option value="">Choisir une région...</option>
+              {regions.map(r => <option key={r} value={r}>{r}</option>)}
+            </select>
+
+            {searchRegion && regionalAssociations.length > 0 && (
+              <div className="space-y-2">
+                {regionalAssociations.map(a => (
+                  <a key={a.id} href={a.url} target="_blank" rel="noopener noreferrer"
+                    className="flex items-center justify-between bg-white/[0.04] border border-white/10 rounded-xl p-4 hover:border-magenta transition-all group">
+                    <h5 className="font-semibold text-white group-hover:text-magenta transition-colors text-[14px]">{a.name}</h5>
+                    <div className="flex items-center gap-1.5 text-magenta text-[12px]">
+                      <ExternalLink className="w-3.5 h-3.5" /> Visiter
+                    </div>
+                  </a>
+                ))}
+              </div>
             )}
-          </button>
-        </div>
+            {searchRegion && regionalAssociations.length === 0 && (
+              <div className="bg-white/[0.04] border border-white/10 rounded-xl p-5">
+                <p className="text-[13px] text-white/45">Aucun centre trouvé pour cette région dans notre base de données.</p>
+              </div>
+            )}
+          </ChapterShell>
+        )}
+
+        {/* ── Ch 3 : Vos besoins ── */}
+        {chapter === 3 && (
+          <ChapterShell
+            kicker="04" title="Vos besoins"
+            titlePrefix="Quelle ressource"
+            titleAccent="t'intéresse le plus ?"
+            lede="Partage ce qui te parle le plus parmi tout ce que tu as vu — association, ressource ou programme."
+            onPrev={() => goTo(2)} onNext={() => goTo(4)} nextEnabled={interested.trim().length > 0}
+            nextLabel={interested.trim().length > 0 ? "Terminer le chapitre →" : "Écris ta réponse d'abord"}
+          >
+            <div>
+              <label className="block text-[13px] font-medium text-white/70 mb-3">
+                Quelle association ou ressource t'intéresse le plus, et pourquoi ?
+              </label>
+              <textarea
+                value={interested}
+                onChange={e => handleInterestedChange(e.target.value)}
+                placeholder="Partage tes centres d'intérêt..."
+                className="w-full bg-white/[0.04] border border-white/10 rounded-lg px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-magenta focus:ring-2 focus:ring-magenta/20 resize-none text-[14px]"
+                rows={5}
+                maxLength={4000}
+              />
+            </div>
+          </ChapterShell>
+        )}
+
+        {/* ── Récap ── */}
+        {chapter === 4 && (
+          <ChapterRecap
+            chapterLabel="Accompagnement"
+            summary="Tu as découvert les associations, ressources pédagogiques et programmes de mentorat disponibles pour te lancer dans le spatial."
+            nextTitle="Zone FAQ"
+            nextDesc="Pose tes questions aux professionnels du secteur spatial."
+            onContinue={onComplete}
+            onPrev={() => goTo(3)}
+          />
+        )}
       </div>
-    </div>
+    </SectionCanvas>
   );
 }

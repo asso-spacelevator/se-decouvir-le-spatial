@@ -140,10 +140,10 @@ const EVENTS: TimelineEvent[] = [
 
 const CATEGORY_COLORS: Record<string, { bg: string; border: string; text: string; dot: string }> = {
   milestone: { bg: 'bg-white/10', border: 'border-white/30', text: 'text-white', dot: '#ffffff' },
-  telecom:   { bg: 'bg-blue-500/10', border: 'border-blue-500/30', text: 'text-blue-300', dot: '#3b82f6' },
-  science:   { bg: 'bg-green-500/10', border: 'border-green-500/30', text: 'text-green-300', dot: '#10b981' },
-  navigation:{ bg: 'bg-amber-500/10', border: 'border-amber-500/30', text: 'text-amber-300', dot: '#f59e0b' },
-  constellation:{ bg: 'bg-violet-500/10', border: 'border-violet-500/30', text: 'text-violet-300', dot: '#8b5cf6' },
+  telecom:   { bg: 'bg-magenta/10', border: 'border-magenta/30', text: 'text-magenta', dot: '#c8257a' },
+  science:   { bg: 'bg-magenta/10', border: 'border-magenta/30', text: 'text-magenta', dot: '#c8257a' },
+  navigation:{ bg: 'bg-magenta/10', border: 'border-magenta/30', text: 'text-magenta', dot: '#c8257a' },
+  constellation:{ bg: 'bg-magenta/10', border: 'border-magenta/30', text: 'text-magenta', dot: '#c8257a' },
 };
 
 const CATEGORY_LABELS: Record<string, string> = {
@@ -226,7 +226,7 @@ export function SatelliteTimeline() {
             <polyline
               points={svgPoints}
               fill="none"
-              stroke="#22d3ee"
+              stroke="#c8257a"
               strokeWidth="2"
               strokeLinejoin="round"
             />
@@ -248,8 +248,8 @@ export function SatelliteTimeline() {
             })}
             <defs>
               <linearGradient id="satGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#22d3ee" stopOpacity="0.8" />
-                <stop offset="100%" stopColor="#22d3ee" stopOpacity="0" />
+                <stop offset="0%" stopColor="#c8257a" stopOpacity="0.8" />
+                <stop offset="100%" stopColor="#c8257a" stopOpacity="0" />
               </linearGradient>
             </defs>
           </svg>

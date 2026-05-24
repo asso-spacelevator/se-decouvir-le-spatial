@@ -131,7 +131,7 @@ export function AvatarGuide({ lines, autoPlay = true, interval = 3500, className
       {/* Girl */}
       <div className={`flex flex-col items-center gap-1 transition-all duration-300 ${isGirl ? 'scale-105' : 'scale-90 opacity-50'}`}>
         <GirlAvatar talking={isGirl && talking} size={64} />
-        <span className="text-sky-300 text-xs font-semibold">Léa</span>
+        <span className="text-magenta text-xs font-semibold">Léa</span>
       </div>
 
       {/* Bubble */}
@@ -141,21 +141,17 @@ export function AvatarGuide({ lines, autoPlay = true, interval = 3500, className
         }`}
       >
         <div
-          className={`relative w-full rounded-2xl px-4 py-3 text-sm font-medium leading-relaxed text-white border ${
-            isGirl
-              ? 'bg-slate-800/50 border-sky-700/40'
-              : 'bg-amber-900/25 border-amber-600/40'
-          }`}
+          className="relative w-full rounded-2xl px-4 py-3 text-sm font-medium leading-relaxed text-white border bg-white/[0.04] border-magenta/20"
         >
           {/* tail toward active speaker */}
           <div
             className={`absolute bottom-4 w-3 h-3 rotate-45 ${
               isGirl
-                ? '-left-1.5 bg-slate-800/50 border-l border-b border-sky-700/40'
-                : '-right-1.5 bg-amber-900/25 border-r border-b border-amber-600/40'
+                ? '-left-1.5 bg-white/[0.04] border-l border-b border-magenta/20'
+                : '-right-1.5 bg-white/[0.04] border-r border-b border-magenta/20'
             }`}
           />
-          <span className={`font-bold mr-1 ${isGirl ? 'text-sky-300' : 'text-amber-400'}`}>
+          <span className="font-bold mr-1 text-magenta">
             {isGirl ? 'Léa :' : 'Noah :'}
           </span>
           {current.text}
@@ -165,7 +161,7 @@ export function AvatarGuide({ lines, autoPlay = true, interval = 3500, className
       {/* Boy */}
       <div className={`flex flex-col items-center gap-1 transition-all duration-300 ${!isGirl ? 'scale-105' : 'scale-90 opacity-50'}`}>
         <BoyAvatar talking={!isGirl && talking} size={64} />
-        <span className="text-amber-400 text-xs font-semibold">Noah</span>
+        <span className="text-magenta text-xs font-semibold">Noah</span>
       </div>
     </div>
   );

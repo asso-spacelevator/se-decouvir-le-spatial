@@ -1,4 +1,5 @@
 import { Home, CheckCircle2, Rocket, Globe, MessageSquare, ChevronRight } from 'lucide-react';
+import { SectionCanvas } from './ChapterShell';
 
 interface SessionBreakPageProps {
   onContinue: () => void;
@@ -7,66 +8,71 @@ interface SessionBreakPageProps {
 
 export function SessionBreakPage({ onContinue }: SessionBreakPageProps) {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white flex flex-col items-center justify-center px-6 py-16">
-      {/* Badge */}
-      <div className="flex items-center gap-2 mb-8 px-4 py-2 rounded-full border border-green-500/30 bg-green-500/10 text-green-400 text-sm font-semibold">
-        <CheckCircle2 className="w-4 h-4" />
-        Session 1 terminée !
-      </div>
-
-      <h1 className="text-4xl md:text-5xl font-bold text-center mb-4 leading-tight">
-        Bravo, c'est fini !
-      </h1>
-      <p className="text-gray-400 text-center text-lg max-w-xl mb-12 leading-relaxed">
-        Tu as couvert l'impact terrestre du spatial, les lanceurs et les réseaux. Quand tu veux, la session 2 t'attend à l'accueil.
-      </p>
-
-      {/* Recap */}
-      <div className="w-full max-w-2xl mb-10">
-        <p className="text-xs text-gray-500 uppercase tracking-widest mb-4 text-center">Ce que tu as exploré</p>
-        <div className="grid grid-cols-3 gap-3">
-          {[
-            { icon: <Globe className="w-5 h-5" />, label: 'Impact Terrestre', color: 'text-blue-400 border-blue-500/30 bg-blue-500/8' },
-            { icon: <Rocket className="w-5 h-5" />, label: 'Lanceurs', color: 'text-orange-400 border-orange-500/30 bg-orange-500/8' },
-            { icon: <MessageSquare className="w-5 h-5" />, label: 'Réseaux & Social', color: 'text-pink-400 border-pink-500/30 bg-pink-500/8' },
-          ].map(({ icon, label, color }) => (
-            <div key={label} className={`flex flex-col items-center gap-2 rounded-xl border p-4 ${color}`}>
-              {icon}
-              <span className="text-xs font-medium text-center">{label}</span>
-            </div>
-          ))}
+    <SectionCanvas>
+      <div className="relative z-[1] flex flex-col items-center justify-center min-h-screen px-6 py-16">
+        {/* Badge */}
+        <div className="flex items-center gap-2 mb-8 px-4 py-2 rounded-full border border-magenta/30 bg-magenta/10 text-magenta text-sm font-semibold">
+          <CheckCircle2 className="w-4 h-4" />
+          Session 1 terminée
         </div>
-      </div>
 
-      {/* Teaser session 2 */}
-      <div className="w-full max-w-2xl bg-white/4 border border-white/10 rounded-2xl p-6 mb-10">
-        <p className="text-sm font-semibold text-gray-300 mb-3">Session 2 — t'attend à l'accueil</p>
-        <div className="space-y-2">
-          {[
-            { num: '01', title: 'Orbite', desc: 'Les satellites et leurs usages concrets' },
-            { num: '02', title: 'Au-delà', desc: 'Exploration lointaine et défis futurs' },
-            { num: '03', title: 'Accompagnement', desc: 'Associations, ressources, mentorat' },
-            { num: '04', title: 'FAQ & Questions', desc: 'Vos questions aux professionnels' },
-          ].map(({ num, title, desc }) => (
-            <div key={num} className="flex items-center gap-4">
-              <span className="text-xs font-mono text-gray-600 w-6 flex-shrink-0">{num}</span>
-              <div>
-                <span className="text-sm font-semibold text-white">{title}</span>
-                <span className="text-xs text-gray-500 ml-2">{desc}</span>
+        <h1 className="font-display font-bold uppercase tracking-[0.04em] text-[clamp(36px,5vw,56px)] text-center mb-4 leading-tight">
+          Bravo, <span className="text-magenta">c'est fini !</span>
+        </h1>
+        <p className="text-white/60 text-center text-[17px] max-w-xl mb-12 leading-relaxed">
+          Tu as couvert l'impact terrestre du spatial, les lanceurs et les réseaux. La session 2 t'attend à l'accueil quand tu veux.
+        </p>
+
+        {/* Recap */}
+        <div className="w-full max-w-2xl mb-10">
+          <p className="text-[11px] font-semibold tracking-[0.16em] uppercase text-white/40 mb-4 text-center">Ce que tu as exploré</p>
+          <div className="grid grid-cols-3 gap-3">
+            {[
+              { icon: <Globe className="w-5 h-5" />, label: 'Impact Terrestre' },
+              { icon: <Rocket className="w-5 h-5" />, label: 'Lanceurs' },
+              { icon: <MessageSquare className="w-5 h-5" />, label: 'Réseaux & Social' },
+            ].map(({ icon, label }) => (
+              <div
+                key={label}
+                className="flex flex-col items-center gap-2 rounded-xl border border-magenta/25 bg-magenta/[0.06] p-4 text-magenta"
+              >
+                {icon}
+                <span className="text-xs font-medium text-center text-white/80">{label}</span>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </div>
 
-      <button
-        onClick={onContinue}
-        className="flex items-center gap-3 px-8 py-4 bg-white text-slate-900 hover:bg-gray-100 transition-all rounded-xl text-base font-semibold shadow-lg hover:scale-105"
-      >
-        <Home className="w-5 h-5" />
-        Retour à l'accueil
-        <ChevronRight className="w-4 h-4" />
-      </button>
-    </div>
+        {/* Session 2 teaser */}
+        <div className="w-full max-w-2xl bg-white/[0.04] border border-white/10 rounded-2xl p-6 mb-10">
+          <p className="text-[11px] font-semibold tracking-[0.16em] uppercase text-white/40 mb-4">Session 2 — t'attend à l'accueil</p>
+          <div className="space-y-2">
+            {[
+              { num: '01', title: 'Orbite', desc: 'Les satellites et leurs usages concrets' },
+              { num: '02', title: 'Au-delà', desc: 'Exploration lointaine et défis futurs' },
+              { num: '03', title: 'Accompagnement', desc: 'Associations, ressources, mentorat' },
+              { num: '04', title: 'FAQ & Questions', desc: 'Vos questions aux professionnels' },
+            ].map(({ num, title, desc }) => (
+              <div key={num} className="flex items-center gap-4">
+                <span className="text-xs font-mono text-white/30 w-6 flex-shrink-0">{num}</span>
+                <div>
+                  <span className="text-sm font-semibold text-white">{title}</span>
+                  <span className="text-xs text-white/45 ml-2">{desc}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <button
+          onClick={onContinue}
+          className="inline-flex items-center gap-3 px-8 py-4 bg-magenta hover:bg-magenta-700 text-white transition rounded-xl text-base font-semibold"
+        >
+          <Home className="w-5 h-5" />
+          Retour à l'accueil
+          <ChevronRight className="w-4 h-4" />
+        </button>
+      </div>
+    </SectionCanvas>
   );
 }

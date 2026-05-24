@@ -99,7 +99,7 @@ export function StartPage({ onStartSession1, onStartSession2 }: StartPageProps) 
             </h1>
             <p className="text-[18px] leading-[1.55] text-white/75 max-w-[540px] m-0">
               Deux sessions interactives pour découvrir l'industrie spatiale européenne.
-              Commence par celle qui t'intéresse, tu peux reprendre où tu en étais à tout moment.
+              Un parcours intéractif pour découvir les métiers du spatial.
             </p>
           </div>
 
