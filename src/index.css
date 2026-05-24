@@ -46,3 +46,14 @@
 .animate-fadeIn {
   animation: fadeIn 0.3s ease-out;
 }
+
+@keyframes chapterIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.12); color: #c8257a; }
+  100% { transform: scale(1); }
+}

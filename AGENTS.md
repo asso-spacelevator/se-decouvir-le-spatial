@@ -123,3 +123,109 @@ at the site root. When referencing these assets in code, **always use**
 Vite's `--base` flag is set in CI via `github.event.repository.name`.
 `import.meta.env.BASE_URL` is automatically injected by Vite and resolves to
 `/` in development and `/repo-name/` in production.
+
+## Brand identity — Space Elevator
+
+This app is a Space Elevator product. Every visible surface must follow the brand charter (`Charte graphique.docx`). The agent is responsible for making each new component, page, or section feel like it belongs to Space Elevator from the first commit. Re-read this section every time you create or restyle a screen.
+
+### 1 · Foundations (non-negotiable)
+
+- **Typeface** — Poppins only. Loaded once from Google Fonts in `index.html`. Use `font-display: swap`. Set `font-family: 'Poppins', sans-serif` globally via Tailwind `theme.fontFamily.sans`. Never introduce Inter, Roboto, system stacks, or display fonts.
+- **Colours** — these four are the entire palette. Don't add a fifth.
+  - `--magenta` `#C8257A` (brand accent, charter rule)
+  - `--deepspace` `#0B0F2A` (primary dark surface — every section uses it)
+  - `--gray-500` `#808080` (captions, footer text, charter rule)
+  - `--black` `#000000` / `--white` `#FFFFFF`
+  - Tailwind config exposes `bg-magenta`, `bg-deepspace`, plus magenta-100…900 scale steps.
+- **No rainbow** — there is one accent in the brand: magenta. Do **not** use emerald, sky, teal, orange, amber, violet, rose, cyan, blue, pink, red for hover, callout, status, or "category" colour. The only exceptions: real flag images (chap. 4 of `ImpactTerrestreSection`), red for "incorrect" feedback in interactive widgets, and gold-ish for celebratory moments — and even those should be used sparingly. When in doubt, magenta.
+- **No emoji** — the brand never uses emoji. If you see one in legacy code, replace it with a Lucide icon (`lucide-react` is already in `dependencies`). Common mappings: 🌍 → `<Globe />`, 🚀 → `<Rocket />`, 🛰️ → `<Satellite />`, 📡 → `<Radio />`, 📱 → `<Smartphone />`, 📸 → `<Camera />`, 💬 → `<MessageCircle />`, 🤝 → `<Users />`, ✅ → `<Check />`, ❌ → `<X />`, 💡 → `<Lightbulb />`, ⭐ → `<Star />`, 🏠 → `<Home />`, 🎓 → `<GraduationCap />`. Use `strokeWidth={1.75}` at `w-5 h-5` (inline) or `w-6 h-6` (heading-aligned).
+- **No gradients** for accent colour. The only gradient allowed is the deep-space background variants (`from-deepspace via-deepspace-soft to-deepspace`). Magenta text gradients (`from-blue-400 to-teal-400 bg-clip-text`) are forbidden — set the colour solid.
+
+### 2 · Layout chrome (shared across every section)
+
+Every screen sits on the same canvas. Build it once, reuse it everywhere.
+
+```tsx
+<div className="relative min-h-screen bg-deepspace text-white font-sans overflow-x-hidden">
+  {/* Starfield (defined in src/index.css as .starry-background) */}
+  <div className="starry-background absolute inset-0" />
+
+  {/* Subtle magenta glow — no blue/teal blobs */}
+  <div className="pointer-events-none absolute inset-0">
+    <div className="absolute bottom-0 left-0 w-[600px] h-[600px] rounded-full opacity-15 bg-magenta blur-[120px]" />
+    <div className="absolute -top-32 right-24 w-[400px] h-[400px] rounded-full opacity-5 bg-magenta blur-[100px]" />
+  </div>
+
+  {/* … your content with z-index 1 on top … */}
+</div>
+```
+
+Hero banners use the full-width header pattern from `StartPage.tsx`:
+- Logo top-left (`logos/space-elevator.png` for dark surfaces).
+- Breadcrumb top-right in `text-[12px] tracking-[0.16em] uppercase text-white/55` with a magenta dot.
+- Title is **Poppins Bold, ALL CAPS, `tracking-[0.04em]`**, with one word in `text-magenta` as the accent.
+- Subtitle in `text-white/75 max-w-[540px]`.
+
+### 3 · The chapter shell — required for any educational/content section
+
+Long content pages (anything that today is 5+ scrolling sections, like `ImpactTerrestreSection`, `RocketSection`, `SatelliteSection`, etc.) **must** be broken into 3–6 chapters that the student progresses through. This creates the sense of progression the product depends on.
+
+The canonical implementation lives in `src/components/ImpactTerrestreSection.tsx`. **Extract `<ChapterShell>` and `<ChapterQuiz>` into their own files at `src/components/ChapterShell.tsx` and `src/components/ChapterQuiz.tsx`** if they aren't there yet, then reuse them.
+
+A chapter shell provides:
+1. **Sticky top bar** with logo + section label (`Session 1 · Chapitre N sur M · {section name}`) + Accueil button.
+2. **Sticky progress strip**: `Page NN sur MM`, a magenta-filled gradient track, and one pill per page.
+3. **Page container** — pages can hold 1 chapter (a focused step like a quiz or a recap) or 2 chapters stacked (when two sub-topics are related and short). Use 2-per-page by default; use 1-per-page when the screen needs full focus (quiz, recap).
+4. **Per-chapter header** = kicker `<span class="bg-magenta text-white rounded-full px-2.5 py-0.5">{NN}</span>` + ALL-CAPS title with magenta accent + lede in `text-white/70 max-w-[720px]`.
+5. **Per-chapter footer** at the end of each *page* with `← Précédent` (border ghost button) and a magenta `→ Continue · {next chapter name}` button. The first chapter of a 2-per-page does not get a footer; the page footer sits at the bottom of the second chapter only.
+6. **Gating** — when a chapter requires an interaction (revealing all cards, completing a quiz), the page-level *Continue* button is `disabled` with placeholder copy like `Réponds à toutes les questions` until done, then unlocks with the real label `Continue · {next chapter} →`.
+7. **Récap chapter** at the end of every section — magenta trophy circle, ALL-CAPS heading "Chapitre N terminé.", three personalised stat cards (e.g. *satellites utilisés*, *retombées découvertes*, *score quiz*), and a card teasing the next section with a big magenta CTA.
+
+Persistence: hydrate page index, quiz scores, and interactive state through `useSession` / `saveResponse` so a student resuming on a different day lands back on their last page. Always store progress *during* a chapter, not just on completion.
+
+### 4 · Component patterns
+
+- **Buttons** — three variants only:
+  - Primary: `bg-magenta hover:bg-magenta-700 text-white rounded-lg px-5 py-3.5 font-semibold`
+  - Ghost: `border border-white/10 hover:border-white/30 text-white/70 hover:text-white`
+  - Link: `text-magenta hover:underline`
+  - Never pill-shaped (`rounded-full`) except for badges/chips.
+- **Cards** — `bg-white/[0.04] border border-white/10 rounded-2xl p-6`. Hover: `border-magenta` + `-translate-y-0.5`. No drop-shadow on cards.
+- **Stats** — number in `text-magenta font-bold text-[40px] tracking-[-0.02em] leading-none`, label below in `text-[11px] uppercase tracking-[0.08em] text-white/55`.
+- **Image credits** — every photographic image MUST have a credit line. Inline `text-[10.5px] italic text-white/45` underneath, OR an overlay badge at `bottom: 10px; right: 14px` for full-bleed photos. Credits use the form `Image : {source} / {photographer or programme}, {year}` (e.g. `© ESA / Copernicus Sentinel-2, 2024`).
+- **Callouts / asides** — magenta-bordered card from the brand charter: `border border-magenta rounded-lg p-4 border-[1.5px]`. Use for "Pour les enseignants", "Le saviez-vous", "La science au-dessus des conflits".
+- **Form inputs** — `bg-white/[0.04] border border-white/10 rounded-lg px-4 py-3` with `focus:border-magenta focus:ring-2 focus:ring-magenta/20`.
+
+### 5 · Copy and tone
+
+- Section banners are ALL CAPS (Poppins Bold). Body headings (`h3`, `h4`) are Title Case Poppins SemiBold.
+- French copy is the default. Address the student with *tu*. Address the teacher with *vous*.
+- No "Houston, we have…" tropes. No exclamation cascades. Sober, generous, action-first.
+- Verb-first CTAs: `Commencer la partie 1`, `Continue · {next}`, `Voir mon récap`, `Découvre la suite`. Avoid `Cliquer ici`, `En savoir plus` unless inline in a sentence.
+- Stats are the brand's emotional driver. When you have one, oversize it (`text-[40px]`+) and put it in magenta.
+- **No double-dashes** (`—`) in visible copy. Use periods, colons, or middots (`·`) instead. CSS custom properties (`--se-magenta`) and CSS comments are fine.
+- **No time references in tile labels** that pretend to be schedule items (`08h15 · Trajet` *is* fine because it's the content of a chapter); but avoid `Durée : 45 min` decorative meta, which felt incorrect to the team.
+
+### 6 · Animation
+
+- `cubic-bezier(0.2, 0, 0, 1)` for everything (the easing of the brand).
+- 150 ms hover, 250 ms page-level transitions, 450 ms chapter-in (`@keyframes chapterIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }`).
+- A `pulse` keyframe is reserved for celebratory moments (a stat counter incrementing, a trophy revealing). Use sparingly.
+- No bouncy springs. No flips other than the spinoff card-game in `ImpactTerrestreSection` (which is part of that chapter's mechanic). No parallax.
+
+### 7 · Sections to refactor next
+
+In priority order, every existing section needs a pass:
+1. `RocketSection` — preserve the `Ariane6Diagram` component (it is the strongest interactive in the app), restyle it. Split content into 3–4 chapters: *La fusée pas à pas*, *Ariane 6 dans le monde*, *La séquence de lancement*, *Quiz éclair*, *Récap*.
+2. `SocialReferencesSection` — chapters: *Quels comptes suivre*, *Distinguer info / promo*, *Évènements à ne pas manquer*, *Quiz*, *Récap*.
+3. `SatelliteSection` — chapters around `MissionSimulator`, `OrbitalAnimation`, `SatelliteTimeline`, `SatelliteDistribution`, `SatelliteLabelGame`. Each becomes its own chapter.
+4. `ExplorationSection`, `AccompagnementSection`, `FAQQuestionsSection`, `CompletionPage`, `SessionBreakPage` — same pattern.
+5. Touch the shared primitives ONCE — `Subsection.tsx`, `Quiz.tsx`, `ProgressBar.tsx`, `Navigation.tsx` — and every section inherits the cleanup. Worth doing before per-section work.
+
+### 8 · The reference implementations
+
+When in doubt, copy from:
+- `src/components/StartPage.tsx` — hero pattern, partner row, dialogue bubble, session cards.
+- `src/components/ImpactTerrestreSection.tsx` — chapter shell, 2-per-page pattern, progress strip, gating, hydrate-from-supabase pattern, recap with personal stats.
+
+If a new requirement falls outside both references, ask for a design pass before inventing a new pattern. The brand owns a small set of patterns on purpose.

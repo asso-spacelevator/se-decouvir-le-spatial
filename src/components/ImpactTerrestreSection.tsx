@@ -1,363 +1,23 @@
-import { useState, useEffect } from 'react';
-import { Earth, ChevronRight, CheckCircle, Radio, Globe, ExternalLink, FileText } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
+import { ChevronLeft, ChevronRight, Home, Trophy } from 'lucide-react';
 import { useSession } from '../contexts/SessionContext';
-import { Navigation } from './Navigation';
-import { Quiz } from './Quiz';
-import { AvatarGuide } from './AvatarGuide';
 
-/* ─────────────────────────────────────────
-   Ground Stations & Opérateurs au sol block
-   ───────────────────────────────────────── */
-const GROUND_JOBS = [
-  {
-    icon: '📐',
-    color: 'sky',
-    title: 'Ingénieur Trajectoire & Orbitographie',
-    subtitle: 'Orbital Mechanics Engineer',
-    desc: "Calcule et corrige l'orbite tout au long de la vie du satellite. Prépare les manœuvres d'évitement de débris, les corrections de cap et la déorbitisation finale avec une précision de quelques cm/s.",
-    example: "L'ISS effectue en moyenne 2 manœuvres d'évitement de débris par an — préparées par les équipes trajectoire de Houston et Moscou.",
-    videos: [{ id: 'KfcjGFfPQi8', label: 'Témoignage : ingénieur orbitographie' }],
-  },
-  {
-    icon: '🗑️',
-    color: 'orange',
-    title: 'Responsable Sauvegarde Sol / Débris Spatiaux',
-    subtitle: 'Ground Safety & Space Debris',
-    desc: "Surveille les 35 000+ objets catalogués en orbite (débris de lanceurs, satellites morts, fragments de collisions). Calcule les probabilités de collision et émet des alertes pour les opérateurs de satellites actifs. Gère aussi la sécurité au sol lors des lancements.",
-    example: "Le réseau Space Fence de l'US Space Force détecte des objets de 10 cm en LEO. En Europe, l'ESA gère le service SST (Space Surveillance and Tracking) depuis son centre de Darmstadt.",
-    videos: [{ id: '6EzPAgSw8KM', label: 'Témoignage : responsable sauvegarde sol' }],
-  },
-  {
-    icon: '🚀',
-    color: 'amber',
-    title: 'Contrôleur de Vol & Ingénieur Opérations',
-    subtitle: 'Flight Controller & Operations Engineer',
-    desc: "Surveille en temps réel la santé du satellite (énergie, température, orientation, propulsion) et applique des procédures d'urgence en quelques minutes. Suit le déroulement des missions, coordonne avec les équipes ISS, gère les amarrages de vaisseaux (Dragon, Soyuz, Cygnus) et assure le lien entre Houston, Moscou, Toulouse et Tsukuba.",
-    example: "Lors de l'amarrage d'un Dragon SpaceX, jusqu'à 6 centres de contrôle sur 3 continents communiquent simultanément pour valider chaque étape de l'approche finale.",
-    videos: [{ id: 'QqkNx23Zv2s', label: 'Témoignage : ingénieur / technicien opérations' }],
-  },
-  {
-    icon: '📡',
-    color: 'teal',
-    title: 'Ingénieur / Technicien Stations Sol',
-    subtitle: 'Ground Station Engineer',
-    desc: "Spécifie, développe, valide et maintient les antennes et équipements sol qui communiquent avec les satellites. Planifie les fenêtres de contact, encode les télécommandes et décode la télémétrie. Maîtrise des fréquences radio (RF) et des protocoles de communication spatiale.",
-    example: "Pour Mars Express, chaque session dure 8 à 10 h et doit être réservée des jours à l'avance en fonction de la géométrie Terre–Mars et de la disponibilité des antennes du réseau DSN.",
-    videos: [
-      { id: '7ckHeYw8xAc', label: 'Témoignage : ingénieur / technicien stations sol' },
-      { id: 'HZ5a0Roc3lE', label: 'Témoignage : radio fréquence – télécommunication' },
-    ],
-  },
-  {
-    icon: '🔭',
-    color: 'violet',
-    title: 'Ingénieur Charge Utile & Exploitation',
-    subtitle: 'Payload & Exploitation Engineer',
-    desc: "Programme les séquences d'observation de l'instrument scientifique ou commercial embarqué (caméra, radar, sondeur météo…), calibre les capteurs et analyse la qualité des données reçues. Interface entre les scientifiques et le satellite.",
-    example: "Les opérateurs payload de l'ESAC (Espagne) programment chaque semaine les pointages du télescope Cheops vers les exoplanètes prioritaires des chercheurs européens.",
-    videos: [
-      { id: 'a3TsE5G_FEk', label: "Témoignage : ingénieur / technicien d'exploitation" },
-      { id: 'HW7I22CXmzE', label: 'Témoignage : assemblage intégration charges utiles optiques' },
-    ],
-  },
-];
+/* ════════════════════════════════════════════════════════════════
+ *  ImpactTerrestreSection — chapter-based interactive flow
+ *
+ *  6 chapters the student progresses through one at a time:
+ *    1. "Une journée dans ta vie"  → satellite counter
+ *    2. "Le regard de Copernicus"  → carousel of satellite views
+ *    3. "Le spatial dans ta poche" → flip-card spinoff game
+ *    4. "Pilotage international"   → ESOC photo + agencies + ISS flags
+ *    5. "Quiz éclair"              → 4 questions sequential
+ *    6. "Récap"                    → celebration + next CTA
+ *
+ *  Persistence: chapter index + quiz answers + counter total are
+ *  saved through `saveResponse` so the student can resume.
+ * ════════════════════════════════════════════════════════════════*/
 
-const GS_COLOR: Record<string, { ring: string; bg: string; text: string; tag: string }> = {
-  emerald: { ring: 'border-emerald-400/40', bg: 'bg-emerald-500/10', text: 'text-emerald-300', tag: 'bg-emerald-500/10 text-emerald-400 border-emerald-400/20' },
-  sky:     { ring: 'border-sky-400/40',     bg: 'bg-sky-500/10',     text: 'text-sky-300',     tag: 'bg-sky-500/10 text-sky-400 border-sky-400/20' },
-  orange:  { ring: 'border-orange-400/40',  bg: 'bg-orange-500/10',  text: 'text-orange-300',  tag: 'bg-orange-500/10 text-orange-400 border-orange-400/20' },
-  amber:   { ring: 'border-amber-400/40',   bg: 'bg-amber-500/10',   text: 'text-amber-300',   tag: 'bg-amber-500/10 text-amber-400 border-amber-400/20' },
-  teal:    { ring: 'border-teal-400/40',    bg: 'bg-teal-500/10',    text: 'text-teal-300',    tag: 'bg-teal-500/10 text-teal-400 border-teal-400/20' },
-  violet:  { ring: 'border-blue-400/40',    bg: 'bg-blue-500/10',    text: 'text-blue-300',    tag: 'bg-blue-500/10 text-blue-400 border-blue-400/20' },
-};
-
-const SPINOFFS = [
-  {
-    icon: '🛏️',
-    color: 'emerald',
-    accent: 'border-emerald-400/30',
-    source: 'NASA',
-    year: '1966',
-    title: 'Mousse à mémoire de forme',
-    desc: "Développée par la NASA pour absorber les chocs lors des décollages et protéger les astronautes, la mousse viscoélastique a révolutionné notre façon de dormir. Ses propriétés uniques (elle épouse le corps puis reprend sa forme) en font le matériau de référence dans les matelas haut de gamme, les sièges de voiture et les équipements médicaux anti-escarres.",
-    imgDaily: 'https://guideliterie.com/wp-content/uploads/2018/12/matelas-memoire-de-forme.jpeg',
-    imgSpace: 'https://www.cieletespace.fr/media/cache/innergrid_xl/uploads/editorial-media/2024/09/media-jqrwv3-695acccf1cedb185956182.jpg',
-    labelDaily: 'Matelas à mémoire de forme',
-    labelSpace: 'Siège capsule spatiale NASA',
-  },
-  {
-    icon: '👟',
-    color: 'sky',
-    accent: 'border-sky-400/30',
-    source: 'NASA',
-    year: 'Années 60',
-    title: 'Velcro & fixations sans apesanteur',
-    desc: "Dans l'espace, aucune vis ne peut être serrée à la main sans s'envoler. La NASA a massivement adopté le velcro pour fixer outils et vêtements à bord des capsules Apollo et de l'ISS. Cette adoption à grande échelle a lancé sa diffusion mondiale dans les chaussures, vêtements de sport, articles médicaux et bagages.",
-    imgDaily: 'https://images.pexels.com/photos/30641951/pexels-photo-30641951.jpeg',
-    imgSpace: 'https://live.staticflickr.com/65535/55180852205_ecf572f1df_c.jpg',
-    labelDaily: 'Chaussures à velcro',
-    labelSpace: 'Sophie Adenot attache son matériel via des velcros sur ses jambes',
-  },
-  {
-    icon: '📸',
-    color: 'amber',
-    accent: 'border-amber-400/30',
-    source: 'JPL',
-    year: '1993',
-    title: 'Capteur photo CMOS (smartphone)',
-    desc: "En 1993, le JPL de la NASA développe un capteur d'image miniaturisé à faible consommation pour équiper les sondes spatiales. Cette invention constitue aujourd'hui le cœur de tous les appareils photo de smartphones — soit des milliards de capteurs produits chaque année.",
-    imgDaily: 'https://images.pexels.com/photos/1828109/pexels-photo-1828109.jpeg',
-    imgSpace: 'https://www.copernicus.eu/system/files/styles/image_of_the_day/private/2024-12/image_day/20241231_Seine%20river.png?itok=Zg_IUmBQ',
-    labelDaily: 'Photographier avec son smartphone',
-    labelSpace: "La Seine vue par Sentinel-2 — l'ESA propose de recevoir une image de votre région chaque jour",
-    creditSpace: '© Union européenne, Copernicus Sentinel-2',
-  },
-  {
-    icon: '📍',
-    color: 'orange',
-    accent: 'border-orange-400/30',
-    source: 'DOD',
-    year: '1973',
-    title: 'GPS / Géolocalisation',
-    desc: "Conçu par le Département de la Défense américain pour guider missiles et troupes, le GPS (24 satellites en orbite moyenne) a été ouvert au civil en 1983. Aujourd'hui fondement invisible de la navigation auto, de la logistique et de l'agriculture de précision. L'Europe a développé son propre système souverain : Galileo.",
-    imgDaily: 'https://images.pexels.com/photos/9966011/pexels-photo-9966011.jpeg',
-    imgSpace: 'https://images.pexels.com/photos/13315965/pexels-photo-13315965.jpeg',
-    labelDaily: 'Navigation GPS sur smartphone',
-    labelSpace: 'Militaires et antenne de géolocalisation',
-  },
-  {
-    icon: '🧲',
-    color: 'rose',
-    accent: 'border-rose-400/30',
-    source: 'NASA',
-    year: 'Années 70',
-    title: 'IRM — Imagerie par Résonance Magnétique',
-    desc: "Les algorithmes de traitement d'image développés par la NASA pour reconstituer des photos des sondes lunaires ont directement inspiré les premières machines IRM. Aujourd'hui, l'IRM est l'outil de diagnostic le plus puissant de la médecine moderne : tumeurs, AVC, maladies neurologiques.",
-    imgDaily: 'https://images.pexels.com/photos/7089017/pexels-photo-7089017.jpeg',
-    imgSpace: 'https://images.pexels.com/photos/586056/pexels-photo-586056.jpeg',
-    labelDaily: 'Machine IRM en milieu hospitalier',
-    labelSpace: 'Satellite d\'observation en orbite',
-  },
-  {
-    icon: '🔥',
-    color: 'cyan',
-    accent: 'border-cyan-400/30',
-    source: 'NASA',
-    year: 'Années 70–80',
-    title: 'Céramique haute performance',
-    desc: "Pour résister aux températures extrêmes de la rentrée atmosphérique (1 600 °C), la NASA développe des tuiles en céramique ultra-légère pour la navette spatiale. Ces recherches ont donné naissance aux implants dentaires en zircone, plaques de cuisson vitrocéramiques et systèmes de freinage TGV.",
-    imgDaily: 'https://images.pexels.com/photos/8055154/pexels-photo-8055154.jpeg',
-    imgSpace: 'https://images.pexels.com/photos/10652773/pexels-photo-10652773.jpeg',
-    labelDaily: 'Poêle en céramique',
-    labelSpace: 'Train à grande vitesse — freinage haute performance',
-  },
-];
-
-const SO_COLOR: Record<string, { sideBg: string; sideText: string; yearBg: string; yearText: string; yearBorder: string }> = {
-  emerald: { sideBg: 'bg-emerald-500/10', sideText: 'text-emerald-400', yearBg: 'bg-emerald-500/15', yearText: 'text-emerald-400', yearBorder: 'border-emerald-500/20' },
-  sky:     { sideBg: 'bg-sky-500/10',     sideText: 'text-sky-400',     yearBg: 'bg-sky-500/15',     yearText: 'text-sky-400',     yearBorder: 'border-sky-500/20' },
-  amber:   { sideBg: 'bg-amber-500/10',   sideText: 'text-amber-400',   yearBg: 'bg-amber-500/15',   yearText: 'text-amber-400',   yearBorder: 'border-amber-500/20' },
-  orange:  { sideBg: 'bg-orange-500/10',  sideText: 'text-orange-400',  yearBg: 'bg-orange-500/15',  yearText: 'text-orange-400',  yearBorder: 'border-orange-500/20' },
-  rose:    { sideBg: 'bg-rose-500/10',    sideText: 'text-rose-400',    yearBg: 'bg-rose-500/15',    yearText: 'text-rose-400',    yearBorder: 'border-rose-500/20' },
-  cyan:    { sideBg: 'bg-cyan-500/10',    sideText: 'text-cyan-400',    yearBg: 'bg-cyan-500/15',    yearText: 'text-cyan-400',    yearBorder: 'border-cyan-500/20' },
-};
-
-function SpinOffBlock() {
-  const [hovered, setHovered] = useState<number | null>(null);
-  return (
-    <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10 mb-8">
-      <div className="flex items-center gap-3 mb-2">
-        <span className="text-2xl">🏠</span>
-        <h3 className="text-2xl font-semibold">Les Objets du Quotidien Nés du Spatial</h3>
-      </div>
-      <p className="text-gray-400 text-sm mb-6">
-        Vous utilisez chaque jour des technologies inventées pour conquérir l'espace, sans même le savoir.
-     
-      </p>
-      <div className="space-y-4">
-        {SPINOFFS.map((item, i) => {
-          const c = SO_COLOR[item.color];
-          const isHovered = hovered === i;
-          return (
-            <div
-              key={i}
-              className={`rounded-xl border transition-all duration-300 overflow-hidden cursor-default ${isHovered ? `${item.accent} bg-white/8` : 'border-white/10 bg-white/3 hover:border-white/20'}`}
-              onMouseEnter={() => setHovered(i)}
-              onMouseLeave={() => setHovered(null)}
-            >
-              <div className="flex items-start gap-0">
-                {/* Sidebar */}
-                <div className={`flex-shrink-0 w-14 flex flex-col items-center justify-start pt-5 pb-5 ${c.sideBg} border-r border-white/10`}>
-                  <span className="text-2xl">{item.icon}</span>
-                  <span className={`text-xs font-bold mt-3 opacity-70 ${c.sideText}`}>{item.source}</span>
-                </div>
-                {/* Content */}
-                <div className="flex-1 min-w-0">
-                  <div className="p-5 pb-3">
-                    <div className="flex items-center gap-2 mb-1">
-                      <h4 className="font-bold text-white text-base">{item.title}</h4>
-                      <span className={`text-xs px-2 py-0.5 rounded-full ${c.yearBg} ${c.yearText} border ${c.yearBorder}`}>{item.year}</span>
-                    </div>
-                    <p className="text-gray-400 text-sm leading-relaxed">{item.desc}</p>
-                  </div>
-                  {/* Image comparison — visible on hover */}
-                  <div className={`grid grid-cols-2 gap-0 transition-all duration-500 ${isHovered ? 'max-h-72 opacity-100' : 'max-h-0 opacity-0'} overflow-hidden`}>
-                    <div className="relative">
-                      <img src={item.imgDaily} alt={item.labelDaily} className="w-full h-48 object-cover" />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
-                      <div className="absolute bottom-0 left-0 right-0 p-3">
-                        <span className="block text-xs text-gray-300 font-semibold uppercase tracking-wide mb-0.5">Quotidien</span>
-                        <span className="block text-xs text-white leading-snug">{item.labelDaily}</span>
-                      </div>
-                    </div>
-                    <div className="relative border-l border-white/10">
-                      <img src={item.imgSpace} alt={item.labelSpace} className="w-full h-48 object-cover" />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
-                      <div className="absolute bottom-0 left-0 right-0 p-3">
-                        <span className="block text-xs text-gray-300 font-semibold uppercase tracking-wide mb-0.5">Origine spatiale</span>
-                        <span className="block text-xs text-white leading-snug">{item.labelSpace}</span>
-                        {'creditSpace' in item && (
-                          <span className="block text-[10px] text-gray-400 mt-1 italic">{(item as typeof item & { creditSpace: string }).creditSpace}</span>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
-function GroundStationsBlock() {
-  const [open, setOpen] = useState<number | null>(null);
-  return (
-    <div className="mb-8">
-      {/* Header */}
-      <div className="flex items-center gap-3 mb-4">
-        <div className="w-10 h-10 rounded-xl bg-emerald-500/15 border border-emerald-400/30 flex items-center justify-center flex-shrink-0">
-          <Radio className="w-5 h-5 text-emerald-400" />
-        </div>
-        <div>
-          <h3 className="text-xl font-bold text-white">Stations Sol & Opérations Satellite</h3>
-          <p className="text-gray-400 text-xs mt-0.5">Les équipes invisibles qui pilotent l'espace depuis la Terre</p>
-        </div>
-      </div>
-
-      {/* Intro + photo */}
-      <div className="bg-white/5 rounded-2xl border border-white/10 overflow-hidden mb-5">
-        <div className="relative">
-          <img
-            src="https://www.esa.int/var/esa/storage/images/esa_multimedia/images/2012/06/main_control_room_at_esa_s_space_operations_centre/11252253-2-eng-GB/Main_Control_Room_at_ESA_s_Space_Operations_Centre_pillars.jpg"
-            alt="Salle de contrôle principale de l'ESOC — European Space Operations Centre, Darmstadt"
-            className="w-full object-cover h-64"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-transparent to-transparent" />
-          <div className="absolute bottom-4 left-5 right-5">
-            <span className="text-xs text-gray-300 bg-black/50 px-2 py-1 rounded">
-              Salle de contrôle principale — ESOC, Darmstadt (Allemagne) · © ESA
-            </span>
-          </div>
-        </div>
-        <div className="p-5">
-          <p className="text-gray-400 text-xs italic leading-relaxed mb-4 border-l-2 border-white/20 pl-3">
-            Centre d'excellence européen pour les opérations de mission, l'ESOC abrite les ingénieurs qui contrôlent les engins spatiaux en orbite, gèrent le réseau mondial de stations sol et conçoivent les systèmes au sol qui soutiennent les missions dans l'espace. Plus de 60 satellites appartenant à l'ESA et à ses partenaires ont été pilotés depuis Darmstadt, Allemagne. <span className="text-gray-500">— © ESA</span>
-          </p>
-          <p className="text-gray-300 text-sm leading-relaxed mb-4">
-            Chaque satellite en orbite est surveillé et commandé depuis la Terre, 24 h/24. Ces centres d'opération sont équipés de serveurs de calcul et de consoles de contrôle qui échangent des milliers de commandes par jour avec l'espace. Ils sont reliés à des dizaines de <strong className="text-white">stations sol</strong> réparties dans le monde pour pouvoir contacter le plus souvent possible les satellites. Le plus grand centre européen est l'<strong className="text-white">ESOC</strong> (European Space Operations Centre) à <strong className="text-white">Darmstadt, Allemagne</strong>, qui contrôle plus de 20 missions ESA simultanément — de l'orbite basse jusqu'aux sondes interplanétaires.
-          </p>
-          <p className="text-gray-300 text-sm leading-relaxed mb-4">
-            C'est dans le centre d'opération de la NASA à <strong className="text-white">Houston</strong> qu'étaient gérées les missions Apollo, avec lesquelles les astronautes étaient en communication. Aujourd'hui, les opérateurs se relayent pour les opérations à bord de l'<strong className="text-white">ISS</strong>. Ce sont ces mêmes types de centres d'opérations qui pilotent des missions lointaines comme <strong className="text-white">Perseverance</strong>, le rover de la NASA sur Mars !
-          </p>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-            {[
-              { v: '20+',  l: 'Missions contrôlées' },
-              { v: '24/7', l: 'Opérations continues' },
-              { v: '900+', l: 'Experts sur site' },
-            ].map(s => (
-              <div key={s.l} className="bg-white/5 rounded-xl p-3 border border-white/10 text-center">
-                <div className="text-xl font-bold text-emerald-400">{s.v}</div>
-                <div className="text-xs text-gray-400 mt-0.5">{s.l}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Métiers */}
-      <p className="text-gray-400 text-sm mb-3">Clique sur un métier pour en savoir plus.</p>
-      <div className="space-y-2">
-        {GROUND_JOBS.map((job, i) => {
-          const c = GS_COLOR[job.color];
-          const isOpen = open === i;
-          return (
-            <div
-              key={i}
-              className={`rounded-xl border transition-all duration-300 overflow-hidden ${isOpen ? `${c.bg} ${c.ring}` : 'border-white/10 bg-white/3 hover:bg-white/6 hover:border-white/20'}`}
-            >
-              <button
-                className="w-full flex items-center gap-4 px-5 py-4 text-left"
-                onClick={() => setOpen(isOpen ? null : i)}
-              >
-                <span className="text-xl flex-shrink-0">{job.icon}</span>
-                <div className="flex-1 min-w-0">
-                  <span className="font-semibold text-white text-sm">{job.title}</span>
-                  <span className="text-gray-500 text-xs ml-2">{job.subtitle}</span>
-                </div>
-                <svg
-                  className={`w-4 h-4 text-gray-400 transition-transform duration-300 flex-shrink-0 ${isOpen ? 'rotate-180' : ''}`}
-                  fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
-
-              {isOpen && (
-                <div className="px-5 pb-5">
-                  <p className="text-gray-300 text-sm leading-relaxed mb-3">{job.desc}</p>
-                  <div className={`rounded-lg p-3 ${c.bg} border ${c.ring} mb-3`}>
-                    <p className="text-xs text-gray-300 leading-relaxed">
-                      <strong className={`${c.text} block mb-1`}>Exemple concret</strong>
-                      {job.example}
-                    </p>
-                  </div>
-                  {job.videos.map((v) => (
-                    <div key={v.id} className="rounded-xl overflow-hidden border border-white/10 mb-2 last:mb-0">
-                      <div className="px-3 py-2 bg-white/5 border-b border-white/10 flex items-center gap-2">
-                        <svg className="w-3.5 h-3.5 text-red-400 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31.6 31.6 0 0 0 0 12a31.6 31.6 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31.6 31.6 0 0 0 24 12a31.6 31.6 0 0 0-.5-5.8zM9.75 15.5v-7l6.25 3.5-6.25 3.5z"/>
-                        </svg>
-                        <span className="text-xs text-gray-400">{v.label}</span>
-                      </div>
-                      <div className="aspect-video">
-                        <iframe
-                          src={`https://www.youtube.com/embed/${v.id}`}
-                          title={v.label}
-                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                          allowFullScreen
-                          className="w-full h-full"
-                        />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
-const IMPACT_LINES = [
-  { speaker: 'girl' as const, text: "Cette section, c'est la grande question : qu'est-ce que l'espace change concrètement pour nous sur Terre ?" },
-  { speaker: 'boy' as const,  text: "Pas les orbites ni la technique — ça viendra après. Ici on parle d'impact humain, social et environnemental." },
-  { speaker: 'girl' as const, text: "Et on verra aussi comment les pays du monde entier collaborent malgré leurs rivalités." },
-];
+const TOTAL_CHAPTERS = 6;
 
 interface ImpactTerrestreSectionProps {
   onComplete: () => void;
@@ -365,515 +25,803 @@ interface ImpactTerrestreSectionProps {
   onBack: () => void;
 }
 
-export function ImpactTerrestreSection({ onComplete, onHome, onBack }: ImpactTerrestreSectionProps) {
+export function ImpactTerrestreSection({ onComplete, onHome }: ImpactTerrestreSectionProps) {
   const { saveResponse, getResponses } = useSession();
-  const [responses, setResponses] = useState<Record<string, string>>({});
-  const [submitted, setSubmitted] = useState(false);
-  const [quizCompleted, setQuizCompleted] = useState(false);
+  const [chapter, setChapter] = useState(0);
+  const [satellites, setSatellites] = useState(0);
+  const [flipsCount, setFlipsCount] = useState(0);
+  const [quizScore, setQuizScore] = useState<number | null>(null);
+  const [hydrated, setHydrated] = useState(false);
 
+  // Hydrate from supabase
   useEffect(() => {
-    const loadResponses = async () => {
-      const savedResponses = await getResponses('impact_terrestre');
-      setResponses(savedResponses);
-    };
-    loadResponses();
+    (async () => {
+      const r = await getResponses('impact_terrestre');
+      if (r.chapter) setChapter(Math.min(parseInt(r.chapter, 10) || 0, TOTAL_CHAPTERS - 1));
+      if (r.satellites) setSatellites(parseInt(r.satellites, 10) || 0);
+      if (r.flips) setFlipsCount(parseInt(r.flips, 10) || 0);
+      if (r.quiz_score) setQuizScore(parseInt(r.quiz_score, 10));
+      setHydrated(true);
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const quizQuestions = [
-    {
-      id: 'impact_q0',
-      question: 'Combien de satellites utilises-tu au cours d\'une journée (en moyenne) ?',
-      options: [
-        { id: 'a', text: 'Aucun, je ne suis pas astronaute', isCorrect: false },
-        { id: 'b', text: 'Entre 2 et 4', isCorrect: false },
-        { id: 'c', text: 'Au moins 8, souvent bien plus', isCorrect: true },
-        { id: 'd', text: 'Exactement 1 (mon téléphone)', isCorrect: false }
-      ],
-      explanation: 'Sans t\'en rendre compte, tu utilises des dizaines de satellites chaque jour ! Le matin pour aller à l\'école : au moins 4 satellites GPS te localisent. Tes appels, SMS et internet passent par des satellites télécom (+2). Tu regardes la météo ? +2 satellites météo. La nourriture de ta cantine vient de champs surveillés depuis l\'espace par des satellites agricoles. Ce n\'est qu\'une moyenne — parfois plus, parfois moins. L\'espace est partout dans ton quotidien !'
-    },
-    {
-      id: 'impact_q1',
-      question: 'Quel programme spatial européen fournit des données environnementales en accès libre à tous ?',
-      options: [
-        { id: 'a', text: 'Ariane 6', isCorrect: false },
-        { id: 'b', text: 'Copernicus', isCorrect: true },
-        { id: 'c', text: 'Artemis', isCorrect: false },
-        { id: 'd', text: 'Hubble', isCorrect: false }
-      ],
-      explanation: 'Copernicus est le programme européen d\'observation de la Terre de l\'ESA. Ses données sont entièrement ouvertes et gratuites : elles servent à surveiller les forêts, mesurer la fonte des glaces, anticiper les catastrophes naturelles et guider les agriculteurs. C\'est le programme de données spatiales le plus utilisé au monde.'
-    },
-    {
-      id: 'impact_q2',
-      question: 'Parmi ces secteurs, lequel utilise les données Copernicus ?',
-      options: [
-        { id: 'a', text: 'Uniquement les agences spatiales', isCorrect: false },
-        { id: 'b', text: 'Uniquement les météorologues', isCorrect: false },
-        { id: 'c', text: 'Agriculture, pêche, assurances, qualité de l\'air...', isCorrect: true },
-        { id: 'd', text: 'Uniquement les gouvernements européens', isCorrect: false }
-      ],
-      explanation: 'Plus de 80 % des bénéfices économiques de Copernicus sont générés en dehors du secteur spatial ! Les données sont utilisées dans des domaines très variés : les agriculteurs optimisent leurs récoltes, les assureurs évaluent les catastrophes naturelles, les autorités surveillent la qualité de l\'air, les pêcheurs localisent les zones poissonneuses... Ces données gratuites créent une valeur immense pour toute l\'économie.'
-    },
-    {
-      id: 'impact_q3',
-      question: 'Quelle est la taille de la plus grande antenne au sol utilisée pour les télécommunications spatiales ?',
-      image: {
-        src: 'https://www.nasa.gov/wp-content/uploads/2020/03/dsn-stadium-final.jpg?resize=900,900',
-        alt: 'Antenne parabolique de 70 mètres de Goldstone — Deep Space Network NASA',
-        credit: '© NASA / Deep Space Network'
-      },
-      options: [
-        { id: 'a', text: '10 mètres', isCorrect: false },
-        { id: 'b', text: '34 mètres', isCorrect: false },
-        { id: 'c', text: '70 mètres', isCorrect: true },
-        { id: 'd', text: '120 mètres', isCorrect: false }
-      ],
-      explanation: 'L\'antenne de 70 mètres de Goldstone, en Californie, fait partie du Deep Space Network (DSN) de la NASA — le réseau mondial d\'antennes géantes qui maintient le contact avec les sondes spatiales lointaines. Pour comparaison, elle est plus large qu\'un terrain de football ! Ce colosse peut capter des signaux émis par des sondes situées à des milliards de kilomètres de la Terre.'
-    },
-  ];
-
-  const handleResponseChange = async (id: string, value: string) => {
-    setResponses(prev => ({ ...prev, [id]: value }));
-    await saveResponse('impact_terrestre', id, value);
+  const goTo = async (i: number) => {
+    if (i < 0 || i >= TOTAL_CHAPTERS) return;
+    setChapter(i);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (hydrated) await saveResponse('impact_terrestre', 'chapter', String(i));
   };
 
-  const handleQuizComplete = () => {
-    setQuizCompleted(true);
+  const handleSatellites = async (n: number) => {
+    setSatellites(n);
+    if (hydrated) await saveResponse('impact_terrestre', 'satellites', String(n));
   };
-
-  const handleSubmit = async () => {
-    setSubmitted(true);
-    setTimeout(() => {
-      onComplete();
-    }, 1500);
+  const handleFlips = async (n: number) => {
+    setFlipsCount(n);
+    if (hydrated) await saveResponse('impact_terrestre', 'flips', String(n));
   };
-
-  const canSubmit = import.meta.env.DEV || (quizCompleted && responses['q1']?.trim().length > 0);
+  const handleQuizScore = async (n: number) => {
+    setQuizScore(n);
+    if (hydrated) await saveResponse('impact_terrestre', 'quiz_score', String(n));
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 to-emerald-950 text-white py-16 px-6">
-      <Navigation onHome={onHome} onBack={onBack} showBack={true} />
+    <div className="relative min-h-screen bg-deepspace text-white font-sans overflow-x-hidden">
+      <div className="starry-background absolute inset-0" />
 
-      <div className="max-w-4xl mx-auto mt-20">
-        <div className="flex items-center gap-4 mb-6">
-          <Earth className="w-12 h-12 text-emerald-400" />
-          <div>
-            <div className="text-sm text-emerald-400 font-semibold uppercase tracking-wider">🌍 Impact sur Terre</div>
-            <h2 className="text-4xl font-bold">Le Spatial au Service de l'Humanité</h2>
+      {/* Soft magenta glow */}
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] rounded-full opacity-15 bg-magenta blur-[120px]" />
+        <div className="absolute -top-32 right-24 w-[400px] h-[400px] rounded-full opacity-5 bg-magenta blur-[100px]" />
+      </div>
+
+      {/* Top bar */}
+      <div className="sticky top-0 z-20 backdrop-blur-md bg-deepspace/80 border-b border-white/5">
+        <div className="max-w-[1240px] mx-auto px-8 py-4 grid grid-cols-[auto_1fr_auto] items-center gap-8">
+          <img
+            src={`${import.meta.env.BASE_URL}logos/space-elevator.png`}
+            alt="Space Elevator"
+            className="h-8 block"
+          />
+          <div className="text-center text-[12px] font-medium tracking-[0.16em] uppercase text-white/60">
+            <span className="text-white font-semibold mr-2">Session 1</span>
+            Chapitre 1 sur 3 · L'espace au quotidien
           </div>
-        </div>
-
-        <div className="mb-8 bg-white/5 backdrop-blur-sm rounded-2xl p-4 border border-emerald-500/20">
-          <AvatarGuide lines={IMPACT_LINES} interval={4000} />
-        </div>
-
-        {/* ── Surveiller la Santé de notre Planète ── */}
-        <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10 mb-8">
-          <div className="flex items-center gap-3 mb-4">
-            <span className="text-2xl">🌿</span>
-            <h3 className="text-2xl font-semibold">Surveiller la Santé de notre Planète</h3>
-          </div>
-
-          <p className="text-gray-300 leading-relaxed mb-6">
-            Ces dernières années, les scientifiques analysent l'évolution des écosystèmes de la planète Terre pour y
-            surveiller l'état de la faune, de la flore, du climat et des océans. La planète Terre est un système dont
-            l'équilibre est fragile : un dérèglement d'un des piliers, et les autres paramètres s'emballent.
-          </p>
-          <p className="text-gray-300 leading-relaxed mb-6">
-            Le programme européen Copernicus met à disposition de tous — gratuitement — des images satellites de la
-            Terre entière, actualisées plusieurs fois par semaine. Des scientifiques, des gouvernements et des ONG
-            s'en servent pour mesurer la fonte des glaces polaires, suivre la déforestation en Amazonie, cartographier
-            les zones inondées après un cyclone, ou estimer les rendements agricoles d'un pays. Sans cette vue depuis
-            l'espace, nous serions aveugles face au changement climatique.
-          </p>
-
-          {/* Infographie limites planétaires */}
-          <div className="rounded-xl overflow-hidden border border-white/10 mb-5">
-            <img
-              src={`${import.meta.env.BASE_URL}image.png`}
-              alt="Les 9 limites planétaires — CGDD 2025"
-              className="w-full object-contain bg-white"
-            />
-          </div>
-          <p className="text-xs text-gray-500 text-center mb-6">
-            Source : CGDD, 2025 — d'après le Stockholm Resilience Centre
-          </p>
-
-          <div className="flex flex-col sm:flex-row gap-3">
-            <a
-              href="https://www.notre-environnement.gouv.fr/themes/climate/les-observations-du-changement-climatique-ressources/article/comprendre-le-changement-climatique-causes-et-impacts-en-france"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-emerald-500/15 border border-emerald-400/30 text-emerald-300 hover:bg-emerald-500/25 hover:border-emerald-400/60 transition-all duration-200 text-sm font-medium group"
-            >
-              <span>🌍</span>
-              <span>Comprendre le changement climatique : causes et impacts en France</span>
-              <svg className="w-4 h-4 opacity-60 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-              </svg>
-            </a>
-            <a
-              href="https://www.copernicus.eu/sites/default/files/Brochure%20Copernicus%20FR%20web.pdf"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-blue-500/15 border border-blue-400/30 text-blue-300 hover:bg-blue-500/25 hover:border-blue-400/60 transition-all duration-200 text-sm font-medium group"
-            >
-              <span>🛰️</span>
-              <span>Brochure Copernicus — Programme européen d'observation de la Terre (PDF)</span>
-              <svg className="w-4 h-4 opacity-60 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-              </svg>
-            </a>
-          </div>
-
-          <div className="mt-6 rounded-xl bg-blue-500/10 border border-blue-400/20 p-5">
-            <p className="text-blue-200 text-sm font-semibold mb-3">Le saviez-vous ? La flotte Copernicus</p>
-            <p className="text-blue-100 text-sm leading-relaxed mb-5">
-              Afin d'offrir une grande quantité de données de bonne qualité, le programme Copernicus est composé d'une
-              flotte de <strong className="text-white">20 satellites</strong>, dont 7 sont déjà en orbite. Tous ne
-              prennent pas des images dans le spectre du visible : certains détectent des gaz invisibles à l'œil nu,
-              d'autres révèlent la présence de bactéries dans l'eau !
-            </p>
-
-            <div className="grid md:grid-cols-2 gap-4">
-              <div className="flex flex-col gap-2">
-                <div className="rounded-lg overflow-hidden border border-white/10 aspect-[4/3] bg-black/30">
-                  <img
-                    src="https://esa.int/var/esa/storage/images/esa_multimedia/images/2016/05/piton_de_la_fournaise/15985095-1-eng-GB/Piton_de_la_Fournaise.jpg"
-                    alt="Sentinel-1 — Piton de la Fournaise, La Réunion"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <p className="text-white text-xs font-semibold">Piton de la Fournaise, La Réunion</p>
-                <p className="text-blue-200/70 text-xs leading-relaxed">
-                  Image radar Sentinel-1 du volcan en éruption. Les satellites radar voient à travers les nuages et de nuit.
-                </p>
-                <p className="text-blue-200/40 text-xs">Source : ESA / Sentinel-1, 2016</p>
-              </div>
-
-              <div className="flex flex-col gap-2">
-                <div className="rounded-lg overflow-hidden border border-white/10 aspect-[4/3] bg-black/30">
-                  <img
-                    src="https://esa.int/var/esa/storage/images/esa_multimedia/images/2022/01/sulphur_dioxide_from_tonga_eruption_spreads_over_australia/23907503-1-eng-GB/Sulphur_dioxide_from_Tonga_eruption_spreads_over_Australia_card_full.jpg"
-                    alt="Sentinel-5P TROPOMI — Dioxyde de soufre de l'éruption de Tonga"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <p className="text-white text-xs font-semibold">Dioxyde de soufre — Éruption de Tonga</p>
-                <p className="text-blue-200/70 text-xs leading-relaxed">
-                  Sentinel-5P/TROPOMI détecte les gaz invisibles. Ici le nuage de SO2 de Tonga (2022) au-dessus de l'Australie.
-                </p>
-                <p className="text-blue-200/40 text-xs">Source : ESA / Sentinel-5P TROPOMI, 2022</p>
-              </div>
-
-            </div>
-          </div>
-        </div>
-
-        {/* ── Surveillance des Océans ── */}
-        <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10 mb-8">
-          <div className="flex items-center gap-3 mb-4">
-            <span className="text-2xl">🌊</span>
-            <h3 className="text-2xl font-semibold">Surveiller la Santé de l'Océan</h3>
-          </div>
-
-          <p className="text-gray-300 leading-relaxed mb-4">
-            L'océan couvre plus de 70 % de la surface terrestre et régule le climat de la planète entière : il absorbe
-            près de 30 % du CO₂ émis par les activités humaines et redistribue la chaleur entre les pôles et les
-            tropiques. Pourtant, il reste l'un des environnements les moins connus et les moins surveillés de la Terre.
-          </p>
-          <p className="text-gray-300 leading-relaxed mb-4">
-            C'est là qu'interviennent les satellites d'altimétrie, de température de surface et de couleur de l'eau.
-            Combinés à des bouées dérivantes, des gliders autonomes et des capteurs embarqués sur des navires, ils
-            permettent de mesurer en continu la montée des eaux, le réchauffement des couches superficielles,
-            l'acidification, et la distribution du phytoplancton — base de toute vie marine. Ces données sont
-            essentielles pour anticiper les phénomènes El Niño, la montée du niveau des mers et l'évolution des
-            pêcheries mondiales.
-          </p>
-          <p className="text-gray-300 leading-relaxed mb-6">
-            Des acteurs comme <strong className="text-white">CLS (Collecte Localisation Satellites)</strong>, filiale
-            du CNES, développent des solutions d'observation opérationnelle de l'océan au service des gouvernements,
-            des scientifiques et de l'industrie maritime.
-          </p>
-
-          <a
-            href="https://www.youtube.com/watch?v=placeholder_fabien_lefevre"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-3 px-5 py-3 rounded-xl bg-blue-500/15 border border-blue-400/30 text-blue-300 hover:bg-blue-500/25 hover:border-blue-400/60 transition-all duration-200 text-sm font-medium group"
-          >
-            <svg className="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M21.582 7.186a2.506 2.506 0 0 0-1.768-1.768C18.254 5 12 5 12 5s-6.254 0-7.814.418a2.506 2.506 0 0 0-1.768 1.768C2 8.746 2 12 2 12s0 3.254.418 4.814a2.506 2.506 0 0 0 1.768 1.768C5.746 19 12 19 12 19s6.254 0 7.814-.418a2.506 2.506 0 0 0 1.768-1.768C22 15.254 22 12 22 12s0-3.254-.418-4.814zM10 15V9l5.2 3-5.2 3z" />
-            </svg>
-            <div className="text-left">
-              <div className="font-medium">Vidéo : Fabien LeFevre — Océanographie CLS</div>
-              <div className="text-xs text-blue-400/70">Surveillance de la santé de l'océan</div>
-            </div>
-            <svg className="w-4 h-4 opacity-60 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all ml-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-            </svg>
-          </a>
-        </div>
-
-        {/* ── Les objets du quotidien nés du spatial ── */}
-        <SpinOffBlock />
-
-        {/* ── Stations Sol & Opérations ── */}
-        <GroundStationsBlock />
-
-        {/* ── Coopération Internationale ── */}
-        <div className="bg-gradient-to-br from-slate-900/60 to-blue-950/40 backdrop-blur-sm rounded-2xl p-8 border border-blue-500/20 mb-8">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 rounded-xl bg-blue-500/15 border border-blue-400/30 flex items-center justify-center flex-shrink-0">
-              <Globe className="w-5 h-5 text-blue-400" />
-            </div>
-            <div>
-              <h3 className="text-xl font-bold text-white">Coopération Internationale : l'Espace comme Terrain de Paix</h3>
-              <p className="text-gray-400 text-xs mt-0.5">Des nations rivales, un laboratoire commun</p>
-            </div>
-          </div>
-
-          <p className="text-gray-300 text-sm leading-relaxed mb-6">
-            L'exploration spatiale est l'une des rares activités humaines où les grandes puissances mondiales collaborent réellement, même en période de tensions. Quatre agences dominent la scène internationale :
-          </p>
-
-          {/* Les grandes agences */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
-            {[
-              { name: 'ESA', flagCode: 'eu', color: 'from-blue-900/40 to-blue-800/20', border: 'border-blue-500/30', text: 'text-blue-300', desc: '22 États membres — Ariane, Copernicus, Galileo, James Webb' },
-              { name: 'NASA', flagCode: 'us', color: 'from-red-900/30 to-slate-900/20', border: 'border-red-500/30', text: 'text-red-300', desc: 'Artemis, James Webb, Perseverance, ISS' },
-              { name: 'JAXA', flagCode: 'jp', color: 'from-rose-900/30 to-slate-900/20', border: 'border-rose-500/30', text: 'text-rose-300', desc: 'Module Kibô ISS, mission Hayabusa, lanceur H3' },
-              { name: 'Roscosmos', flagCode: 'ru', color: 'from-slate-800/40 to-slate-900/20', border: 'border-slate-500/30', text: 'text-slate-300', desc: "Soyouz, Progress, segment russe de l'ISS" },
-            ].map(a => (
-              <div key={a.name} className={`bg-gradient-to-br ${a.color} rounded-xl p-4 border ${a.border}`}>
-                <div className="flex items-center gap-2 mb-2">
-                  <img
-                    src={`https://flagcdn.com/w40/${a.flagCode}.png`}
-                    srcSet={`https://flagcdn.com/w80/${a.flagCode}.png 2x`}
-                    width="24"
-                    height="18"
-                    alt={a.name}
-                    className="rounded-sm shadow-sm object-cover flex-shrink-0"
-                  />
-                  <span className={`font-bold text-lg ${a.text}`}>{a.name}</span>
-                </div>
-                <p className="text-gray-400 text-xs leading-relaxed">{a.desc}</p>
-              </div>
-            ))}
-          </div>
-
-          {/* ISS et drapeaux astronautes */}
-          <div className="bg-white/5 rounded-xl border border-white/10 p-5 mb-6">
-            <h4 className="text-white font-semibold text-sm mb-1">La Station Spatiale Internationale (ISS)</h4>
-            <p className="text-gray-400 text-xs mb-4">Plus de 270 astronautes de 21 nationalités différentes ont séjourné à bord depuis 1998.</p>
-            <div className="flex flex-wrap gap-2 mb-4">
-              {[
-                { code: 'us', label: 'États-Unis' },
-                { code: 'ru', label: 'Russie' },
-                { code: 'jp', label: 'Japon' },
-                { code: 'de', label: 'Allemagne' },
-                { code: 'fr', label: 'France' },
-                { code: 'ca', label: 'Canada' },
-                { code: 'it', label: 'Italie' },
-                { code: 'gb', label: 'Royaume-Uni' },
-                { code: 'nl', label: 'Pays-Bas' },
-                { code: 'be', label: 'Belgique' },
-                { code: 'se', label: 'Suède' },
-                { code: 'dk', label: 'Danemark' },
-                { code: 'no', label: 'Norvège' },
-                { code: 'es', label: 'Espagne' },
-                { code: 'ch', label: 'Suisse' },
-                { code: 'br', label: 'Brésil' },
-                { code: 'kz', label: 'Kazakhstan' },
-                { code: 'ua', label: 'Ukraine' },
-                { code: 'sa', label: 'Arabie Saoudite' },
-                { code: 'ae', label: 'Émirats arabes unis' },
-                { code: 'kr', label: 'Corée du Sud' },
-              ].map(({ code, label }) => (
-                <img
-                  key={code}
-                  src={`https://flagcdn.com/w40/${code}.png`}
-                  srcSet={`https://flagcdn.com/w80/${code}.png 2x`}
-                  width="28"
-                  height="21"
-                  alt={label}
-                  title={label}
-                  className="rounded-sm shadow-sm hover:scale-125 transition-transform cursor-default object-cover"
-                />
-              ))}
-            </div>
-            <p className="text-gray-300 text-sm leading-relaxed">
-              Depuis 1998, des astronautes américains, russes, européens, japonais et canadiens partagent ce laboratoire orbital — même aux pires moments des tensions géopolitiques. L'ISS est le projet d'ingénierie internationale le plus ambitieux jamais réalisé, assemblé pièce par pièce lors de plus de 40 missions de construction.
-            </p>
-          </div>
-
-          {/* Anecdote Ukraine */}
-          <div className="bg-amber-500/10 border border-amber-400/20 rounded-xl p-5 mb-6">
-            <p className="text-amber-200 text-sm leading-relaxed">
-              <strong className="text-amber-300">La science au-dessus des conflits —</strong> En février 2022, lors du déclenchement de la guerre en Ukraine, le cosmonaute russe Oleg Artemyev se trouvait en orbite à bord de l'ISS. Malgré les tensions diplomatiques au sol, la collaboration scientifique n'a pas été interrompue : russes et américains ont continué à travailler côte à côte dans l'espace, preuve que la science peut transcender les conflits politiques.
-            </p>
-          </div>
-
-          {/* Projets internationaux */}
-          <div className="mb-6">
-            <h4 className="text-white font-semibold text-sm mb-3">Grands projets de coopération internationale</h4>
-            <div className="grid md:grid-cols-2 gap-3">
-              {/* James Webb */}
-              <div className="bg-white/5 rounded-xl p-4 border border-white/10 flex flex-col">
-                <p className="text-white font-semibold text-sm mb-1">Télescope James Webb</p>
-                <p className="text-blue-300 text-xs mb-2">NASA · ESA · CSA</p>
-                <p className="text-gray-400 text-xs leading-relaxed mb-3 flex-1">
-                  Le plus grand télescope spatial jamais construit, fruit de 15 ans de coopération internationale. Un symbole de ce que l'humanité peut accomplir ensemble.
-                </p>
-                <a
-                  href="https://www.esa.int/Space_in_Member_States/France/Il_y_a_un_an_le_lancement_parfait_du_telescope_spatial_James_Webb"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-xs text-cyan-400 hover:text-cyan-300 transition-colors group"
-                >
-                  <ExternalLink className="w-3 h-3 flex-shrink-0" />
-                  <span className="group-hover:underline">Lire l'article ESA (fr)</span>
-                </a>
-              </div>
-              {/* ISS */}
-              <div className="bg-white/5 rounded-xl p-4 border border-white/10 flex flex-col">
-                <p className="text-white font-semibold text-sm mb-2">Station Spatiale Internationale</p>
-                <div className="flex flex-wrap gap-2 mb-3">
-                  {[
-                    { flag: '🇺🇸', agency: 'NASA' },
-                    { flag: '🇷🇺', agency: 'Roscosmos' },
-                    { flag: '🇪🇺', agency: 'ESA' },
-                    { flag: '🇯🇵', agency: 'JAXA' },
-                    { flag: '🇨🇦', agency: 'CSA' },
-                  ].map(({ flag, agency }) => (
-                    <span key={agency} className="inline-flex items-center gap-1 bg-white/8 border border-white/10 rounded-md px-2 py-1 text-xs text-gray-300">
-                      <span className="text-base leading-none">{flag}</span>
-                      <span>{agency}</span>
-                    </span>
-                  ))}
-                </div>
-                <p className="text-gray-400 text-xs leading-relaxed mb-3 flex-1">Laboratoire orbital habité en continu depuis novembre 2000. Symbole ultime de la coopération internationale.</p>
-                <div className="flex flex-col gap-1.5">
-                  <a href="https://www.futura-sciences.com/sciences/definitions/astronautique-station-spatiale-internationale-2571/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-xs text-cyan-400 hover:text-cyan-300 transition-colors group">
-                    <ExternalLink className="w-3 h-3 flex-shrink-0" />
-                    <span className="group-hover:underline">Dossier ISS — Futura Sciences</span>
-                  </a>
-                  <a href="https://cnes.fr/dossiers/stations-orbitales" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-xs text-cyan-400 hover:text-cyan-300 transition-colors group">
-                    <ExternalLink className="w-3 h-3 flex-shrink-0" />
-                    <span className="group-hover:underline">Les stations orbitales — CNES</span>
-                  </a>
-                </div>
-              </div>
-              {/* ExoMars */}
-              <div className="bg-white/5 rounded-xl p-4 border border-white/10 flex flex-col">
-                <p className="text-white font-semibold text-sm mb-1">ExoMars</p>
-                <p className="text-blue-300 text-xs mb-2">ESA · Roscosmos</p>
-                <p className="text-gray-400 text-xs leading-relaxed mb-3 flex-1">
-                  Programme conjoint ESA–Roscosmos pour explorer Mars et rechercher des traces de vie. Preuve que la coopération scientifique peut dépasser les tensions politiques.
-                </p>
-                <a
-                  href="https://www.esa.int/Space_in_Member_States/France/Cap_sur_la_planete_rouge_avec_la_mission_ExoMars"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-xs text-cyan-400 hover:text-cyan-300 transition-colors group"
-                >
-                  <ExternalLink className="w-3 h-3 flex-shrink-0" />
-                  <span className="group-hover:underline">Lire l'article ESA (fr)</span>
-                </a>
-              </div>
-              {/* Artemis */}
-              <div className="bg-white/5 rounded-xl p-4 border border-white/10 flex flex-col">
-                <p className="text-white font-semibold text-sm mb-1">Programme Artémis</p>
-                <p className="text-blue-300 text-xs mb-2">NASA · ESA · JAXA · CSA</p>
-                <p className="text-gray-400 text-xs leading-relaxed mb-3 flex-1">Retour humain sur la Lune et préparation de l'exploration de Mars. L'ESA contribue au module de service de la capsule Orion.</p>
-                <div className="flex flex-col gap-1.5">
-                  <a href="https://cnes.fr/actualites/programme-artemis-retour-dhumains-lune" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-xs text-cyan-400 hover:text-cyan-300 transition-colors group">
-                    <ExternalLink className="w-3 h-3 flex-shrink-0" />
-                    <span className="group-hover:underline">Programme Artémis — CNES</span>
-                  </a>
-                  <a href="https://cnes.fr/actualites/artemis-ii-un-nouveau-depart-vers-lune" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-xs text-cyan-400 hover:text-cyan-300 transition-colors group">
-                    <ExternalLink className="w-3 h-3 flex-shrink-0" />
-                    <span className="group-hover:underline">Artémis II : cap vers la Lune — CNES</span>
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Ressource PDF */}
-          <div className="mb-4">
-            <a
-              href="https://www.cartolycee.net/IMG/pdf/les_puissances_spatiales_dans_le_monde.pdf"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-3 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 rounded-xl p-4 transition-colors group"
-            >
-              <div className="w-9 h-9 rounded-lg bg-orange-500/15 border border-orange-400/30 flex items-center justify-center flex-shrink-0">
-                <FileText className="w-4 h-4 text-orange-400" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-white text-sm font-medium group-hover:text-orange-200 transition-colors">Les puissances spatiales dans le monde</p>
-                <p className="text-gray-500 text-xs mt-0.5">Cartolycée — JC Fichet · PDF · Euroconsult, UCS, Assemblée nationale</p>
-              </div>
-              <ExternalLink className="w-4 h-4 text-gray-500 group-hover:text-orange-400 flex-shrink-0 transition-colors" />
-            </a>
-          </div>
-
-          {/* Traité de l'espace */}
-          <div className="bg-blue-500/10 border border-blue-400/20 rounded-xl p-5">
-            <h4 className="text-blue-300 font-semibold text-sm mb-2">Le Traité de l'Espace (1967)</h4>
-            <p className="text-blue-100 text-sm leading-relaxed">
-              Signé en pleine Guerre froide par les États-Unis, l'URSS et le Royaume-Uni, le <strong className="text-white">Traité sur l'Espace Extra-Atmosphérique</strong> pose un principe fondateur : l'espace est le patrimoine commun de l'humanité, non appropriable par aucune nation. Il interdit les armes nucléaires en orbite et sur les corps célestes. C'est une <strong className="text-white">première brique essentielle</strong> d'une législation spatiale internationale — mais elle laisse encore de nombreuses zones grises à consolider : exploitation des ressources lunaires, trafic orbital, débris spatiaux, militarisation de l'espace. Le droit spatial international reste un chantier ouvert, plus urgent que jamais face à la multiplication des acteurs privés et étatiques.
-            </p>
-          </div>
-        </div>
-
-        <Quiz
-          questions={quizQuestions}
-          onComplete={handleQuizComplete}
-        />
-
-        <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10 mt-8">
-          <h3 className="text-2xl font-semibold mb-6">Réfléchissez à ce que vous avez appris</h3>
-
-          <div className="mb-6">
-            <label className="block text-gray-300 mb-3 font-medium">
-              Parmi tous les impacts du spatial sur Terre évoqués ici, lequel vous touche le plus personnellement et pourquoi ?
-            </label>
-            <textarea
-              value={responses['q1'] || ''}
-              onChange={(e) => handleResponseChange('q1', e.target.value)}
-              placeholder="Environnement, inclusion numérique, gestion des crises, coopération internationale..."
-              className="w-full bg-white/5 border border-white/10 rounded-lg p-4 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent resize-none"
-              rows={3}
-              maxLength={4000}
-            />
-          </div>
-
           <button
-            onClick={handleSubmit}
-            disabled={!canSubmit || submitted}
-            className={`w-full py-4 rounded-lg font-semibold text-lg transition-all duration-300 flex items-center justify-center gap-2 ${
-              submitted
-                ? 'bg-green-600 text-white'
-                : canSubmit
-                ? 'bg-gradient-to-r from-emerald-500 to-blue-500 hover:from-emerald-600 hover:to-blue-600 text-white'
-                : 'bg-gray-700 text-gray-400 cursor-not-allowed'
-            }`}
+            onClick={onHome}
+            className="inline-flex items-center gap-1.5 border border-white/10 hover:border-white/30 rounded-lg px-3 py-1.5 text-[12px] font-medium text-white/70 hover:text-white transition-colors"
           >
-            {submitted ? (
-              <>
-                <CheckCircle className="w-5 h-5" />
-                Réponses sauvegardées !
-              </>
-            ) : (
-              <>
-                Continuer vers les Lanceurs 🚀
-                <ChevronRight className="w-5 h-5" />
-              </>
-            )}
+            <Home className="w-3.5 h-3.5" /> Accueil
           </button>
         </div>
+      </div>
+
+      {/* Progress bar */}
+      <div className="sticky top-[57px] z-10 backdrop-blur-md bg-deepspace/75 border-b border-white/5">
+        <div className="max-w-[1240px] mx-auto px-8 py-3.5 flex items-center gap-3.5">
+          <div className="text-[11px] font-semibold tracking-[0.16em] uppercase text-white/55 whitespace-nowrap">
+            Page <span className="text-magenta">{String(chapter + 1).padStart(2, '0')}</span> sur 06
+          </div>
+          <div className="flex-1 h-1 bg-white/10 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-gradient-to-r from-magenta to-magenta-700 transition-all duration-500"
+              style={{ width: `${((chapter + 1) / TOTAL_CHAPTERS) * 100}%` }}
+            />
+          </div>
+          <div className="flex gap-1.5">
+            {Array.from({ length: TOTAL_CHAPTERS }).map((_, i) => {
+              const isCurrent = i === chapter;
+              const isDone = i < chapter;
+              return (
+                <button
+                  key={i}
+                  onClick={() => goTo(i)}
+                  className={
+                    'w-6 h-6 rounded-full grid place-items-center text-[11px] font-bold transition-all ' +
+                    (isCurrent
+                      ? 'bg-magenta text-white scale-110 shadow-[0_0_0_3px_rgba(200,37,122,0.25)]'
+                      : isDone
+                        ? 'bg-magenta/15 text-magenta border border-magenta'
+                        : 'bg-white/5 text-white/55 border border-white/10')
+                  }
+                >
+                  {i + 1}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+      {/* Stage */}
+      <div className="relative z-[1] max-w-[1120px] mx-auto px-8 pt-14 pb-24">
+        {chapter === 0 && (
+          <ChapterShell
+            kicker="01" title="Une journée dans ta vie" titleAccent="utilises-tu aujourd'hui ?"
+            lede="Clique sur chaque moment de ta journée. À chaque fois, on compte combien de satellites travaillent pour toi sans que tu t'en rendes compte."
+            onPrev={null} onNext={() => goTo(1)} nextEnabled={satellites > 0}
+            nextLabel={satellites > 0 ? "Continue · Le regard de Copernicus →" : "Découvre tous les moments d'abord"}
+          >
+            <DayCounter onComplete={handleSatellites} initial={satellites} />
+          </ChapterShell>
+        )}
+
+        {chapter === 1 && (
+          <ChapterShell
+            kicker="02" title="Le regard de Copernicus" titleAccent="on serait aveugles."
+            titlePrefix="Sans ces yeux,"
+            lede="Le programme européen Copernicus met à disposition de tous, gratuitement, des images de la Terre actualisées plusieurs fois par semaine. Voici trois exemples concrets."
+            onPrev={() => goTo(0)} onNext={() => goTo(2)} nextEnabled={true}
+            nextLabel="Continue · Le spatial dans ta poche →"
+          >
+            <CopernicusCarousel />
+          </ChapterShell>
+        )}
+
+        {chapter === 2 && (
+          <ChapterShell
+            kicker="03" title="Le spatial dans ta poche" titleAccent="est né du spatial ?"
+            titlePrefix="Quel objet du quotidien"
+            lede="Retourne chaque carte. Toutes les inventions ci-dessous viennent du spatial. Combien tu en utilises au quotidien ?"
+            onPrev={() => goTo(1)} onNext={() => goTo(3)} nextEnabled={flipsCount >= 6}
+            nextLabel={flipsCount >= 6 ? "Continue · Pilotage international →" : "Retourne toutes les cartes d'abord"}
+          >
+            <SpinoffGame initial={flipsCount} onCount={handleFlips} />
+          </ChapterShell>
+        )}
+
+        {chapter === 3 && (
+          <ChapterShell
+            kicker="04" title="Pilotage international" titleAccent="qui pilotent l'espace."
+            titlePrefix="Les équipes invisibles"
+            lede="Chaque satellite en orbite est surveillé et commandé depuis la Terre, vingt-quatre heures sur vingt-quatre. Le plus grand centre européen est l'ESOC, à Darmstadt en Allemagne."
+            onPrev={() => goTo(2)} onNext={() => goTo(4)} nextEnabled={true}
+            nextLabel="Continue vers le quiz éclair →"
+          >
+            <OpsBlock />
+          </ChapterShell>
+        )}
+
+        {chapter === 4 && (
+          <ChapterShell
+            kicker="05" title="Quiz éclair" titleAccent="valider la partie."
+            titlePrefix="Quatre questions pour"
+            lede="Une réponse par question. Pas de mauvaise réponse définitive, tu peux te tromper. L'objectif, c'est d'apprendre."
+            onPrev={() => goTo(3)} onNext={() => goTo(5)} nextEnabled={quizScore !== null}
+            nextLabel={quizScore !== null ? "Termine le chapitre →" : "Réponds à toutes les questions"}
+          >
+            <Quiz onDone={handleQuizScore} initial={quizScore} />
+          </ChapterShell>
+        )}
+
+        {chapter === 5 && (
+          <Recap
+            satellites={satellites}
+            flips={flipsCount}
+            quizScore={quizScore ?? 0}
+            onContinue={onComplete}
+            onPrev={() => goTo(4)}
+          />
+        )}
       </div>
     </div>
   );
 }
+
+/* ─────────────────────────────────────────────────────────
+ *  ChapterShell — common chrome around each chapter
+ * ────────────────────────────────────────────────────────*/
+interface ChapterShellProps {
+  kicker: string;
+  title: string;
+  titleAccent: string;
+  titlePrefix?: string;
+  lede: string;
+  onPrev: (() => void) | null;
+  onNext: () => void;
+  nextEnabled: boolean;
+  nextLabel: string;
+  children: React.ReactNode;
+}
+function ChapterShell(props: ChapterShellProps) {
+  return (
+    <section className="animate-[chapterIn_480ms_cubic-bezier(.2,0,0,1)]">
+      <div className="flex flex-col gap-2 mb-7">
+        <div className="inline-flex items-center gap-3 text-[12px] font-semibold tracking-[0.16em] uppercase text-magenta">
+          <span className="bg-magenta text-white rounded-full px-2.5 py-0.5 text-[11px] font-bold">{props.kicker}</span>
+          {props.title}
+        </div>
+        <h1 className="font-display font-bold uppercase tracking-[0.04em] text-[clamp(32px,4vw,52px)] leading-[1.08] m-0">
+          {props.titlePrefix && <>{props.titlePrefix}<br/></>}
+          <span className="text-magenta">{props.titleAccent}</span>
+        </h1>
+        <p className="text-[16px] text-white/70 max-w-[720px] leading-[1.55] m-0 mt-2">{props.lede}</p>
+      </div>
+
+      {props.children}
+
+      <div className="mt-12 pt-6 border-t border-white/10 flex items-center justify-between gap-4">
+        {props.onPrev ? (
+          <button
+            onClick={props.onPrev}
+            className="inline-flex items-center gap-2 rounded-lg px-5 py-3.5 text-[14px] font-semibold border border-white/10 text-white/70 hover:border-white/30 hover:text-white transition"
+          >
+            <ChevronLeft className="w-4 h-4" /> Précédent
+          </button>
+        ) : <div />}
+
+        <button
+          onClick={props.onNext}
+          disabled={!props.nextEnabled}
+          className="inline-flex items-center gap-2 rounded-lg px-5 py-3.5 text-[14px] font-semibold bg-magenta text-white hover:bg-magenta-700 disabled:bg-white/10 disabled:text-white/40 disabled:cursor-not-allowed transition"
+        >
+          {props.nextLabel}
+        </button>
+      </div>
+    </section>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────
+ *  Chapter 1 — Day counter
+ * ────────────────────────────────────────────────────────*/
+const DAY_TILES = [
+  {
+    moment: '07h30 · Réveil',
+    label: 'Tu te réveilles',
+    activity: "Tu consultes la météo, ton téléphone est déjà connecté.",
+    add: 4,
+    reveal: "GPS de tes parents (4 satellites Galileo en visibilité), réveil synchronisé avec un serveur de temps satellitaire.",
+  },
+  {
+    moment: '08h15 · Trajet',
+    label: 'Tu vas en cours',
+    activity: "Bus, vélo, voiture. Le trajet est calculé depuis l'orbite.",
+    add: 3,
+    reveal: "GPS pour le trajet, info trafic en temps réel, Galileo (Europe) qui complète le GPS américain.",
+  },
+  {
+    moment: '12h00 · Cantine',
+    label: 'Tu déjeunes',
+    activity: "Légumes du potager. Météo aux infos. Tous deux suivis depuis l'espace.",
+    add: 2,
+    reveal: "La nourriture servie vient de champs surveillés par Sentinel-2. Les bulletins météo utilisent les satellites Meteosat.",
+  },
+  {
+    moment: '20h00 · Soirée',
+    label: 'Tu regardes une vidéo',
+    activity: "Streaming, appel international. Les ondes passent par l'orbite.",
+    add: 3,
+    reveal: "Vidéo en streaming via fibre + satellites de relais télécom. Tes messages avec un cousin à l'étranger transitent par des constellations comme Starlink ou Eutelsat.",
+  },
+];
+
+const CAPTIONS = [
+  'Continue à explorer ta journée. Le total grimpe.',
+  'On y est à mi-chemin. Plus tu cliques, plus le compteur monte.',
+  'Encore un moment à découvrir.',
+  "C'est plus que ce que tu pensais, non ? Et on n'a pas tout compté.",
+];
+
+function DayCounter({ onComplete, initial }: { onComplete: (n: number) => void; initial: number }) {
+  const [clicked, setClicked] = useState<Set<number>>(new Set());
+  const [reveal, setReveal] = useState<string>('');
+  const total = useMemo(() => Array.from(clicked).reduce((sum, i) => sum + DAY_TILES[i].add, 0), [clicked]);
+  const allClicked = clicked.size === DAY_TILES.length;
+
+  // Push the running total up when it changes
+  useEffect(() => { onComplete(total); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, [total]);
+
+  // Restore last visible total if hydrated
+  const startTotal = clicked.size === 0 && initial ? initial : total;
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+      <div className="grid grid-cols-2 gap-3">
+        {DAY_TILES.map((t, i) => {
+          const isDone = clicked.has(i);
+          return (
+            <button
+              key={i}
+              onClick={() => {
+                if (isDone) return;
+                const next = new Set(clicked); next.add(i); setClicked(next);
+                setReveal(t.reveal);
+              }}
+              className={`relative text-left rounded-2xl p-5 transition-all duration-200 ${
+                isDone
+                  ? 'bg-magenta/10 border border-magenta'
+                  : 'bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/25 hover:-translate-y-0.5'
+              }`}
+            >
+              <div className={`text-[11px] font-semibold tracking-[0.16em] uppercase mb-1 ${isDone ? 'text-magenta' : 'text-white/55'}`}>
+                {t.moment}
+              </div>
+              <div className="text-[18px] font-semibold mb-1.5">{t.label}</div>
+              <div className="text-[13px] text-white/65 leading-[1.45]">{t.activity}</div>
+              <span className={`absolute top-3.5 right-3.5 bg-magenta text-white rounded-full px-2.5 py-0.5 text-[11px] font-bold transition-all duration-300 ${
+                isDone ? 'opacity-100 scale-100' : 'opacity-0 scale-50'
+              }`}>+{t.add}</span>
+            </button>
+          );
+        })}
+      </div>
+
+      <div className="rounded-2xl border border-magenta/30 bg-gradient-to-br from-magenta/15 to-magenta/[0.03] p-8 flex flex-col gap-4 relative overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_80%_0%,rgba(200,37,122,0.18),transparent_60%)] pointer-events-none" />
+        <span className="relative text-[11px] font-semibold tracking-[0.16em] uppercase text-magenta">Total cumulé</span>
+        <div key={total} className="relative font-display font-bold text-[clamp(72px,10vw,128px)] leading-[0.9] tracking-[-0.02em] animate-[pulse_320ms_cubic-bezier(.2,0,0,1)]">
+          {startTotal}
+        </div>
+        <p className="relative text-[14px] leading-[1.55] text-white/80 m-0">
+          {allClicked
+            ? "C'est plus que ce que tu pensais, non ? Et on n'a pas tout compté."
+            : clicked.size === 0
+              ? "Clique sur les moments de ta journée pour les découvrir."
+              : CAPTIONS[clicked.size - 1] || CAPTIONS[0]}
+        </p>
+        {reveal && (
+          <div className="relative bg-white/5 border border-white/10 rounded-xl px-4 py-3.5 text-[13px] leading-[1.5] text-white/85">
+            {reveal}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────
+ *  Chapter 2 — Copernicus carousel
+ * ────────────────────────────────────────────────────────*/
+const SLIDES = [
+  {
+    img: 'https://esa.int/var/esa/storage/images/esa_multimedia/images/2016/05/piton_de_la_fournaise/15985095-1-eng-GB/Piton_de_la_Fournaise.jpg',
+    tag: 'Sentinel-1 · Île de La Réunion',
+    title: 'Le Piton de la Fournaise en éruption',
+    desc: "Sentinel-1 voit avec un radar qui traverse les nuages et fonctionne de nuit. Le volcan est cartographié en temps réel pendant chaque éruption pour évaluer la coulée de lave et alerter les habitants.",
+    stats: [{ v: '5j', k: 'Cycle de revisite Sentinel-1' }, { v: '24/7', k: 'Imagerie radar, jour ou nuit' }],
+    credit: 'Image : ESA / Copernicus Sentinel-1, 2016',
+  },
+  {
+    img: 'https://esa.int/var/esa/storage/images/esa_multimedia/images/2022/01/sulphur_dioxide_from_tonga_eruption_spreads_over_australia/23907503-1-eng-GB/Sulphur_dioxide_from_Tonga_eruption_spreads_over_Australia_card_full.jpg',
+    tag: 'Sentinel-5P · Janvier 2022',
+    title: "Le nuage de soufre de l'éruption de Tonga",
+    desc: "Sentinel-5P TROPOMI détecte les gaz invisibles à l'œil nu. Ici, le dioxyde de soufre rejeté par l'éruption volcanique de Tonga se propage au-dessus de l'Australie.",
+    stats: [{ v: '7', k: 'Polluants suivis en continu' }, { v: '100%', k: 'Couverture terrestre quotidienne' }],
+    credit: 'Image : ESA / Copernicus Sentinel-5P, 2022',
+  },
+  {
+    img: 'https://www.copernicus.eu/system/files/styles/image_of_the_day/private/2024-12/image_day/20241231_Seine%20river.png?itok=Zg_IUmBQ',
+    tag: 'Sentinel-2 · La Seine',
+    title: "Ta ville vue de l'espace",
+    desc: "Copernicus propose chaque jour une image différente de la Terre. Voici la Seine vue par Sentinel-2 en optique multispectrale. Les mêmes images servent à l'agriculture, l'urbanisme et la gestion des inondations.",
+    stats: [{ v: '20', k: 'Satellites Sentinel dans la flotte' }, { v: '0€', k: 'Données gratuites pour tous' }],
+    credit: 'Image : ESA / Copernicus Sentinel-2, 2024',
+  },
+];
+
+function CopernicusCarousel() {
+  const [idx, setIdx] = useState(0);
+  const set = (i: number) => setIdx((i + SLIDES.length) % SLIDES.length);
+  return (
+    <div>
+      <div className="rounded-2xl overflow-hidden border border-white/10 relative bg-black/30">
+        <div
+          className="flex transition-transform duration-500"
+          style={{ transform: `translateX(-${idx * 100}%)`, width: `${SLIDES.length * 100}%` }}
+        >
+          {SLIDES.map((s, i) => (
+            <div key={i} className="grid grid-cols-1 md:grid-cols-[1.4fr_1fr] w-full" style={{ width: `${100 / SLIDES.length}%` }}>
+              <div className="aspect-[4/3] bg-black bg-cover bg-center" style={{ backgroundImage: `url('${s.img}')` }} />
+              <div className="p-8 flex flex-col gap-3">
+                <span className="text-[11px] font-semibold tracking-[0.16em] uppercase text-magenta">{s.tag}</span>
+                <h3 className="text-[22px] font-semibold leading-[1.2] m-0">{s.title}</h3>
+                <p className="text-[14px] leading-[1.55] text-white/75 m-0">{s.desc}</p>
+                <div className="mt-auto flex gap-6">
+                  {s.stats.map((st, k) => (
+                    <div key={k}>
+                      <div className="text-[32px] font-bold text-magenta leading-none">{st.v}</div>
+                      <div className="text-[11px] uppercase tracking-[0.08em] text-white/50 mt-1 max-w-[130px] leading-[1.4]">{st.k}</div>
+                    </div>
+                  ))}
+                </div>
+                <p className="text-[10.5px] italic text-white/45 m-0 mt-3">{s.credit}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+        <button onClick={() => set(idx - 1)} aria-label="Précédent" className="absolute top-1/2 left-4 -translate-y-1/2 w-11 h-11 rounded-full bg-black/60 backdrop-blur-md border border-white/20 grid place-items-center hover:bg-magenta hover:border-magenta transition">
+          <ChevronLeft className="w-5 h-5" />
+        </button>
+        <button onClick={() => set(idx + 1)} aria-label="Suivant" className="absolute top-1/2 right-4 -translate-y-1/2 w-11 h-11 rounded-full bg-black/60 backdrop-blur-md border border-white/20 grid place-items-center hover:bg-magenta hover:border-magenta transition">
+          <ChevronRight className="w-5 h-5" />
+        </button>
+      </div>
+      <div className="flex gap-2 justify-center mt-5">
+        {SLIDES.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => set(i)}
+            aria-label={`Aller à la diapo ${i + 1}`}
+            className={`rounded-full transition-all duration-200 ${i === idx ? 'w-7 h-2 bg-magenta' : 'w-2 h-2 bg-white/20'}`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────
+ *  Chapter 3 — Spinoff flip-card game
+ * ────────────────────────────────────────────────────────*/
+const SPINOFFS = [
+  { name: 'Matelas à mémoire de forme', badge: 'NASA · 1966', source: 'Apollo, sièges de capsule', title: 'Mousse à mémoire de forme', desc: "Inventée pour absorber les chocs au décollage et protéger les astronautes. Aujourd'hui dans nos matelas, sièges auto, équipements anti-escarres.", img: 'https://guideliterie.com/wp-content/uploads/2018/12/matelas-memoire-de-forme.jpeg' },
+  { name: 'Velcro',                     badge: 'NASA · 1960s', source: 'Apollo, ISS',                title: 'Velcro et fixations sans pesanteur', desc: "Aucune vis ne peut être serrée à la main en apesanteur sans s'envoler. Le velcro est devenu indispensable à bord. Puis dans nos chaussures, sacs, matériel médical.", img: 'https://live.staticflickr.com/65535/55180852205_ecf572f1df_c.jpg' },
+  { name: 'Capteur photo smartphone',   badge: 'JPL · 1993',  source: 'Sondes interplanétaires',   title: 'Capteur CMOS', desc: "Inventé au JPL de la NASA pour les sondes interplanétaires. Cœur de chaque appareil photo de smartphone, des milliards produits chaque année.", img: 'https://images.pexels.com/photos/1828109/pexels-photo-1828109.jpeg' },
+  { name: 'GPS de ton téléphone',       badge: 'DoD · 1973',  source: '24 satellites en orbite moyenne', title: 'GPS et géolocalisation', desc: "Conçu par l'armée américaine pour guider missiles et troupes. Ouvert au civil en 1983. L'Europe a depuis développé son propre système, Galileo.", img: 'https://images.pexels.com/photos/9966011/pexels-photo-9966011.jpeg' },
+  { name: 'Imagerie médicale IRM',      badge: 'NASA · 1970s', source: "Traitement d'image sondes lunaires", title: 'IRM, imagerie médicale', desc: "Les algorithmes de traitement d'image développés pour les sondes lunaires ont inspiré les premières IRM. Outil de diagnostic le plus puissant de la médecine moderne.", img: 'https://images.pexels.com/photos/7089017/pexels-photo-7089017.jpeg' },
+  { name: 'Plaque vitrocéramique',      badge: 'NASA · 1970s', source: 'Bouclier thermique navette', title: 'Céramiques haute performance', desc: "Pour résister à 1 600 °C lors de la rentrée atmosphérique. Aujourd'hui dans nos plaques de cuisson, implants dentaires, freins de TGV.", img: 'https://images.pexels.com/photos/8055154/pexels-photo-8055154.jpeg' },
+];
+
+function SpinoffGame({ initial, onCount }: { initial: number; onCount: (n: number) => void }) {
+  const [flipped, setFlipped] = useState<Set<number>>(new Set());
+  const count = flipped.size;
+  useEffect(() => { onCount(Math.max(count, initial || 0)); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, [count]);
+
+  return (
+    <div>
+      <div className="bg-white/5 border border-white/10 rounded-xl px-5 py-4 mb-6 flex items-center justify-between gap-6 flex-wrap">
+        <div className="text-[14px] text-white/85 leading-[1.5] flex-1 min-w-[280px]">
+          Astuce : la majorité de nos technologies modernes ont d'abord été développées pour les missions spatiales avant d'être adoptées dans la vie civile. C'est ce qu'on appelle des <strong>retombées</strong>, ou <em>spinoffs</em>.
+        </div>
+        <div className="text-[13px] text-white/60 inline-flex items-center gap-2.5">
+          <span className="text-[28px] font-bold text-magenta leading-none">{count}</span>
+          sur 6 retournées
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        {SPINOFFS.map((s, i) => {
+          const isFlipped = flipped.has(i);
+          return (
+            <div
+              key={i}
+              onClick={() => {
+                if (isFlipped) return;
+                const next = new Set(flipped); next.add(i); setFlipped(next);
+              }}
+              className="aspect-[3/4] cursor-pointer [perspective:1000px]"
+            >
+              <div className={`relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d] ${isFlipped ? '[transform:rotateY(180deg)]' : ''}`}>
+                {/* Front */}
+                <div className="absolute inset-0 rounded-2xl overflow-hidden [backface-visibility:hidden] bg-gradient-to-br from-deepspace-soft to-magenta/20 border border-white/10 hover:border-magenta p-5 flex flex-col justify-between">
+                  <div className="text-[11px] font-medium tracking-[0.12em] uppercase text-white/55">Question {i + 1}</div>
+                  <div className="font-extrabold text-[72px] text-magenta/40 leading-none -mt-2">?</div>
+                  <div className="text-[17px] font-semibold leading-[1.2]">{s.name}</div>
+                </div>
+                {/* Back */}
+                <div
+                  className="absolute inset-0 rounded-2xl overflow-hidden [backface-visibility:hidden] [transform:rotateY(180deg)] bg-cover bg-center border border-magenta flex flex-col justify-end"
+                  style={{ backgroundImage: `url('${s.img}')` }}
+                >
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent" />
+                  <div className="relative p-4 text-white">
+                    <span className="inline-flex bg-magenta text-white rounded-full px-2.5 py-0.5 text-[10px] font-bold tracking-[0.08em] mb-2">{s.badge}</span>
+                    <div className="text-[11px] text-white/70 mb-1">{s.source}</div>
+                    <h4 className="text-[16px] font-bold m-0 mb-2 leading-[1.2]">{s.title}</h4>
+                    <p className="text-[12px] text-white/85 leading-[1.45] m-0">{s.desc}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────
+ *  Chapter 4 — ESOC + agencies + ISS flags
+ * ────────────────────────────────────────────────────────*/
+const AGENCIES = [
+  { name: 'ESA', flag: 'eu', desc: '22 États membres. Ariane, Copernicus, Galileo, James Webb.' },
+  { name: 'NASA', flag: 'us', desc: 'Artemis, James Webb, Perseverance, ISS.' },
+  { name: 'JAXA', flag: 'jp', desc: 'Module Kibô, Hayabusa, lanceur H3.' },
+  { name: 'Roscosmos', flag: 'ru', desc: 'Soyouz, Progress, segment russe de l\'ISS.' },
+];
+
+const ISS_FLAGS: { code: string; name: string }[] = [
+  { code: 'us', name: 'États-Unis' }, { code: 'ru', name: 'Russie' }, { code: 'jp', name: 'Japon' },
+  { code: 'de', name: 'Allemagne' }, { code: 'fr', name: 'France' }, { code: 'ca', name: 'Canada' },
+  { code: 'it', name: 'Italie' }, { code: 'gb', name: 'Royaume-Uni' }, { code: 'nl', name: 'Pays-Bas' },
+  { code: 'be', name: 'Belgique' }, { code: 'se', name: 'Suède' }, { code: 'dk', name: 'Danemark' },
+  { code: 'es', name: 'Espagne' }, { code: 'ch', name: 'Suisse' }, { code: 'br', name: 'Brésil' },
+  { code: 'kz', name: 'Kazakhstan' }, { code: 'ua', name: 'Ukraine' }, { code: 'sa', name: 'Arabie saoudite' },
+  { code: 'ae', name: 'Émirats arabes unis' }, { code: 'kr', name: 'Corée du Sud' }, { code: 'no', name: 'Norvège' },
+];
+
+function OpsBlock() {
+  const [hovered, setHovered] = useState<string>('');
+  return (
+    <div>
+      <div className="grid grid-cols-1 md:grid-cols-[1.4fr_1fr] gap-6">
+        <div
+          className="aspect-[4/3] rounded-2xl overflow-hidden border border-white/10 bg-black bg-cover bg-center relative"
+          style={{ backgroundImage: "url('https://www.esa.int/var/esa/storage/images/esa_multimedia/images/2012/06/main_control_room_at_esa_s_space_operations_centre/11252253-2-eng-GB/Main_Control_Room_at_ESA_s_Space_Operations_Centre_pillars.jpg')" }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
+          <div className="absolute bottom-5 left-6 right-6">
+            <span className="inline-block bg-magenta text-white text-[10px] font-bold uppercase tracking-[0.12em] px-2.5 py-1 rounded mb-2">ESOC · Darmstadt</span>
+            <h3 className="text-[22px] font-semibold m-0 mb-1.5">European Space Operations Centre</h3>
+            <p className="text-[12.5px] text-white/80 m-0 leading-[1.4]">Centre d'excellence européen pour les opérations de mission. Plus de 60 satellites pilotés depuis sa création.</p>
+            <p className="text-[10.5px] italic text-white/45 m-0 mt-2">Image : ESA / ESOC, 2012</p>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 gap-3">
+          <StatRow v="20+" k="missions ESA contrôlées en parallèle" />
+          <StatRow v="24/7" k="opérations en continu, jour et nuit" />
+          <StatRow v="900+" k="experts sur site, à Darmstadt" />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-7">
+        {AGENCIES.map(a => (
+          <div key={a.name} className="bg-white/5 border border-white/10 rounded-xl p-4 flex flex-col gap-2 hover:border-magenta hover:bg-magenta/[0.06] hover:-translate-y-0.5 transition-all">
+            <div className="flex items-center gap-2.5">
+              <img src={`https://flagcdn.com/w40/${a.flag}.png`} alt="" width={28} height={20} className="rounded-sm object-cover" />
+              <strong className="text-[18px] font-bold">{a.name}</strong>
+            </div>
+            <p className="text-[12px] text-white/65 leading-[1.45] m-0">{a.desc}</p>
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-7 bg-white/5 border border-white/10 rounded-xl p-6">
+        <div className="flex items-baseline justify-between gap-4 mb-1.5">
+          <h4 className="text-[17px] font-semibold m-0">La Station spatiale internationale</h4>
+          <small className="text-[12px] text-white/55">270 astronautes, 21 nationalités, depuis 1998</small>
+        </div>
+        <p className="text-[13px] text-white/70 m-0 mb-4">Survole les drapeaux pour découvrir qui a séjourné à bord.</p>
+        <div className="flex flex-wrap gap-2">
+          {ISS_FLAGS.map(f => (
+            <img
+              key={f.code}
+              src={`https://flagcdn.com/w40/${f.code}.png`}
+              alt={f.name}
+              title={f.name}
+              width={32}
+              height={24}
+              className="rounded-sm object-cover opacity-85 hover:opacity-100 hover:scale-[1.18] transition-all"
+              onMouseEnter={() => setHovered(f.name)}
+              onMouseLeave={() => setHovered('')}
+            />
+          ))}
+        </div>
+        <div className="mt-3 text-[12px] font-medium text-magenta tracking-[0.04em] min-h-[18px]">{hovered || '\u00A0'}</div>
+      </div>
+    </div>
+  );
+}
+
+function StatRow({ v, k }: { v: string; k: string }) {
+  return (
+    <div className="bg-white/5 border border-white/10 rounded-xl px-5 py-4 flex items-baseline justify-between gap-4">
+      <span className="text-[40px] font-bold text-magenta leading-none tracking-[-0.02em]">{v}</span>
+      <span className="text-[12px] text-white/70 text-right leading-[1.4]">{k}</span>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────
+ *  Chapter 5 — Quiz
+ * ────────────────────────────────────────────────────────*/
+const QUESTIONS = [
+  {
+    q: "Combien de satellites utilises-tu au cours d'une journée, en moyenne ?",
+    options: [
+      { t: 'Aucun, je ne suis pas astronaute', ok: false },
+      { t: 'Entre 2 et 4', ok: false },
+      { t: 'Au moins 8, souvent bien plus', ok: true },
+      { t: 'Exactement 1, mon téléphone', ok: false },
+    ],
+    e: "Sans t'en rendre compte, tu utilises des dizaines de satellites chaque jour. Au moins 4 satellites GPS te localisent en permanence. Tes appels et internet passent par des satellites télécom. La météo, les bulletins routiers, et même les champs qui produisent ta nourriture sont suivis depuis l'espace.",
+  },
+  {
+    q: 'Quel programme spatial européen fournit des données environnementales en accès libre à tous ?',
+    options: [
+      { t: 'Ariane 6', ok: false },
+      { t: 'Copernicus', ok: true },
+      { t: 'Artemis', ok: false },
+      { t: 'Hubble', ok: false },
+    ],
+    e: "Copernicus est le programme européen d'observation de la Terre. Ses données sont entièrement ouvertes et gratuites. Forêts, fonte des glaces, qualité de l'air, agriculture, urbanisme : tout passe par Copernicus.",
+  },
+  {
+    q: 'Parmi ces secteurs, lequel utilise les données Copernicus ?',
+    options: [
+      { t: 'Uniquement les agences spatiales', ok: false },
+      { t: 'Uniquement les météorologues', ok: false },
+      { t: "Agriculture, pêche, assurances, qualité de l'air", ok: true },
+      { t: 'Uniquement les gouvernements européens', ok: false },
+    ],
+    e: "Plus de 80 % des bénéfices économiques de Copernicus sont générés en dehors du secteur spatial. Agriculteurs, assureurs, pêcheurs, autorités sanitaires : tout le monde utilise ces données ouvertes.",
+  },
+  {
+    q: 'Quelle est la taille de la plus grande antenne au sol utilisée pour les télécommunications spatiales ?',
+    options: [
+      { t: '10 mètres', ok: false },
+      { t: '34 mètres', ok: false },
+      { t: '70 mètres', ok: true },
+      { t: '120 mètres', ok: false },
+    ],
+    e: "L'antenne de 70 mètres de Goldstone, en Californie, fait partie du Deep Space Network de la NASA. Plus large qu'un terrain de football. Elle capte des signaux émis par des sondes situées à des milliards de kilomètres.",
+  },
+];
+
+function Quiz({ onDone, initial }: { onDone: (score: number) => void; initial: number | null }) {
+  const [step, setStep] = useState(0);
+  const [score, setScore] = useState(0);
+  const [answers, setAnswers] = useState<(boolean | null)[]>(QUESTIONS.map(() => null));
+  const [chosen, setChosen] = useState<number | null>(null);
+  const [done, setDone] = useState(initial !== null);
+
+  const answer = (i: number) => {
+    if (chosen !== null) return;
+    const ok = QUESTIONS[step].options[i].ok;
+    setChosen(i);
+    const next = [...answers]; next[step] = ok; setAnswers(next);
+    if (ok) setScore(score + 1);
+    setTimeout(() => {
+      if (step + 1 < QUESTIONS.length) {
+        setStep(step + 1);
+        setChosen(null);
+      } else {
+        setDone(true);
+        onDone(score + (ok ? 1 : 0));
+      }
+    }, 2200);
+  };
+
+  if (done) {
+    const finalScore = initial !== null ? initial : score;
+    return (
+      <div className="bg-white/5 border border-white/10 rounded-2xl p-12 text-center">
+        <Trophy className="w-14 h-14 text-magenta mx-auto mb-4" />
+        <div className="text-[11px] font-semibold tracking-[0.16em] uppercase text-magenta mb-2">Quiz terminé</div>
+        <div className="text-[36px] font-bold mb-2">
+          {finalScore} <span className="text-white/40">/ 4</span>
+        </div>
+        <p className="text-white/65 max-w-md mx-auto m-0">
+          {finalScore >= 3 ? "Excellent. Tu as bien suivi." : finalScore >= 2 ? "Bien joué. Tu peux encore relire certains chapitres." : "Pas grave, le but est d'apprendre. Tu peux revenir aux chapitres précédents."}
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-white/5 border border-white/10 rounded-2xl p-9">
+      <div className="flex items-center justify-between mb-6 text-[12px] font-semibold tracking-[0.14em] uppercase text-white/60">
+        <span>Question <span className="text-magenta">{step + 1}</span> sur {QUESTIONS.length}</span>
+        <span className="inline-flex gap-1.5 items-center">
+          {answers.map((a, i) => (
+            <span key={i} className={`w-2.5 h-2.5 rounded-full transition ${a === true ? 'bg-magenta' : a === false ? 'bg-white/30' : 'bg-white/10'}`} />
+          ))}
+        </span>
+      </div>
+      <p className="text-[22px] font-semibold leading-[1.3] m-0 mb-5">{QUESTIONS[step].q}</p>
+      <div className="flex flex-col gap-2.5">
+        {QUESTIONS[step].options.map((o, i) => {
+          const isChosen = chosen === i;
+          const showCorrect = chosen !== null && o.ok;
+          const showIncorrect = isChosen && !o.ok;
+          return (
+            <button
+              key={i}
+              onClick={() => answer(i)}
+              disabled={chosen !== null}
+              className={
+                'rounded-xl px-5 py-4 text-[14.5px] font-medium text-left flex items-center gap-3.5 border transition-all ' +
+                (showCorrect
+                  ? 'bg-magenta/15 border-magenta text-white'
+                  : showIncorrect
+                    ? 'bg-white/[0.04] border-red-400/50 text-white/55'
+                    : 'bg-white/[0.04] border-white/10 hover:bg-white/[0.08] hover:border-magenta')
+              }
+            >
+              <span className={
+                'w-6.5 h-6.5 rounded-full grid place-items-center text-[12px] font-bold flex-shrink-0 ' +
+                (showCorrect ? 'bg-magenta text-white' : showIncorrect ? 'bg-red-400/30 text-white' : 'bg-white/10 text-white/70')
+              } style={{ width: 26, height: 26 }}>
+                {String.fromCharCode(65 + i)}
+              </span>
+              <span>{o.t}</span>
+            </button>
+          );
+        })}
+      </div>
+      {chosen !== null && (
+        <div className="mt-5 px-5 py-4 bg-magenta/[0.06] border border-magenta/25 rounded-xl text-[13.5px] leading-[1.55] text-white/85 animate-[chapterIn_320ms]">
+          <div className="font-semibold text-magenta uppercase text-[11px] tracking-[0.1em] mb-1.5">À retenir</div>
+          {QUESTIONS[step].e}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────
+ *  Chapter 6 — Récap
+ * ────────────────────────────────────────────────────────*/
+function Recap({ satellites, flips, quizScore, onContinue, onPrev }: {
+  satellites: number; flips: number; quizScore: number;
+  onContinue: () => void; onPrev: () => void;
+}) {
+  return (
+    <section className="animate-[chapterIn_480ms_cubic-bezier(.2,0,0,1)]">
+      <div className="text-center pt-10">
+        <div className="w-24 h-24 mx-auto mb-6 bg-magenta rounded-full grid place-items-center shadow-[0_0_0_6px_rgba(200,37,122,0.18),0_20px_40px_rgba(200,37,122,0.35)]">
+          <Trophy className="w-12 h-12 text-white" />
+        </div>
+        <h1 className="font-display font-bold uppercase tracking-[0.04em] text-[clamp(36px,5vw,56px)] m-0 mb-3">
+          Chapitre 1 <span className="text-magenta">terminé.</span>
+        </h1>
+        <p className="text-[17px] text-white/70 max-w-[560px] mx-auto m-0 mb-9 leading-[1.55]">
+          Tu as découvert comment le spatial change ta vie au quotidien, qui pilote les satellites depuis la Terre,
+          et comment les nations collaborent dans l'orbite.
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 text-left mb-9">
+          <RecapStat v={satellites} t="satellites utilisés aujourd'hui" />
+          <RecapStat v={flips} t="retombées du spatial découvertes" />
+          <RecapStat v={`${quizScore} / 4`} t="réponses correctes au quiz" />
+        </div>
+        <div className="bg-white/5 border border-white/10 rounded-2xl p-7 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 text-left">
+          <div className="flex flex-col gap-1">
+            <span className="text-[11px] font-semibold tracking-[0.16em] uppercase text-white/55">Prochain chapitre</span>
+            <span className="text-[22px] font-semibold">Lanceurs et Ariane 6</span>
+            <span className="text-[13px] text-white/60">Découvre comment on quitte la Terre, et qui le fait.</span>
+          </div>
+          <button
+            onClick={onContinue}
+            className="inline-flex items-center gap-2 bg-magenta text-white rounded-lg px-6 py-4 text-[14px] font-semibold hover:bg-magenta-700 transition"
+          >
+            Continuer la session →
+          </button>
+        </div>
+      </div>
+      <div className="mt-12 pt-6 border-t border-white/10 flex">
+        <button
+          onClick={onPrev}
+          className="inline-flex items-center gap-2 rounded-lg px-5 py-3.5 text-[14px] font-semibold border border-white/10 text-white/70 hover:border-white/30 hover:text-white transition"
+        >
+          <ChevronLeft className="w-4 h-4" /> Revenir au quiz
+        </button>
+      </div>
+    </section>
+  );
+}
+
+function RecapStat({ v, t }: { v: string | number; t: string }) {
+  return (
+    <div className="bg-white/5 border border-white/10 rounded-xl p-5 flex flex-col gap-2">
+      <span className="text-[10px] font-bold tracking-[0.16em] uppercase text-magenta">Tes statistiques</span>
+      <span className="text-[32px] font-bold text-magenta leading-none">{v}</span>
+      <span className="text-[15px] font-medium leading-[1.35]">{t}</span>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────
+ *  Tailwind utility additions you'll want in `index.css`:
+ *
+ *  @keyframes chapterIn {
+ *    from { opacity: 0; transform: translateY(20px); }
+ *    to   { opacity: 1; transform: translateY(0); }
+ *  }
+ *  @keyframes pulse {
+ *    0%   { transform: scale(1); }
+ *    40%  { transform: scale(1.12); color: #c8257a; }
+ *    100% { transform: scale(1); }
+ *  }
+ * ────────────────────────────────────────────────────────*/
