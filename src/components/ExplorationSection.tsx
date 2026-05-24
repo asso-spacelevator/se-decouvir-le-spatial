@@ -230,6 +230,7 @@ export function ExplorationSection({ onComplete, onHome, onBack }: ExplorationSe
               placeholder="Partagez votre vision de l'avenir de l'exploration spatiale..."
               className="w-full bg-white/5 border border-white/10 rounded-lg p-4 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
               rows={5}
+              maxLength={4000}
             />
           </div>
 

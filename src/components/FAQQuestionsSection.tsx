@@ -213,6 +213,7 @@ export function FAQQuestionsSection({ onComplete, onHome, onBack }: FAQQuestions
                     placeholder="Tapez votre question ici..."
                     className="w-full bg-white/5 border border-white/10 rounded-lg p-4 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-sky-500 resize-none"
                     rows={5}
+                    maxLength={4000}
                   />
                   <div className="mt-3 text-sm text-gray-400">
                     <span className="font-medium">Inspiration :</span>
