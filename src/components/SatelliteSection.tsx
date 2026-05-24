@@ -474,6 +474,7 @@ export function SatelliteSection({ onComplete, onHome, onBack }: SatelliteSectio
               placeholder="Décrivez votre choix d'orbite, la mission et les principaux défis d'ingénierie..."
               className="w-full bg-white/5 border border-white/10 rounded-lg p-4 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent resize-none"
               rows={4}
+              maxLength={4000}
             />
           </div>
 

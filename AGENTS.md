@@ -101,6 +101,9 @@ hosted projects sync it via `supabase config push` (a separate command from
 - Components live flat in `src/components/`; the `Subsection` component is the
   standard expandable "topic + embedded video" card pattern reused across
   sections
+- User-input text columns must have a `CHECK (length(...) <= N)` constraint;
+  every corresponding `<textarea>` must carry a matching `maxLength={N}` so
+  the browser enforces the limit before the DB rejects the write
 
 ### Static Assets
 

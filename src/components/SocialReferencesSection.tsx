@@ -264,6 +264,7 @@ export function SocialReferencesSection({ onComplete, onHome, onBack }: SocialRe
               placeholder="Partagez vos centres d'intérêt..."
               className="w-full bg-white/5 border border-white/10 rounded-lg p-4 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent resize-none"
               rows={4}
+              maxLength={4000}
             />
           </div>
 

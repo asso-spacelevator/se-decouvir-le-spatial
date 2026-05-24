@@ -483,6 +483,7 @@ export function AccompagnementSection({ onComplete, onHome, onBack }: Accompagne
               placeholder="Partagez vos centres d'intérêt et vos besoins..."
               className="w-full bg-white/5 border border-white/10 rounded-lg p-4 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-teal-500 resize-none"
               rows={4}
+              maxLength={4000}
             />
           </div>
           <button
