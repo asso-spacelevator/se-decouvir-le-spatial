@@ -489,7 +489,7 @@ export function ImpactTerrestreSection({ onComplete, onHome, onBack }: ImpactTer
           {/* Infographie limites planétaires */}
           <div className="rounded-xl overflow-hidden border border-white/10 mb-5">
             <img
-              src="/image.png"
+              src={`${import.meta.env.BASE_URL}image.png`}
               alt="Les 9 limites planétaires — CGDD 2025"
               className="w-full object-contain bg-white"
             />

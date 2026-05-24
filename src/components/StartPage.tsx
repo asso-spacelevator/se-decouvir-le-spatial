@@ -155,13 +155,13 @@ export function StartPage({ onStartSession1, onStartSession2 }: StartPageProps) 
         {/* Partner logos */}
         <div className="flex items-center justify-center gap-8 mt-8">
           <img
-            src="/logos/space-elevator.png"
+            src={`${import.meta.env.BASE_URL}logos/space-elevator.png`}
             alt="Space Elevator"
             className="object-contain opacity-80 hover:opacity-100 transition-opacity"
             style={{ minWidth: '85px', height: '60px' }}
           />
           <img
-            src="/logos/ile-de-france.png"
+            src={`${import.meta.env.BASE_URL}logos/ile-de-france.png`}
             alt="Région Île-de-France"
             className="object-contain opacity-80 hover:opacity-100 transition-opacity"
             style={{ minWidth: '85px', height: '60px' }}

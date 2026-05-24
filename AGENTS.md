@@ -101,3 +101,22 @@ hosted projects sync it via `supabase config push` (a separate command from
 - Components live flat in `src/components/`; the `Subsection` component is the
   standard expandable "topic + embedded video" card pattern reused across
   sections
+
+### Static Assets
+
+Static assets (images, PDFs, etc.) live in the `public/` directory and are served
+at the site root. When referencing these assets in code, **always use**
+`import.meta.env.BASE_URL` to ensure correct paths in production:
+
+```tsx
+// Correct — works in dev and production with GitHub Pages
+<img src={`${import.meta.env.BASE_URL}logos/space-elevator.png`} />
+
+// Wrong — breaks when deployed to a subpath (e.g., GitHub Pages)
+<img src="/logos/space-elevator.png" />
+<img src="logos/space-elevator.png" />
+```
+
+Vite's `--base` flag is set in CI via `github.event.repository.name`.
+`import.meta.env.BASE_URL` is automatically injected by Vite and resolves to
+`/` in development and `/repo-name/` in production.
