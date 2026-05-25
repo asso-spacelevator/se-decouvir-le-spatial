@@ -119,7 +119,7 @@ export function SatelliteSection({ onComplete, onHome }: SatelliteSectionProps) 
 
   return (
     <SectionCanvas>
-      <SectionTopBar label="Session 2 · Chapitre 1 sur 4 · Satellites & Orbites" onHome={onHome} />
+      <SectionTopBar label="Session 2 · Chapitre 1 sur 5 · Satellites & Orbites" onHome={onHome} />
       <SectionProgress current={chapter} total={TOTAL_CHAPTERS} onGoTo={goTo} />
 
       <div className="relative z-[1] max-w-[1120px] mx-auto px-8 pt-14 pb-24">

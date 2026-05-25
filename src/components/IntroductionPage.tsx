@@ -115,6 +115,7 @@ const QUOTES_DATA = [
     id: 'armstrong',
     quote: "C'est un petit pas pour l'homme, un bond de géant pour l'humanité.",
     author: 'Neil Armstrong',
+    role: 'Astronaute · 1er homme sur la Lune',
     context: "Prononcée le 21 juillet 1969 lors de la mission Apollo 11. Neil Armstrong fut le premier être humain à poser le pied sur la Lune. Cette phrase, transmise en direct à des centaines de millions de téléspectateurs, reste l'une des plus célèbres de l'histoire spatiale.",
     source: "NASA broadcast, mission Apollo 11 · 21 juillet 1969",
     imageQuestion: `${import.meta.env.BASE_URL}citations/neil2.jpg`,
@@ -124,6 +125,7 @@ const QUOTES_DATA = [
     id: 'tsiolkovsky',
     quote: "La Terre est le berceau de l'humanité, mais on ne reste pas éternellement dans son berceau.",
     author: 'Konstantin Tsiolkovsky',
+    role: "Mathématicien · Père de l'astronautique",
     context: "Konstantin Tsiolkovsky (1857-1935), mathématicien et ingénieur russe autodidacte, est considéré comme le père de l'astronautique. Sourd depuis l'enfance, il a théorisé les bases de la propulsion par réaction et imaginé les fusées multi-étages bien avant les premiers vols spatiaux.",
     source: "K. Tsiolkovsky, lettre à un correspondant · 1911",
     imageQuestion: `${import.meta.env.BASE_URL}citations/KonstantinTsiolkowsky2.jpg`,
@@ -133,6 +135,7 @@ const QUOTES_DATA = [
     id: 'sagan',
     quote: "Regardez encore ce point. C'est ici. C'est notre foyer. C'est nous.",
     author: 'Carl Sagan',
+    role: 'Astrophysicien · Vulgarisateur scientifique',
     context: "Carl Sagan (1934-1996), astrophysicien et vulgarisateur américain, a écrit ces mots en 1994 à propos d'une photo de la Terre prise par la sonde Voyager 1 depuis 6 milliards de kilomètres. Sur cette image, notre planète n'apparaît que comme un infime point bleu pâle — un rappel de notre fragilité et de notre responsabilité collective.",
     source: "Carl Sagan, Pale Blue Dot: A Vision of the Human Future in Space · 1994",
     imageQuestion: `${import.meta.env.BASE_URL}citations/CarlSagan2.jpg`,
@@ -142,6 +145,7 @@ const QUOTES_DATA = [
     id: 'hawking',
     quote: "Rappelez-vous de regarder les étoiles et non pas vos pieds.",
     author: 'Stephen Hawking',
+    role: 'Physicien théoricien · Cosmologiste',
     context: "Stephen Hawking (1942-2018), physicien théoricien britannique, a consacré sa vie aux mystères des trous noirs et de l'origine de l'univers, malgré la maladie de Charcot qui le condamnait à un fauteuil roulant dès l'âge de 21 ans. Cette citation résume sa philosophie : garder la curiosité et l'émerveillement comme boussoles.",
     source: "Stephen Hawking, discours à l'Université de Cambridge · 2009",
     imageQuestion: `${import.meta.env.BASE_URL}citations/hawkings%202.jpg`,
@@ -282,7 +286,7 @@ export function IntroductionPage({ onContinue, onHome, onBack }: IntroductionPag
             title="Citations"
             titlePrefix="Le spatial dans la culture"
             titleAccent="4 voix qui ont marqué l'histoire"
-            lede="Ces figures ont consacré leur vie à comprendre l'univers ou à permettre à l'humanité de s'y aventurer. Mais connais-tu leurs mots ? Relie chaque citation à son auteur·e pour découvrir leur portrait et leur histoire."
+            lede="Tu viens de voir le programme qui t'attend. Avant de plonger dans les sections, un détour par ceux et celles qui ont posé les bases de ce secteur. Ces quatre figures ont marqué l'exploration spatiale par leurs théories, leurs missions, leurs mots. Associe chaque citation à son auteur·e pour découvrir leur portrait et leur parcours."
             onPrev={() => goTo(0)}
             onNext={() => goTo(2)}
             nextEnabled={quoteVerified}
@@ -305,7 +309,7 @@ export function IntroductionPage({ onContinue, onHome, onBack }: IntroductionPag
             title="À toi"
             titlePrefix="Le spatial vu par"
             titleAccent="tes yeux"
-            lede="Avant que tu commences, arrête-toi un instant. Quels mots te viennent spontanément quand tu penses à l'espace ? On reviendra sur cette liste à la fin de la session pour mesurer ensemble le chemin parcouru."
+            lede="Tu viens de croiser quatre pionniers qui ont consacré leur vie à ce secteur. Avant de te lancer dans le parcours à ton tour, arrête-toi un instant. Quels mots te viennent spontanément quand tu penses à l'espace ?"
             onPrev={() => goTo(1)}
             onNext={onContinue}
             nextEnabled={canStartExploration}
@@ -498,7 +502,7 @@ function PageQuotes({ matches, checked, verified, onMatch, onVerify }: PageQuote
       {!verified && (
         <div className="border border-magenta/25 bg-magenta/[0.04] rounded-xl px-5 py-4">
           <p className="text-[13.5px] text-white/80 leading-[1.6] m-0">
-            Quatre personnalités majeures de l'histoire spatiale. Associe chaque citation à la personne qui l'a prononcée. Une fois toutes les correspondances correctes, tu découvriras leur portrait et leur parcours.
+            Une fois toutes les correspondances correctes, les portraits se dévoilent avec leur histoire complète.
           </p>
         </div>
       )}
@@ -551,9 +555,10 @@ function PageQuotes({ matches, checked, verified, onMatch, onVerify }: PageQuote
                     {isWrong   && <XCircle    className="w-5 h-5 text-red-400 flex-shrink-0" />}
                   </div>
                 ) : (
-                  <div className="flex items-center gap-2 pt-2">
+                  <div className="flex items-center gap-2 pt-2 flex-wrap">
                     <CheckCircle className="w-4 h-4 text-magenta flex-shrink-0" />
                     <span className="text-magenta font-semibold text-[15px]">{q.author}</span>
+                    <span className="text-[11px] font-medium text-white/50 border border-white/15 rounded-full px-2.5 py-0.5 tracking-[0.04em]">{q.role}</span>
                   </div>
                 )}
               </div>
@@ -569,7 +574,10 @@ function PageQuotes({ matches, checked, verified, onMatch, onVerify }: PageQuote
                     className="flex-shrink-0 w-20 h-24 object-cover rounded-xl border border-magenta/30"
                   />
                   <div className="flex flex-col gap-2">
-                    <h4 className="font-semibold text-[17px] m-0">{q.author}</h4>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <h4 className="font-semibold text-[17px] m-0">{q.author}</h4>
+                      <span className="text-[11px] font-medium text-white/50 border border-white/15 rounded-full px-2.5 py-0.5 tracking-[0.04em]">{q.role}</span>
+                    </div>
                     <p className="text-white/80 text-[13.5px] leading-[1.65] m-0">{q.context}</p>
                     <p className="text-[11px] text-white/40 italic m-0 mt-1">{q.source}</p>
                   </div>
@@ -627,10 +635,10 @@ function PageWords({ words, onChange }: { words: string[]; onChange: (i: number,
       {/* Context */}
       <div className="border border-magenta/25 bg-magenta/[0.04] rounded-xl px-5 py-4 flex flex-col gap-1">
         <p className="text-[14px] text-white/85 leading-[1.65] m-0">
-          Cette liste est ton point de départ. Il n'y a pas de bonne ou de mauvaise réponse : note ce qui te vient spontanément, sans chercher à impressionner.
+          Cette liste est ton point de départ ! note ce qui te vient spontanément, sans chercher à impressionner.
         </p>
         <p className="text-[13px] text-white/55 leading-[1.55] m-0 mt-1">
-          On reviendra sur cette liste à la fin de la session. Les mots que tu choisis maintenant forment une photo de ta représentation du spatial avant de tout découvrir.
+          Les mots que tu choisis maintenant forment une photo de ta représentation du spatial avant de tout découvrir.
         </p>
       </div>
 

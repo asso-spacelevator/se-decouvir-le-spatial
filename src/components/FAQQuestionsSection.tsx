@@ -106,7 +106,7 @@ export function FAQQuestionsSection({ onComplete, onHome }: FAQQuestionsSectionP
 
   return (
     <SectionCanvas>
-      <SectionTopBar label="Session 2 · Chapitre 4 sur 4 · Zone FAQ" onHome={onHome} />
+      <SectionTopBar label="Session 2 · Chapitre 5 sur 5 · Zone FAQ" onHome={onHome} />
       <SectionProgress current={chapter} total={TOTAL_CHAPTERS} onGoTo={goTo} />
 
       <div className="relative z-[1] max-w-[1120px] mx-auto px-8 pt-14 pb-24">

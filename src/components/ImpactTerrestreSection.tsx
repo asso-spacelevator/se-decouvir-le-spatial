@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { ChevronLeft, ChevronRight, Trophy } from 'lucide-react';
+import { ChevronLeft, ChevronRight, CheckCircle, ExternalLink, Globe, Radio, Trophy } from 'lucide-react';
 import { useSession } from '../contexts/SessionContext';
 import { ChapterShell, SectionTopBar, SectionProgress } from './ChapterShell';
 
@@ -18,7 +18,7 @@ import { ChapterShell, SectionTopBar, SectionProgress } from './ChapterShell';
  *  saved through `saveResponse` so the student can resume.
  * ════════════════════════════════════════════════════════════════*/
 
-const TOTAL_CHAPTERS = 6;
+const TOTAL_CHAPTERS = 5;
 
 interface ImpactTerrestreSectionProps {
   onComplete: () => void;
@@ -32,6 +32,8 @@ export function ImpactTerrestreSection({ onComplete, onHome }: ImpactTerrestreSe
   const [satellites, setSatellites] = useState(0);
   const [flipsCount, setFlipsCount] = useState(0);
   const [quizScore, setQuizScore] = useState<number | null>(null);
+  const [linkVisited, setLinkVisited] = useState(false);
+  const [docAnswer, setDocAnswer] = useState('');
   const [hydrated, setHydrated] = useState(false);
 
   // Hydrate from supabase
@@ -42,6 +44,8 @@ export function ImpactTerrestreSection({ onComplete, onHome }: ImpactTerrestreSe
       if (r.satellites) setSatellites(parseInt(r.satellites, 10) || 0);
       if (r.flips) setFlipsCount(parseInt(r.flips, 10) || 0);
       if (r.quiz_score) setQuizScore(parseInt(r.quiz_score, 10));
+      if (r.link_visited === 'true') setLinkVisited(true);
+      if (r.doc_answer) setDocAnswer(r.doc_answer);
       setHydrated(true);
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -67,6 +71,16 @@ export function ImpactTerrestreSection({ onComplete, onHome }: ImpactTerrestreSe
     if (hydrated) await saveResponse('impact_terrestre', 'quiz_score', String(n));
   };
 
+  const handleLinkVisit = async () => {
+    setLinkVisited(true);
+    if (hydrated) await saveResponse('impact_terrestre', 'link_visited', 'true');
+  };
+
+  const handleDocAnswer = async (v: string) => {
+    setDocAnswer(v);
+    if (hydrated) await saveResponse('impact_terrestre', 'doc_answer', v);
+  };
+
   return (
     <div className="relative min-h-screen bg-deepspace text-white font-sans overflow-x-hidden">
       <div className="starry-background absolute inset-0" />
@@ -87,70 +101,196 @@ export function ImpactTerrestreSection({ onComplete, onHome }: ImpactTerrestreSe
       <div className="relative z-[1] max-w-[1120px] mx-auto px-8 pt-14 pb-24">
         {chapter === 0 && (
           <ChapterShell
-            kicker="01" title="Une journée dans ta vie" titleAccent="utilises-tu aujourd'hui ?"
-            lede="Clique sur chaque moment de ta journée. À chaque fois, on compte combien de satellites travaillent pour toi sans que tu t'en rendes compte."
-            onPrev={null} onNext={() => goTo(1)} nextEnabled={satellites > 0}
-            nextLabel={satellites > 0 ? "Continue · Le regard de Copernicus →" : "Découvre tous les moments d'abord"}
+            kicker="01" title="L'espace dans ta vie" titleAccent="chaque instant de ta journée."
+            titlePrefix="Le spatial façonne"
+            lede="Clique sur chaque moment de ta journée pour voir combien de satellites travaillent pour toi. Puis retourne les cartes : parmi ces 9 inventions, saueras-tu distinguer les vraies retombées spatiales ?"
+            onPrev={null} onNext={() => goTo(1)}
+            nextEnabled={satellites > 0 && linkVisited && docAnswer.trim().length >= 20 && flipsCount >= TOTAL_CARDS}
+            nextLabel={
+              satellites === 0
+                ? "Explore ta journée d'abord"
+                : !linkVisited
+                  ? "Consulte le document CNES d'abord"
+                  : docAnswer.trim().length < 20
+                    ? "Réponds à la question du document"
+                    : flipsCount < TOTAL_CARDS
+                      ? `Retourne toutes les cartes (${flipsCount}/${TOTAL_CARDS})`
+                      : "Continue · Le regard de Copernicus →"
+            }
           >
-            <DayCounter onComplete={handleSatellites} initial={satellites} />
+            <div className="flex flex-col gap-10">
+              {/* Intro : accroche quotidienne */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                {[
+                  { app: 'Google Maps · Waze · Snapchat', detail: 'La géoloc de toutes ces applis repose sur Galileo ou GPS : des dizaines de satellites calculant ta position en moins d\'une seconde.' },
+                  { app: 'La météo sur ton téléphone', detail: 'Les prévisions viennent de satellites Meteosat qui photographient l\'Europe toutes les 15 minutes depuis 36 000 km.' },
+                  { app: 'YouTube · Twitch · appels vidéo', detail: 'Les vidéos en direct depuis l\'étranger et les appels internationaux transitent par des satellites de télécommunications en orbite.' },
+                ].map((item, i) => (
+                  <div key={i} className="bg-white/[0.04] border border-white/10 rounded-xl p-5 flex flex-col gap-2">
+                    <span className="text-[13px] font-semibold text-magenta leading-[1.3]">{item.app}</span>
+                    <p className="text-[12.5px] text-white/65 leading-[1.55] m-0">{item.detail}</p>
+                  </div>
+                ))}
+              </div>
+
+              {/* Day counter */}
+              <div>
+                <div className="flex items-center gap-3 mb-5">
+                  <span className="text-[11px] font-bold tracking-[0.16em] uppercase text-white/50">Ta journée</span>
+                  <div className="flex-1 h-px bg-white/10" />
+                </div>
+                <DayCounter onComplete={handleSatellites} initial={satellites} />
+              </div>
+
+              <div className="h-px bg-white/10" />
+
+              {/* CNES document + question */}
+              <div>
+                <div className="flex items-center gap-3 mb-5">
+                  <span className="text-[11px] font-bold tracking-[0.16em] uppercase text-white/50">Document à consulter</span>
+                  <div className="flex-1 h-px bg-white/10" />
+                </div>
+
+                <div className={`rounded-xl p-6 flex flex-col sm:flex-row items-start sm:items-center gap-5 border transition-all duration-300 ${linkVisited ? 'border-magenta/30 bg-magenta/[0.03]' : 'border-magenta bg-magenta/[0.07]'}`}>
+                  <div className="flex-1">
+                    <div className="text-[11px] font-bold tracking-[0.16em] uppercase text-magenta mb-1">CNES · Dossier officiel</div>
+                    <h3 className="text-[17px] font-semibold m-0 mb-2">Les applications des satellites</h3>
+                    <p className="text-[13px] text-white/70 m-0 leading-[1.5]">
+                      Lis ce dossier avant de continuer. Tu y trouveras des utilisations concrètes des satellites que tu n'aurais pas soupçonnées.
+                    </p>
+                  </div>
+                  <a
+                    href="https://cnes.fr/dossiers/applications-satellites"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={handleLinkVisit}
+                    className={`inline-flex items-center gap-2 rounded-lg px-5 py-3.5 text-[14px] font-semibold transition flex-shrink-0 ${
+                      linkVisited
+                        ? 'bg-white/10 text-white/55 cursor-default'
+                        : 'bg-magenta text-white hover:bg-magenta-700'
+                    }`}
+                  >
+                    {linkVisited
+                      ? <><CheckCircle className="w-4 h-4" /> Document consulté</>
+                      : <><ExternalLink className="w-4 h-4" /> Ouvrir le document</>
+                    }
+                  </a>
+                </div>
+
+                {linkVisited && (
+                  <div className="mt-4 flex flex-col gap-3 animate-[chapterIn_320ms_cubic-bezier(.2,0,0,1)]">
+                    <label className="text-[14px] font-semibold leading-[1.4]">
+                      D'après ce document, cite une application des satellites que tu ne connaissais pas avant.
+                    </label>
+                    <textarea
+                      value={docAnswer}
+                      onChange={(e) => handleDocAnswer(e.target.value)}
+                      placeholder="Décris l'application en quelques phrases…"
+                      maxLength={500}
+                      rows={3}
+                      className="bg-white/[0.04] border border-white/10 rounded-lg px-4 py-3 text-white text-[14px] leading-[1.55] focus:outline-none focus:border-magenta focus:ring-2 focus:ring-magenta/20 resize-none placeholder-white/30 transition"
+                    />
+                    <div className="flex justify-between items-center">
+                      <span className="text-[12px] text-white/45">
+                        {docAnswer.trim().length >= 20
+                          ? 'Réponse enregistrée.'
+                          : `Écris au moins 20 caractères (${docAnswer.trim().length}/20).`}
+                      </span>
+                      <span className="text-[11px] text-white/30">{docAnswer.length}/500</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* RF engineer video placeholder */}
+              <div>
+                <div className="flex items-center gap-3 mb-5">
+                  <span className="text-[11px] font-bold tracking-[0.16em] uppercase text-white/50">Métier du spatial</span>
+                  <div className="flex-1 h-px bg-white/10" />
+                </div>
+                <div className="bg-white/[0.04] border border-white/10 rounded-xl overflow-hidden">
+                  <div className="aspect-video bg-black/40 flex flex-col items-center justify-center gap-3">
+                    <Radio className="w-10 h-10 text-white/20" strokeWidth={1.5} />
+                    <p className="text-[13px] text-white/30 text-center max-w-[280px] leading-[1.5] m-0">
+                      Vidéo à intégrer : témoignage d'un ingénieur RF
+                    </p>
+                  </div>
+                  <div className="p-5 border-t border-white/10">
+                    <div className="text-[11px] font-bold tracking-[0.16em] uppercase text-magenta mb-1.5">Métier · Ingénieur RF</div>
+                    <h3 className="text-[16px] font-semibold m-0 mb-2">Responsable des liaisons radio satellite-sol</h3>
+                    <p className="text-[13px] text-white/65 leading-[1.55] m-0">
+                      L'ingénieur RF (Radio Fréquence) conçoit les systèmes de communication entre les satellites et les stations au sol. C'est lui qui garantit que tes vidéos, appels et données de navigation arrivent sans erreur depuis l'orbite.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="h-px bg-white/10" />
+
+              {/* Spinoff flip cards */}
+              <div>
+                <div className="flex items-center gap-3 mb-5">
+                  <span className="text-[11px] font-bold tracking-[0.16em] uppercase text-white/50">Spatial ou pas ?</span>
+                  <div className="flex-1 h-px bg-white/10" />
+                </div>
+                <p className="text-[14px] text-white/65 leading-[1.55] mb-5">
+                  Retourne chaque carte. Certaines sont des retombées du spatial, d'autres non. Sauras-tu faire la différence ?
+                </p>
+                <SpinoffGame initial={flipsCount} onCount={handleFlips} />
+              </div>
+            </div>
           </ChapterShell>
         )}
 
         {chapter === 1 && (
           <ChapterShell
-            kicker="02" title="Le regard de Copernicus" titleAccent="on serait aveugles."
-            titlePrefix="Sans ces yeux,"
-            lede="Le programme européen Copernicus met à disposition de tous, gratuitement, des images de la Terre actualisées plusieurs fois par semaine. Voici trois exemples concrets."
+            kicker="02" title="Le regard de Copernicus" titleAccent="vu depuis l'orbite."
+            titlePrefix="Le climat de la Terre"
+            lede="Le programme européen Copernicus met à disposition de tous, gratuitement, des images de la Terre en temps quasi-réel. Quatre satellites Sentinel, les enjeux climatiques qu'ils révèlent, et le métier de ceux qui traitent ces images chaque jour."
             onPrev={() => goTo(0)} onNext={() => goTo(2)} nextEnabled={true}
-            nextLabel="Continue · Le spatial dans ta poche →"
+            nextLabel="Continue · Pilotage international →"
           >
-            <CopernicusCarousel />
+            <div className="flex flex-col gap-14">
+              <CopernicusCarousel />
+              <div className="h-px bg-white/10" />
+              <ClimateBlock />
+              <div className="h-px bg-white/10" />
+              <OceanScientistSpotlight />
+            </div>
           </ChapterShell>
         )}
 
         {chapter === 2 && (
           <ChapterShell
-            kicker="03" title="Le spatial dans ta poche" titleAccent="est né du spatial ?"
-            titlePrefix="Quel objet du quotidien"
-            lede="Retourne chaque carte. Toutes les inventions ci-dessous viennent du spatial. Combien tu en utilises au quotidien ?"
-            onPrev={() => goTo(1)} onNext={() => goTo(3)} nextEnabled={flipsCount >= 6}
-            nextLabel={flipsCount >= 6 ? "Continue · Pilotage international →" : "Retourne toutes les cartes d'abord"}
-          >
-            <SpinoffGame initial={flipsCount} onCount={handleFlips} />
-          </ChapterShell>
-        )}
-
-        {chapter === 3 && (
-          <ChapterShell
-            kicker="04" title="Pilotage international" titleAccent="qui pilotent l'espace."
+            kicker="03" title="Pilotage international" titleAccent="qui pilotent l'espace."
             titlePrefix="Les équipes invisibles"
             lede="Chaque satellite en orbite est surveillé et commandé depuis la Terre, vingt-quatre heures sur vingt-quatre. Le plus grand centre européen est l'ESOC, à Darmstadt en Allemagne."
-            onPrev={() => goTo(2)} onNext={() => goTo(4)} nextEnabled={true}
-            nextLabel="Continue vers le quiz éclair →"
+            onPrev={() => goTo(1)} onNext={() => goTo(3)} nextEnabled={true}
+            nextLabel="Continue · Quiz éclair →"
           >
             <OpsBlock />
           </ChapterShell>
         )}
 
-        {chapter === 4 && (
+        {chapter === 3 && (
           <ChapterShell
-            kicker="05" title="Quiz éclair" titleAccent="valider la partie."
-            titlePrefix="Quatre questions pour"
+            kicker="04" title="Quiz éclair" titleAccent="valider la partie."
+            titlePrefix="Deux questions pour"
             lede="Une réponse par question. Pas de mauvaise réponse définitive, tu peux te tromper. L'objectif, c'est d'apprendre."
-            onPrev={() => goTo(3)} onNext={() => goTo(5)} nextEnabled={quizScore !== null}
+            onPrev={() => goTo(2)} onNext={() => goTo(4)} nextEnabled={quizScore !== null}
             nextLabel={quizScore !== null ? "Termine le chapitre →" : "Réponds à toutes les questions"}
           >
             <Quiz onDone={handleQuizScore} initial={quizScore} />
           </ChapterShell>
         )}
 
-        {chapter === 5 && (
+        {chapter === 4 && (
           <Recap
             satellites={satellites}
             flips={flipsCount}
             quizScore={quizScore ?? 0}
             onContinue={onComplete}
-            onPrev={() => goTo(4)}
+            onPrev={() => goTo(3)}
           />
         )}
       </div>
@@ -165,9 +305,9 @@ const DAY_TILES = [
   {
     moment: '07h30 · Réveil',
     label: 'Tu te réveilles',
-    activity: "Tu consultes la météo, ton téléphone est déjà connecté.",
+    activity: "Tu consultes la météo et les news sur ton téléphone.",
     add: 4,
-    reveal: "GPS de tes parents (4 satellites Galileo en visibilité), réveil synchronisé avec un serveur de temps satellitaire.",
+    reveal: "La météo vient de satellites Meteosat en orbite géostationnaire. Les titres d'actu sont distribués via des satellites télécom : millions d'articles, images et vidéos envoyés en temps réel depuis le monde entier.",
   },
   {
     moment: '08h15 · Trajet',
@@ -179,16 +319,16 @@ const DAY_TILES = [
   {
     moment: '12h00 · Cantine',
     label: 'Tu déjeunes',
-    activity: "Légumes du potager. Météo aux infos. Tous deux suivis depuis l'espace.",
+    activity: "Les légumes dans ton assiette ont poussé dans des champs pilotés depuis l'orbite.",
     add: 2,
-    reveal: "La nourriture servie vient de champs surveillés par Sentinel-2. Les bulletins météo utilisent les satellites Meteosat.",
+    reveal: "Le programme Copernicus surveille les cultures avec Sentinel-2 : rendement, stress hydrique, risque de gel. Les agriculteurs ajustent irrigation et récolte grâce aux images satellite.",
   },
   {
     moment: '20h00 · Soirée',
-    label: 'Tu regardes une vidéo',
-    activity: "Streaming, appel international. Les ondes passent par l'orbite.",
+    label: 'Tu regardes des vidéos',
+    activity: "Streaming, appel vidéo, match en direct. Les données passent par l'orbite.",
     add: 3,
-    reveal: "Vidéo en streaming via fibre + satellites de relais télécom. Tes messages avec un cousin à l'étranger transitent par des constellations comme Starlink ou Eutelsat.",
+    reveal: "Les constellations télécom (Starlink, Eutelsat, SES) relaient des milliards de gigaoctets chaque jour. Sans elles, pas de streaming ni d'appel vidéo avec quelqu'un à l'autre bout du monde.",
   },
 ];
 
@@ -267,47 +407,58 @@ function DayCounter({ onComplete, initial }: { onComplete: (n: number) => void; 
 }
 
 /* ─────────────────────────────────────────────────────────
- *  Chapter 2 — Copernicus carousel
+ *  Chapter 2 — Copernicus: carousel + climate + career
  * ────────────────────────────────────────────────────────*/
 const SLIDES = [
   {
-    img: 'https://esa.int/var/esa/storage/images/esa_multimedia/images/2016/05/piton_de_la_fournaise/15985095-1-eng-GB/Piton_de_la_Fournaise.jpg',
+    img: 'https://www.esa.int/var/esa/storage/images/esa_multimedia/images/2016/05/piton_de_la_fournaise/15985095-1-eng-GB/Piton_de_la_Fournaise.jpg',
     tag: 'Sentinel-1 · Île de La Réunion',
     title: 'Le Piton de la Fournaise en éruption',
     desc: "Sentinel-1 voit avec un radar qui traverse les nuages et fonctionne de nuit. Le volcan est cartographié en temps réel pendant chaque éruption pour évaluer la coulée de lave et alerter les habitants.",
-    stats: [{ v: '5j', k: 'Cycle de revisite Sentinel-1' }, { v: '24/7', k: 'Imagerie radar, jour ou nuit' }],
+    stats: [{ v: '5 j', k: 'Cycle de revisite Sentinel-1' }, { v: '24/7', k: 'Imagerie radar, jour ou nuit' }],
     credit: 'Image : ESA / Copernicus Sentinel-1, 2016',
   },
   {
-    img: 'https://esa.int/var/esa/storage/images/esa_multimedia/images/2022/01/sulphur_dioxide_from_tonga_eruption_spreads_over_australia/23907503-1-eng-GB/Sulphur_dioxide_from_Tonga_eruption_spreads_over_Australia_card_full.jpg',
+    img: 'https://eu-space.europa.eu/sites/default/files/styles/wide/public/images/iotd/20240515_PhytoplanktonBlom.webp?itok=1_QEMbSK',
+    tag: 'Sentinel-3 · Atlantique Nord',
+    title: "La couleur de l'océan révèle le vivant",
+    desc: "Sentinel-3 mesure la couleur de la mer pour cartographier le phytoplancton — base de toute la chaîne alimentaire marine. Ces données alertent sur les zones mortes et les efflorescences algales.",
+    stats: [{ v: '300 m', k: 'Résolution des images Sentinel-3' }, { v: '2×/j', k: 'Couverture océanique mondiale' }],
+    credit: 'Image : ESA / Copernicus Sentinel-3, 2020',
+  },
+  {
+    img: 'https://www.esa.int/var/esa/storage/images/esa_multimedia/images/2022/01/sulphur_dioxide_from_tonga_eruption_spreads_over_australia/23907503-1-eng-GB/Sulphur_dioxide_from_Tonga_eruption_spreads_over_Australia_card_full.jpg',
     tag: 'Sentinel-5P · Janvier 2022',
     title: "Le nuage de soufre de l'éruption de Tonga",
     desc: "Sentinel-5P TROPOMI détecte les gaz invisibles à l'œil nu. Ici, le dioxyde de soufre rejeté par l'éruption volcanique de Tonga se propage au-dessus de l'Australie.",
-    stats: [{ v: '7', k: 'Polluants suivis en continu' }, { v: '100%', k: 'Couverture terrestre quotidienne' }],
+    stats: [{ v: '7', k: 'Polluants atmosphériques suivis' }, { v: '100 %', k: 'Couverture terrestre quotidienne' }],
     credit: 'Image : ESA / Copernicus Sentinel-5P, 2022',
   },
   {
     img: 'https://www.copernicus.eu/system/files/styles/image_of_the_day/private/2024-12/image_day/20241231_Seine%20river.png?itok=Zg_IUmBQ',
-    tag: 'Sentinel-2 · La Seine',
+    tag: 'Sentinel-2 · La Seine, France',
     title: "Ta ville vue de l'espace",
     desc: "Copernicus propose chaque jour une image différente de la Terre. Voici la Seine vue par Sentinel-2 en optique multispectrale. Les mêmes images servent à l'agriculture, l'urbanisme et la gestion des inondations.",
-    stats: [{ v: '20', k: 'Satellites Sentinel dans la flotte' }, { v: '0€', k: 'Données gratuites pour tous' }],
+    stats: [{ v: '20', k: 'Satellites Sentinel dans la flotte' }, { v: '0 €', k: 'Données gratuites pour tous' }],
     credit: 'Image : ESA / Copernicus Sentinel-2, 2024',
   },
 ];
 
 function CopernicusCarousel() {
   const [idx, setIdx] = useState(0);
-  const set = (i: number) => setIdx((i + SLIDES.length) % SLIDES.length);
+  const n = SLIDES.length;
+  const set = (i: number) => setIdx((i + n) % n);
+
   return (
     <div>
       <div className="rounded-2xl overflow-hidden border border-white/10 relative bg-black/30">
+        {/* translateX is % of the element itself (n×100% wide), so divide by n */}
         <div
           className="flex transition-transform duration-500"
-          style={{ transform: `translateX(-${idx * 100}%)`, width: `${SLIDES.length * 100}%` }}
+          style={{ transform: `translateX(-${idx * 100 / n}%)`, width: `${n * 100}%` }}
         >
           {SLIDES.map((s, i) => (
-            <div key={i} className="grid grid-cols-1 md:grid-cols-[1.4fr_1fr] w-full" style={{ width: `${100 / SLIDES.length}%` }}>
+            <div key={i} className="grid grid-cols-1 md:grid-cols-[1.4fr_1fr]" style={{ width: `${100 / n}%` }}>
               <div className="aspect-[4/3] bg-black bg-cover bg-center" style={{ backgroundImage: `url('${s.img}')` }} />
               <div className="p-8 flex flex-col gap-3">
                 <span className="text-[11px] font-semibold tracking-[0.16em] uppercase text-magenta">{s.tag}</span>
@@ -347,17 +498,247 @@ function CopernicusCarousel() {
   );
 }
 
+function ClimateBlock() {
+  return (
+    <div className="flex flex-col gap-8">
+
+      {/* Header */}
+      <div>
+        <div className="flex items-center gap-3 mb-4">
+          <span className="text-[11px] font-bold tracking-[0.16em] uppercase text-white/50">Enjeux climatiques</span>
+          <div className="flex-1 h-px bg-white/10" />
+        </div>
+        <p className="text-[14px] text-white/70 leading-[1.65] m-0 max-w-[760px]">
+          Le spatial est l'un des rares outils capables de mesurer le changement climatique à l'échelle planétaire et en continu. Sans les satellites, les scientifiques travailleraient à l'aveugle sur les grands équilibres de la Terre.
+        </p>
+      </div>
+
+      {/* 3 stat cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="bg-white/[0.04] border border-white/10 rounded-2xl p-6 flex flex-col gap-2">
+          <div className="text-[40px] font-bold text-magenta leading-none tracking-[-0.02em]">+4 mm</div>
+          <div className="text-[11px] uppercase tracking-[0.08em] text-white/55 mt-1">par an · hausse du niveau des mers</div>
+          <p className="text-[12.5px] text-white/60 leading-[1.55] m-0 mt-1">
+            Mesuré en continu depuis 1993 par les satellites altimétriques TOPEX, Jason et aujourd'hui Sentinel-6. Une donnée impossible à obtenir avec des marégraphes seuls.
+          </p>
+          <span className="text-[10.5px] italic text-white/35 mt-auto pt-2">Source : CNES / Copernicus · 2024</span>
+        </div>
+        <div className="bg-white/[0.04] border border-white/10 rounded-2xl p-6 flex flex-col gap-2">
+          <div className="text-[40px] font-bold text-magenta leading-none tracking-[-0.02em]">-75 %</div>
+          <div className="text-[11px] uppercase tracking-[0.08em] text-white/55 mt-1">glace arctique pluriannuelle depuis 1984</div>
+          <p className="text-[12.5px] text-white/60 leading-[1.55] m-0 mt-1">
+            Sentinel-1 radar cartographie la banquise chaque semaine, même sous les nuages arctiques. C'est la seule façon de suivre la perte de glace permanente dans cette région hostile.
+          </p>
+          <span className="text-[10.5px] italic text-white/35 mt-auto pt-2">Source : ESA CCI Sea Ice · 2024</span>
+        </div>
+        <div className="bg-white/[0.04] border border-white/10 rounded-2xl p-6 flex flex-col gap-2">
+          <div className="text-[40px] font-bold text-magenta leading-none tracking-[-0.02em]">423 ppm</div>
+          <div className="text-[11px] uppercase tracking-[0.08em] text-white/55 mt-1">CO₂ atmosphérique · record 2024</div>
+          <p className="text-[12.5px] text-white/60 leading-[1.55] m-0 mt-1">
+            Sentinel-5P TROPOMI et les satellites de la série OCO mesurent la concentration de CO₂ partout sur Terre, permettant de localiser les sources d'émissions et de vérifier les engagements des États.
+          </p>
+          <span className="text-[10.5px] italic text-white/35 mt-auto pt-2">Source : NOAA / Copernicus C3S · 2024</span>
+        </div>
+      </div>
+
+      {/* Link cards — CNES + gouvernement.fr */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <a
+          href="https://cnes.fr/scientifiques/sciences-terre-environnement"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group bg-white/[0.04] border border-magenta/25 hover:border-magenta rounded-2xl p-6 flex flex-col gap-3 transition-all duration-200 hover:-translate-y-0.5"
+        >
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <span className="inline-flex bg-magenta/15 text-magenta text-[10px] font-bold tracking-[0.1em] uppercase rounded-full px-2.5 py-0.5 mb-2">CNES</span>
+              <h4 className="text-[16px] font-semibold m-0 mb-1.5 leading-[1.3]">Terre et Environnement · portail officiel</h4>
+              <p className="text-[12.5px] text-white/65 leading-[1.55] m-0">
+                Le portail dédié de l'agence spatiale française : missions, données et applications au service du climat, des océans et de l'environnement.
+              </p>
+            </div>
+            <ExternalLink className="w-4 h-4 text-magenta/60 flex-shrink-0 mt-1 group-hover:text-magenta transition" strokeWidth={1.75} />
+          </div>
+          <span className="text-[11px] text-white/35 italic">cnes.fr/scientifiques/sciences-terre-environnement</span>
+        </a>
+
+        <a
+          href="https://climate.copernicus.eu/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group bg-white/[0.04] border border-white/10 hover:border-magenta rounded-2xl p-6 flex flex-col gap-3 transition-all duration-200 hover:-translate-y-0.5"
+        >
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <span className="inline-flex bg-white/10 text-white/60 text-[10px] font-bold tracking-[0.1em] uppercase rounded-full px-2.5 py-0.5 mb-2">Copernicus C3S</span>
+              <h4 className="text-[16px] font-semibold m-0 mb-1.5 leading-[1.3]">Service Changement Climatique</h4>
+              <p className="text-[12.5px] text-white/65 leading-[1.55] m-0">
+                Les données climatiques officielles de l'Union Européenne : températures, niveau des mers, concentration de CO₂, état de la banquise — toutes librement téléchargeables.
+              </p>
+            </div>
+            <ExternalLink className="w-4 h-4 text-white/30 flex-shrink-0 mt-1 group-hover:text-magenta transition" strokeWidth={1.75} />
+          </div>
+          <span className="text-[11px] text-white/35 italic">climate.copernicus.eu</span>
+        </a>
+
+        <a
+          href="https://www.ecologie.gouv.fr/sites/default/files/falc/changement_climatique_FALC.pdf"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group bg-white/[0.04] border border-white/10 hover:border-magenta rounded-2xl p-6 flex flex-col gap-3 transition-all duration-200 hover:-translate-y-0.5"
+        >
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <span className="inline-flex bg-white/10 text-white/60 text-[10px] font-bold tracking-[0.1em] uppercase rounded-full px-2.5 py-0.5 mb-2">Gouvernement · MTECT</span>
+              <h4 className="text-[16px] font-semibold m-0 mb-1.5 leading-[1.3]">Politiques publiques · Climat</h4>
+              <p className="text-[12.5px] text-white/65 leading-[1.55] m-0">
+                Le cadre réglementaire français face au changement climatique : Plan Climat, Stratégie Nationale Bas-Carbone, et comment les données spatiales alimentent les décisions publiques.
+              </p>
+            </div>
+            <ExternalLink className="w-4 h-4 text-white/30 flex-shrink-0 mt-1 group-hover:text-magenta transition" strokeWidth={1.75} />
+          </div>
+          <span className="text-[11px] text-white/35 italic">ecologie.gouv.fr · PDF</span>
+        </a>
+
+        <a
+          href="https://www.ifremer.fr/fr/ocean-climat"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group bg-white/[0.04] border border-white/10 hover:border-magenta rounded-2xl p-6 flex flex-col gap-3 transition-all duration-200 hover:-translate-y-0.5"
+        >
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <span className="inline-flex bg-white/10 text-white/60 text-[10px] font-bold tracking-[0.1em] uppercase rounded-full px-2.5 py-0.5 mb-2">IFREMER</span>
+              <h4 className="text-[16px] font-semibold m-0 mb-1.5 leading-[1.3]">Océan et Climat</h4>
+              <p className="text-[12.5px] text-white/65 leading-[1.55] m-0">
+                L'Institut Français de Recherche pour l'Exploitation de la Mer : comment les données satellites Sentinel-3 et 6 alimentent la recherche sur les océans et leur rôle dans le climat global.
+              </p>
+            </div>
+            <ExternalLink className="w-4 h-4 text-white/30 flex-shrink-0 mt-1 group-hover:text-magenta transition" strokeWidth={1.75} />
+          </div>
+          <span className="text-[11px] text-white/35 italic">ifremer.fr</span>
+        </a>
+      </div>
+    </div>
+  );
+}
+
+function OceanScientistSpotlight() {
+  return (
+    <div className="flex flex-col gap-6">
+      <div className="flex items-center gap-3">
+        <span className="text-[11px] font-bold tracking-[0.16em] uppercase text-white/50">Métier du spatial</span>
+        <div className="flex-1 h-px bg-white/10" />
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-[1fr_1.6fr] gap-0 rounded-2xl overflow-hidden border border-magenta/25 bg-white/[0.03]">
+        {/* Photo côté gauche */}
+        <div className="relative min-h-[280px] bg-black">
+          <img
+            src="https://dataspace.copernicus.eu/sites/default/files/styles/teaser_mini/public/media/images/2026-02/sentinel-3_sharkbay-australia_truecolor_19012026_clean_2.jpg"
+            alt="Shark Bay, Australie — eaux turquoise vues par Sentinel-3"
+            className="w-full h-full object-cover"
+            style={{ minHeight: 280 }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent to-black/60 md:block hidden" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent md:hidden" />
+          <span className="absolute bottom-3 left-3 text-[10px] italic text-white/40">Image : Copernicus / Sentinel-3 · Shark Bay, Australie, 2026</span>
+        </div>
+
+        {/* Contenu côté droit */}
+        <div className="p-8 flex flex-col gap-5">
+          <div>
+            <span className="inline-flex bg-magenta text-white rounded-full px-3 py-0.5 text-[11px] font-bold tracking-[0.08em] uppercase mb-3">Océanographe satellite</span>
+            <h3 className="text-[24px] font-bold leading-[1.15] m-0 mb-2">
+              Lire l'océan depuis <span className="text-magenta">l'orbite</span>
+            </h3>
+            <p className="text-[13.5px] text-white/75 leading-[1.65] m-0">
+              L'océanographe satellite traite les images envoyées par des satellites comme Sentinel-3 ou Sentinel-6 pour mesurer la température de surface, la couleur de l'eau, la hauteur des vagues et le niveau de la mer. Ses analyses alimentent les modèles climatiques, la gestion des pêches et la sécurité maritime.
+            </p>
+          </div>
+
+          {/* Tâches quotidiennes */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {[
+              { label: 'Traitement d\'images', detail: 'Python, NetCDF, toolbox ESA SNAP pour corriger et calibrer les données brutes envoyées par le satellite.' },
+              { label: 'Détection d\'anomalies', detail: 'Identifier les efflorescences algales, zones mortes, déversements d\'hydrocarbures sur des millions de km² d\'océan.' },
+              { label: 'Modélisation', detail: 'Intégrer les données satellite dans des modèles océaniques globaux (MERCATOR OCÉAN) pour prédire les courants.' },
+              { label: 'Publication & veille', detail: 'Rédiger des bulletins scientifiques pour les pêcheurs, armateurs, États côtiers et organismes climatiques.' },
+            ].map((t, i) => (
+              <div key={i} className="bg-white/[0.04] border border-white/8 rounded-xl p-4">
+                <div className="text-[12px] font-semibold text-magenta mb-1">{t.label}</div>
+                <p className="text-[12px] text-white/60 leading-[1.5] m-0">{t.detail}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Où travailler */}
+          <div>
+            <div className="text-[11px] font-bold tracking-[0.12em] uppercase text-white/40 mb-2">Où exercer ce métier</div>
+            <div className="flex flex-wrap gap-2">
+              {['CNES · Toulouse', 'IFREMER · Brest', 'MERCATOR OCÉAN', 'CLS · Collecte Localisation Satellites', 'ESA · ESRIN', 'Météo-France'].map(org => (
+                <span key={org} className="bg-white/[0.06] border border-white/10 rounded-full px-3 py-1 text-[11.5px] font-medium text-white/70">{org}</span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Video placeholder */}
+      <div className="bg-white/[0.04] border border-white/10 rounded-2xl overflow-hidden">
+        <div className="aspect-video bg-black/40 flex flex-col items-center justify-center gap-3">
+          <Globe className="w-10 h-10 text-white/20" strokeWidth={1.5} />
+          <p className="text-[13px] text-white/30 text-center max-w-[300px] leading-[1.5] m-0">
+            Vidéo à intégrer : témoignage d'une océanographe satellite
+          </p>
+        </div>
+        <div className="p-5 border-t border-white/10">
+          <div className="text-[11px] font-bold tracking-[0.16em] uppercase text-magenta mb-1.5">Témoignage · Océanographe satellite</div>
+          <h3 className="text-[16px] font-semibold m-0 mb-2">Une journée à lire l'océan depuis l'orbite</h3>
+          <p className="text-[13px] text-white/65 leading-[1.55] m-0">
+            Découvre comment une océanographe satellite passe sa journée à traiter des millions de pixels envoyés par Sentinel-3 : de la donnée brute aux alertes scientifiques qui guident pêcheurs, États côtiers et chercheurs en climatologie.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ─────────────────────────────────────────────────────────
  *  Chapter 3 — Spinoff flip-card game
  * ────────────────────────────────────────────────────────*/
-const SPINOFFS = [
-  { name: 'Matelas à mémoire de forme', badge: 'NASA · 1966', source: 'Apollo, sièges de capsule', title: 'Mousse à mémoire de forme', desc: "Inventée pour absorber les chocs au décollage et protéger les astronautes. Aujourd'hui dans nos matelas, sièges auto, équipements anti-escarres.", img: 'https://guideliterie.com/wp-content/uploads/2018/12/matelas-memoire-de-forme.jpeg' },
-  { name: 'Velcro',                     badge: 'NASA · 1960s', source: 'Apollo, ISS',                title: 'Velcro et fixations sans pesanteur', desc: "Aucune vis ne peut être serrée à la main en apesanteur sans s'envoler. Le velcro est devenu indispensable à bord. Puis dans nos chaussures, sacs, matériel médical.", img: 'https://live.staticflickr.com/65535/55180852205_ecf572f1df_c.jpg' },
-  { name: 'Capteur photo smartphone',   badge: 'JPL · 1993',  source: 'Sondes interplanétaires',   title: 'Capteur CMOS', desc: "Inventé au JPL de la NASA pour les sondes interplanétaires. Cœur de chaque appareil photo de smartphone, des milliards produits chaque année.", img: 'https://images.pexels.com/photos/1828109/pexels-photo-1828109.jpeg' },
-  { name: 'GPS de ton téléphone',       badge: 'DoD · 1973',  source: '24 satellites en orbite moyenne', title: 'GPS et géolocalisation', desc: "Conçu par l'armée américaine pour guider missiles et troupes. Ouvert au civil en 1983. L'Europe a depuis développé son propre système, Galileo.", img: 'https://images.pexels.com/photos/9966011/pexels-photo-9966011.jpeg' },
-  { name: 'Imagerie médicale IRM',      badge: 'NASA · 1970s', source: "Traitement d'image sondes lunaires", title: 'IRM, imagerie médicale', desc: "Les algorithmes de traitement d'image développés pour les sondes lunaires ont inspiré les premières IRM. Outil de diagnostic le plus puissant de la médecine moderne.", img: 'https://images.pexels.com/photos/7089017/pexels-photo-7089017.jpeg' },
-  { name: 'Plaque vitrocéramique',      badge: 'NASA · 1970s', source: 'Bouclier thermique navette', title: 'Céramiques haute performance', desc: "Pour résister à 1 600 °C lors de la rentrée atmosphérique. Aujourd'hui dans nos plaques de cuisson, implants dentaires, freins de TGV.", img: 'https://images.pexels.com/photos/8055154/pexels-photo-8055154.jpeg' },
+interface CardItem {
+  name: string;
+  isSpatial: boolean;
+  badge: string;
+  source?: string;
+  title: string;
+  desc: string;
+  img: string;
+}
+
+const SPINOFFS: CardItem[] = [
+  { name: 'Matelas à mémoire de forme', isSpatial: true,  badge: 'NASA · 1966',  source: 'Apollo, sièges de capsule',       title: 'Mousse à mémoire de forme',         desc: "Inventée pour absorber les chocs au décollage et protéger les astronautes. Aujourd'hui dans nos matelas, sièges auto, équipements anti-escarres.",                               img: 'https://guideliterie.com/wp-content/uploads/2018/12/matelas-memoire-de-forme.jpeg' },
+  { name: 'Velcro',                     isSpatial: true,  badge: 'NASA · 1960s', source: 'Apollo, ISS',                     title: 'Velcro et fixations sans pesanteur', desc: "Aucune vis ne peut être serrée à la main en apesanteur sans s'envoler. Le velcro est devenu indispensable à bord. Puis dans nos chaussures, sacs, matériel médical.", img: 'https://live.staticflickr.com/65535/55180852205_ecf572f1df_c.jpg' },
+  { name: 'Capteur photo smartphone',   isSpatial: true,  badge: 'JPL · 1993',   source: 'Sondes interplanétaires',         title: 'Capteur CMOS',                      desc: "Inventé au JPL de la NASA pour les sondes interplanétaires. Cœur de chaque appareil photo de smartphone, des milliards produits chaque année.",                          img: 'https://images.pexels.com/photos/1828109/pexels-photo-1828109.jpeg' },
+  { name: 'GPS de ton téléphone',       isSpatial: true,  badge: 'DoD · 1973',   source: '24 satellites en orbite moyenne', title: 'GPS et géolocalisation',             desc: "Conçu par l'armée américaine pour guider missiles et troupes. Ouvert au civil en 1983. L'Europe a depuis développé son propre système, Galileo.",                        img: 'https://images.pexels.com/photos/9966011/pexels-photo-9966011.jpeg' },
+  { name: 'Imagerie médicale IRM',      isSpatial: true,  badge: 'NASA · 1970s', source: "Traitement d'image sondes lunaires", title: 'IRM, imagerie médicale',          desc: "Les algorithmes de traitement d'image développés pour les sondes lunaires ont inspiré les premières IRM. Outil de diagnostic le plus puissant de la médecine moderne.", img: 'https://images.pexels.com/photos/7089017/pexels-photo-7089017.jpeg' },
+  { name: 'Plaque vitrocéramique',      isSpatial: true,  badge: 'NASA · 1970s', source: 'Bouclier thermique navette',       title: 'Céramiques haute performance',       desc: "Pour résister à 1 600 °C lors de la rentrée atmosphérique. Aujourd'hui dans nos plaques de cuisson, implants dentaires, freins de TGV.",                                  img: 'https://images.pexels.com/photos/8055154/pexels-photo-8055154.jpeg' },
 ];
+
+const DISTRACTORS: CardItem[] = [
+  { name: 'Machine à laver', isSpatial: false, badge: 'Hamilton Smith · 1858', title: 'Pas une invention spatiale', desc: "Inventée par Hamilton Smith en 1858, un siècle avant Spoutnik. Née du besoin de mécaniser les corvées ménagères — aucun lien avec les missions spatiales.",                                                 img: 'https://images.pexels.com/photos/5591581/pexels-photo-5591581.jpeg' },
+  { name: 'Réfrigérateur',   isSpatial: false, badge: 'Jacob Perkins · 1834',  title: 'Pas une invention spatiale', desc: "Le premier système de réfrigération mécanique date de 1834, 123 ans avant le lancement de Spoutnik. Jacob Perkins a breveté une machine à compression de vapeur pour conserver les aliments.", img: 'https://images.pexels.com/photos/2343467/pexels-photo-2343467.jpeg' },
+  { name: 'Aspirateur',      isSpatial: false, badge: 'H.C. Booth · 1901',     title: 'Pas une invention spatiale', desc: "Hubert Cecil Booth a breveté le premier aspirateur électrique en 1901, 56 ans avant Spoutnik. Né du besoin de nettoyer les wagons de chemin de fer — aucun lien avec les missions spatiales.",             img: 'https://images.pexels.com/photos/38325/vacuum-cleaner-carpet-cleaner-housework-housekeeping-38325.jpeg' },
+];
+
+// Fixed interleaved order so distractors are spread across each row of 3
+const ALL_CARDS: CardItem[] = [
+  SPINOFFS[0], DISTRACTORS[0], SPINOFFS[1],
+  SPINOFFS[2], DISTRACTORS[1], SPINOFFS[3],
+  SPINOFFS[4], DISTRACTORS[2], SPINOFFS[5],
+];
+const TOTAL_CARDS = ALL_CARDS.length;
 
 function SpinoffGame({ initial, onCount }: { initial: number; onCount: (n: number) => void }) {
   const [flipped, setFlipped] = useState<Set<number>>(new Set());
@@ -368,16 +749,16 @@ function SpinoffGame({ initial, onCount }: { initial: number; onCount: (n: numbe
     <div>
       <div className="bg-white/5 border border-white/10 rounded-xl px-5 py-4 mb-6 flex items-center justify-between gap-6 flex-wrap">
         <div className="text-[14px] text-white/85 leading-[1.5] flex-1 min-w-[280px]">
-          Astuce : la majorité de nos technologies modernes ont d'abord été développées pour les missions spatiales avant d'être adoptées dans la vie civile. C'est ce qu'on appelle des <strong>retombées</strong>, ou <em>spinoffs</em>.
+          Certaines de ces inventions sont des <strong>retombées</strong> (<em>spinoffs</em>) du spatial — nées des missions avant d'entrer dans nos vies. D'autres n'ont rien à voir avec l'espace. Retourne pour découvrir.
         </div>
         <div className="text-[13px] text-white/60 inline-flex items-center gap-2.5">
           <span className="text-[28px] font-bold text-magenta leading-none">{count}</span>
-          sur 6 retournées
+          sur {TOTAL_CARDS} retournées
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-        {SPINOFFS.map((s, i) => {
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        {ALL_CARDS.map((s, i) => {
           const isFlipped = flipped.has(i);
           return (
             <div
@@ -389,25 +770,41 @@ function SpinoffGame({ initial, onCount }: { initial: number; onCount: (n: numbe
               className="aspect-[3/4] cursor-pointer [perspective:1000px]"
             >
               <div className={`relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d] ${isFlipped ? '[transform:rotateY(180deg)]' : ''}`}>
-                {/* Front */}
+                {/* Front — même pour toutes les cartes */}
                 <div className="absolute inset-0 rounded-2xl overflow-hidden [backface-visibility:hidden] bg-gradient-to-br from-deepspace-soft to-magenta/20 border border-white/10 hover:border-magenta p-5 flex flex-col justify-between">
-                  <div className="text-[11px] font-medium tracking-[0.12em] uppercase text-white/55">Question {i + 1}</div>
+                  <div className="text-[11px] font-medium tracking-[0.12em] uppercase text-white/55">Spatial ou pas ?</div>
                   <div className="font-extrabold text-[72px] text-magenta/40 leading-none -mt-2">?</div>
                   <div className="text-[17px] font-semibold leading-[1.2]">{s.name}</div>
                 </div>
-                {/* Back */}
-                <div
-                  className="absolute inset-0 rounded-2xl overflow-hidden [backface-visibility:hidden] [transform:rotateY(180deg)] bg-cover bg-center border border-magenta flex flex-col justify-end"
-                  style={{ backgroundImage: `url('${s.img}')` }}
-                >
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent" />
-                  <div className="relative p-4 text-white">
-                    <span className="inline-flex bg-magenta text-white rounded-full px-2.5 py-0.5 text-[10px] font-bold tracking-[0.08em] mb-2">{s.badge}</span>
-                    <div className="text-[11px] text-white/70 mb-1">{s.source}</div>
-                    <h4 className="text-[16px] font-bold m-0 mb-2 leading-[1.2]">{s.title}</h4>
-                    <p className="text-[12px] text-white/85 leading-[1.45] m-0">{s.desc}</p>
+
+                {s.isSpatial ? (
+                  /* Dos — retombée spatiale (magenta) */
+                  <div
+                    className="absolute inset-0 rounded-2xl overflow-hidden [backface-visibility:hidden] [transform:rotateY(180deg)] bg-cover bg-center border border-magenta flex flex-col justify-end"
+                    style={{ backgroundImage: `url('${s.img}')` }}
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent" />
+                    <div className="relative p-4 text-white">
+                      <span className="inline-flex bg-magenta text-white rounded-full px-2.5 py-0.5 text-[10px] font-bold tracking-[0.08em] mb-1.5">{s.badge}</span>
+                      {s.source && <div className="text-[11px] text-white/70 mb-1">{s.source}</div>}
+                      <h4 className="text-[15px] font-bold m-0 mb-1.5 leading-[1.2]">{s.title}</h4>
+                      <p className="text-[11.5px] text-white/85 leading-[1.45] m-0">{s.desc}</p>
+                    </div>
                   </div>
-                </div>
+                ) : (
+                  /* Dos — invention non spatiale (neutre) */
+                  <div
+                    className="absolute inset-0 rounded-2xl overflow-hidden [backface-visibility:hidden] [transform:rotateY(180deg)] bg-cover bg-center border border-white/25 flex flex-col justify-end"
+                    style={{ backgroundImage: `url('${s.img}')` }}
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/55 to-black/10" />
+                    <div className="relative p-4 text-white">
+                      <span className="inline-flex bg-white/20 text-white/90 rounded-full px-2.5 py-0.5 text-[10px] font-bold tracking-[0.08em] mb-1.5">{s.badge}</span>
+                      <h4 className="text-[15px] font-bold m-0 mb-1.5 leading-[1.2]">{s.title}</h4>
+                      <p className="text-[11.5px] text-white/85 leading-[1.45] m-0">{s.desc}</p>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           );
@@ -524,34 +921,14 @@ const QUESTIONS = [
     e: "Sans t'en rendre compte, tu utilises des dizaines de satellites chaque jour. Au moins 4 satellites GPS te localisent en permanence. Tes appels et internet passent par des satellites télécom. La météo, les bulletins routiers, et même les champs qui produisent ta nourriture sont suivis depuis l'espace.",
   },
   {
-    q: 'Quel programme spatial européen fournit des données environnementales en accès libre à tous ?',
+    q: "Parmi ces objets du quotidien, lequel a été inventé pour les missions spatiales avant d'arriver dans ta vie ?",
     options: [
-      { t: 'Ariane 6', ok: false },
-      { t: 'Copernicus', ok: true },
-      { t: 'Artemis', ok: false },
-      { t: 'Hubble', ok: false },
+      { t: 'Le vélo électrique', ok: false },
+      { t: 'La mousse à mémoire de forme', ok: true },
+      { t: 'Le réfrigérateur', ok: false },
+      { t: 'Le téléphone fixe', ok: false },
     ],
-    e: "Copernicus est le programme européen d'observation de la Terre. Ses données sont entièrement ouvertes et gratuites. Forêts, fonte des glaces, qualité de l'air, agriculture, urbanisme : tout passe par Copernicus.",
-  },
-  {
-    q: 'Parmi ces secteurs, lequel utilise les données Copernicus ?',
-    options: [
-      { t: 'Uniquement les agences spatiales', ok: false },
-      { t: 'Uniquement les météorologues', ok: false },
-      { t: "Agriculture, pêche, assurances, qualité de l'air", ok: true },
-      { t: 'Uniquement les gouvernements européens', ok: false },
-    ],
-    e: "Plus de 80 % des bénéfices économiques de Copernicus sont générés en dehors du secteur spatial. Agriculteurs, assureurs, pêcheurs, autorités sanitaires : tout le monde utilise ces données ouvertes.",
-  },
-  {
-    q: 'Quelle est la taille de la plus grande antenne au sol utilisée pour les télécommunications spatiales ?',
-    options: [
-      { t: '10 mètres', ok: false },
-      { t: '34 mètres', ok: false },
-      { t: '70 mètres', ok: true },
-      { t: '120 mètres', ok: false },
-    ],
-    e: "L'antenne de 70 mètres de Goldstone, en Californie, fait partie du Deep Space Network de la NASA. Plus large qu'un terrain de football. Elle capte des signaux émis par des sondes situées à des milliards de kilomètres.",
+    e: "La mousse à mémoire de forme a été inventée par la NASA en 1966 pour absorber les chocs au décollage. Aujourd'hui dans nos matelas, sièges auto et équipements médicaux. Ces innovations nées du spatial qui entrent dans nos vies s'appellent des retombées — spinoffs.",
   },
 ];
 
@@ -586,10 +963,10 @@ function Quiz({ onDone, initial }: { onDone: (score: number) => void; initial: n
         <Trophy className="w-14 h-14 text-magenta mx-auto mb-4" />
         <div className="text-[11px] font-semibold tracking-[0.16em] uppercase text-magenta mb-2">Quiz terminé</div>
         <div className="text-[36px] font-bold mb-2">
-          {finalScore} <span className="text-white/40">/ 4</span>
+          {finalScore} <span className="text-white/40">/ 2</span>
         </div>
         <p className="text-white/65 max-w-md mx-auto m-0">
-          {finalScore >= 3 ? "Excellent. Tu as bien suivi." : finalScore >= 2 ? "Bien joué. Tu peux encore relire certains chapitres." : "Pas grave, le but est d'apprendre. Tu peux revenir aux chapitres précédents."}
+          {finalScore >= 2 ? "Parfait. Tu as tout retenu." : finalScore >= 1 ? "Bien joué. Une sur deux, c'est un bon départ." : "Pas grave, le but est d'apprendre. Tu peux revenir aux chapitres précédents."}
         </p>
       </div>
     );
@@ -668,8 +1045,8 @@ function Recap({ satellites, flips, quizScore, onContinue, onPrev }: {
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 text-left mb-9">
           <RecapStat v={satellites} t="satellites utilisés aujourd'hui" />
-          <RecapStat v={flips} t="retombées du spatial découvertes" />
-          <RecapStat v={`${quizScore} / 4`} t="réponses correctes au quiz" />
+          <RecapStat v={flips} t="cartes retournées dans le jeu" />
+          <RecapStat v={`${quizScore} / 2`} t="réponses correctes au quiz" />
         </div>
         <div className="bg-white/5 border border-white/10 rounded-2xl p-7 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 text-left">
           <div className="flex flex-col gap-1">
@@ -696,6 +1073,7 @@ function Recap({ satellites, flips, quizScore, onContinue, onPrev }: {
     </section>
   );
 }
+
 
 function RecapStat({ v, t }: { v: string | number; t: string }) {
   return (

@@ -8,6 +8,7 @@ import { SocialReferencesSection } from './components/SocialReferencesSection';
 import { SessionBreakPage } from './components/SessionBreakPage';
 import { SatelliteSection } from './components/SatelliteSection';
 import { ExplorationSection } from './components/ExplorationSection';
+import { EntreprisesSpatialesSection } from './components/EntreprisesSpatialesSection';
 import { AccompagnementSection } from './components/AccompagnementSection';
 import { FAQQuestionsSection } from './components/FAQQuestionsSection';
 import { CompletionPage } from './components/CompletionPage';
@@ -17,7 +18,7 @@ const sectionOrder: Section[] = [
   'start', 'introduction',
   'impact_terrestre', 'rockets', 'social',
   'session_break',
-  'satellites', 'exploration', 'accompagnement', 'faq_questions',
+  'satellites', 'exploration', 'entreprises_spatiales', 'accompagnement', 'faq_questions',
   'completed',
 ];
 
@@ -124,6 +125,13 @@ function AppContent() {
       )}
       {currentView === 'exploration' && (
         <ExplorationSection
+          onComplete={() => handleSectionComplete('entreprises_spatiales')}
+          onHome={handleHome}
+          onBack={handleBack}
+        />
+      )}
+      {currentView === 'entreprises_spatiales' && (
+        <EntreprisesSpatialesSection
           onComplete={() => handleSectionComplete('accompagnement')}
           onHome={handleHome}
           onBack={handleBack}
