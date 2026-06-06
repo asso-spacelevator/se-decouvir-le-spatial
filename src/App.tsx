@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { SessionProvider, useSession } from './contexts/SessionContext';
 import { StartPage } from './components/StartPage';
 import { IntroductionPage } from './components/IntroductionPage';
+import { IntroductionPage2 } from './components/IntroductionPage2';
 import { ImpactTerrestreSection } from './components/ImpactTerrestreSection';
 import { RocketSection } from './components/RocketSection';
 import { SocialReferencesSection } from './components/SocialReferencesSection';
@@ -18,12 +19,12 @@ const sectionOrder: Section[] = [
   'start', 'introduction',
   'impact_terrestre', 'rockets', 'social',
   'session_break',
-  'satellites', 'exploration', 'entreprises_spatiales', 'accompagnement', 'faq_questions',
+  'introduction_s2', 'satellites', 'exploration', 'entreprises_spatiales', 'accompagnement', 'faq_questions',
   'completed',
 ];
 
 const SESSION1_SECTIONS: Section[] = ['introduction', 'impact_terrestre', 'rockets', 'social', 'session_break'];
-const SESSION2_SECTIONS: Section[] = ['satellites', 'exploration', 'entreprises_spatiales', 'accompagnement', 'faq_questions'];
+const SESSION2_SECTIONS: Section[] = ['introduction_s2', 'satellites', 'exploration', 'entreprises_spatiales', 'accompagnement', 'faq_questions'];
 
 function AppContent() {
   const { session, loading, updateSection, completeSection, markSession1Complete, markSession2Complete } = useSession();
@@ -67,7 +68,7 @@ function AppContent() {
   const handleStartSession2 = async () => {
     const resumeTo = session && SESSION2_SECTIONS.includes(session.current_section)
       ? session.current_section
-      : 'satellites';
+      : 'introduction_s2';
     await navigate(resumeTo);
   };
 
@@ -141,6 +142,13 @@ function AppContent() {
       )}
 
       {/* Session 2 */}
+      {currentView === 'introduction_s2' && (
+        <IntroductionPage2
+          onContinue={() => navigate('satellites')}
+          onHome={handleHome}
+          onBack={handleBack}
+        />
+      )}
       {currentView === 'satellites' && (
         <SatelliteSection
           onComplete={() => handleSectionComplete('exploration')}
