@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
-import { ChevronLeft, ChevronRight, CheckCircle, ExternalLink, Globe, Radio, Trophy } from 'lucide-react';
+import { ISSViewer } from './ISSViewer';
+import { ChevronLeft, ChevronRight, CheckCircle, ChevronDown, Compass, ExternalLink, Globe, Radio, Rocket, Satellite, Shield, Trophy, Users } from 'lucide-react';
 import { useSession } from '../contexts/SessionContext';
 import { ChapterShell, SectionTopBar, SectionProgress } from './ChapterShell';
 
@@ -34,6 +35,7 @@ export function ImpactTerrestreSection({ onComplete, onHome }: ImpactTerrestreSe
   const [quizScore, setQuizScore] = useState<number | null>(null);
   const [linkVisited, setLinkVisited] = useState(false);
   const [docAnswer, setDocAnswer] = useState('');
+  const [collaboGame, setCollaboGame] = useState(false);
   const [hydrated, setHydrated] = useState(false);
 
   // Hydrate from supabase
@@ -46,6 +48,7 @@ export function ImpactTerrestreSection({ onComplete, onHome }: ImpactTerrestreSe
       if (r.quiz_score) setQuizScore(parseInt(r.quiz_score, 10));
       if (r.link_visited === 'true') setLinkVisited(true);
       if (r.doc_answer) setDocAnswer(r.doc_answer);
+      if (r.collabo_game === 'true') setCollaboGame(true);
       setHydrated(true);
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -79,6 +82,11 @@ export function ImpactTerrestreSection({ onComplete, onHome }: ImpactTerrestreSe
   const handleDocAnswer = async (v: string) => {
     setDocAnswer(v);
     if (hydrated) await saveResponse('impact_terrestre', 'doc_answer', v);
+  };
+
+  const handleCollaboGame = async () => {
+    setCollaboGame(true);
+    if (hydrated) await saveResponse('impact_terrestre', 'collabo_game', 'true');
   };
 
   return (
@@ -264,19 +272,20 @@ export function ImpactTerrestreSection({ onComplete, onHome }: ImpactTerrestreSe
           <ChapterShell
             kicker="03" title="Pilotage international" titleAccent="qui pilotent l'espace."
             titlePrefix="Les équipes invisibles"
-            lede="Chaque satellite en orbite est surveillé et commandé depuis la Terre, vingt-quatre heures sur vingt-quatre. Le plus grand centre européen est l'ESOC, à Darmstadt en Allemagne."
-            onPrev={() => goTo(1)} onNext={() => goTo(3)} nextEnabled={true}
-            nextLabel="Continue · Quiz éclair →"
+            lede="Chaque satellite en orbite est surveillé et commandé depuis la Terre, vingt-quatre heures sur vingt-quatre. Explore les astronautes français qui ont porté cette aventure, puis reconstitue l'équipe internationale de l'ISS."
+            onPrev={() => goTo(1)} onNext={() => goTo(3)}
+            nextEnabled={collaboGame}
+            nextLabel={collaboGame ? "Continue · Quiz éclair →" : "Termine le jeu de collaboration"}
           >
-            <OpsBlock />
+            <OpsBlock onGameComplete={handleCollaboGame} gameCompleted={collaboGame} />
           </ChapterShell>
         )}
 
         {chapter === 3 && (
           <ChapterShell
             kicker="04" title="Quiz éclair" titleAccent="valider la partie."
-            titlePrefix="Deux questions pour"
-            lede="Une réponse par question. Pas de mauvaise réponse définitive, tu peux te tromper. L'objectif, c'est d'apprendre."
+            titlePrefix="Six questions pour"
+            lede="Une réponse par question. Lis bien l'explication après chaque réponse, puis clique pour avancer. Pas de mauvaise réponse définitive : l'objectif, c'est d'apprendre."
             onPrev={() => goTo(2)} onNext={() => goTo(4)} nextEnabled={quizScore !== null}
             nextLabel={quizScore !== null ? "Termine le chapitre →" : "Réponds à toutes les questions"}
           >
@@ -815,13 +824,216 @@ function SpinoffGame({ initial, onCount }: { initial: number; onCount: (n: numbe
 }
 
 /* ─────────────────────────────────────────────────────────
- *  Chapter 4 — ESOC + agencies + ISS flags
+ *  Chapter 3 — astronautes français + jeu collaboration + ESOC
  * ────────────────────────────────────────────────────────*/
+
+const FR_ASTRONAUTS = [
+  {
+    name: 'Thomas Pesquet',
+    role: 'Astronaute ESA · Commandant ISS',
+    missions: 'Proxima (2016–2017) · Alpha (2021)',
+    videoId: '9r8GCYvLtQ0',
+    videoNote: '',
+  },
+  {
+    name: 'Claudie Haigneré',
+    role: "Astronaute ESA · 1ʳᵉ Européenne dans l'ISS",
+    missions: 'Cassiopée / Mir (1996) · Andromède / ISS (2001)',
+    videoId: 'WZjY7a8lukI',
+    videoNote: '',
+  },
+  {
+    name: 'Sophie Adenot',
+    role: 'Astronaute ESA · Promotion 2022',
+    missions: 'Sélectionnée en 2022 · En formation active',
+    videoId: 'CMnzsSnUGeE',
+    videoNote: '',
+  },
+];
+
+const ISS_PAIRS = [
+  {
+    id: 'zarya', module: 'Zarya',
+    moduleDesc: 'Premier module lancé en 1998. Structure porteuse initiale de la station.',
+    country: 'ru', countryName: 'Russie', agency: 'Roscosmos',
+    svgX: 18, svgY: 94, svgW: 82, svgH: 36,
+  },
+  {
+    id: 'destiny', module: 'Laboratoire Destiny',
+    moduleDesc: 'Principal laboratoire, lancé en 2001 par la navette Atlantis.',
+    country: 'us', countryName: 'États-Unis', agency: 'NASA',
+    svgX: 126, svgY: 94, svgW: 96, svgH: 36,
+  },
+  {
+    id: 'canadarm', module: 'Canadarm2',
+    moduleDesc: 'Bras robotique de 17 m pour les assemblages et sorties extra-véhiculaires.',
+    country: 'ca', countryName: 'Canada', agency: 'ASC',
+    svgX: 248, svgY: 46, svgW: 22, svgH: 48,
+  },
+  {
+    id: 'columbus', module: 'Laboratoire Columbus',
+    moduleDesc: "Laboratoire scientifique, lancé en 2008 par la navette Atlantis.",
+    country: 'eu', countryName: 'Europe', agency: 'ESA',
+    svgX: 282, svgY: 64, svgW: 94, svgH: 36,
+  },
+  {
+    id: 'kibo', module: 'Module Kibo',
+    moduleDesc: "Le plus grand module de l'ISS. Laboratoire avec sas extérieur.",
+    country: 'jp', countryName: 'Japon', agency: 'JAXA',
+    svgX: 282, svgY: 130, svgW: 94, svgH: 36,
+  },
+]
+function ISSPlan() {
+  return (
+    <div className="bg-white/[0.02] border border-white/10 rounded-2xl overflow-hidden mb-6">
+      <div className="px-4 pt-4 text-[10px] font-bold tracking-[0.16em] uppercase text-white/30 mb-1">
+        Station spatiale internationale · Modèle 3D
+      </div>
+      <ISSViewer className="w-full h-[480px]" />
+      <p className="px-4 pb-3 text-[10.5px] italic text-white/45 m-0">
+        Modèle 3D : NASA / Visualization Technology Applications and Development (VTAD), 2019
+      </p>
+    </div>
+  );
+}
+
+function CollaboGame({ onComplete, initial }: { onComplete: () => void; initial: boolean }) {
+  const [selected, setSelected] = useState<string | null>(null);
+  const [matched, setMatched]   = useState<Set<string>>(new Set());
+  const [wrongId, setWrongId]   = useState<string | null>(null);
+  const [done, setDone]         = useState(initial);
+
+  const [countries] = useState(() =>
+    [...ISS_PAIRS.map(p => ({ code: p.country, name: p.countryName }))]
+      .sort(() => Math.random() - 0.5)
+  );
+
+  const handleModuleClick = (id: string) => {
+    if (matched.has(id)) return;
+    setSelected(selected === id ? null : id);
+    setWrongId(null);
+  };
+
+  const handleCountryClick = (code: string) => {
+    if (!selected) return;
+    const pair = ISS_PAIRS.find(p => p.id === selected)!;
+    if (pair.country === code) {
+      const next = new Set(matched);
+      next.add(selected);
+      setMatched(next);
+      setSelected(null);
+      if (next.size === ISS_PAIRS.length) { setDone(true); onComplete(); }
+    } else {
+      setWrongId(selected);
+      setSelected(null);
+      setTimeout(() => setWrongId(null), 800);
+    }
+  };
+
+  if (done) {
+    return (
+      <div className="bg-magenta/[0.06] border border-magenta/25 rounded-2xl p-8 text-center animate-[chapterIn_480ms_cubic-bezier(.2,0,0,1)]">
+        <Users className="w-12 h-12 text-magenta mx-auto mb-3" strokeWidth={1.75} />
+        <div className="text-[11px] font-bold tracking-[0.16em] uppercase text-magenta mb-2">Jeu terminé</div>
+        <p className="text-[17px] font-semibold m-0">Tu as reconstitué l'équipe internationale de l'ISS.</p>
+        <p className="text-[13px] text-white/65 m-0 mt-2 max-w-md mx-auto">
+          5 pays, 1 station. C'est ça la collaboration spatiale : chacun apporte ce qu'il sait faire le mieux.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <ISSPlan />
+      <p className="text-[13.5px] text-white/65 mb-5 leading-[1.55]">
+        Chaque module a été construit par un pays différent. Clique sur un module, puis sur le drapeau du pays qui l'a construit.
+      </p>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+        {/* Left — modules */}
+        <div className="flex flex-col gap-3">
+          <span className="text-[10px] font-bold tracking-[0.16em] uppercase text-white/40 mb-1">Modules de l'ISS</span>
+          {ISS_PAIRS.map(p => {
+            const isMatched  = matched.has(p.id);
+            const isSelected = selected === p.id;
+            const isWrong    = wrongId === p.id;
+            if (isMatched) {
+              return (
+                <div key={p.id} className="rounded-xl px-4 py-3.5 border border-magenta/40 bg-magenta/[0.06] flex items-center justify-between gap-2 animate-[chapterIn_320ms_cubic-bezier(.2,0,0,1)]">
+                  <div>
+                    <div className="text-[14px] font-semibold">{p.module}</div>
+                    <div className="text-[12px] text-white/55 mt-0.5 leading-[1.4]">{p.moduleDesc}</div>
+                  </div>
+                  <CheckCircle className="w-4 h-4 text-magenta flex-shrink-0" strokeWidth={1.75} />
+                </div>
+              );
+            }
+            return (
+              <button
+                key={p.id}
+                onClick={() => handleModuleClick(p.id)}
+                className={
+                  'text-left rounded-xl px-4 py-3.5 border transition-all duration-150 ' +
+                  (isSelected
+                    ? 'bg-magenta/15 border-magenta shadow-[0_0_0_2px_rgba(200,37,122,0.25)]'
+                    : isWrong
+                      ? 'bg-red-400/10 border-red-400/50'
+                      : 'bg-white/[0.04] border-white/10 hover:border-white/30 hover:-translate-y-0.5')
+                }
+              >
+                <div className="text-[14px] font-semibold">{p.module}</div>
+                <div className="text-[12px] text-white/55 mt-0.5 leading-[1.4]">{p.moduleDesc}</div>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Right — countries (flag + name only, no agency) */}
+        <div className="flex flex-col gap-3">
+          <span className="text-[10px] font-bold tracking-[0.16em] uppercase text-white/40 mb-1">Pays</span>
+          {countries.map(c => {
+            const isMatched = ISS_PAIRS.some(p => matched.has(p.id) && p.country === c.code);
+            return (
+              <button
+                key={c.code}
+                onClick={() => handleCountryClick(c.code)}
+                disabled={isMatched || !selected}
+                className={
+                  'rounded-xl px-4 py-3.5 border transition-all duration-150 ' +
+                  (isMatched
+                    ? 'bg-magenta/10 border-magenta/40 opacity-55 cursor-default'
+                    : selected
+                      ? 'bg-white/[0.04] border-white/20 hover:border-magenta hover:bg-magenta/[0.06] hover:-translate-y-0.5 cursor-pointer'
+                      : 'bg-white/[0.04] border-white/10 opacity-35 cursor-default')
+                }
+              >
+                <div className="flex items-center gap-3">
+                  <img src={`https://flagcdn.com/w40/${c.code}.png`} alt="" width={32} height={24} className="rounded-sm object-cover flex-shrink-0" />
+                  <span className="text-[14px] font-semibold flex-1 text-left">{c.name}</span>
+                  {isMatched && <CheckCircle className="w-4 h-4 text-magenta flex-shrink-0" strokeWidth={1.75} />}
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      <div className="mt-4 text-[12px] text-white/45 min-h-[18px]">
+        {matched.size > 0
+          ? `${matched.size} / ${ISS_PAIRS.length} associations correctes`
+          : selected
+            ? 'Sélectionne maintenant le drapeau du pays qui a construit ce module.'
+            : 'Clique sur un module pour le sélectionner.'}
+      </div>
+    </div>
+  );
+}
 const AGENCIES = [
   { name: 'ESA', flag: 'eu', desc: '22 États membres. Ariane, Copernicus, Galileo, James Webb.' },
   { name: 'NASA', flag: 'us', desc: 'Artemis, James Webb, Perseverance, ISS.' },
   { name: 'JAXA', flag: 'jp', desc: 'Module Kibô, Hayabusa, lanceur H3.' },
-  { name: 'Roscosmos', flag: 'ru', desc: 'Soyouz, Progress, segment russe de l\'ISS.' },
+  { name: 'Roscosmos', flag: 'ru', desc: "Soyouz, Progress, segment russe de l'ISS." },
 ];
 
 const ISS_FLAGS: { code: string; name: string }[] = [
@@ -834,43 +1046,95 @@ const ISS_FLAGS: { code: string; name: string }[] = [
   { code: 'ae', name: 'Émirats arabes unis' }, { code: 'kr', name: 'Corée du Sud' }, { code: 'no', name: 'Norvège' },
 ];
 
-function OpsBlock() {
+function OpsBlock({ onGameComplete, gameCompleted }: { onGameComplete: () => void; gameCompleted: boolean }) {
   const [hovered, setHovered] = useState<string>('');
   return (
-    <div>
-      <div className="grid grid-cols-1 md:grid-cols-[1.4fr_1fr] gap-6">
-        <div
-          className="aspect-[4/3] rounded-2xl overflow-hidden border border-white/10 bg-black bg-cover bg-center relative"
-          style={{ backgroundImage: "url('https://www.esa.int/var/esa/storage/images/esa_multimedia/images/2012/06/main_control_room_at_esa_s_space_operations_centre/11252253-2-eng-GB/Main_Control_Room_at_ESA_s_Space_Operations_Centre_pillars.jpg')" }}
-        >
-          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
-          <div className="absolute bottom-5 left-6 right-6">
-            <span className="inline-block bg-magenta text-white text-[10px] font-bold uppercase tracking-[0.12em] px-2.5 py-1 rounded mb-2">ESOC · Darmstadt</span>
-            <h3 className="text-[22px] font-semibold m-0 mb-1.5">European Space Operations Centre</h3>
-            <p className="text-[12.5px] text-white/80 m-0 leading-[1.4]">Centre d'excellence européen pour les opérations de mission. Plus de 60 satellites pilotés depuis sa création.</p>
-            <p className="text-[10.5px] italic text-white/45 m-0 mt-2">Image : ESA / ESOC, 2012</p>
-          </div>
-        </div>
-        <div className="grid grid-cols-1 gap-3">
-          <StatRow v="20+" k="missions ESA contrôlées en parallèle" />
-          <StatRow v="24/7" k="opérations en continu, jour et nuit" />
-          <StatRow v="900+" k="experts sur site, à Darmstadt" />
-        </div>
-      </div>
+    <div className="flex flex-col gap-14">
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-7">
-        {AGENCIES.map(a => (
-          <div key={a.name} className="bg-white/5 border border-white/10 rounded-xl p-4 flex flex-col gap-2 hover:border-magenta hover:bg-magenta/[0.06] hover:-translate-y-0.5 transition-all">
-            <div className="flex items-center gap-2.5">
-              <img src={`https://flagcdn.com/w40/${a.flag}.png`} alt="" width={28} height={20} className="rounded-sm object-cover" />
-              <strong className="text-[18px] font-bold">{a.name}</strong>
+      {/* French astronaut videos */}
+      <div>
+        <div className="flex items-center gap-3 mb-6">
+          <span className="text-[11px] font-bold tracking-[0.16em] uppercase text-white/50">Astronautes français</span>
+          <div className="flex-1 h-px bg-white/10" />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          {FR_ASTRONAUTS.map(a => (
+            <div key={a.name} className="bg-white/[0.04] border border-white/10 rounded-2xl overflow-hidden flex flex-col">
+              <div className="aspect-video bg-black/70 relative">
+                {a.videoId ? (
+                  <iframe
+                    className="absolute inset-0 w-full h-full"
+                    src={`https://www.youtube-nocookie.com/embed/${a.videoId}`}
+                    title={`${a.name} — présentation`}
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerPolicy="strict-origin-when-cross-origin"
+                    allowFullScreen
+                  />
+                ) : (
+                  <div className="absolute inset-0 flex flex-col items-center justify-center gap-2.5">
+                    <Rocket className="w-9 h-9 text-white/15" strokeWidth={1.5} />
+                    <p className="text-[12px] text-white/30 text-center max-w-[220px] leading-[1.5] m-0 px-4">
+                      {a.videoNote}
+                    </p>
+                  </div>
+                )}
+              </div>
+              <div className="p-4 border-t border-white/10 flex flex-col gap-1 flex-1">
+                <span className="text-[10px] font-bold tracking-[0.14em] uppercase text-magenta">Présentation</span>
+                <h4 className="text-[15px] font-bold m-0 leading-[1.2]">{a.name}</h4>
+                <p className="text-[12px] text-white/55 m-0 leading-[1.4]">{a.role}</p>
+                <p className="text-[11px] text-white/40 m-0 mt-1">{a.missions}</p>
+              </div>
             </div>
-            <p className="text-[12px] text-white/65 leading-[1.45] m-0">{a.desc}</p>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
 
-      <div className="mt-7 bg-white/5 border border-white/10 rounded-xl p-6">
+      <div className="h-px bg-white/10" />
+
+      {/* ESOC + agences */}
+      <div>
+        <div className="flex items-center gap-3 mb-6">
+          <span className="text-[11px] font-bold tracking-[0.16em] uppercase text-white/50">Centre de contrôle</span>
+          <div className="flex-1 h-px bg-white/10" />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-[1.4fr_1fr] gap-6">
+          <div
+            className="aspect-[4/3] rounded-2xl overflow-hidden border border-white/10 bg-black bg-cover bg-center relative"
+            style={{ backgroundImage: "url('https://www.esa.int/var/esa/storage/images/esa_multimedia/images/2012/06/main_control_room_at_esa_s_space_operations_centre/11252253-2-eng-GB/Main_Control_Room_at_ESA_s_Space_Operations_Centre_pillars.jpg')" }}
+          >
+            <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
+            <div className="absolute bottom-5 left-6 right-6">
+              <span className="inline-block bg-magenta text-white text-[10px] font-bold uppercase tracking-[0.12em] px-2.5 py-1 rounded mb-2">ESOC · Darmstadt</span>
+              <h3 className="text-[22px] font-semibold m-0 mb-1.5">European Space Operations Centre</h3>
+              <p className="text-[12.5px] text-white/80 m-0 leading-[1.4]">Centre d'excellence européen pour les opérations de mission. Plus de 60 satellites pilotés depuis sa création.</p>
+              <p className="text-[10.5px] italic text-white/45 m-0 mt-2">Image : ESA / ESOC, 2012</p>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 gap-3">
+            <StatRow v="20+" k="missions ESA contrôlées en parallèle" />
+            <StatRow v="24/7" k="opérations en continu, jour et nuit" />
+            <StatRow v="900+" k="experts sur site, à Darmstadt" />
+          </div>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-7">
+          {AGENCIES.map(a => (
+            <div key={a.name} className="bg-white/5 border border-white/10 rounded-xl p-4 flex flex-col gap-2 hover:border-magenta hover:bg-magenta/[0.06] hover:-translate-y-0.5 transition-all">
+              <div className="flex items-center gap-2.5">
+                <img src={`https://flagcdn.com/w40/${a.flag}.png`} alt="" width={28} height={20} className="rounded-sm object-cover" />
+                <strong className="text-[18px] font-bold">{a.name}</strong>
+              </div>
+              <p className="text-[12px] text-white/65 leading-[1.45] m-0">{a.desc}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="h-px bg-white/10" />
+
+      {/* Drapeaux ISS */}
+      <div className="bg-white/5 border border-white/10 rounded-xl p-6">
         <div className="flex items-baseline justify-between gap-4 mb-1.5">
           <h4 className="text-[17px] font-semibold m-0">La Station spatiale internationale</h4>
           <small className="text-[12px] text-white/55">270 astronautes, 21 nationalités, depuis 1998</small>
@@ -891,12 +1155,50 @@ function OpsBlock() {
             />
           ))}
         </div>
-        <div className="mt-3 text-[12px] font-medium text-magenta tracking-[0.04em] min-h-[18px]">{hovered || '\u00A0'}</div>
+        <div className="mt-3 text-[12px] font-medium text-magenta tracking-[0.04em] min-h-[18px]">{hovered || ' '}</div>
       </div>
+
+      <div className="h-px bg-white/10" />
+
+      {/* Jeu collaboration */}
+      <div>
+        <div className="flex items-center gap-3 mb-3">
+          <span className="text-[11px] font-bold tracking-[0.16em] uppercase text-white/50">Jeu · Qui a construit l'ISS ?</span>
+          <div className="flex-1 h-px bg-white/10" />
+        </div>
+        <p className="text-[15px] font-semibold mb-4">La construction de l'ISS est une oeuvre collective.</p>
+        <CollaboGame onComplete={onGameComplete} initial={gameCompleted} />
+      </div>
+
+      <div className="h-px bg-white/10" />
+
+      {/* ISS spotter */}
+      <div className="border border-[1.5px] border-magenta rounded-lg p-5 flex flex-col sm:flex-row gap-4 items-start">
+        <div className="flex-shrink-0 w-10 h-10 rounded-full bg-magenta/10 flex items-center justify-center">
+          <Satellite className="w-5 h-5 text-magenta" strokeWidth={1.75} />
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="text-[11px] font-bold tracking-[0.14em] uppercase text-magenta m-0 mb-1">Observer l'ISS depuis chez toi</p>
+          <p className="text-[14px] font-semibold m-0 mb-1.5 leading-[1.3]">L'ISS est visible à l'oeil nu, plusieurs fois par semaine.</p>
+          <p className="text-[13px] text-white/65 m-0 mb-4 leading-[1.55]">
+            Elle apparaît comme un point lumineux qui traverse le ciel en 3 à 6 minutes, plus brillant que n'importe quelle étoile.
+            Le site <strong className="text-white/85">Spot the Station</strong> (NASA) indique les prochains passages au-dessus de ta ville, avec l'heure exacte et la direction à regarder.
+          </p>
+          <a
+            href="https://spotthestation.nasa.gov/fr/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 bg-magenta hover:bg-magenta-700 text-white rounded-lg px-5 py-3 text-[13.5px] font-semibold transition-colors duration-150"
+          >
+            Voir les prochains passages
+            <ExternalLink className="w-4 h-4" strokeWidth={1.75} />
+          </a>
+        </div>
+      </div>
+
     </div>
   );
 }
-
 function StatRow({ v, k }: { v: string; k: string }) {
   return (
     <div className="bg-white/5 border border-white/10 rounded-xl px-5 py-4 flex items-baseline justify-between gap-4">
@@ -930,11 +1232,50 @@ const QUESTIONS = [
     ],
     e: "La mousse à mémoire de forme a été inventée par la NASA en 1966 pour absorber les chocs au décollage. Aujourd'hui dans nos matelas, sièges auto et équipements médicaux. Ces innovations nées du spatial qui entrent dans nos vies s'appellent des retombées — spinoffs.",
   },
+  {
+    q: "Quelle est la taille de la plus grande antenne de radiotélécommunications américaine ?",
+    options: [
+      { t: '30 mètres', ok: false },
+      { t: '50 mètres', ok: false },
+      { t: '70 mètres', ok: true },
+      { t: '100 mètres', ok: false },
+    ],
+    e: "L'antenne DSS-14 à Goldstone (Californie) mesure 70 mètres de diamètre. Appartenant au réseau Deep Space Network (DSN) de la NASA, elle communique avec des sondes aux confins du système solaire, comme Voyager 1 — à plus de 23 milliards de kilomètres de la Terre.",
+  },
+  {
+    q: "Combien d'astronautes français ont voyagé dans l'espace depuis le début de l'exploration spatiale ?",
+    options: [
+      { t: '4', ok: false },
+      { t: '6', ok: false },
+      { t: '10', ok: true },
+      { t: '15', ok: false },
+    ],
+    e: "10 Français ont décollé vers l'espace depuis 1982, quand Jean-Loup Chrétien est devenu le premier. Parmi eux : Patrick Baudry, Jean-François Clervoy, Thomas Pesquet — parti en 2016 et 2021. La France est le pays non-américain et non-russe ayant envoyé le plus d'astronautes dans l'espace.",
+  },
+  {
+    q: "À quelle altitude orbite la Station spatiale internationale (ISS) ?",
+    options: [
+      { t: 'Environ 200 km', ok: false },
+      { t: 'Environ 400 km', ok: true },
+      { t: 'Environ 800 km', ok: false },
+      { t: 'À 36 000 km (géostationnaire)', ok: false },
+    ],
+    e: "L'ISS se trouve à environ 400 km d'altitude, en orbite basse (LEO). Elle effectue une révolution complète autour de la Terre en 90 minutes, soit 16 orbites par jour, à 27 600 km/h. À cette hauteur, les astronautes voient un lever de soleil toutes les 45 minutes.",
+  },
+  {
+    q: "Quel programme européen met à disposition de tous, gratuitement, des images satellite de la Terre ?",
+    options: [
+      { t: 'Galileo', ok: false },
+      { t: 'Ariane', ok: false },
+      { t: 'Copernicus', ok: true },
+      { t: 'Starlink', ok: false },
+    ],
+    e: "Copernicus est le programme d'observation de la Terre de l'Union Européenne, géré par l'ESA. Ses données sont accessibles gratuitement à tous : gouvernements, scientifiques, entreprises, citoyens. Les satellites Sentinel génèrent chaque jour des téraoctets d'images couvrant l'intégralité du globe.",
+  },
 ];
 
 function Quiz({ onDone, initial }: { onDone: (score: number) => void; initial: number | null }) {
   const [step, setStep] = useState(0);
-  const [score, setScore] = useState(0);
   const [answers, setAnswers] = useState<(boolean | null)[]>(QUESTIONS.map(() => null));
   const [chosen, setChosen] = useState<number | null>(null);
   const [done, setDone] = useState(initial !== null);
@@ -944,29 +1285,34 @@ function Quiz({ onDone, initial }: { onDone: (score: number) => void; initial: n
     const ok = QUESTIONS[step].options[i].ok;
     setChosen(i);
     const next = [...answers]; next[step] = ok; setAnswers(next);
-    if (ok) setScore(score + 1);
-    setTimeout(() => {
-      if (step + 1 < QUESTIONS.length) {
-        setStep(step + 1);
-        setChosen(null);
-      } else {
-        setDone(true);
-        onDone(score + (ok ? 1 : 0));
-      }
-    }, 2200);
+  };
+
+  const goNext = () => {
+    if (step + 1 < QUESTIONS.length) {
+      setStep(step + 1);
+      setChosen(null);
+    } else {
+      const finalScore = answers.filter(a => a === true).length;
+      setDone(true);
+      onDone(finalScore);
+    }
   };
 
   if (done) {
-    const finalScore = initial !== null ? initial : score;
+    const finalScore = initial !== null ? initial : answers.filter(a => a === true).length;
     return (
       <div className="bg-white/5 border border-white/10 rounded-2xl p-12 text-center">
         <Trophy className="w-14 h-14 text-magenta mx-auto mb-4" />
         <div className="text-[11px] font-semibold tracking-[0.16em] uppercase text-magenta mb-2">Quiz terminé</div>
         <div className="text-[36px] font-bold mb-2">
-          {finalScore} <span className="text-white/40">/ 2</span>
+          {finalScore} <span className="text-white/40">/ {QUESTIONS.length}</span>
         </div>
         <p className="text-white/65 max-w-md mx-auto m-0">
-          {finalScore >= 2 ? "Parfait. Tu as tout retenu." : finalScore >= 1 ? "Bien joué. Une sur deux, c'est un bon départ." : "Pas grave, le but est d'apprendre. Tu peux revenir aux chapitres précédents."}
+          {finalScore >= QUESTIONS.length
+            ? "Parfait. Tu as tout retenu."
+            : finalScore >= Math.ceil(QUESTIONS.length / 2)
+              ? "Bien joué. Tu en sais plus qu'hier."
+              : "Pas grave, le but est d'apprendre. Tu peux revenir aux chapitres précédents."}
         </p>
       </div>
     );
@@ -1014,10 +1360,21 @@ function Quiz({ onDone, initial }: { onDone: (score: number) => void; initial: n
         })}
       </div>
       {chosen !== null && (
-        <div className="mt-5 px-5 py-4 bg-magenta/[0.06] border border-magenta/25 rounded-xl text-[13.5px] leading-[1.55] text-white/85 animate-[chapterIn_320ms]">
-          <div className="font-semibold text-magenta uppercase text-[11px] tracking-[0.1em] mb-1.5">À retenir</div>
-          {QUESTIONS[step].e}
-        </div>
+        <>
+          <div className="mt-5 px-5 py-4 bg-magenta/[0.06] border border-magenta/25 rounded-xl text-[13.5px] leading-[1.55] text-white/85 animate-[chapterIn_320ms]">
+            <div className="font-semibold text-magenta uppercase text-[11px] tracking-[0.1em] mb-1.5">À retenir</div>
+            {QUESTIONS[step].e}
+          </div>
+          <div className="mt-4 flex justify-end animate-[chapterIn_320ms]">
+            <button
+              onClick={goNext}
+              className="inline-flex items-center gap-2 bg-magenta text-white rounded-lg px-5 py-3.5 text-[14px] font-semibold hover:bg-magenta-700 transition"
+            >
+              {step + 1 < QUESTIONS.length ? 'Question suivante' : 'Voir les résultats'}
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+        </>
       )}
     </div>
   );
@@ -1046,7 +1403,7 @@ function Recap({ satellites, flips, quizScore, onContinue, onPrev }: {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 text-left mb-9">
           <RecapStat v={satellites} t="satellites utilisés aujourd'hui" />
           <RecapStat v={flips} t="cartes retournées dans le jeu" />
-          <RecapStat v={`${quizScore} / 2`} t="réponses correctes au quiz" />
+          <RecapStat v={`${quizScore} / ${QUESTIONS.length}`} t="réponses correctes au quiz" />
         </div>
         <div className="bg-white/5 border border-white/10 rounded-2xl p-7 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 text-left">
           <div className="flex flex-col gap-1">

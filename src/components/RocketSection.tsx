@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
-import { CheckCircle } from 'lucide-react';
+import { CheckCircle, ExternalLink, Zap, X, BookOpen } from 'lucide-react';
 import { useSession } from '../contexts/SessionContext';
 import { Quiz } from './Quiz';
 import { Ariane6Diagram } from './Ariane6Diagram';
 import { MissionSimulator } from './MissionSimulator';
 import { SectionCanvas, SectionTopBar, SectionProgress, ChapterShell, ChapterRecap } from './ChapterShell';
 
-const TOTAL_CHAPTERS = 7;
+const TOTAL_CHAPTERS = 8;
 
 interface RocketSectionProps {
   onComplete: () => void;
@@ -14,13 +14,128 @@ interface RocketSectionProps {
   onBack: () => void;
 }
 
+// ── Speed-sort game ──
+const SPEED_ITEMS = [
+  {
+    id: 0,
+    label: 'Avion de ligne',
+    subLabel: 'Airbus A320 en croisière',
+    value: 900,
+    unit: 'km/h',
+    context: "Un vol Paris-New York prend ~8 h à cette vitesse. Rapide pour un humain, négligeable pour l'espace.",
+    imagePath: 'vitesses/a320.jpg',
+    credit: null,
+  },
+  {
+    id: 1,
+    label: 'Balle de fusil',
+    subLabel: 'carabine haute vélocité',
+    value: 3600,
+    unit: 'km/h',
+    context: "Même une balle est 8 fois trop lente pour rester en orbite. L'espace exige une énergie bien supérieure.",
+    imagePath: null,
+    credit: null,
+  },
+  {
+    id: 2,
+    label: 'Station Spatiale Internationale',
+    subLabel: 'orbite basse à 400 km',
+    value: 27600,
+    unit: 'km/h',
+    context: "À cette vitesse, l'ISS fait le tour de la Terre en 92 minutes. C'est la vitesse minimale pour ne pas retomber.",
+    imagePath: 'vitesses/iss_image.jpg',
+    credit: 'NASA / Expédition 66, Domaine public',
+  },
+  {
+    id: 3,
+    label: 'Sonde New Horizons',
+    subLabel: 'record de vitesse humaine',
+    value: 58000,
+    unit: 'km/h',
+    context: "Lancée en 2006, New Horizons a atteint Pluton en 9 ans. Elle a quitté le Système solaire et ne reviendra jamais.",
+    imagePath: 'vitesses/NewHorizons.jpg',
+    credit: 'Johns Hopkins Univ. APL / Southwest Research Institute / NASA, Domaine public',
+  },
+];
+// Fixed display order, deliberately not in ascending order
+const SPEED_DISPLAY_ORDER = [2, 0, 3, 1];
+
+// ── True/False game ──
+const TRUE_FALSE_ITEMS = [
+  {
+    id: 0,
+    statement: "Une salle blanche spatiale est environ 20 fois plus propre qu'un bloc opératoire.",
+    isTrue: true,
+    explication: "Un bloc opératoire tolère jusqu'à 10 000 particules/m³. Une salle blanche ISO 5 descend à 3 520/m³ — soit bien plus propre qu'une salle d'opération.",
+  },
+  {
+    id: 1,
+    statement: "Tu peux porter un parfum léger si tu le dilues à l'eau avant d'entrer.",
+    isTrue: false,
+    explication: "Aucun parfum, cosmétique ni lotion n'est toléré. Les molécules volatiles se déposent sur les optiques et capteurs, les rendant inutilisables en orbite.",
+  },
+  {
+    id: 2,
+    statement: "Chaque outil entrant dans la salle blanche est répertorié et tracé.",
+    isTrue: true,
+    explication: "Un tournevis oublié peut provoquer un court-circuit ou un déséquilibre mécanique en orbite. La traçabilité est absolue — rien ne rentre sans être enregistré.",
+  },
+  {
+    id: 3,
+    statement: "La température peut varier de quelques degrés selon les saisons, c'est toléré.",
+    isTrue: false,
+    explication: "21 °C et 45 % d'humidité sont maintenus en permanence. Les matériaux de précision se dilatent avec la chaleur et les circuits réagissent aux variations hydriques.",
+  },
+  {
+    id: 4,
+    statement: "Les tests acoustiques et vibratoires d'un satellite peuvent durer plusieurs semaines à eux seuls.",
+    isTrue: true,
+    explication: "À l'ESTEC (Pays-Bas), une campagne complète de tests — vibrations, chocs, vide thermique, compatibilité électromagnétique — peut s'étendre sur 6 à 12 mois. Les seuls tests de vide thermique (TVAC) durent souvent 3 à 6 semaines en continu, 24 h/24.",
+  },
+  {
+    id: 5,
+    statement: "Une équipe de 10 à 15 techniciens suffit pour intégrer un grand satellite comme Gaia ou Euclid.",
+    isTrue: false,
+    explication: "Pour un satellite scientifique de grande envergure, l'équipe complète dépasse généralement 200 personnes : ingénieurs d'intégration, spécialistes système, experts en tests, représentants industriels. Ils ne sont pas tous présents en salle blanche simultanément, mais la coordination mobilise des centaines d'experts.",
+  },
+  {
+    id: 6,
+    statement: "L'Europe dispose d'une dizaine de grandes salles blanches capables d'accueillir un satellite de plusieurs tonnes.",
+    isTrue: true,
+    explication: "On dénombre en Europe une dizaine d'installations majeures : l'ESTEC aux Pays-Bas (deux grandes salles), Airbus à Toulouse et à Bremen, Thales Alenia Space à Cannes et à Rome, OHB à Bremen, IABG à Ottobrunn — auxquelles s'ajoute le Centre Spatial Guyanais à Kourou.",
+  },
+  {
+    id: 7,
+    statement: "L'ESTEC, le principal centre d'essais de l'ESA, est situé en Allemagne.",
+    isTrue: false,
+    explication: "L'ESTEC (European Space Research and Technology Centre) est situé à Noordwijk, aux Pays-Bas. C'est le plus grand établissement de l'ESA avec environ 2 500 personnes sur site. Il abrite les plus grandes chambres de vide thermique et de test acoustique d'Europe : presque tous les satellites européens y passent avant d'être expédiés à Kourou.",
+  },
+];
+
+// ── Matching game ──
+const WORLD_LAUNCHERS = [
+  { id: 'ariane6', name: 'Ariane 6', agency: 'ArianeGroup · ESA', country: 'Europe' },
+  { id: 'falcon9', name: 'Falcon 9', agency: 'SpaceX', country: 'États-Unis' },
+  { id: 'h3', name: 'H3', agency: 'JAXA · Mitsubishi', country: 'Japon' },
+  { id: 'vegac', name: 'Vega-C', agency: 'Avio · ESA', country: 'Europe' },
+];
+const WORLD_DESCRIPTIONS: { id: string; text: string; launcherId: string }[] = [
+  { id: 'd_ariane6', text: "Lanceur lourd européen en deux configurations (A62 / A64) ; garantit l'accès autonome de l'Europe à l'espace depuis Kourou en Guyane.", launcherId: 'ariane6' },
+  { id: 'd_falcon9', text: "Premier lanceur orbital réutilisable à grande échelle : son premier étage atterrit seul après chaque mission, ce qui a divisé les coûts de lancement par dix.", launcherId: 'falcon9' },
+  { id: 'd_h3', text: "Successeur du H-IIA japonais, conçu pour réduire de moitié le coût par lancement et conquérir une part du marché commercial international.", launcherId: 'h3' },
+  { id: 'd_vegac', text: "Lanceur léger européen dédié aux microsatellites et aux constellations en orbite basse, opéré depuis le même port spatial qu'Ariane 6.", launcherId: 'vegac' },
+];
+const DESC_DISPLAY_ORDER = ['d_falcon9', 'd_vegac', 'd_ariane6', 'd_h3'];
+
+// ── Engineering challenges ──
 const challenges = [
   {
     name: 'Températures Extrêmes',
     problem: "Les moteurs de lanceur peuvent atteindre 3 000 °C, tandis que l'espace oscille entre -150 °C et +150 °C.",
     solution: "Utilisation de matériaux composites céramiques ultra-résistants et de systèmes de refroidissement actifs avec circulation d'hydrogène liquide.",
     innovation: "Les boucliers thermiques modernes supportent des gradients de 3 000 °C sur quelques centimètres d'épaisseur.",
-    funFact: "Le nez d'un lanceur lors de la rentrée atmosphérique chauffe tellement qu'il crée un plasma — un quatrième état de la matière — qui bloque temporairement les communications radio.",
+    funFact: "Le nez d'un lanceur lors de la rentrée atmosphérique chauffe tellement qu'il crée un plasma qui bloque temporairement les communications radio.",
+    link: { label: "Propulsion spatiale — CNES", url: "https://cnes.fr/fr/propulsion-spatiale" },
   },
   {
     name: 'Puissance Colossale',
@@ -28,6 +143,7 @@ const challenges = [
     solution: "Moteurs à combustion d'hydrogène et oxygène liquides, brûlant 300 kg de carburant par seconde.",
     innovation: "Un seul moteur Vulcain 2.1 produit une puissance équivalente à 1 500 voitures de F1 combinées.",
     funFact: "Si on pouvait canaliser toute la puissance d'un moteur de lanceur dans une ampoule, elle brillerait 190 fois plus fort que le Soleil vu depuis la Terre.",
+    link: { label: "Le moteur Vulcain 2.1 — ArianeGroup", url: "https://www.ariane.group/fr/lanceur/ariane-6/" },
   },
   {
     name: 'Précision Absolue',
@@ -35,6 +151,7 @@ const challenges = [
     solution: "Systèmes de guidage inertiel couplés au GPS, avec corrections en temps réel toutes les millisecondes.",
     innovation: "Les gyroscopes laser actuels détectent des rotations de l'ordre du milliardième de degré.",
     funFact: "La précision requise est équivalente à lancer une fléchette depuis Paris et toucher le centre d'une cible à New York.",
+    link: { label: "Navigation et guidage — ONERA", url: "https://www.onera.fr/fr" },
   },
   {
     name: 'Légèreté Maximale',
@@ -42,7 +159,25 @@ const challenges = [
     solution: "Alliages aluminium-lithium et composites carbone ultra-légers, avec optimisation par intelligence artificielle.",
     innovation: "Les nouveaux matériaux permettent un rapport résistance/poids 5 fois supérieur à l'acier.",
     funFact: "Économiser 1 kg sur la structure d'un lanceur peut permettre de placer 100 kg supplémentaires en orbite.",
+    link: { label: "Matériaux spatiaux — CNES R&T", url: "https://cnes.fr/fr/recherche-technologie" },
   },
+  {
+    name: 'Vibrations et Acoustique',
+    problem: "Au décollage, les moteurs génèrent des vibrations si violentes qu'elles peuvent endommager les satellites embarqués.",
+    solution: "Isolation vibratoire par des systèmes amortisseurs et des structures en nid d'abeille pour absorber les chocs.",
+    innovation: "Des capteurs piézoélectriques actifs contrent les vibrations en temps réel, comme un casque antibruit géant pour satellite.",
+    funFact: "La pression acoustique au décollage atteint 165 dB. Sans protection, un satellite se briserait en vol avant même d'atteindre l'atmosphère.",
+    link: { label: "Centre d'essais ESA — ESTEC", url: "https://www.esa.int/Enabling_Support/Space_Engineering_Technology/Test_Centre" },
+  },
+];
+
+const CLEAN_ROOM_RULES = [
+  { rule: 'Électricité statique', detail: "En te frottant sur de la moquette, tu génères ~3 000 V. Un circuit satellite supporte moins de 5 V avant destruction." },
+  { rule: 'Combinaison antistatique', detail: "La combinaison, les gants et le bracelet sont conducteurs pour évacuer toute charge vers la terre en permanence." },
+  { rule: 'Sas de décontamination', detail: "Douche d'air comprimé à l'entrée : elle chasse les particules accrochées à la combinaison." },
+  { rule: 'Traçabilité de chaque outil', detail: "Chaque tournevis et boulon entrant est répertorié. Rien ne doit être oublié à l'intérieur du satellite." },
+  { rule: 'Température et humidité fixes', detail: "21 °C, humidité 45 % — les matériaux se dilatent avec la chaleur et l'humidité favorise les courts-circuits." },
+  { rule: 'Zéro maquillage ni parfum', detail: "Les substances chimiques volatiles se déposent sur les optiques et capteurs, les rendant inutilisables." },
 ];
 
 const quizQuestions = [
@@ -70,22 +205,59 @@ const quizQuestions = [
   },
 ];
 
-const CLEAN_ROOM_RULES = [
-  { rule: 'Électricité statique', detail: "En te frottant sur de la moquette, tu génères ~3 000 V. Un circuit satellite supporte moins de 5 V avant destruction." },
-  { rule: 'Combinaison antistatique', detail: "La combinaison, les gants et le bracelet sont conducteurs pour évacuer toute charge vers la terre en permanence." },
-  { rule: 'Sas de décontamination', detail: "Douche d'air comprimé à l'entrée : elle chasse les particules accrochées à la combinaison." },
-  { rule: 'Traçabilité de chaque outil', detail: "Chaque tournevis et boulon entrant est répertorié. Rien ne doit être oublié à l'intérieur du satellite." },
-  { rule: 'Température et humidité fixes', detail: "21 °C, humidité 45 % — les matériaux se dilatent avec la chaleur et l'humidité favorise les courts-circuits." },
-  { rule: 'Zéro maquillage ni parfum', detail: "Les substances chimiques volatiles se déposent sur les optiques et capteurs, les rendant inutilisables." },
-];
+// ── Resource links helper ──
+function ResourceLinks({ title, links }: { title: string; links: { label: string; url: string; desc?: string }[] }) {
+  return (
+    <div className="mt-6 border border-white/10 rounded-xl p-5">
+      <div className="flex items-center gap-2 mb-4">
+        <BookOpen className="w-4 h-4 text-magenta" strokeWidth={1.75} />
+        <span className="text-[11px] font-bold tracking-[0.12em] uppercase text-white/55">{title}</span>
+      </div>
+      <div className="flex flex-wrap gap-2">
+        {links.map(({ label, url, desc }) => (
+          <a
+            key={url}
+            href={url}
+            target="_blank"
+            rel="noopener noreferrer"
+            title={desc}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-white/10 bg-white/[0.04] hover:border-magenta/50 hover:bg-magenta/[0.06] text-[12px] text-white/65 hover:text-white transition-all"
+          >
+            {label}
+            <ExternalLink className="w-3 h-3 opacity-60" strokeWidth={1.75} />
+          </a>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 export function RocketSection({ onComplete, onHome }: RocketSectionProps) {
   const { saveResponse, getResponses } = useSession();
   const [chapter, setChapter] = useState(0);
   const [hydrated, setHydrated] = useState(false);
+
+  // Ordering game state
+  const [orderClicks, setOrderClicks] = useState<number[]>([]);
+  const [orderWrongFlash, setOrderWrongFlash] = useState<number | null>(null);
+
+  // True/False game state
+  const [tfAnswers, setTfAnswers] = useState<Record<number, boolean | null>>({});
+
+  // Matching game state
+  const [selectedLauncher, setSelectedLauncher] = useState<string | null>(null);
+  const [worldMatchPairs, setWorldMatchPairs] = useState<Record<string, string>>({});
+  const [worldMatchWrong, setWorldMatchWrong] = useState(false);
+
+  // Existing state
   const [selectedChallenge, setSelectedChallenge] = useState<number | null>(null);
   const [quizCompleted, setQuizCompleted] = useState(false);
   const [reflection, setReflection] = useState('');
+
+  // Derived booleans
+  const orderComplete = orderClicks.length === SPEED_ITEMS.length;
+  const tfComplete = TRUE_FALSE_ITEMS.every(item => item.id in tfAnswers);
+  const matchingComplete = WORLD_LAUNCHERS.every(l => l.id in worldMatchPairs);
 
   useEffect(() => {
     (async () => {
@@ -94,6 +266,9 @@ export function RocketSection({ onComplete, onHome }: RocketSectionProps) {
       if (r.selectedChallenge) setSelectedChallenge(parseInt(r.selectedChallenge, 10));
       if (r.quizCompleted === 'true') setQuizCompleted(true);
       if (r.reflection) setReflection(r.reflection);
+      if (r.orderClicks) setOrderClicks(JSON.parse(r.orderClicks));
+      if (r.tfAnswers) setTfAnswers(JSON.parse(r.tfAnswers));
+      if (r.worldMatchPairs) setWorldMatchPairs(JSON.parse(r.worldMatchPairs));
       setHydrated(true);
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -104,6 +279,45 @@ export function RocketSection({ onComplete, onHome }: RocketSectionProps) {
     setChapter(i);
     window.scrollTo({ top: 0, behavior: 'smooth' });
     if (hydrated) await saveResponse('rockets', 'chapter', String(i));
+  };
+
+  const handleOrderClick = async (phaseId: number) => {
+    if (orderClicks.includes(phaseId)) return;
+    if (phaseId === orderClicks.length) {
+      const next = [...orderClicks, phaseId];
+      setOrderClicks(next);
+      if (hydrated) await saveResponse('rockets', 'orderClicks', JSON.stringify(next));
+    } else {
+      setOrderWrongFlash(phaseId);
+      setTimeout(() => setOrderWrongFlash(null), 700);
+    }
+  };
+
+  const handleTfAnswer = async (itemId: number, answer: boolean) => {
+    if (itemId in tfAnswers) return;
+    const next = { ...tfAnswers, [itemId]: answer };
+    setTfAnswers(next);
+    if (hydrated) await saveResponse('rockets', 'tfAnswers', JSON.stringify(next));
+  };
+
+  const handleLauncherSelect = (launcherId: string) => {
+    if (launcherId in worldMatchPairs) return;
+    setSelectedLauncher(prev => (prev === launcherId ? null : launcherId));
+  };
+
+  const handleDescSelect = async (descId: string, descLauncherId: string) => {
+    if (!selectedLauncher) return;
+    if (Object.values(worldMatchPairs).includes(descId)) return;
+    if (descLauncherId === selectedLauncher) {
+      const next = { ...worldMatchPairs, [selectedLauncher]: descId };
+      setWorldMatchPairs(next);
+      setSelectedLauncher(null);
+      if (hydrated) await saveResponse('rockets', 'worldMatchPairs', JSON.stringify(next));
+    } else {
+      setWorldMatchWrong(true);
+      setSelectedLauncher(null);
+      setTimeout(() => setWorldMatchWrong(false), 800);
+    }
   };
 
   const handleChallengeSelect = async (i: number) => {
@@ -119,7 +333,7 @@ export function RocketSection({ onComplete, onHome }: RocketSectionProps) {
   const handleQuizComplete = async () => {
     setQuizCompleted(true);
     if (hydrated) await saveResponse('rockets', 'quizCompleted', 'true');
-    goTo(6);
+    goTo(7);
   };
 
   return (
@@ -129,48 +343,138 @@ export function RocketSection({ onComplete, onHome }: RocketSectionProps) {
 
       <div className="relative z-[1] max-w-[1120px] mx-auto px-8 pt-14 pb-24">
 
-        {/* ── Ch 1 : La fusée pas à pas ── */}
+        {/* ── Ch 0 : La fusée pas à pas ── */}
         {chapter === 0 && (
           <ChapterShell
             kicker="01" title="La fusée pas à pas"
             titlePrefix="Comment on envoie un satellite"
             titleAccent="dans l'espace ?"
             lede="Pour placer un satellite en orbite, il faut lui faire atteindre 28 000 km/h — 25 fois la vitesse d'une balle de fusil. La seule machine capable de cela est un lanceur."
-            onPrev={null} onNext={() => goTo(1)} nextEnabled={true}
-            nextLabel="Continue · Ariane 6 décortiquée →"
+            onPrev={null} onNext={() => goTo(1)}
+            nextEnabled={orderComplete}
+            nextLabel={orderComplete ? "Continue · Ariane 6 décortiquée →" : "Trie les vitesses d'abord"}
           >
-            <div className="rounded-2xl border border-white/10 bg-white/[0.04] overflow-hidden">
-              <div className="px-6 pt-6 pb-5 space-y-3 text-white/75 leading-relaxed text-[15px]">
-                <p>Un lanceur fonctionne par <span className="text-white font-semibold">étages</span> : chaque étage brûle son carburant puis se détache pour alléger le reste. Moins de masse à emporter, plus on peut aller vite et haut.</p>
-              </div>
-              <div className="grid grid-cols-3 divide-x divide-white/10 border-t border-white/10">
-                {[
-                  { value: '28 000', unit: 'km/h', label: 'Vitesse orbitale minimale' },
-                  { value: '600+', unit: 'personnes', label: 'Sur le chantier de construction' },
-                  { value: '6', unit: 'pays', label: 'Contribuent à Ariane 6' },
-                ].map(({ value, unit, label }) => (
-                  <div key={label} className="px-5 py-4 text-center">
-                    <p className="text-[28px] font-bold text-magenta leading-none">{value} <span className="text-[13px] font-normal text-magenta/70">{unit}</span></p>
-                    <p className="text-[11px] text-white/45 mt-1.5 leading-snug uppercase tracking-[0.08em]">{label}</p>
-                  </div>
-                ))}
-              </div>
-              <div className="border-t border-white/10 px-6 py-5">
-                <p className="text-[13px] text-white/55 mb-3">Ariane 6 est le fruit direct de <span className="text-white font-medium">6 nations européennes</span>. Voici comment le travail est réparti :</p>
-                <div className="rounded-xl overflow-hidden border border-white/10">
-                  <img
-                    src="https://cnes.fr/sites/default/files/styles/native_format/public/2025-02/ariane-6-organisation-industrielle.png?itok=PAgtKtio"
-                    alt="Organisation industrielle Ariane 6"
-                    className="w-full object-contain bg-white"
-                  />
+            <div className="space-y-6">
+              {/* Context card */}
+              <div className="rounded-2xl border border-white/10 bg-white/[0.04] overflow-hidden">
+                <div className="px-6 pt-6 pb-5 space-y-3 text-white/75 leading-relaxed text-[15px]">
+                  <p>Un lanceur fonctionne par <span className="text-white font-semibold">étages</span> : chaque étage brûle son carburant puis se détache pour alléger le reste. Moins de masse à emporter, plus on peut aller vite et haut.</p>
+                  <p>Le lanceur doit aussi lutter contre la résistance de l'air dans les premières dizaines de kilomètres, puis contre la gravité terrestre pendant toute la montée. La coiffe protège le satellite le temps de traverser l'atmosphère avant d'être larguée.</p>
                 </div>
-                <p className="text-[11px] italic text-white/35 mt-2 text-center">Source : CNES — Organisation industrielle Ariane 6</p>
+                <div className="grid grid-cols-3 divide-x divide-white/10 border-t border-white/10">
+                  {[
+                    { value: '28 000', unit: 'km/h', label: 'Vitesse orbitale minimale' },
+                    { value: '600+', unit: 'personnes', label: 'Sur le chantier de construction' },
+                    { value: '6', unit: 'pays', label: 'Contribuent à Ariane 6' },
+                  ].map(({ value, unit, label }) => (
+                    <div key={label} className="px-5 py-4 text-center">
+                      <p className="text-[28px] font-bold text-magenta leading-none">{value} <span className="text-[13px] font-normal text-magenta/70">{unit}</span></p>
+                      <p className="text-[11px] text-white/45 mt-1.5 leading-snug uppercase tracking-[0.08em]">{label}</p>
+                    </div>
+                  ))}
+                </div>
+                <div className="border-t border-white/10 px-6 py-5">
+                  <p className="text-[13px] text-white/55 mb-3">Ariane 6 est le fruit direct de <span className="text-white font-medium">6 nations européennes</span>. Voici comment le travail est réparti :</p>
+                  <div className="rounded-xl overflow-hidden border border-white/10">
+                    <img
+                      src="https://cnes.fr/sites/default/files/styles/native_format/public/2025-02/ariane-6-organisation-industrielle.png?itok=PAgtKtio"
+                      alt="Organisation industrielle Ariane 6"
+                      className="w-full object-contain bg-white"
+                    />
+                  </div>
+                  <p className="text-[11px] italic text-white/35 mt-2 text-center">Source : CNES — Organisation industrielle Ariane 6</p>
+                </div>
               </div>
+
+              {/* Speed-sort game */}
+              <div className="border border-magenta/20 bg-magenta/[0.02] rounded-2xl p-6">
+                <div className="mb-5">
+                  <p className="text-[13px] font-bold tracking-[0.12em] uppercase text-magenta mb-1.5">Jeu · Tri par vitesse</p>
+                  <p className="text-[14px] text-white/70 leading-[1.5]">
+                    {orderComplete
+                      ? "Bien joué ! La vitesse orbitale est 30 fois celle d'un avion de ligne. Tu peux continuer."
+                      : `Clique ces objets du plus lent au plus rapide. Prochain attendu : vitesse n°${orderClicks.length + 1} sur ${SPEED_ITEMS.length}.`}
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  {SPEED_DISPLAY_ORDER.map((itemId) => {
+                    const item = SPEED_ITEMS[itemId];
+                    const clickedIndex = orderClicks.indexOf(itemId);
+                    const isClicked = clickedIndex !== -1;
+                    const isWrong = orderWrongFlash === itemId;
+
+                    return (
+                      <div
+                        key={itemId}
+                        onClick={isClicked ? undefined : () => handleOrderClick(itemId)}
+                        role={isClicked ? undefined : 'button'}
+                        className={`rounded-xl border text-left transition-all duration-200 overflow-hidden select-none ${
+                          isClicked
+                            ? 'border-magenta bg-magenta/10'
+                            : isWrong
+                              ? 'border-red-500/60 bg-red-500/10 scale-[0.98]'
+                              : 'border-white/10 bg-white/[0.04] hover:border-magenta/40 hover:bg-white/[0.07] hover:-translate-y-0.5 cursor-pointer'
+                        }`}
+                      >
+                        {/* Image zone — fixed height so browsers never collapse it */}
+                        <div className="relative w-full h-[140px] overflow-hidden bg-black/40">
+                          {item.imagePath ? (
+                            <img
+                              src={`${import.meta.env.BASE_URL}${item.imagePath}`}
+                              alt={item.label}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center">
+                              <span className="text-[11px] text-white/15 uppercase tracking-[0.1em]">—</span>
+                            </div>
+                          )}
+                          {item.credit && isClicked && (
+                            <span className="absolute bottom-1.5 right-2 text-[9px] italic text-white/45 bg-black/60 px-1.5 py-0.5 rounded">
+                              {item.credit}
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Text zone */}
+                        <div className="p-4">
+                          <div className="flex items-center justify-between mb-1.5">
+                            <span className={`w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-bold flex-shrink-0 transition-all ${
+                              isClicked ? 'bg-magenta text-white' : 'bg-white/10 text-white/35'
+                            }`}>
+                              {isClicked ? clickedIndex + 1 : '?'}
+                            </span>
+                            {isWrong && <X className="w-3.5 h-3.5 text-red-400 flex-shrink-0" strokeWidth={2} />}
+                            {isClicked && (
+                              <span className="text-[15px] font-bold text-magenta leading-none">
+                                {item.value.toLocaleString('fr-FR')} <span className="text-[11px] font-normal text-magenta/70">{item.unit}</span>
+                              </span>
+                            )}
+                          </div>
+                          <p className={`text-[13px] font-semibold leading-snug ${isClicked ? 'text-white' : 'text-white/65'}`}>{item.label}</p>
+                          <p className="text-[11px] text-white/35 mt-0.5">{item.subLabel}</p>
+                          {isClicked && (
+                            <p className="text-[11px] text-white/45 leading-[1.45] mt-2 border-t border-white/10 pt-2">{item.context}</p>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {orderComplete && (
+                  <div className="mt-4 flex items-center gap-2 text-[13px] text-magenta font-medium">
+                    <CheckCircle className="w-4 h-4" strokeWidth={1.75} /> Classement correct.
+                  </div>
+                )}
+              </div>
+
             </div>
           </ChapterShell>
         )}
 
-        {/* ── Ch 2 : Ariane 6 décortiquée ── */}
+        {/* ── Ch 1 : Ariane 6 décortiquée ── */}
         {chapter === 1 && (
           <ChapterShell
             kicker="02" title="Ariane 6 décortiquée"
@@ -180,11 +484,43 @@ export function RocketSection({ onComplete, onHome }: RocketSectionProps) {
             onPrev={() => goTo(0)} onNext={() => goTo(2)} nextEnabled={true}
             nextLabel="Continue · Les défis de l'ingénieur →"
           >
-            <Ariane6Diagram />
+            <div className="space-y-6">
+              <Ariane6Diagram />
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {[
+                  {
+                    title: "Deux configurations",
+                    body: "A62 vole avec 2 boosters P120C (charge utile en orbite de transfert géostationnaire : 3,5 t) ; A64 en monte 4 pour les charges lourdes jusqu'à 11,5 t en orbite basse.",
+                  },
+                  {
+                    title: "Moteur Vulcain 2.1",
+                    body: "Le moteur principal du premier étage. Il brûle de l'hydrogène liquide refroidi à -252 °C dans une chambre de combustion à 3 000 °C — refroidi par l'hydrogène lui-même.",
+                  },
+                  {
+                    title: "Moteur VINCI — étage supérieur",
+                    body: "Seul moteur européen rallumable en orbite. Il permet de déposer plusieurs satellites sur des orbites différentes lors d'une même mission, sans retomber vers la Terre.",
+                  },
+                ].map(({ title, body }) => (
+                  <div key={title} className="bg-white/[0.04] border border-white/10 rounded-xl p-4">
+                    <p className="text-[13px] font-semibold text-white mb-2">{title}</p>
+                    <p className="text-[12px] text-white/55 leading-[1.55]">{body}</p>
+                  </div>
+                ))}
+              </div>
+
+              <div className="bg-white/[0.04] border border-white/10 rounded-xl p-5">
+                <p className="text-[13px] font-semibold text-white mb-2">Les boosters P120C — une coopération unique</p>
+                <p className="text-[13px] text-white/65 leading-[1.6]">
+                  Les propulseurs à poudre P120C sont partagés entre Ariane 6 et Vega-C. C'est la première fois qu'un composant identique équipe deux lanceurs européens différents — une économie d'échelle industrielle inédite. Chaque P120C contient 145 tonnes de propergol solide et s'allume en même temps que le Vulcain au décollage.
+                </p>
+              </div>
+
+            </div>
           </ChapterShell>
         )}
 
-        {/* ── Ch 3 : Défis techniques ── */}
+        {/* ── Ch 2 : Défis de l'ingénieur ── */}
         {chapter === 2 && (
           <ChapterShell
             kicker="03" title="Les défis de l'ingénieur"
@@ -211,6 +547,7 @@ export function RocketSection({ onComplete, onHome }: RocketSectionProps) {
                   </button>
                 ))}
               </div>
+
               {selectedChallenge !== null && (
                 <div className="bg-magenta/[0.06] border border-magenta/25 rounded-2xl p-6 space-y-4 animate-[chapterIn_320ms_cubic-bezier(.2,0,0,1)]">
                   <div>
@@ -224,21 +561,31 @@ export function RocketSection({ onComplete, onHome }: RocketSectionProps) {
                   <div className="bg-white/[0.04] border border-white/10 rounded-xl px-5 py-4">
                     <p className="text-[13px] text-white/70 leading-[1.55]">{challenges[selectedChallenge].funFact}</p>
                   </div>
+                  <a
+                    href={challenges[selectedChallenge].link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 text-[12px] text-magenta hover:underline"
+                  >
+                    {challenges[selectedChallenge].link.label}
+                    <ExternalLink className="w-3 h-3" strokeWidth={1.75} />
+                  </a>
                 </div>
               )}
             </div>
           </ChapterShell>
         )}
 
-        {/* ── Ch 4 : Salles blanches ── */}
+        {/* ── Ch 3 : Salles blanches ── */}
         {chapter === 3 && (
           <ChapterShell
             kicker="04" title="Les salles blanches"
             titlePrefix="Le satellite est assemblé ici,"
             titleAccent="avant le décollage."
             lede="Avant de voir la fusée décoller, chaque satellite a été assemblé dans un endroit très particulier. Plus propre qu'un bloc opératoire, la salle blanche protège les composants de la poussière et de l'électricité statique."
-            onPrev={() => goTo(2)} onNext={() => goTo(4)} nextEnabled={true}
-            nextLabel="Continue · La séquence de lancement →"
+            onPrev={() => goTo(2)} onNext={() => goTo(4)}
+            nextEnabled={tfComplete}
+            nextLabel={tfComplete ? "Continue · Ariane 6 dans le monde →" : `Réponds aux ${TRUE_FALSE_ITEMS.length} questions`}
           >
             <div className="space-y-6">
               <div className="grid grid-cols-2 gap-3">
@@ -254,6 +601,7 @@ export function RocketSection({ onComplete, onHome }: RocketSectionProps) {
                 ))}
               </div>
               <p className="text-[11px] italic text-white/35 text-right">Sources : ESA / Airbus Defence & Space</p>
+
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {CLEAN_ROOM_RULES.map(({ rule, detail }) => (
                   <div key={rule} className="bg-white/[0.04] border border-white/10 rounded-xl p-4">
@@ -262,6 +610,7 @@ export function RocketSection({ onComplete, onHome }: RocketSectionProps) {
                   </div>
                 ))}
               </div>
+
               <div className="grid grid-cols-3 divide-x divide-white/10 border border-white/10 rounded-2xl overflow-hidden">
                 {[
                   { value: '3 000 V', label: "Charge statique d'un frottement ordinaire" },
@@ -274,18 +623,259 @@ export function RocketSection({ onComplete, onHome }: RocketSectionProps) {
                   </div>
                 ))}
               </div>
+
+              {/* Visite virtuelle ESTEC */}
+              <div className="rounded-xl p-6 flex flex-col sm:flex-row items-start sm:items-center gap-5 border border-magenta bg-magenta/[0.07]">
+                <div className="flex-1">
+                  <div className="text-[11px] font-bold tracking-[0.16em] uppercase text-magenta mb-1">ESA · ESTEC · Noordwijk, Pays-Bas</div>
+                  <h3 className="text-[17px] font-semibold m-0 mb-2">Visite virtuelle du centre d'essais</h3>
+                  <p className="text-[13px] text-white/70 m-0 leading-[1.5]">
+                    Avant de répondre aux questions, explore le centre d'essais de l'ESA. Parcours les salles blanches, les chambres de vide thermique et les bancs d'essais acoustiques : c'est ici que chaque satellite européen est qualifié avant son départ pour Kourou.
+                  </p>
+                </div>
+                <a
+                  href="https://esamultimedia.esa.int/multimedia/ESTEC/virtualtour/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 bg-magenta text-white hover:bg-magenta-700 rounded-lg px-5 py-3.5 text-[14px] font-semibold transition flex-shrink-0"
+                >
+                  <ExternalLink className="w-4 h-4" strokeWidth={1.75} /> Visiter l'ESTEC
+                </a>
+              </div>
+
+              {/* True/False game */}
+              <div className="border border-magenta/20 bg-magenta/[0.02] rounded-2xl p-6">
+                <div className="mb-5">
+                  <p className="text-[13px] font-bold tracking-[0.12em] uppercase text-magenta mb-1.5">Jeu · Vrai ou Faux</p>
+                  <p className="text-[14px] text-white/70">
+                    {tfComplete
+                      ? "Toutes les questions répondues. Tu peux continuer."
+                      : `${Object.keys(tfAnswers).length} / ${TRUE_FALSE_ITEMS.length} questions répondues.`}
+                  </p>
+                </div>
+                <div className="space-y-4">
+                  {TRUE_FALSE_ITEMS.map((item) => {
+                    const answered = item.id in tfAnswers;
+                    const givenAnswer = tfAnswers[item.id];
+                    const isCorrect = answered && givenAnswer === item.isTrue;
+
+                    return (
+                      <div
+                        key={item.id}
+                        className={`rounded-xl border p-4 transition-all ${
+                          answered
+                            ? isCorrect
+                              ? 'border-green-500/30 bg-green-500/[0.06]'
+                              : 'border-red-500/30 bg-red-500/[0.06]'
+                            : 'border-white/10 bg-white/[0.04]'
+                        }`}
+                      >
+                        <p className="text-[14px] text-white/90 leading-[1.5] mb-3">{item.statement}</p>
+                        {!answered ? (
+                          <div className="flex gap-3">
+                            <button
+                              onClick={() => handleTfAnswer(item.id, true)}
+                              className="px-4 py-2 rounded-lg border border-white/20 bg-white/[0.04] text-[13px] font-semibold text-white/70 hover:border-magenta/50 hover:bg-magenta/[0.06] hover:text-white transition-all"
+                            >
+                              Vrai
+                            </button>
+                            <button
+                              onClick={() => handleTfAnswer(item.id, false)}
+                              className="px-4 py-2 rounded-lg border border-white/20 bg-white/[0.04] text-[13px] font-semibold text-white/70 hover:border-magenta/50 hover:bg-magenta/[0.06] hover:text-white transition-all"
+                            >
+                              Faux
+                            </button>
+                          </div>
+                        ) : (
+                          <div className="space-y-1.5">
+                            <div className={`inline-flex items-center gap-1.5 text-[12px] font-semibold ${isCorrect ? 'text-green-400' : 'text-red-400'}`}>
+                              {isCorrect
+                                ? <CheckCircle className="w-3.5 h-3.5" strokeWidth={1.75} />
+                                : <X className="w-3.5 h-3.5" strokeWidth={2} />}
+                              {isCorrect ? 'Correct.' : `Incorrect — c'est ${item.isTrue ? 'Vrai' : 'Faux'}.`}
+                            </div>
+                            <p className="text-[12px] text-white/55 leading-[1.5]">{item.explication}</p>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <ResourceLinks
+                title="Pour aller plus loin"
+                links={[
+                  { label: "ESA ESTEC — Centre d'essais", url: "https://www.esa.int/Enabling_Support/Space_Engineering_Technology/Test_Centre", desc: "Le centre de test de l'ESA aux Pays-Bas" },
+                  { label: "Rêve d'espace — Intégration et tests de Gaia", url: "https://reves-d-espace.com/gaia-un-satellite-pour-les-etoiles/les-phases-dintegration-et-de-tests/", desc: "Phases d'intégration et de tests du satellite Gaia en salle blanche · © Rêves d'espace / Airbus DS / ESA" },
+                ]}
+              />
             </div>
           </ChapterShell>
         )}
 
-        {/* ── Ch 5 : Séquence de lancement ── */}
+        {/* ── Ch 4 (nouveau) : Ariane 6 dans le monde ── */}
         {chapter === 4 && (
           <ChapterShell
-            kicker="05" title="La séquence de lancement"
+            kicker="05" title="Ariane 6 dans le monde"
+            titlePrefix="L'accès à l'espace,"
+            titleAccent="un enjeu stratégique."
+            lede="Lancer un satellite, c'est de la géopolitique autant que de la technologie. L'Europe a choisi d'avoir son propre lanceur pour ne dépendre de personne. Mais la concurrence mondiale est intense."
+            onPrev={() => goTo(3)} onNext={() => goTo(5)}
+            nextEnabled={matchingComplete}
+            nextLabel={matchingComplete ? "Continue · La séquence de lancement →" : "Associe tous les lanceurs"}
+          >
+            <div className="space-y-6">
+
+              {/* Context callout */}
+              <div className="border border-magenta/25 rounded-xl p-5 space-y-3 border-[1.5px]">
+                <p className="text-[13px] font-bold tracking-[0.12em] uppercase text-magenta">Pourquoi l'Europe a besoin d'Ariane 6</p>
+                <p className="text-[14px] text-white/75 leading-[1.6]">
+                  La doctrine de l'ESA est claire : l'Europe doit avoir <span className="text-white font-semibold">un accès autonome à l'espace</span>, sans dépendre d'un autre pays pour lancer ses satellites militaires, climatiques ou de télécommunications. Sans lanceur propre, n'importe quelle puissance étrangère pourrait refuser de lancer un satellite européen — ou imposer ses conditions.
+                </p>
+                <p className="text-[14px] text-white/75 leading-[1.6]">
+                  Avec SpaceX et son Falcon 9 réutilisable, le coût d'un lancement commercial a été divisé par dix en dix ans. Ariane 6 doit trouver sa place dans ce marché transformé — pas seulement en réduisant les prix, mais en garantissant <span className="text-white font-semibold">indépendance, fiabilité et souveraineté des données</span>.
+                </p>
+              </div>
+
+              {/* Key stats */}
+              <div className="grid grid-cols-3 divide-x divide-white/10 border border-white/10 rounded-2xl overflow-hidden">
+                {[
+                  { value: '1979', unit: '', label: "Première Ariane — l'Europe lance depuis 45 ans" },
+                  { value: '110+', unit: '', label: 'Lancements réussis pour la famille Ariane' },
+                  { value: '∼ 10×', unit: '', label: "Moins cher depuis la réutilisabilité de Falcon 9" },
+                ].map(({ value, unit, label }) => (
+                  <div key={label} className="px-5 py-4 text-center">
+                    <p className="text-[28px] font-bold text-magenta leading-none">{value}<span className="text-[13px] font-normal text-magenta/70"> {unit}</span></p>
+                    <p className="text-[11px] text-white/45 mt-1.5 leading-snug uppercase tracking-[0.08em]">{label}</p>
+                  </div>
+                ))}
+              </div>
+
+              {/* Matching game */}
+              <div className="border border-magenta/20 bg-magenta/[0.02] rounded-2xl p-6">
+                <div className="mb-5">
+                  <p className="text-[13px] font-bold tracking-[0.12em] uppercase text-magenta mb-1.5">Jeu · Associe les lanceurs</p>
+                  <p className="text-[14px] text-white/70 leading-[1.5]">
+                    {matchingComplete
+                      ? "Toutes les associations trouvées. Tu peux continuer."
+                      : selectedLauncher
+                        ? `Lanceur sélectionné : ${WORLD_LAUNCHERS.find(l => l.id === selectedLauncher)?.name}. Clique maintenant sur sa description.`
+                        : `${Object.keys(worldMatchPairs).length} / ${WORLD_LAUNCHERS.length} associés. Clique d'abord sur un lanceur.`}
+                  </p>
+                  {worldMatchWrong && (
+                    <p className="text-[12px] text-red-400 mt-1.5 font-medium">Mauvaise association. Réessaie.</p>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Launchers */}
+                  <div className="space-y-3">
+                    <p className="text-[10px] font-bold tracking-[0.14em] uppercase text-white/35 mb-2">Lanceurs</p>
+                    {WORLD_LAUNCHERS.map((launcher) => {
+                      const isMatched = launcher.id in worldMatchPairs;
+                      const isSelected = selectedLauncher === launcher.id;
+                      return (
+                        <button
+                          key={launcher.id}
+                          onClick={() => handleLauncherSelect(launcher.id)}
+                          disabled={isMatched}
+                          className={`w-full p-4 rounded-xl border text-left transition-all ${
+                            isMatched
+                              ? 'border-magenta/40 bg-magenta/[0.08] cursor-default'
+                              : isSelected
+                                ? 'border-magenta bg-magenta/15 scale-[1.01] shadow-[0_0_0_2px_rgba(200,37,122,0.15)]'
+                                : 'border-white/10 bg-white/[0.04] hover:border-magenta/40 hover:bg-white/[0.07] hover:-translate-y-0.5'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <p className="text-[15px] font-bold text-white">{launcher.name}</p>
+                              <p className="text-[12px] text-white/50 mt-0.5">{launcher.agency}</p>
+                              <p className="text-[11px] text-white/30 mt-0.5">{launcher.country}</p>
+                            </div>
+                            {isMatched && <CheckCircle className="w-5 h-5 text-magenta flex-shrink-0" strokeWidth={1.75} />}
+                            {isSelected && <Zap className="w-4 h-4 text-magenta flex-shrink-0" strokeWidth={1.75} />}
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {/* Descriptions */}
+                  <div className="space-y-3">
+                    <p className="text-[10px] font-bold tracking-[0.14em] uppercase text-white/35 mb-2">Descriptions</p>
+                    {DESC_DISPLAY_ORDER.map((descId) => {
+                      const desc = WORLD_DESCRIPTIONS.find(d => d.id === descId)!;
+                      const isMatched = Object.values(worldMatchPairs).includes(descId);
+                      const matchedLauncherId = Object.entries(worldMatchPairs).find(([, dId]) => dId === descId)?.[0];
+                      const matchedLauncher = matchedLauncherId ? WORLD_LAUNCHERS.find(l => l.id === matchedLauncherId) : null;
+
+                      return (
+                        <button
+                          key={descId}
+                          onClick={() => handleDescSelect(descId, desc.launcherId)}
+                          disabled={isMatched || !selectedLauncher}
+                          className={`w-full p-4 rounded-xl border text-left transition-all ${
+                            isMatched
+                              ? 'border-magenta/30 bg-magenta/[0.06] cursor-default'
+                              : selectedLauncher
+                                ? 'border-white/20 bg-white/[0.06] hover:border-magenta/40 hover:bg-white/[0.09] cursor-pointer hover:-translate-y-0.5'
+                                : 'border-white/10 bg-white/[0.04] cursor-default opacity-50'
+                          }`}
+                        >
+                          {isMatched && matchedLauncher && (
+                            <p className="text-[10px] font-bold tracking-[0.1em] uppercase text-magenta mb-1.5">{matchedLauncher.name}</p>
+                          )}
+                          <p className="text-[12px] text-white/70 leading-[1.55]">{desc.text}</p>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+
+              {/* Context: landscape */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {[
+                  {
+                    title: "La réutilisabilité change tout",
+                    body: "SpaceX a montré qu'un même premier étage peut voler plus de 20 fois. Ariane 6 n'est pas réutilisable dans sa version actuelle, mais l'ESA travaille déjà sur une version future (Themis) pour rattraper ce retard technologique.",
+                  },
+                  {
+                    title: "Pas que la concurrence",
+                    body: "La diversité des lanceurs mondiaux est une bonne chose pour l'humanité : si Ariane 6, Falcon 9, H3 et Soyouz disparaissaient le même jour, des milliers de satellites essentiels seraient inaccessibles. La redondance est une assurance collective.",
+                  },
+                ].map(({ title, body }) => (
+                  <div key={title} className="bg-white/[0.04] border border-white/10 rounded-xl p-4">
+                    <p className="text-[13px] font-semibold text-white mb-2">{title}</p>
+                    <p className="text-[12px] text-white/55 leading-[1.55]">{body}</p>
+                  </div>
+                ))}
+              </div>
+
+              <ResourceLinks
+                title="Pour aller plus loin"
+                links={[
+                  { label: "ESA — Transport spatial", url: "https://www.esa.int/Enabling_Support/Space_Transportation", desc: "Politique de transport spatial européenne" },
+                  { label: "CNES — Accès à l'espace", url: "https://cnes.fr/fr/acces-espace", desc: "Stratégie d'accès à l'espace" },
+                  { label: "ArianeGroup", url: "https://www.ariane.group/fr/", desc: "Le constructeur d'Ariane" },
+                  { label: "Le Desk CNES", url: "https://ledesk.cnes.fr/", desc: "Actualité spatiale par le CNES" },
+                  { label: "ESA — Themis", url: "https://www.esa.int/Enabling_Support/Space_Transportation/Themis", desc: "Futur lanceur réutilisable européen" },
+                ]}
+              />
+            </div>
+          </ChapterShell>
+        )}
+
+        {/* ── Ch 5 : Séquence de lancement (contenu original inchangé, était Ch 4) ── */}
+        {chapter === 5 && (
+          <ChapterShell
+            kicker="06" title="La séquence de lancement"
             titlePrefix="Chaque étape compte,"
             titleAccent="de la mise à feu au déploiement."
             lede="Regarde un vrai lancement Ariane 6 (mission VA262) et retrouve les étapes clés. Le simulateur te permet ensuite de revivre chaque décision de mission."
-            onPrev={() => goTo(3)} onNext={() => goTo(5)} nextEnabled={true}
+            onPrev={() => goTo(4)} onNext={() => goTo(6)} nextEnabled={true}
             nextLabel="Continue · Quiz éclair →"
           >
             <div className="space-y-6">
@@ -331,31 +921,39 @@ export function RocketSection({ onComplete, onHome }: RocketSectionProps) {
                 </div>
               </div>
               <MissionSimulator />
+
+              <ResourceLinks
+                title="Pour aller plus loin"
+                links={[
+                  { label: "CNES — Centre Spatial Guyanais", url: "https://cnes.fr/dossiers/centre-spatial-guyanais-une-porte-vers-lespace", desc: "Le port spatial de Kourou, porte vers l'espace" },
+                  { label: "ArianeGroup — Ariane 6", url: "https://www.ariane.group/transport-spatial/ariane-6/", desc: "Fiche technique officielle Ariane 6" },
+                ]}
+              />
             </div>
           </ChapterShell>
         )}
 
-        {/* ── Ch 6 : Quiz + Réflexion ── */}
-        {chapter === 5 && !quizCompleted && (
+        {/* ── Ch 6 : Quiz + Réflexion (était Ch 5) ── */}
+        {chapter === 6 && !quizCompleted && (
           <ChapterShell
-            kicker="06" title="Quiz éclair"
+            kicker="07" title="Quiz éclair"
             titlePrefix="Deux questions pour"
             titleAccent="valider le chapitre."
             lede="Une réponse par question. Pas de mauvaise réponse définitive — l'objectif c'est d'apprendre."
-            onPrev={() => goTo(4)} onNext={() => {}} nextEnabled={false}
+            onPrev={() => goTo(5)} onNext={() => {}} nextEnabled={false}
             nextLabel="Réponds aux questions d'abord"
           >
             <Quiz questions={quizQuestions} onComplete={handleQuizComplete} />
           </ChapterShell>
         )}
 
-        {chapter === 5 && quizCompleted && (
+        {chapter === 6 && quizCompleted && (
           <ChapterShell
-            kicker="06" title="Réflexion"
+            kicker="07" title="Réflexion"
             titlePrefix="Quel est le défi le plus impressionnant"
             titleAccent="à retenir ?"
             lede="Prends un moment pour formuler ta réponse. Elle sera transmise aux équipes de Space Elevator."
-            onPrev={() => goTo(4)} onNext={() => goTo(6)} nextEnabled={reflection.trim().length > 0}
+            onPrev={() => goTo(5)} onNext={() => goTo(7)} nextEnabled={reflection.trim().length > 0}
             nextLabel={reflection.trim().length > 0 ? "Terminer le chapitre →" : "Écris ta réflexion d'abord"}
           >
             <div>
@@ -372,26 +970,27 @@ export function RocketSection({ onComplete, onHome }: RocketSectionProps) {
               />
               {reflection.trim().length > 0 && (
                 <div className="flex items-center gap-2 text-[13px] text-magenta mt-3">
-                  <CheckCircle className="w-4 h-4" /> Réflexion enregistrée
+                  <CheckCircle className="w-4 h-4" strokeWidth={1.75} /> Réflexion enregistrée
                 </div>
               )}
             </div>
           </ChapterShell>
         )}
 
-        {/* ── Récap ── */}
-        {chapter === 6 && (
+        {/* ── Ch 7 : Récap (était Ch 6) ── */}
+        {chapter === 7 && (
           <ChapterRecap
             chapterLabel="Lanceurs"
-            summary="Tu as exploré comment on quitte la Terre, les défis techniques des lanceurs, les salles blanches et la séquence d'un vrai lancement Ariane 6."
+            summary="Tu as exploré comment on quitte la Terre, les défis techniques des lanceurs, les salles blanches, la concurrence mondiale et la séquence d'un vrai lancement Ariane 6."
             stats={[
               { v: selectedChallenge !== null ? challenges[selectedChallenge].name : '—', t: 'défi technique exploré' },
+              { v: orderComplete ? '4 / 4' : `${orderClicks.length} / 4`, t: 'vitesses triées correctement' },
               { v: quizCompleted ? '2 / 2' : '0 / 2', t: 'questions du quiz' },
             ]}
             nextTitle="Réseaux Sociaux"
             nextDesc="Découvre les comptes et ressources pour rester connecté à l'actualité spatiale."
             onContinue={onComplete}
-            onPrev={() => goTo(5)}
+            onPrev={() => goTo(6)}
           />
         )}
       </div>
