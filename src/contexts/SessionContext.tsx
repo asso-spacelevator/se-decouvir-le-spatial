@@ -9,6 +9,10 @@ interface SessionContextType {
   saveResponse: (section: string, questionId: string, response: string) => Promise<void>;
   getResponses: (section: string) => Promise<Record<string, string>>;
   submitQuestion: (category: string, questionText: string, isAnonymous: boolean) => Promise<void>;
+  saveSchoolName: (name: string) => Promise<void>;
+  restartSession: () => Promise<void>;
+  markSession1Complete: () => Promise<void>;
+  markSession2Complete: () => Promise<void>;
 }
 
 const SessionContext = createContext<SessionContextType | undefined>(undefined);
@@ -193,8 +197,63 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       });
   };
 
+  const saveSchoolName = async (name: string) => {
+    if (!session) return;
+
+    const { data, error } = await supabase
+      .from('student_sessions')
+      .update({ school_name: name })
+      .eq('id', session.id)
+      .select()
+      .single();
+
+    if (data && !error) {
+      setSession(data);
+    }
+  };
+
+  const markSession1Complete = async () => {
+    if (!session) return;
+    const { data, error } = await supabase
+      .from('student_sessions')
+      .update({ session1_completed_at: new Date().toISOString() })
+      .eq('id', session.id)
+      .select()
+      .single();
+    if (data && !error) setSession(data);
+  };
+
+  const markSession2Complete = async () => {
+    if (!session) return;
+    const { data, error } = await supabase
+      .from('student_sessions')
+      .update({ session2_completed_at: new Date().toISOString() })
+      .eq('id', session.id)
+      .select()
+      .single();
+    if (data && !error) setSession(data);
+  };
+
+  const restartSession = async () => {
+    // Mark current session as abandoned so it's preserved in analytics
+    if (session) {
+      await supabase
+        .from('student_sessions')
+        .update({ abandoned_at: new Date().toISOString() })
+        .eq('id', session.id);
+    }
+
+    // Sign out — clears the supabase-js JWT from localStorage
+    setLoading(true);
+    setSession(null);
+    await supabase.auth.signOut();
+
+    // Re-initialize: new anonymous user + new session row
+    await initializeSession();
+  };
+
   return (
-    <SessionContext.Provider value={{ session, loading, updateSection, completeSection, saveResponse, getResponses, submitQuestion }}>
+    <SessionContext.Provider value={{ session, loading, updateSection, completeSection, saveResponse, getResponses, submitQuestion, saveSchoolName, restartSession, markSession1Complete, markSession2Complete }}>
       {children}
     </SessionContext.Provider>
   );
