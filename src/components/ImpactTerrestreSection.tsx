@@ -1188,7 +1188,7 @@ function OpsBlock({ onGameComplete, gameCompleted }: { onGameComplete: () => voi
             Le site <strong className="text-white/85">Spot the Station</strong> (NASA) indique les prochains passages au-dessus de ta ville, avec l'heure exacte et la direction à regarder.
           </p>
           <a
-            href="https://spotthestation.nasa.gov/fr/"
+            href="https://spotthestation.nasa.gov"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 bg-magenta hover:bg-magenta-700 text-white rounded-lg px-5 py-3 text-[13.5px] font-semibold transition-colors duration-150"
