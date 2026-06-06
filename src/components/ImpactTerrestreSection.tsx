@@ -671,7 +671,7 @@ function OceanScientistSpotlight() {
           {/* Tâches quotidiennes */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {[
-              { label: 'Traitement d\'images', detail: 'Python, NetCDF, toolbox ESA SNAP pour corriger et calibrer les données brutes envoyées par le satellite.' },
+              { label: 'Traitement d\'images', detail: 'Des logiciels spécialisés corrigent et calibrent les images brutes envoyées par le satellite pour les rendre exploitables.' },
               { label: 'Détection d\'anomalies', detail: 'Repérer les proliférations d\'algues, les zones sans oxygène, les marées noires sur des millions de km² d\'océan.' },
               { label: 'Modélisation', detail: 'Intégrer les données satellite dans des modèles océaniques globaux (MERCATOR OCÉAN) pour prédire les courants.' },
               { label: 'Publication & veille', detail: 'Rédiger des bulletins scientifiques pour les pêcheurs, armateurs, États côtiers et organismes climatiques.' },
