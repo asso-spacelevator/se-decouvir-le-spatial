@@ -1,4 +1,4 @@
-import { Canvas, useFrame, useThree } from '@react-three/fiber'
+import { Canvas, useFrame } from '@react-three/fiber'
 import { useGLTF, OrbitControls, Bounds, useBounds } from '@react-three/drei'
 import { Suspense, useRef, useEffect } from 'react'
 import type * as THREE from 'three'

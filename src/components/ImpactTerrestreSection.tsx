@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { ISSViewer } from './ISSViewer';
-import { ChevronLeft, ChevronRight, CheckCircle, ChevronDown, Compass, ExternalLink, Globe, Radio, Rocket, Satellite, Shield, Trophy, Users } from 'lucide-react';
+import { ChevronLeft, ChevronRight, CheckCircle, ExternalLink, Globe, Radio, Rocket, Satellite, Trophy, Users } from 'lucide-react';
 import { useSession } from '../contexts/SessionContext';
 import { ChapterShell, SectionTopBar, SectionProgress } from './ChapterShell';
 
@@ -355,7 +355,8 @@ function DayCounter({ onComplete, initial }: { onComplete: (n: number) => void; 
   const allClicked = clicked.size === DAY_TILES.length;
 
   // Push the running total up when it changes
-  useEffect(() => { onComplete(total); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, [total]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { onComplete(total); }, [total]);
 
   // Restore last visible total if hydrated
   const startTotal = clicked.size === 0 && initial ? initial : total;
@@ -752,7 +753,8 @@ const TOTAL_CARDS = ALL_CARDS.length;
 function SpinoffGame({ initial, onCount }: { initial: number; onCount: (n: number) => void }) {
   const [flipped, setFlipped] = useState<Set<number>>(new Set());
   const count = flipped.size;
-  useEffect(() => { onCount(Math.max(count, initial || 0)); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, [count]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { onCount(Math.max(count, initial || 0)); }, [count]);
 
   return (
     <div>
