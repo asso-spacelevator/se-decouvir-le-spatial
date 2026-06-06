@@ -3,7 +3,7 @@ import { Camera, Radio, Layers, Waves, Thermometer, Globe, ExternalLink, Lock } 
 import { useSession } from '../contexts/SessionContext';
 import { Quiz } from './Quiz';
 import { SatelliteAnatomy } from './SatelliteAnatomy';
-import { SatelliteTimeline } from './SatelliteTimeline';
+import { MosaiqueSatellites } from './MosaiqueSatellites';
 import { SatelliteDistribution } from './SatelliteDistribution';
 import { SectionCanvas, SectionTopBar, SectionProgress, ChapterShell, ChapterRecap } from './ChapterShell';
 import { YouTubeEmbed } from './YouTubeEmbed';
@@ -185,51 +185,6 @@ const instruments = [
   },
 ];
 
-const mosaicImages = [
-  {
-    year: '1969',
-    title: 'Apollo 11',
-    desc: 'Premier alunissage humain',
-    src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Aldrin_Apollo_11_original.jpg/960px-Aldrin_Apollo_11_original.jpg',
-    credit: 'Image : © NASA / Neil Armstrong, domaine public, 1969',
-  },
-  {
-    year: '2000',
-    title: 'Station ISS',
-    desc: 'Laboratoire orbital habité en permanence',
-    src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/International_Space_Station_after_undocking_of_STS-132.jpg/960px-International_Space_Station_after_undocking_of_STS-132.jpg',
-    credit: 'Image : © NASA, domaine public, 2010',
-  },
-  {
-    year: '2009',
-    title: 'Hubble & James Webb',
-    desc: 'Deux générations de télescopes spatiaux',
-    src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/JWST-HST-primary-mirrors.jpg/960px-JWST-HST-primary-mirrors.jpg',
-    credit: 'Image : © NASA / Chris Gunn, domaine public, 2017',
-  },
-  {
-    year: '2015',
-    title: 'Sentinel-2 (ESA)',
-    desc: 'Copernicus : la Terre en open data',
-    src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Sentinel-2_satellite_model_in_ESTEC_test_centre.jpg/960px-Sentinel-2_satellite_model_in_ESTEC_test_centre.jpg',
-    credit: 'Image : © ESA / Remy Decourt, CC BY-SA 3.0 IGO, 2015',
-  },
-  {
-    year: '2021',
-    title: 'James Webb (ESA/NASA)',
-    desc: 'L\'héritier de Hubble, 100× plus puissant',
-    src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Webb_being_prepared_for_testing_in_Houston.jpg/960px-Webb_being_prepared_for_testing_in_Houston.jpg',
-    credit: 'Image : © NASA / Chris Gunn, domaine public, 2017',
-  },
-  {
-    year: '2023',
-    title: 'Meteosat MTG (ESA)',
-    desc: 'La météo européenne de nouvelle génération',
-    src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/Meteosat_Third_Generation_ESA25562401.jpg/960px-Meteosat_Third_Generation_ESA25562401.jpg',
-    credit: 'Image : © ESA / ATG medialab, CC BY-SA 3.0 IGO, 2023',
-  },
-];
-
 const jobs = [
   {
     id: 'opticien',
@@ -398,37 +353,7 @@ export function SatelliteSection({ onComplete, onHome }: SatelliteSectionProps) 
                 </div>
               ))}
             </div>
-            {/* Archive photo mosaic */}
-            <div className="mb-8">
-              <p className="text-[11px] uppercase tracking-[0.14em] text-white/40 font-semibold mb-3">
-                Images d'archives · 70 ans de conquête spatiale
-              </p>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-x-2 gap-y-3">
-                {mosaicImages.map(img => (
-                  <div key={img.year}>
-                    <div className="relative rounded-xl overflow-hidden group aspect-[4/3]">
-                      <img
-                        src={img.src}
-                        alt={img.title}
-                        className="w-full h-full object-cover transition-transform duration-[300ms] ease-[cubic-bezier(.2,0,0,1)] group-hover:scale-105"
-                        loading="lazy"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
-                      <span className="absolute top-2 left-2 text-[10px] font-mono font-bold text-white bg-black/55 rounded px-1.5 py-0.5 tracking-widest">
-                        {img.year}
-                      </span>
-                      <div className="absolute bottom-0 left-0 right-0 px-3 pb-2.5">
-                        <p className="text-[13px] font-semibold text-white leading-tight truncate">{img.title}</p>
-                        <p className="text-[10.5px] text-white/60 mt-0.5 leading-tight truncate">{img.desc}</p>
-                      </div>
-                    </div>
-                    <p className="mt-1 text-[10px] italic text-white/40 leading-snug">{img.credit}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <SatelliteTimeline />
+            <MosaiqueSatellites />
           </ChapterShell>
         )}
 
