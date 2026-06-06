@@ -309,9 +309,12 @@ export function SatelliteDistribution() {
           <p className="text-sm text-gray-300">
             <strong className="text-magenta">Stuff in Space</strong> montre tous les satellites et débris actuellement en orbite en 3D, en temps réel.
           </p>
+          <p className="mt-1.5 text-[11px] text-white/45 italic">
+            Le chargement peut prendre quelques secondes.
+          </p>
         </div>
         <a
-          href="https://stuffin.space"
+          href="https://stuffin-space.vader.zone/"
           target="_blank"
           rel="noopener noreferrer"
           className="flex-shrink-0 flex items-center gap-2 px-5 py-3 bg-magenta hover:bg-magenta-700 text-white font-bold text-sm rounded-xl transition-all hover:scale-105 shadow-lg shadow-magenta/20"
