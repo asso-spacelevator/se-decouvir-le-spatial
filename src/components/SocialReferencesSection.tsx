@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
-import { Instagram, Youtube, Globe, ExternalLink, QrCode } from 'lucide-react';
+import { Instagram, Youtube, Globe, ExternalLink, QrCode, Check } from 'lucide-react';
 import { useSession } from '../contexts/SessionContext';
 import { QRCodeSVG } from 'qrcode.react';
 import { SectionCanvas, SectionTopBar, SectionProgress, ChapterShell, ChapterRecap } from './ChapterShell';
 
 const TOTAL_CHAPTERS = 4;
+const MIN_ACCOUNTS = 3;
+const MIN_SITES = 3;
 
 type RefType = 'instagram' | 'youtube' | 'website';
 
@@ -34,8 +36,8 @@ const references: SocialReference[] = [
   { name: 'Sophie Adenot', handle: '@sophie.adenot', description: "Nouvelle astronaute française de l'ESA, ingénieure et pilote d'essai", category: 'astronaut', url: 'https://www.instagram.com/sophie.adenot/', type: 'instagram' },
   { name: 'CNES', handle: '@cnes_france', description: "L'agence spatiale française — actu spatiale vulgarisée, missions et images", category: 'agency', url: 'https://www.instagram.com/cnes_france/', type: 'instagram' },
   { name: 'ESA France', handle: '@esafrance', description: "Agence Spatiale Européenne — actualités des missions et découvertes", category: 'agency', url: 'https://www.instagram.com/esafrance/', type: 'instagram' },
-  { name: 'CNES', handle: 'youtube.com/@CnesFrance', description: "L'agence spatiale française — vidéos pédagogiques sur les missions spatiales", category: 'agency', url: 'https://www.youtube.com/@CnesFrance/', type: 'youtube' },
-  { name: 'ESA', handle: 'youtube.com/user/ESA', description: "Vidéos immersives sur l'exploration spatiale européenne", category: 'agency', url: 'https://www.youtube.com/user/ESA', type: 'youtube' },
+  { name: 'CNES YT', handle: 'youtube.com/@CnesFrance', description: "L'agence spatiale française — vidéos pédagogiques sur les missions spatiales", category: 'agency', url: 'https://www.youtube.com/@CnesFrance/', type: 'youtube' },
+  { name: 'ESA YT', handle: 'youtube.com/user/ESA', description: "Vidéos immersives sur l'exploration spatiale européenne", category: 'agency', url: 'https://www.youtube.com/user/ESA', type: 'youtube' },
   { name: 'Techniques Spatiales', handle: '@TechniquesSpatiales', description: "Vulgarisation des techniques spatiales en français", category: 'education', url: 'https://www.youtube.com/@TechniquesSpatiales', type: 'youtube' },
   { name: 'Odyssée Spatiale', handle: '@odyssee.spatiale', description: "Vulgarisation spatiale accessible et passionnante", category: 'education', url: 'https://www.instagram.com/odyssee.spatiale/', type: 'instagram' },
   { name: 'Spaceexplorerw', handle: '@spaceexplorerw', description: "Une jeune étudiante qui parle de spatial — parcours et passion", category: 'education', url: 'https://www.instagram.com/spaceexplorerw/', type: 'instagram' },
@@ -74,12 +76,20 @@ export function SocialReferencesSection({ onComplete, onHome }: SocialReferences
   const [hydrated, setHydrated] = useState(false);
   const [favorite, setFavorite] = useState('');
   const [selectedQR, setSelectedQR] = useState<string | null>(null);
+  const [visitedAccounts, setVisitedAccounts] = useState<string[]>([]);
+  const [visitedSites, setVisitedSites] = useState<string[]>([]);
 
   useEffect(() => {
     (async () => {
       const r = await getResponses('social_references');
       if (r.chapter) setChapter(Math.min(parseInt(r.chapter, 10) || 0, TOTAL_CHAPTERS - 1));
       if (r.favorite) setFavorite(r.favorite);
+      if (r.visitedAccounts) {
+        try { setVisitedAccounts(JSON.parse(r.visitedAccounts)); } catch { /* ignore parse errors */ }
+      }
+      if (r.visitedSites) {
+        try { setVisitedSites(JSON.parse(r.visitedSites)); } catch { /* ignore parse errors */ }
+      }
       setHydrated(true);
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -96,6 +106,23 @@ export function SocialReferencesSection({ onComplete, onHome }: SocialReferences
     setFavorite(v);
     if (hydrated) await saveResponse('social_references', 'favorite', v);
   };
+
+  const markAccountVisited = async (name: string) => {
+    if (visitedAccounts.includes(name)) return;
+    const updated = [...visitedAccounts, name];
+    setVisitedAccounts(updated);
+    if (hydrated) await saveResponse('social_references', 'visitedAccounts', JSON.stringify(updated));
+  };
+
+  const markSiteVisited = async (name: string) => {
+    if (visitedSites.includes(name)) return;
+    const updated = [...visitedSites, name];
+    setVisitedSites(updated);
+    if (hydrated) await saveResponse('social_references', 'visitedSites', JSON.stringify(updated));
+  };
+
+  const accountsNeeded = Math.max(0, MIN_ACCOUNTS - visitedAccounts.length);
+  const sitesNeeded = Math.max(0, MIN_SITES - visitedSites.length);
 
   return (
     <SectionCanvas>
@@ -132,9 +159,25 @@ export function SocialReferencesSection({ onComplete, onHome }: SocialReferences
             titlePrefix="Pour rester connecté à l'espace,"
             titleAccent="voici par où commencer."
             lede="Suis ces comptes pour recevoir de l'actualité spatiale et des contenus inspirants au quotidien. Clique sur la carte pour ouvrir le profil, ou affiche le QR code pour scanner avec ton téléphone."
-            onPrev={null} onNext={() => goTo(1)} nextEnabled={true}
-            nextLabel="Continue · Sites web →"
+            onPrev={null} onNext={() => goTo(1)}
+            nextEnabled={visitedAccounts.length >= MIN_ACCOUNTS}
+            nextLabel={
+              accountsNeeded > 0
+                ? `Ouvre encore ${accountsNeeded} compte${accountsNeeded > 1 ? 's' : ''} pour continuer`
+                : 'Continue · Sites web →'
+            }
           >
+            <div className="flex items-center gap-3 mb-6">
+              <span className={`text-[13px] font-semibold tabular-nums ${visitedAccounts.length >= MIN_ACCOUNTS ? 'text-magenta' : 'text-white/55'}`}>
+                {visitedAccounts.length} / {MIN_ACCOUNTS} comptes consultés
+              </span>
+              {visitedAccounts.length >= MIN_ACCOUNTS && (
+                <span className="inline-flex items-center gap-1 bg-magenta/15 text-magenta rounded-full px-2.5 py-0.5 text-[11px] font-semibold">
+                  <Check className="w-3 h-3" strokeWidth={2.5} /> Minimum atteint
+                </span>
+              )}
+            </div>
+
             <div className="space-y-8">
               {(['astronaut', 'agency', 'education', 'female_role_model'] as const).map(category => {
                 const refs = references.filter(r => r.category === category);
@@ -143,29 +186,49 @@ export function SocialReferencesSection({ onComplete, onHome }: SocialReferences
                   <div key={category}>
                     <h3 className="text-[11px] font-semibold tracking-[0.14em] uppercase text-white/45 mb-4">{categoryLabels[category]}</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      {refs.map((ref, i) => (
-                        <div key={i} className="bg-white/[0.04] border border-white/10 rounded-2xl p-5 hover:border-magenta hover:-translate-y-0.5 transition-all group">
-                          <a href={ref.url} target="_blank" rel="noopener noreferrer" className="block mb-3">
-                            <div className="flex items-start gap-3">
-                              <TypeIcon type={ref.type} />
-                              <div className="flex-1 min-w-0">
-                                <h5 className="font-semibold text-white group-hover:text-magenta transition-colors text-[15px]">{ref.name}</h5>
-                                <p className="text-[12px] text-magenta/70 mb-1">{ref.handle}</p>
-                                <p className="text-[12px] text-white/55 leading-[1.45]">{ref.description}</p>
-                              </div>
-                            </div>
-                          </a>
-                          {ref.type !== 'website' && (
-                            <button
-                              onClick={() => setSelectedQR(ref.url)}
-                              className="w-full flex items-center justify-center gap-2 py-2 bg-white/[0.04] hover:bg-magenta/10 border border-white/10 hover:border-magenta rounded-lg text-[12px] text-white/55 hover:text-magenta transition"
+                      {refs.map((ref, i) => {
+                        const visited = visitedAccounts.includes(ref.name);
+                        return (
+                          <div
+                            key={i}
+                            className={`bg-white/[0.04] border rounded-2xl p-5 hover:-translate-y-0.5 transition-all group ${
+                              visited ? 'border-magenta' : 'border-white/10 hover:border-magenta'
+                            }`}
+                          >
+                            <a
+                              href={ref.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="block mb-3"
+                              onClick={() => markAccountVisited(ref.name)}
                             >
-                              <QrCode className="w-3.5 h-3.5" />
-                              Afficher le QR Code
-                            </button>
-                          )}
-                        </div>
-                      ))}
+                              <div className="flex items-start gap-3">
+                                <TypeIcon type={ref.type} />
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-center gap-2">
+                                    <h5 className="font-semibold text-white group-hover:text-magenta transition-colors text-[15px]">{ref.name}</h5>
+                                    {visited && <Check className="w-3.5 h-3.5 text-magenta flex-shrink-0" strokeWidth={2.5} />}
+                                  </div>
+                                  <p className="text-[12px] text-magenta/70 mb-1">{ref.handle}</p>
+                                  <p className="text-[12px] text-white/55 leading-[1.45]">{ref.description}</p>
+                                </div>
+                              </div>
+                            </a>
+                            {ref.type !== 'website' && (
+                              <button
+                                onClick={() => {
+                                  setSelectedQR(ref.url);
+                                  markAccountVisited(ref.name);
+                                }}
+                                className="w-full flex items-center justify-center gap-2 py-2 bg-white/[0.04] hover:bg-magenta/10 border border-white/10 hover:border-magenta rounded-lg text-[12px] text-white/55 hover:text-magenta transition"
+                              >
+                                <QrCode className="w-3.5 h-3.5" />
+                                Afficher le QR Code
+                              </button>
+                            )}
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
                 );
@@ -181,26 +244,51 @@ export function SocialReferencesSection({ onComplete, onHome }: SocialReferences
             titlePrefix="Pour approfondir tes connaissances,"
             titleAccent="ces ressources en ligne."
             lede="Des sites de référence pour rester informé, approfondir tes connaissances et découvrir des opportunités dans le spatial."
-            onPrev={() => goTo(0)} onNext={() => goTo(2)} nextEnabled={true}
-            nextLabel="Continue · Ton inspiration →"
+            onPrev={() => goTo(0)} onNext={() => goTo(2)}
+            nextEnabled={visitedSites.length >= MIN_SITES}
+            nextLabel={
+              sitesNeeded > 0
+                ? `Ouvre encore ${sitesNeeded} site${sitesNeeded > 1 ? 's' : ''} pour continuer`
+                : 'Continue · Ton inspiration →'
+            }
           >
+            <div className="flex items-center gap-3 mb-6">
+              <span className={`text-[13px] font-semibold tabular-nums ${visitedSites.length >= MIN_SITES ? 'text-magenta' : 'text-white/55'}`}>
+                {visitedSites.length} / {MIN_SITES} sites consultés
+              </span>
+              {visitedSites.length >= MIN_SITES && (
+                <span className="inline-flex items-center gap-1 bg-magenta/15 text-magenta rounded-full px-2.5 py-0.5 text-[11px] font-semibold">
+                  <Check className="w-3 h-3" strokeWidth={2.5} /> Minimum atteint
+                </span>
+              )}
+            </div>
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {webResources.map(res => (
-                <a
-                  key={res.url}
-                  href={res.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-start gap-3 bg-white/[0.04] border border-white/10 rounded-2xl p-5 hover:border-magenta hover:-translate-y-0.5 transition-all group"
-                >
-                  <Globe className="w-4 h-4 text-magenta flex-shrink-0 mt-0.5" />
-                  <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-white group-hover:text-magenta transition-colors text-[15px]">{res.name}</p>
-                    <p className="text-[12px] text-white/55 mt-0.5 leading-snug">{res.description}</p>
-                  </div>
-                  <ExternalLink className="w-3.5 h-3.5 text-white/25 flex-shrink-0 mt-0.5 group-hover:text-magenta transition" />
-                </a>
-              ))}
+              {webResources.map(res => {
+                const visited = visitedSites.includes(res.name);
+                return (
+                  <a
+                    key={res.url}
+                    href={res.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => markSiteVisited(res.name)}
+                    className={`flex items-start gap-3 bg-white/[0.04] border rounded-2xl p-5 hover:-translate-y-0.5 transition-all group ${
+                      visited ? 'border-magenta' : 'border-white/10 hover:border-magenta'
+                    }`}
+                  >
+                    <Globe className="w-4 h-4 text-magenta flex-shrink-0 mt-0.5" />
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <p className="font-semibold text-white group-hover:text-magenta transition-colors text-[15px]">{res.name}</p>
+                        {visited && <Check className="w-3.5 h-3.5 text-magenta flex-shrink-0" strokeWidth={2.5} />}
+                      </div>
+                      <p className="text-[12px] text-white/55 mt-0.5 leading-snug">{res.description}</p>
+                    </div>
+                    <ExternalLink className="w-3.5 h-3.5 text-white/25 flex-shrink-0 mt-0.5 group-hover:text-magenta transition" />
+                  </a>
+                );
+              })}
             </div>
           </ChapterShell>
         )}
@@ -236,6 +324,10 @@ export function SocialReferencesSection({ onComplete, onHome }: SocialReferences
           <ChapterRecap
             chapterLabel="Réseaux Sociaux"
             summary="Tu as découvert les comptes à suivre pour rester connecté à l'actualité spatiale, les sites de référence, et partagé ce qui t'inspire."
+            stats={[
+              { v: visitedAccounts.length, t: 'comptes consultés' },
+              { v: visitedSites.length, t: 'sites explorés' },
+            ]}
             nextTitle="Pause entre les sessions"
             nextDesc="Session 1 terminée. Reviens à l'accueil pour démarrer la session 2."
             onContinue={onComplete}

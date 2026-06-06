@@ -5,6 +5,7 @@ import { Quiz } from './Quiz';
 import { Ariane6Diagram } from './Ariane6Diagram';
 import { MissionSimulator } from './MissionSimulator';
 import { SectionCanvas, SectionTopBar, SectionProgress, ChapterShell, ChapterRecap } from './ChapterShell';
+import { YouTubeEmbed } from './YouTubeEmbed';
 
 const TOTAL_CHAPTERS = 8;
 
@@ -64,48 +65,36 @@ const SPEED_DISPLAY_ORDER = [2, 0, 3, 1];
 const TRUE_FALSE_ITEMS = [
   {
     id: 0,
-    statement: "Une salle blanche spatiale est environ 20 fois plus propre qu'un bloc opératoire.",
-    isTrue: true,
-    explication: "Un bloc opératoire tolère jusqu'à 10 000 particules/m³. Une salle blanche ISO 5 descend à 3 520/m³ — soit bien plus propre qu'une salle d'opération.",
-  },
-  {
-    id: 1,
-    statement: "Tu peux porter un parfum léger si tu le dilues à l'eau avant d'entrer.",
-    isTrue: false,
-    explication: "Aucun parfum, cosmétique ni lotion n'est toléré. Les molécules volatiles se déposent sur les optiques et capteurs, les rendant inutilisables en orbite.",
-  },
-  {
-    id: 2,
     statement: "Chaque outil entrant dans la salle blanche est répertorié et tracé.",
     isTrue: true,
     explication: "Un tournevis oublié peut provoquer un court-circuit ou un déséquilibre mécanique en orbite. La traçabilité est absolue — rien ne rentre sans être enregistré.",
   },
   {
-    id: 3,
+    id: 1,
     statement: "La température peut varier de quelques degrés selon les saisons, c'est toléré.",
     isTrue: false,
     explication: "21 °C et 45 % d'humidité sont maintenus en permanence. Les matériaux de précision se dilatent avec la chaleur et les circuits réagissent aux variations hydriques.",
   },
   {
-    id: 4,
+    id: 2,
     statement: "Les tests acoustiques et vibratoires d'un satellite peuvent durer plusieurs semaines à eux seuls.",
     isTrue: true,
     explication: "À l'ESTEC (Pays-Bas), une campagne complète de tests — vibrations, chocs, vide thermique, compatibilité électromagnétique — peut s'étendre sur 6 à 12 mois. Les seuls tests de vide thermique (TVAC) durent souvent 3 à 6 semaines en continu, 24 h/24.",
   },
   {
-    id: 5,
+    id: 3,
     statement: "Une équipe de 10 à 15 techniciens suffit pour intégrer un grand satellite comme Gaia ou Euclid.",
     isTrue: false,
     explication: "Pour un satellite scientifique de grande envergure, l'équipe complète dépasse généralement 200 personnes : ingénieurs d'intégration, spécialistes système, experts en tests, représentants industriels. Ils ne sont pas tous présents en salle blanche simultanément, mais la coordination mobilise des centaines d'experts.",
   },
   {
-    id: 6,
+    id: 4,
     statement: "L'Europe dispose d'une dizaine de grandes salles blanches capables d'accueillir un satellite de plusieurs tonnes.",
     isTrue: true,
     explication: "On dénombre en Europe une dizaine d'installations majeures : l'ESTEC aux Pays-Bas (deux grandes salles), Airbus à Toulouse et à Bremen, Thales Alenia Space à Cannes et à Rome, OHB à Bremen, IABG à Ottobrunn — auxquelles s'ajoute le Centre Spatial Guyanais à Kourou.",
   },
   {
-    id: 7,
+    id: 5,
     statement: "L'ESTEC, le principal centre d'essais de l'ESA, est situé en Allemagne.",
     isTrue: false,
     explication: "L'ESTEC (European Space Research and Technology Centre) est situé à Noordwijk, aux Pays-Bas. C'est le plus grand établissement de l'ESA avec environ 2 500 personnes sur site. Il abrite les plus grandes chambres de vide thermique et de test acoustique d'Europe : presque tous les satellites européens y passent avant d'être expédiés à Kourou.",
@@ -134,6 +123,7 @@ const challenges = [
     problem: "Les moteurs de lanceur peuvent atteindre 3 000 °C, tandis que l'espace oscille entre -150 °C et +150 °C.",
     solution: "Utilisation de matériaux composites céramiques ultra-résistants et de systèmes de refroidissement actifs avec circulation d'hydrogène liquide.",
     innovation: "Les boucliers thermiques modernes supportent des gradients de 3 000 °C sur quelques centimètres d'épaisseur.",
+    comparaison: "Ton four de cuisine monte à 250 °C au maximum. Le moteur Vulcain brûle à 3 000 °C — soit 12 fours superposés. Et il doit tenir ces températures pendant les 8 minutes que dure la montée.",
     funFact: "Le nez d'un lanceur lors de la rentrée atmosphérique chauffe tellement qu'il crée un plasma qui bloque temporairement les communications radio.",
     link: { label: "Propulsion spatiale — CNES", url: "https://cnes.fr/fr/propulsion-spatiale" },
   },
@@ -142,6 +132,7 @@ const challenges = [
     problem: "Il faut générer plus de 1 000 tonnes de poussée pour vaincre la gravité terrestre.",
     solution: "Moteurs à combustion d'hydrogène et oxygène liquides, brûlant 300 kg de carburant par seconde.",
     innovation: "Un seul moteur Vulcain 2.1 produit une puissance équivalente à 1 500 voitures de F1 combinées.",
+    comparaison: "300 kg de carburant brûlés chaque seconde, c'est l'équivalent d'une baignoire entière vidée en flammes toutes les secondes. En 8 minutes de vol, Ariane 6 consomme autant de carburant qu'une voiture en parcourant 800 000 km.",
     funFact: "Si on pouvait canaliser toute la puissance d'un moteur de lanceur dans une ampoule, elle brillerait 190 fois plus fort que le Soleil vu depuis la Terre.",
     link: { label: "Le moteur Vulcain 2.1 — ArianeGroup", url: "https://www.ariane.group/fr/lanceur/ariane-6/" },
   },
@@ -150,6 +141,7 @@ const challenges = [
     problem: "Une erreur de 0,1° lors du lancement peut manquer la cible orbitale de milliers de kilomètres.",
     solution: "Systèmes de guidage inertiel couplés au GPS, avec corrections en temps réel toutes les millisecondes.",
     innovation: "Les gyroscopes laser actuels détectent des rotations de l'ordre du milliardième de degré.",
+    comparaison: "0,1° d'erreur, c'est comme lancer une fléchette depuis Paris et rater la cible à New York de 400 km — soit l'équivalent de viser New York et atterrir à Boston.",
     funFact: "La précision requise est équivalente à lancer une fléchette depuis Paris et toucher le centre d'une cible à New York.",
     link: { label: "Navigation et guidage — ONERA", url: "https://www.onera.fr/fr" },
   },
@@ -158,6 +150,7 @@ const challenges = [
     problem: "Chaque kilogramme de structure en trop réduit la charge utile possible.",
     solution: "Alliages aluminium-lithium et composites carbone ultra-légers, avec optimisation par intelligence artificielle.",
     innovation: "Les nouveaux matériaux permettent un rapport résistance/poids 5 fois supérieur à l'acier.",
+    comparaison: "C'est comme préparer ton sac pour un voyage avec un quota de 20 kg : chaque kilo de sac vide économisé te permet d'emporter 100 kg de matériel utile de plus. Chaque gramme gagné sur la structure profite directement au satellite.",
     funFact: "Économiser 1 kg sur la structure d'un lanceur peut permettre de placer 100 kg supplémentaires en orbite.",
     link: { label: "Matériaux spatiaux — CNES R&T", url: "https://cnes.fr/fr/recherche-technologie" },
   },
@@ -166,6 +159,7 @@ const challenges = [
     problem: "Au décollage, les moteurs génèrent des vibrations si violentes qu'elles peuvent endommager les satellites embarqués.",
     solution: "Isolation vibratoire par des systèmes amortisseurs et des structures en nid d'abeille pour absorber les chocs.",
     innovation: "Des capteurs piézoélectriques actifs contrent les vibrations en temps réel, comme un casque antibruit géant pour satellite.",
+    comparaison: "Un concert de rock c'est environ 110 dB — déjà douloureux. Au décollage, Ariane 6 atteint 165 dB : acoustiquement, c'est 100 000 fois plus intense qu'un concert. À cette puissance, les tympans humains éclateraient en moins d'une seconde.",
     funFact: "La pression acoustique au décollage atteint 165 dB. Sans protection, un satellite se briserait en vol avant même d'atteindre l'atmosphère.",
     link: { label: "Centre d'essais ESA — ESTEC", url: "https://www.esa.int/Enabling_Support/Space_Engineering_Technology/Test_Centre" },
   },
@@ -179,6 +173,7 @@ const CLEAN_ROOM_RULES = [
   { rule: 'Température et humidité fixes', detail: "21 °C, humidité 45 % — les matériaux se dilatent avec la chaleur et l'humidité favorise les courts-circuits." },
   { rule: 'Zéro maquillage ni parfum', detail: "Les substances chimiques volatiles se déposent sur les optiques et capteurs, les rendant inutilisables." },
 ];
+
 
 const quizQuestions = [
   {
@@ -202,6 +197,50 @@ const quizQuestions = [
       { id: 'd', text: '12', isCorrect: false },
     ],
     explanation: "Ariane 6 est le fruit de la coopération de 6 nations européennes. Plus de 600 personnes travaillent sur le chantier de construction.",
+  },
+  {
+    id: 'rocket_q3',
+    question: "Quel gaz est utilisé comme carburant principal dans le moteur Vulcain d'Ariane 6 ?",
+    options: [
+      { id: 'a', text: 'Kérosène', isCorrect: false },
+      { id: 'b', text: 'Méthane', isCorrect: false },
+      { id: 'c', text: 'Hydrogène liquide', isCorrect: true },
+      { id: 'd', text: 'Propane', isCorrect: false },
+    ],
+    explanation: "Le moteur Vulcain brûle de l'hydrogène liquide avec de l'oxygène liquide. C'est l'un des carburants les plus énergétiques disponibles, et sa combustion ne produit que de la vapeur d'eau.",
+  },
+  {
+    id: 'rocket_q4',
+    question: "Pourquoi le Centre Spatial Guyanais à Kourou est-il idéal pour les lancements ?",
+    options: [
+      { id: 'a', text: "Il est proche du pôle Nord, ce qui refroidit les moteurs", isCorrect: false },
+      { id: 'b', text: "Sa proximité de l'équateur donne un boost de vitesse grâce à la rotation de la Terre", isCorrect: true },
+      { id: 'c', text: "Il est au bord de la mer pour faciliter la récupération des étages", isCorrect: false },
+      { id: 'd', text: "Le climat tropical protège les structures des tempêtes", isCorrect: false },
+    ],
+    explanation: "Proche de l'équateur, Kourou bénéficie de la vitesse de rotation terrestre (environ 460 m/s). Ce bonus gratuit réduit la quantité de carburant nécessaire pour atteindre l'orbite géostationnaire.",
+  },
+  {
+    id: 'rocket_q5',
+    question: "Quelle est la principale différence entre Ariane 62 et Ariane 64 ?",
+    options: [
+      { id: 'a', text: "Ariane 64 est réutilisable, Ariane 62 ne l'est pas", isCorrect: false },
+      { id: 'b', text: "Ariane 62 emporte 2 boosters latéraux, Ariane 64 en emporte 4", isCorrect: true },
+      { id: 'c', text: "Ariane 64 vole vers la Lune, Ariane 62 reste en orbite basse", isCorrect: false },
+      { id: 'd', text: "Ariane 64 utilise de l'hydrogène, Ariane 62 du kérosène", isCorrect: false },
+    ],
+    explanation: "Le chiffre après «Ariane 6» indique le nombre de boosters à propergol solide P120C. Ariane 62 (2 boosters) cible les orbites basses ou polaires légères ; Ariane 64 (4 boosters) vise les lourdes charges en orbite géostationnaire.",
+  },
+  {
+    id: 'rocket_q6',
+    question: "À quelle vitesse un satellite doit-il se déplacer pour rester en orbite basse (LEO) autour de la Terre ?",
+    options: [
+      { id: 'a', text: "1 000 km/h", isCorrect: false },
+      { id: 'b', text: "5 000 km/h", isCorrect: false },
+      { id: 'c', text: "11 000 km/h", isCorrect: false },
+      { id: 'd', text: "28 000 km/h", isCorrect: true },
+    ],
+    explanation: "En orbite basse (environ 400 km d'altitude), un satellite file à près de 28 000 km/h, soit 7,7 km par seconde. À cette vitesse, la force centrifuge équilibre exactement l'attraction terrestre.",
   },
 ];
 
@@ -377,12 +416,36 @@ export function RocketSection({ onComplete, onHome }: RocketSectionProps) {
                   <p className="text-[13px] text-white/55 mb-3">Ariane 6 est le fruit direct de <span className="text-white font-medium">6 nations européennes</span>. Voici comment le travail est réparti :</p>
                   <div className="rounded-xl overflow-hidden border border-white/10">
                     <img
-                      src="https://cnes.fr/sites/default/files/styles/native_format/public/2025-02/ariane-6-organisation-industrielle.png?itok=PAgtKtio"
-                      alt="Organisation industrielle Ariane 6"
+                      src="https://www.caia.net/images/upload/135/p033-001.png"
+                      alt="Organisation industrielle Ariane 6 — répartition par nation"
                       className="w-full object-contain bg-white"
                     />
                   </div>
-                  <p className="text-[11px] italic text-white/35 mt-2 text-center">Source : CNES — Organisation industrielle Ariane 6</p>
+                  <p className="text-[10.5px] italic text-white/45 mt-2 mb-4 text-center">Image : ArianeGroup — Organisation industrielle Ariane 6</p>
+                  <div className="rounded-xl border border-white/10 overflow-hidden">
+                    {[
+                      { flag: '🇫🇷', country: 'France', pct: 52, role: "Maître d'œuvre · ArianeGroup (Les Mureaux, Évry)" },
+                      { flag: '🇩🇪', country: 'Allemagne', pct: 22, role: 'Étage supérieur · ArianeGroup Bremen, MT Aerospace' },
+                      { flag: '🇮🇹', country: 'Italie', pct: 15, role: 'Accélérateurs P120C · Avio, Thales Alenia Space' },
+                      { flag: '🇪🇸', country: 'Espagne', pct: 4, role: 'Systèmes embarqués · Indra, SENER, GMV' },
+                      { flag: '🇧🇪', country: 'Belgique', pct: 4, role: 'Structures · Thales Alenia Space Belgium' },
+                      { flag: '🇨🇭', country: 'Suisse', pct: 3, role: 'Coiffes et structures · RUAG Space' },
+                    ].map(({ flag, country, pct, role }) => (
+                      <div key={country} className="flex items-center gap-3 px-4 py-2.5 border-b border-white/[0.06] last:border-0">
+                        <span className="text-xl leading-none w-7 shrink-0">{flag}</span>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-[13px] font-semibold text-white leading-none mb-0.5">{country}</p>
+                          <p className="text-[11px] text-white/45 truncate">{role}</p>
+                        </div>
+                        <div className="flex items-center gap-2 shrink-0">
+                          <div className="w-16 h-1.5 rounded-full bg-white/10 overflow-hidden">
+                            <div className="h-full rounded-full bg-magenta" style={{ width: `${pct}%` }} />
+                          </div>
+                          <span className="text-[12px] font-bold text-magenta w-8 text-right">{pct}%</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
 
@@ -558,6 +621,10 @@ export function RocketSection({ onComplete, onHome }: RocketSectionProps) {
                     <h4 className="font-semibold text-magenta text-[11px] uppercase tracking-[0.12em] mb-2">Innovation clé</h4>
                     <p className="text-white/80 leading-relaxed text-[14px]">{challenges[selectedChallenge].innovation}</p>
                   </div>
+                  <div className="border border-white/15 bg-white/[0.04] rounded-xl px-5 py-4">
+                    <p className="text-[10px] font-bold tracking-[0.12em] uppercase text-white/40 mb-2">Pour te donner une idée</p>
+                    <p className="text-[13px] text-white/80 leading-[1.6] italic">{challenges[selectedChallenge].comparaison}</p>
+                  </div>
                   <div className="bg-white/[0.04] border border-white/10 rounded-xl px-5 py-4">
                     <p className="text-[13px] text-white/70 leading-[1.55]">{challenges[selectedChallenge].funFact}</p>
                   </div>
@@ -643,6 +710,25 @@ export function RocketSection({ onComplete, onHome }: RocketSectionProps) {
                 </a>
               </div>
 
+              {/* Rêve d'espace — intégration et tests de Gaia */}
+              <div className="rounded-xl p-6 flex flex-col sm:flex-row items-start sm:items-center gap-5 bg-white/[0.04] border border-white/10">
+                <div className="flex-1">
+                  <div className="text-[11px] font-bold tracking-[0.16em] uppercase text-magenta mb-1">Rêve d'espace · Gaia · Airbus DS / ESA</div>
+                  <h3 className="text-[17px] font-semibold m-0 mb-2">Intégration et tests de Gaia</h3>
+                  <p className="text-[13px] text-white/70 m-0 leading-[1.5]">
+                    Suis pas à pas l'intégration du satellite Gaia en salle blanche : découvre comment les équipes Airbus DS ont assemblé ce télescope de précision et l'ont soumis à des tests extrêmes avant son lancement.
+                  </p>
+                </div>
+                <a
+                  href="https://reves-d-espace.com/gaia-un-satellite-pour-les-etoiles/les-phases-dintegration-et-de-tests/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 border border-white/20 hover:border-magenta/60 hover:bg-magenta/[0.08] text-white/80 hover:text-white rounded-lg px-5 py-3.5 text-[14px] font-semibold transition flex-shrink-0"
+                >
+                  <ExternalLink className="w-4 h-4" strokeWidth={1.75} /> Voir le reportage
+                </a>
+              </div>
+
               {/* True/False game */}
               <div className="border border-magenta/20 bg-magenta/[0.02] rounded-2xl p-6">
                 <div className="mb-5">
@@ -707,7 +793,6 @@ export function RocketSection({ onComplete, onHome }: RocketSectionProps) {
                 title="Pour aller plus loin"
                 links={[
                   { label: "ESA ESTEC — Centre d'essais", url: "https://www.esa.int/Enabling_Support/Space_Engineering_Technology/Test_Centre", desc: "Le centre de test de l'ESA aux Pays-Bas" },
-                  { label: "Rêve d'espace — Intégration et tests de Gaia", url: "https://reves-d-espace.com/gaia-un-satellite-pour-les-etoiles/les-phases-dintegration-et-de-tests/", desc: "Phases d'intégration et de tests du satellite Gaia en salle blanche · © Rêves d'espace / Airbus DS / ESA" },
                 ]}
               />
             </div>
@@ -859,8 +944,7 @@ export function RocketSection({ onComplete, onHome }: RocketSectionProps) {
                 links={[
                   { label: "ESA — Transport spatial", url: "https://www.esa.int/Enabling_Support/Space_Transportation", desc: "Politique de transport spatial européenne" },
                   { label: "CNES — Accès à l'espace", url: "https://cnes.fr/fr/acces-espace", desc: "Stratégie d'accès à l'espace" },
-                  { label: "ArianeGroup", url: "https://www.ariane.group/fr/", desc: "Le constructeur d'Ariane" },
-                  { label: "Le Desk CNES", url: "https://ledesk.cnes.fr/", desc: "Actualité spatiale par le CNES" },
+                  { label: "ArianeGroup", url: "https://www.ariane.group/", desc: "Le constructeur d'Ariane" },
                   { label: "ESA — Themis", url: "https://www.esa.int/Enabling_Support/Space_Transportation/Themis", desc: "Futur lanceur réutilisable européen" },
                 ]}
               />
@@ -911,13 +995,7 @@ export function RocketSection({ onComplete, onHome }: RocketSectionProps) {
                   </div>
                 </div>
                 <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
-                  <iframe
-                    className="absolute inset-0 w-full h-full"
-                    src="https://www.youtube.com/embed/DhxJ6Z7u-YU?start=1805"
-                    title="Lancement Ariane 6 — Replay rideshare VA262"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  />
+                  <YouTubeEmbed videoId="DhxJ6Z7u-YU" title="Lancement Ariane 6 — Replay rideshare VA262" start={1805} />
                 </div>
               </div>
               <MissionSimulator />
@@ -933,11 +1011,11 @@ export function RocketSection({ onComplete, onHome }: RocketSectionProps) {
           </ChapterShell>
         )}
 
-        {/* ── Ch 6 : Quiz + Réflexion (était Ch 5) ── */}
+        {/* ── Ch 6 : Quiz éclair ── */}
         {chapter === 6 && !quizCompleted && (
           <ChapterShell
             kicker="07" title="Quiz éclair"
-            titlePrefix="Deux questions pour"
+            titlePrefix="Six questions pour"
             titleAccent="valider le chapitre."
             lede="Une réponse par question. Pas de mauvaise réponse définitive — l'objectif c'est d'apprendre."
             onPrev={() => goTo(5)} onNext={() => {}} nextEnabled={false}
@@ -947,6 +1025,7 @@ export function RocketSection({ onComplete, onHome }: RocketSectionProps) {
           </ChapterShell>
         )}
 
+        {/* ── Ch 6 : Réflexion (après quiz) ── */}
         {chapter === 6 && quizCompleted && (
           <ChapterShell
             kicker="07" title="Réflexion"
@@ -985,7 +1064,7 @@ export function RocketSection({ onComplete, onHome }: RocketSectionProps) {
             stats={[
               { v: selectedChallenge !== null ? challenges[selectedChallenge].name : '—', t: 'défi technique exploré' },
               { v: orderComplete ? '4 / 4' : `${orderClicks.length} / 4`, t: 'vitesses triées correctement' },
-              { v: quizCompleted ? '2 / 2' : '0 / 2', t: 'questions du quiz' },
+              { v: quizCompleted ? `${quizQuestions.length} / ${quizQuestions.length}` : '0 / ' + quizQuestions.length, t: 'questions du quiz' },
             ]}
             nextTitle="Réseaux Sociaux"
             nextDesc="Découvre les comptes et ressources pour rester connecté à l'actualité spatiale."

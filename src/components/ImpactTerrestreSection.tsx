@@ -3,6 +3,7 @@ import { ISSViewer } from './ISSViewer';
 import { ChevronLeft, ChevronRight, CheckCircle, ExternalLink, Globe, Radio, Rocket, Satellite, Trophy, Users } from 'lucide-react';
 import { useSession } from '../contexts/SessionContext';
 import { ChapterShell, SectionTopBar, SectionProgress } from './ChapterShell';
+import { YouTubeEmbed } from './YouTubeEmbed';
 
 /* ════════════════════════════════════════════════════════════════
  *  ImpactTerrestreSection — chapter-based interactive flow
@@ -28,7 +29,7 @@ interface ImpactTerrestreSectionProps {
 }
 
 export function ImpactTerrestreSection({ onComplete, onHome }: ImpactTerrestreSectionProps) {
-  const { saveResponse, getResponses } = useSession();
+  const { saveResponse, getResponses, session } = useSession();
   const [chapter, setChapter] = useState(0);
   const [satellites, setSatellites] = useState(0);
   const [flipsCount, setFlipsCount] = useState(0);
@@ -38,8 +39,9 @@ export function ImpactTerrestreSection({ onComplete, onHome }: ImpactTerrestreSe
   const [collaboGame, setCollaboGame] = useState(false);
   const [hydrated, setHydrated] = useState(false);
 
-  // Hydrate from supabase
+  // Hydrate from supabase — depends on session.id so it waits for auth to resolve
   useEffect(() => {
+    if (!session) return;
     (async () => {
       const r = await getResponses('impact_terrestre');
       if (r.chapter) setChapter(Math.min(parseInt(r.chapter, 10) || 0, TOTAL_CHAPTERS - 1));
@@ -52,7 +54,7 @@ export function ImpactTerrestreSection({ onComplete, onHome }: ImpactTerrestreSe
       setHydrated(true);
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [session?.id]);
 
   const goTo = async (i: number) => {
     if (i < 0 || i >= TOTAL_CHAPTERS) return;
@@ -432,7 +434,7 @@ const SLIDES = [
     img: 'https://eu-space.europa.eu/sites/default/files/styles/wide/public/images/iotd/20240515_PhytoplanktonBlom.webp?itok=1_QEMbSK',
     tag: 'Sentinel-3 · Atlantique Nord',
     title: "La couleur de l'océan révèle le vivant",
-    desc: "Sentinel-3 mesure la couleur de la mer pour cartographier le phytoplancton — base de toute la chaîne alimentaire marine. Ces données alertent sur les zones mortes et les efflorescences algales.",
+    desc: "Sentinel-3 mesure la couleur de la mer pour cartographier le phytoplancton — la base de toute la chaîne alimentaire marine. Ces données alertent sur les zones sans oxygène et les proliférations d'algues.",
     stats: [{ v: '300 m', k: 'Résolution des images Sentinel-3' }, { v: '2×/j', k: 'Couverture océanique mondiale' }],
     credit: 'Image : ESA / Copernicus Sentinel-3, 2020',
   },
@@ -670,8 +672,8 @@ function OceanScientistSpotlight() {
           {/* Tâches quotidiennes */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {[
-              { label: 'Traitement d\'images', detail: 'Python, NetCDF, toolbox ESA SNAP pour corriger et calibrer les données brutes envoyées par le satellite.' },
-              { label: 'Détection d\'anomalies', detail: 'Identifier les efflorescences algales, zones mortes, déversements d\'hydrocarbures sur des millions de km² d\'océan.' },
+              { label: 'Traitement d\'images', detail: 'Des logiciels spécialisés corrigent et calibrent les images brutes envoyées par le satellite pour les rendre exploitables.' },
+              { label: 'Détection d\'anomalies', detail: 'Repérer les proliférations d\'algues, les zones sans oxygène, les marées noires sur des millions de km² d\'océan.' },
               { label: 'Modélisation', detail: 'Intégrer les données satellite dans des modèles océaniques globaux (MERCATOR OCÉAN) pour prédire les courants.' },
               { label: 'Publication & veille', detail: 'Rédiger des bulletins scientifiques pour les pêcheurs, armateurs, États côtiers et organismes climatiques.' },
             ].map((t, i) => (
@@ -1064,15 +1066,7 @@ function OpsBlock({ onGameComplete, gameCompleted }: { onGameComplete: () => voi
             <div key={a.name} className="bg-white/[0.04] border border-white/10 rounded-2xl overflow-hidden flex flex-col">
               <div className="aspect-video bg-black/70 relative">
                 {a.videoId ? (
-                  <iframe
-                    className="absolute inset-0 w-full h-full"
-                    src={`https://www.youtube-nocookie.com/embed/${a.videoId}`}
-                    title={`${a.name} — présentation`}
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                    referrerPolicy="strict-origin-when-cross-origin"
-                    allowFullScreen
-                  />
+                  <YouTubeEmbed videoId={a.videoId} title={`${a.name} — présentation`} nocookie />
                 ) : (
                   <div className="absolute inset-0 flex flex-col items-center justify-center gap-2.5">
                     <Rocket className="w-9 h-9 text-white/15" strokeWidth={1.5} />
@@ -1187,7 +1181,7 @@ function OpsBlock({ onGameComplete, gameCompleted }: { onGameComplete: () => voi
             Le site <strong className="text-white/85">Spot the Station</strong> (NASA) indique les prochains passages au-dessus de ta ville, avec l'heure exacte et la direction à regarder.
           </p>
           <a
-            href="https://spotthestation.nasa.gov/fr/"
+            href="https://spotthestation.nasa.gov"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 bg-magenta hover:bg-magenta-700 text-white rounded-lg px-5 py-3 text-[13.5px] font-semibold transition-colors duration-150"
@@ -1235,7 +1229,9 @@ const QUESTIONS = [
     e: "La mousse à mémoire de forme a été inventée par la NASA en 1966 pour absorber les chocs au décollage. Aujourd'hui dans nos matelas, sièges auto et équipements médicaux. Ces innovations nées du spatial qui entrent dans nos vies s'appellent des retombées — spinoffs.",
   },
   {
-    q: "Quelle est la taille de la plus grande antenne de radiotélécommunications américaine ?",
+    q: "Quelle est la taille de la plus grande antenne de radiotélécommunications du monde ?",
+    img: 'https://www.nasa.gov/wp-content/uploads/2020/03/dsn-stadium-final.jpg?resize=900,900',
+    imgCredit: 'NASA/JPL-Caltech',
     options: [
       { t: '30 mètres', ok: false },
       { t: '50 mètres', ok: false },
@@ -1331,6 +1327,18 @@ function Quiz({ onDone, initial }: { onDone: (score: number) => void; initial: n
         </span>
       </div>
       <p className="text-[22px] font-semibold leading-[1.3] m-0 mb-5">{QUESTIONS[step].q}</p>
+      {QUESTIONS[step].img && (
+        <div className="relative mb-5 rounded-xl overflow-hidden">
+          <img
+            src={QUESTIONS[step].img}
+            alt=""
+            className="w-full max-h-56 object-cover"
+          />
+          <span className="absolute bottom-2 right-3 text-[10.5px] italic text-white/45">
+            Image : {QUESTIONS[step].imgCredit}
+          </span>
+        </div>
+      )}
       <div className="flex flex-col gap-2.5">
         {QUESTIONS[step].options.map((o, i) => {
           const isChosen = chosen === i;
