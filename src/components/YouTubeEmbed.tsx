@@ -46,14 +46,17 @@ export function YouTubeEmbed({ videoId, title, start, nocookie = false }: YouTub
     const domain = nocookie ? 'www.youtube-nocookie.com' : 'www.youtube.com';
     const params = start ? `?start=${start}` : '';
     return (
-      <iframe
-        className="absolute inset-0 w-full h-full"
-        src={`https://${domain}/embed/${videoId}${params}`}
-        title={title}
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-        referrerPolicy="strict-origin-when-cross-origin"
-        allowFullScreen
-      />
+      <div className="absolute inset-0 overflow-hidden">
+        <iframe
+          className="absolute left-0 w-full"
+          style={{ top: '-10%', height: '120%' }}
+          src={`https://${domain}/embed/${videoId}${params}`}
+          title={title}
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          referrerPolicy="strict-origin-when-cross-origin"
+          allowFullScreen
+        />
+      </div>
     );
   }
 
