@@ -433,7 +433,7 @@ const SLIDES = [
     img: 'https://eu-space.europa.eu/sites/default/files/styles/wide/public/images/iotd/20240515_PhytoplanktonBlom.webp?itok=1_QEMbSK',
     tag: 'Sentinel-3 · Atlantique Nord',
     title: "La couleur de l'océan révèle le vivant",
-    desc: "Sentinel-3 mesure la couleur de la mer pour cartographier le phytoplancton — base de toute la chaîne alimentaire marine. Ces données alertent sur les zones mortes et les efflorescences algales.",
+    desc: "Sentinel-3 mesure la couleur de la mer pour cartographier le phytoplancton — la base de toute la chaîne alimentaire marine. Ces données alertent sur les zones sans oxygène et les proliférations d'algues.",
     stats: [{ v: '300 m', k: 'Résolution des images Sentinel-3' }, { v: '2×/j', k: 'Couverture océanique mondiale' }],
     credit: 'Image : ESA / Copernicus Sentinel-3, 2020',
   },
@@ -672,7 +672,7 @@ function OceanScientistSpotlight() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {[
               { label: 'Traitement d\'images', detail: 'Python, NetCDF, toolbox ESA SNAP pour corriger et calibrer les données brutes envoyées par le satellite.' },
-              { label: 'Détection d\'anomalies', detail: 'Identifier les efflorescences algales, zones mortes, déversements d\'hydrocarbures sur des millions de km² d\'océan.' },
+              { label: 'Détection d\'anomalies', detail: 'Repérer les proliférations d\'algues, les zones sans oxygène, les marées noires sur des millions de km² d\'océan.' },
               { label: 'Modélisation', detail: 'Intégrer les données satellite dans des modèles océaniques globaux (MERCATOR OCÉAN) pour prédire les courants.' },
               { label: 'Publication & veille', detail: 'Rédiger des bulletins scientifiques pour les pêcheurs, armateurs, États côtiers et organismes climatiques.' },
             ].map((t, i) => (
