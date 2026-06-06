@@ -22,8 +22,11 @@ const sectionOrder: Section[] = [
   'completed',
 ];
 
+const SESSION1_SECTIONS: Section[] = ['introduction', 'impact_terrestre', 'rockets', 'social', 'session_break'];
+const SESSION2_SECTIONS: Section[] = ['satellites', 'exploration', 'entreprises_spatiales', 'accompagnement', 'faq_questions'];
+
 function AppContent() {
-  const { session, loading, updateSection, completeSection } = useSession();
+  const { session, loading, updateSection, completeSection, markSession1Complete, markSession2Complete } = useSession();
   const [currentView, setCurrentView] = useState<Section>('start');
 
   useEffect(() => {
@@ -52,9 +55,32 @@ function AppContent() {
 
   const handleHome = async () => navigate('start');
 
-  // End of session 2 → completed page, then back to home
+  // Smart resume: goes back to the last section visited within the session,
+  // or to the session's entry point when no in-progress section is found.
+  const handleStartSession1 = async () => {
+    const resumeTo = session && SESSION1_SECTIONS.includes(session.current_section)
+      ? session.current_section
+      : 'introduction';
+    await navigate(resumeTo);
+  };
+
+  const handleStartSession2 = async () => {
+    const resumeTo = session && SESSION2_SECTIONS.includes(session.current_section)
+      ? session.current_section
+      : 'satellites';
+    await navigate(resumeTo);
+  };
+
+  // Séance 1 done: mark completion then go home so the student can start séance 2
+  const handleSession1End = async () => {
+    await markSession1Complete();
+    await navigate('start');
+  };
+
+  // Séance 2 done: mark séance 2 (and full journey) complete
   const handleSession2End = async () => {
     await completeSection(currentView);
+    await markSession2Complete();
     await navigate('completed');
   };
 
@@ -68,11 +94,10 @@ function AppContent() {
 
   return (
     <div className="min-h-screen bg-deepspace">
-
       {currentView === 'start' && (
         <StartPage
-          onStartSession1={() => navigate('introduction')}
-          onStartSession2={() => navigate('satellites')}
+          onStartSession1={handleStartSession1}
+          onStartSession2={handleStartSession2}
         />
       )}
 
@@ -107,11 +132,11 @@ function AppContent() {
         />
       )}
 
-      {/* Fin de session 1 → retour accueil */}
+      {/* Fin de session 1 → marque séance 1 complète + retour accueil */}
       {currentView === 'session_break' && (
         <SessionBreakPage
-          onContinue={handleHome}
-          onHome={handleHome}
+          onContinue={handleSession1End}
+          onHome={handleSession1End}
         />
       )}
 

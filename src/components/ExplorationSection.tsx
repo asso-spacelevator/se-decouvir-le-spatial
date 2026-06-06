@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
-import { Telescope, Moon, Sparkles, Globe, Lightbulb } from 'lucide-react';
+import { Telescope, Moon, Sparkles, Globe, Lightbulb, ChevronLeft } from 'lucide-react';
 import { useSession } from '../contexts/SessionContext';
 import { Quiz } from './Quiz';
 import { SectionCanvas, SectionTopBar, SectionProgress, ChapterShell, ChapterRecap } from './ChapterShell';
 
-const TOTAL_CHAPTERS = 4;
+const TOTAL_CHAPTERS = 3;
 
 interface ExplorationSectionProps {
   onComplete: () => void;
@@ -69,7 +69,8 @@ export function ExplorationSection({ onComplete, onHome }: ExplorationSectionPro
   const { saveResponse, getResponses } = useSession();
   const [chapter, setChapter] = useState(0);
   const [hydrated, setHydrated] = useState(false);
-  const [selectedTopic, setSelectedTopic] = useState<number | null>(null);
+  const [viewingTopic, setViewingTopic] = useState<number | null>(null);
+  const [exploredTopics, setExploredTopics] = useState<Set<number>>(new Set());
   const [quizCompleted, setQuizCompleted] = useState(false);
   const [dream, setDream] = useState('');
 
@@ -77,7 +78,11 @@ export function ExplorationSection({ onComplete, onHome }: ExplorationSectionPro
     (async () => {
       const r = await getResponses('exploration');
       if (r.chapter) setChapter(Math.min(parseInt(r.chapter, 10) || 0, TOTAL_CHAPTERS - 1));
-      if (r.selectedTopic !== undefined && r.selectedTopic !== '') setSelectedTopic(parseInt(r.selectedTopic, 10));
+      if (r.exploredTopics) {
+        try {
+          setExploredTopics(new Set(JSON.parse(r.exploredTopics) as number[]));
+        } catch { /* ignore malformed */ }
+      }
       if (r.quizCompleted === 'true') setQuizCompleted(true);
       if (r.dream) setDream(r.dream);
       setHydrated(true);
@@ -88,13 +93,24 @@ export function ExplorationSection({ onComplete, onHome }: ExplorationSectionPro
   const goTo = async (i: number) => {
     if (i < 0 || i >= TOTAL_CHAPTERS) return;
     setChapter(i);
+    setViewingTopic(null);
     window.scrollTo({ top: 0, behavior: 'smooth' });
     if (hydrated) await saveResponse('exploration', 'chapter', String(i));
   };
 
-  const handleTopicSelect = async (index: number) => {
-    setSelectedTopic(index);
-    if (hydrated) await saveResponse('exploration', 'selectedTopic', String(index));
+  const handleTopicOpen = async (index: number) => {
+    setViewingTopic(index);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (!exploredTopics.has(index)) {
+      const newExplored = new Set(exploredTopics).add(index);
+      setExploredTopics(newExplored);
+      if (hydrated) await saveResponse('exploration', 'exploredTopics', JSON.stringify([...newExplored]));
+    }
+  };
+
+  const handleTopicClose = () => {
+    setViewingTopic(null);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleQuizComplete = async () => {
@@ -107,6 +123,8 @@ export function ExplorationSection({ onComplete, onHome }: ExplorationSectionPro
     if (hydrated) await saveResponse('exploration', 'dream', v);
   };
 
+  const allExplored = exploredTopics.size >= explorationTopics.length;
+
   return (
     <SectionCanvas>
       <SectionTopBar label="Session 2 · Chapitre 2 sur 5 · Exploration" onHome={onHome} />
@@ -114,95 +132,111 @@ export function ExplorationSection({ onComplete, onHome }: ExplorationSectionPro
 
       <div className="relative z-[1] max-w-[1120px] mx-auto px-8 pt-14 pb-24">
 
-        {/* ── Ch 0 : L'ère de l'exploration ── */}
-        {chapter === 0 && (
+        {/* ── Ch 0 : Menu des missions ── */}
+        {chapter === 0 && viewingTopic === null && (
           <ChapterShell
             kicker="01" title="L'ère de l'exploration"
-            titlePrefix="Nous vivons une époque"
-            titleAccent="extraordinaire."
-            lede="Télescopes révolutionnaires, retour sur la Lune, rover sur Mars — chaque mission repousse les limites du possible. Choisis un domaine pour plonger dedans."
-            onPrev={null} onNext={() => goTo(1)} nextEnabled={selectedTopic !== null}
-            nextLabel={selectedTopic !== null ? "Continue · Découvrir →" : "Sélectionne un domaine d'abord"}
+            titlePrefix="À 1,5 million de kilomètres d'ici,"
+            titleAccent="un télescope voit des étoiles nées il y a 13,5 milliards d'années."
+            lede="James Webb, Artemis, Perseverance. Explore les 4 missions pour découvrir les enjeux de cette décennie d'exploration."
+            onPrev={null} onNext={() => goTo(1)} nextEnabled={allExplored}
+            nextLabel={allExplored ? "Continue · Quiz →" : `Explore ${exploredTopics.size}/${explorationTopics.length} missions d'abord`}
           >
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {explorationTopics.map((topic, i) => (
-                <button
-                  key={i}
-                  onClick={() => handleTopicSelect(i)}
-                  className={`p-5 rounded-2xl border text-left transition-all group ${
-                    selectedTopic === i
-                      ? 'border-magenta bg-magenta/10'
-                      : 'border-white/10 bg-white/[0.04] hover:border-magenta hover:-translate-y-0.5'
-                  }`}
-                >
-                  <div className="flex items-center gap-3 mb-2">
-                    <span className={`flex-shrink-0 transition-colors ${selectedTopic === i ? 'text-magenta' : 'text-magenta/60 group-hover:text-magenta'}`}>
-                      {topic.icon}
-                    </span>
-                    <h4 className="font-semibold text-white text-[15px]">{topic.name}</h4>
-                  </div>
-                  <p className="text-[12px] text-white/55 leading-snug">{topic.description}</p>
-                </button>
-              ))}
+              {explorationTopics.map((topic, i) => {
+                const explored = exploredTopics.has(i);
+                return (
+                  <button
+                    key={i}
+                    onClick={() => handleTopicOpen(i)}
+                    className={`p-5 rounded-2xl border text-left transition-all group ${
+                      explored
+                        ? 'border-magenta/50 bg-magenta/[0.07]'
+                        : 'border-white/10 bg-white/[0.04] hover:border-magenta hover:-translate-y-0.5'
+                    }`}
+                  >
+                    <div className="flex items-center gap-3 mb-2">
+                      <span className={`flex-shrink-0 transition-colors ${explored ? 'text-magenta' : 'text-magenta/60 group-hover:text-magenta'}`}>
+                        {topic.icon}
+                      </span>
+                      <h4 className="font-semibold text-white text-[15px] flex-1 text-left">{topic.name}</h4>
+                      {explored && (
+                        <span className="text-[10px] text-magenta border border-magenta/40 rounded-full px-2 py-0.5 shrink-0">vu</span>
+                      )}
+                    </div>
+                    <p className="text-[12px] text-white/55 leading-snug">{topic.description}</p>
+                  </button>
+                );
+              })}
             </div>
           </ChapterShell>
         )}
 
-        {/* ── Ch 1 : Deep dive ── */}
-        {chapter === 1 && selectedTopic !== null && (
-          <ChapterShell
-            kicker="02" title={explorationTopics[selectedTopic].name}
-            titlePrefix="Tout sur"
-            titleAccent="ce domaine."
-            lede="Ce qui a été accompli, ce qui reste à faire, et l'anecdote qui surprend tout le monde."
-            onPrev={() => goTo(0)} onNext={() => goTo(2)} nextEnabled={true}
-            nextLabel="Continue · Quiz →"
-          >
+        {/* ── Ch 0 : Détail d'une mission ── */}
+        {chapter === 0 && viewingTopic !== null && (
+          <div className="animate-[chapterIn_320ms_cubic-bezier(.2,0,0,1)] space-y-8">
+            <button
+              onClick={handleTopicClose}
+              className="inline-flex items-center gap-2 rounded-lg px-5 py-3 text-[14px] font-semibold border border-white/10 text-white/70 hover:border-white/30 hover:text-white transition-colors"
+            >
+              <ChevronLeft className="w-4 h-4" /> Retour aux missions
+            </button>
+
+            <div>
+              <span className="bg-magenta text-white rounded-full px-2.5 py-0.5 text-[11px] font-bold tracking-[0.12em] uppercase">Mission</span>
+              <h1 className="font-display font-bold uppercase tracking-[0.04em] text-[clamp(28px,4vw,48px)] leading-[1.08] mt-3">
+                <span className="text-magenta">{explorationTopics[viewingTopic].name}</span>
+              </h1>
+              <p className="text-[16px] text-white/70 max-w-[720px] leading-[1.55] mt-2">
+                {explorationTopics[viewingTopic].description}
+              </p>
+            </div>
+
             <div className="space-y-4">
               <div className="bg-white/[0.04] border border-white/10 rounded-2xl p-6 space-y-5">
                 <div>
                   <h4 className="text-[11px] font-semibold tracking-[0.14em] uppercase text-white/45 mb-2">Description</h4>
-                  <p className="text-white/80 leading-relaxed text-[14px]">{explorationTopics[selectedTopic].details}</p>
+                  <p className="text-white/80 leading-relaxed text-[14px]">{explorationTopics[viewingTopic].details}</p>
                 </div>
                 <div>
                   <h4 className="text-[11px] font-semibold tracking-[0.14em] uppercase text-white/45 mb-2">Réalisations</h4>
-                  <p className="text-white/80 leading-relaxed text-[14px]">{explorationTopics[selectedTopic].achievements}</p>
+                  <p className="text-white/80 leading-relaxed text-[14px]">{explorationTopics[viewingTopic].achievements}</p>
                 </div>
                 <div>
                   <h4 className="text-[11px] font-semibold tracking-[0.14em] uppercase text-white/45 mb-2">Futur</h4>
-                  <p className="text-white/80 leading-relaxed text-[14px]">{explorationTopics[selectedTopic].future}</p>
+                  <p className="text-white/80 leading-relaxed text-[14px]">{explorationTopics[viewingTopic].future}</p>
                 </div>
               </div>
-              <div className="border border-magenta/30 border-[1.5px] rounded-lg p-4 flex items-start gap-3">
-                <Lightbulb className="w-4 h-4 text-magenta flex-shrink-0 mt-0.5" />
-                <p className="text-white/80 text-[13px] leading-relaxed">{explorationTopics[selectedTopic].funFact}</p>
+              <div className="border-[1.5px] border-magenta/30 rounded-lg p-4 flex items-start gap-3">
+                <Lightbulb className="w-4 h-4 text-magenta flex-shrink-0 mt-0.5" strokeWidth={1.75} />
+                <p className="text-white/80 text-[13px] leading-relaxed">{explorationTopics[viewingTopic].funFact}</p>
               </div>
             </div>
-          </ChapterShell>
+          </div>
         )}
 
-        {/* ── Ch 2a : Quiz ── */}
-        {chapter === 2 && !quizCompleted && (
+        {/* ── Ch 1a : Quiz ── */}
+        {chapter === 1 && !quizCompleted && (
           <ChapterShell
-            kicker="03" title="Quiz éclair"
-            titlePrefix="Teste ce que tu viens"
-            titleAccent="d'apprendre."
-            lede="Une question rapide avant de partager ta vision de l'avenir."
-            onPrev={() => goTo(1)} onNext={() => goTo(3)} nextEnabled={false}
+            kicker="02" title="Quiz éclair"
+            titlePrefix="Une question."
+            titleAccent="Elle sépare ceux qui ont lu vite de ceux qui ont vraiment retenu."
+            lede="Une seule réponse. L'objectif, c'est l'apprentissage."
+            onPrev={() => goTo(0)} onNext={() => goTo(2)} nextEnabled={false}
             nextLabel="Réponds à la question d'abord"
           >
             <Quiz questions={quizQuestions} onComplete={handleQuizComplete} />
           </ChapterShell>
         )}
 
-        {/* ── Ch 2b : Ton rêve spatial ── */}
-        {chapter === 2 && quizCompleted && (
+        {/* ── Ch 1b : Ton rêve spatial ── */}
+        {chapter === 1 && quizCompleted && (
           <ChapterShell
-            kicker="03" title="Ton rêve spatial"
-            titlePrefix="Quelle mission te fait"
-            titleAccent="rêver ?"
-            lede="Quelle découverte ou mission spatiale t'inspire le plus ? Quel rêve spatial voudrais-tu voir se réaliser de ton vivant ?"
-            onPrev={() => goTo(1)} onNext={() => goTo(3)} nextEnabled={dream.trim().length > 0}
+            kicker="02" title="Ton rêve spatial"
+            titlePrefix="Des équipes de milliers de personnes"
+            titleAccent="construisent les missions que tu viens de voir."
+            lede="Et toi, quelle mission te fait rêver ? Quelle découverte voudrais-tu voir se réaliser de ton vivant ?"
+            onPrev={() => goTo(0)} onNext={() => goTo(2)} nextEnabled={dream.trim().length > 0}
             nextLabel={dream.trim().length > 0 ? "Terminer le chapitre →" : "Écris ta réponse d'abord"}
           >
             <div>
@@ -222,14 +256,14 @@ export function ExplorationSection({ onComplete, onHome }: ExplorationSectionPro
         )}
 
         {/* ── Récap ── */}
-        {chapter === 3 && (
+        {chapter === 2 && (
           <ChapterRecap
             chapterLabel="Exploration Spatiale"
             summary="Tu as exploré les grandes missions en cours, découvert les défis de l'exploration et partagé ta vision de l'avenir."
             nextTitle="Associations et accompagnement"
             nextDesc="Comment t'engager dans le spatial : associations, ressources et mentorat."
             onContinue={onComplete}
-            onPrev={() => goTo(2)}
+            onPrev={() => goTo(1)}
           />
         )}
       </div>

@@ -1,6 +1,6 @@
 import { useState, useEffect, type ReactNode } from 'react';
 import {
-  Users, ExternalLink, Mail, UserSearch, BookOpen, Wrench, Trophy, Search,
+  Users, ExternalLink, Mail, UserSearch, BookOpen, Wrench, Trophy,
   Lightbulb, Heart, Atom, Star, Monitor, GraduationCap, Building2, Rocket,
   TrendingUp, Calculator, Telescope, Globe, ChevronRight, Package, Satellite,
 } from 'lucide-react';
@@ -8,7 +8,7 @@ import { useSession } from '../contexts/SessionContext';
 import { supabase } from '../lib/supabase';
 import { SectionCanvas, SectionTopBar, SectionProgress, ChapterShell, ChapterRecap } from './ChapterShell';
 
-const TOTAL_CHAPTERS = 5;
+const TOTAL_CHAPTERS = 4;
 
 interface Association {
   name: string;
@@ -189,12 +189,6 @@ const typeIcons: Record<Resource['type'], ReactNode> = {
   kit: <Package className="w-5 h-5" />,
 };
 
-const regions = [
-  'Auvergne-Rhône-Alpes', 'Bourgogne-Franche-Comté', 'Bretagne', 'Centre-Val de Loire',
-  'Corse', 'Grand Est', 'Hauts-de-France', 'Île-de-France', 'Normandie',
-  'Nouvelle-Aquitaine', 'Occitanie', 'Pays de la Loire', "Provence-Alpes-Côte d'Azur",
-];
-
 const sciCategoryLabels: Record<string, string> = {
   general_science: 'Sciences Générales',
   space: 'Associations Spatiales',
@@ -205,17 +199,14 @@ export function AccompagnementSection({ onComplete, onHome }: AccompagnementSect
   const { saveResponse, getResponses } = useSession();
   const [chapter, setChapter] = useState(0);
   const [hydrated, setHydrated] = useState(false);
-  const [searchRegion, setSearchRegion] = useState('');
   const [interested, setInterested] = useState('');
   const [mentoringPlatforms, setMentoringPlatforms] = useState<MentoringPlatform[]>([]);
   const [scientificAssociations, setScientificAssociations] = useState<ScientificAssociation[]>([]);
-  const [regionalAssociations, setRegionalAssociations] = useState<ScientificAssociation[]>([]);
 
   useEffect(() => {
     (async () => {
       const r = await getResponses('accompagnement');
       if (r.chapter) setChapter(Math.min(parseInt(r.chapter, 10) || 0, TOTAL_CHAPTERS - 1));
-      if (r.searchRegion) setSearchRegion(r.searchRegion);
       if (r.interested) setInterested(r.interested);
 
       const { data: mentoring } = await supabase.from('mentoring_platforms').select('*').order('name');
@@ -223,11 +214,6 @@ export function AccompagnementSection({ onComplete, onHome }: AccompagnementSect
 
       const { data: assocs } = await supabase.from('scientific_associations').select('*').order('name');
       if (assocs) setScientificAssociations(assocs);
-
-      if (r.searchRegion) {
-        const { data } = await supabase.from('scientific_associations').select('*').eq('category', 'mediation').eq('region', r.searchRegion);
-        if (data) setRegionalAssociations(data);
-      }
 
       setHydrated(true);
     })();
@@ -239,17 +225,6 @@ export function AccompagnementSection({ onComplete, onHome }: AccompagnementSect
     setChapter(i);
     window.scrollTo({ top: 0, behavior: 'smooth' });
     if (hydrated) await saveResponse('accompagnement', 'chapter', String(i));
-  };
-
-  const handleRegionSearch = async (region: string) => {
-    setSearchRegion(region);
-    if (hydrated) await saveResponse('accompagnement', 'searchRegion', region);
-    if (region) {
-      const { data } = await supabase.from('scientific_associations').select('*').eq('category', 'mediation').eq('region', region);
-      if (data) setRegionalAssociations(data);
-    } else {
-      setRegionalAssociations([]);
-    }
   };
 
   const handleInterestedChange = async (v: string) => {
@@ -268,12 +243,24 @@ export function AccompagnementSection({ onComplete, onHome }: AccompagnementSect
         {chapter === 0 && (
           <ChapterShell
             kicker="01" title="Associations"
-            titlePrefix="Des acteurs engagés pour"
-            titleAccent="t'accompagner."
-            lede="Ces associations peuvent t'aider à explorer le spatial, trouver un mentor, ou rejoindre un projet scientifique. Clique sur une fiche pour visiter leur site."
+            titlePrefix="150 000 jeunes accompagnés chaque année."
+            titleAccent="Ces structures peuvent t'aider à trouver ta voie."
+            lede="Associations spatiales, plateformes de mentorat, dispositifs d'orientation. Chaque fiche te donne accès à des personnes et des programmes qui peuvent t'accompagner concrètement."
             onPrev={null} onNext={() => goTo(1)} nextEnabled={true}
             nextLabel="Continue · Ressources →"
           >
+            <div className="grid grid-cols-3 gap-3 mb-8">
+              {[
+                { value: '150 000', label: 'jeunes accompagnés / an' },
+                { value: '12+', label: 'associations référencées' },
+                { value: '13', label: 'régions couvertes' },
+              ].map(stat => (
+                <div key={stat.label} className="bg-white/[0.04] border border-white/10 rounded-xl p-4 text-center">
+                  <div className="text-[28px] font-bold text-magenta leading-none">{stat.value}</div>
+                  <div className="text-[11px] text-white/45 mt-1.5 leading-tight uppercase tracking-[0.08em]">{stat.label}</div>
+                </div>
+              ))}
+            </div>
             <div className="space-y-3 mb-8">
               {associations.map((a, i) => (
                 <div key={i} className="bg-white/[0.04] border border-white/10 rounded-2xl p-5">
@@ -334,11 +321,11 @@ export function AccompagnementSection({ onComplete, onHome }: AccompagnementSect
         {chapter === 1 && (
           <ChapterShell
             kicker="02" title="Ressources pédagogiques"
-            titlePrefix="Tous les outils pour"
-            titleAccent="apprendre et s'engager."
-            lede="Interventions en classe, kits clé en main, projets DIY, concours — et des plateformes de mentorat soutenues par l'État."
+            titlePrefix="Interventions, concours, kits, mentorat :"
+            titleAccent="tous les outils pour passer à l'action."
+            lede="Des ateliers en classe aux ballons stratosphériques, en passant par les concours nationaux et les plateformes de mentorat soutenues par l'État."
             onPrev={() => goTo(0)} onNext={() => goTo(2)} nextEnabled={true}
-            nextLabel="Continue · Par région →"
+            nextLabel="Continue · Vos besoins →"
           >
             <div className="space-y-8 mb-8">
               {(['intervention', 'kit', 'diy', 'competition'] as const).map(type => {
@@ -437,58 +424,14 @@ export function AccompagnementSection({ onComplete, onHome }: AccompagnementSect
           </ChapterShell>
         )}
 
-        {/* ── Ch 2 : Par région ── */}
+        {/* ── Ch 2 : Vos besoins ── */}
         {chapter === 2 && (
           <ChapterShell
-            kicker="03" title="Par région"
-            titlePrefix="La médiation scientifique"
-            titleAccent="près de chez toi."
-            lede="Trouve les centres de médiation scientifique dans ta région pour aller plus loin localement."
-            onPrev={() => goTo(1)} onNext={() => goTo(3)} nextEnabled={true}
-            nextLabel="Continue · Vos besoins →"
-          >
-            <div className="flex items-center gap-2 mb-4">
-              <Search className="w-4 h-4 text-magenta flex-shrink-0" />
-              <label className="text-[13px] font-medium text-white/70">Choisis ta région</label>
-            </div>
-            <select
-              value={searchRegion}
-              onChange={e => handleRegionSearch(e.target.value)}
-              className="w-full bg-white/[0.04] border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-magenta focus:ring-2 focus:ring-magenta/20 mb-4 text-[14px]"
-            >
-              <option value="">Choisir une région...</option>
-              {regions.map(r => <option key={r} value={r}>{r}</option>)}
-            </select>
-
-            {searchRegion && regionalAssociations.length > 0 && (
-              <div className="space-y-2">
-                {regionalAssociations.map(a => (
-                  <a key={a.id} href={a.url} target="_blank" rel="noopener noreferrer"
-                    className="flex items-center justify-between bg-white/[0.04] border border-white/10 rounded-xl p-4 hover:border-magenta transition-all group">
-                    <h5 className="font-semibold text-white group-hover:text-magenta transition-colors text-[14px]">{a.name}</h5>
-                    <div className="flex items-center gap-1.5 text-magenta text-[12px]">
-                      <ExternalLink className="w-3.5 h-3.5" /> Visiter
-                    </div>
-                  </a>
-                ))}
-              </div>
-            )}
-            {searchRegion && regionalAssociations.length === 0 && (
-              <div className="bg-white/[0.04] border border-white/10 rounded-xl p-5">
-                <p className="text-[13px] text-white/45">Aucun centre trouvé pour cette région dans notre base de données.</p>
-              </div>
-            )}
-          </ChapterShell>
-        )}
-
-        {/* ── Ch 3 : Vos besoins ── */}
-        {chapter === 3 && (
-          <ChapterShell
-            kicker="04" title="Vos besoins"
-            titlePrefix="Quelle ressource"
-            titleAccent="t'intéresse le plus ?"
-            lede="Partage ce qui te parle le plus parmi tout ce que tu as vu — association, ressource ou programme."
-            onPrev={() => goTo(2)} onNext={() => goTo(4)} nextEnabled={interested.trim().length > 0}
+            kicker="03" title="Vos besoins"
+            titlePrefix="Tu as vu ce qui existe."
+            titleAccent="Qu'est-ce qui te parle vraiment ?"
+            lede="Parmi tout ce que tu viens de parcourir, quelle association, ressource ou programme te donne envie d'aller plus loin ?"
+            onPrev={() => goTo(1)} onNext={() => goTo(3)} nextEnabled={interested.trim().length > 0}
             nextLabel={interested.trim().length > 0 ? "Terminer le chapitre →" : "Écris ta réponse d'abord"}
           >
             <div>
@@ -508,14 +451,14 @@ export function AccompagnementSection({ onComplete, onHome }: AccompagnementSect
         )}
 
         {/* ── Récap ── */}
-        {chapter === 4 && (
+        {chapter === 3 && (
           <ChapterRecap
             chapterLabel="Accompagnement"
             summary="Tu as découvert les associations, ressources pédagogiques et programmes de mentorat disponibles pour te lancer dans le spatial."
             nextTitle="Zone FAQ"
             nextDesc="Pose tes questions aux professionnels du secteur spatial."
             onContinue={onComplete}
-            onPrev={() => goTo(3)}
+            onPrev={() => goTo(2)}
           />
         )}
       </div>

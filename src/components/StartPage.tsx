@@ -1,6 +1,8 @@
-import { useEffect, useState } from 'react';
-import { Globe, Rocket, Wifi, Satellite, Compass, Users, MessageCircle, ArrowRight } from 'lucide-react';
+import { useEffect, useState, useRef } from 'react';
+import { Globe, Rocket, Wifi, Satellite, Compass, Users, MessageCircle, ArrowRight, RotateCcw, Check, School } from 'lucide-react';
 import { GirlAvatar, BoyAvatar } from './AvatarGuide';
+import { useSession } from '../contexts/SessionContext';
+import { RestartConfirmModal } from './RestartConfirmModal';
 
 interface StartPageProps {
   onStartSession1: () => void;
@@ -31,9 +33,50 @@ const SESSION_2_TOPICS = [
 ];
 
 export function StartPage({ onStartSession1, onStartSession2 }: StartPageProps) {
+  const { session, restartSession, saveSchoolName } = useSession();
   const [dialogueIndex, setDialogueIndex] = useState(0);
   const [visible, setVisible] = useState(true);
   const [talking, setTalking] = useState(true);
+  const [showRestartModal, setShowRestartModal] = useState(false);
+  const [isRestarting, setIsRestarting] = useState(false);
+  const [schoolInput, setSchoolInput] = useState('');
+  const [schoolSaved, setSchoolSaved] = useState(false);
+  const schoolSaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    if (session?.school_name) setSchoolInput(session.school_name);
+  }, [session?.school_name]);
+
+  const handleSchoolChange = (value: string) => {
+    setSchoolInput(value);
+    setSchoolSaved(false);
+    if (schoolSaveTimer.current) clearTimeout(schoolSaveTimer.current);
+    if (value.trim()) {
+      schoolSaveTimer.current = setTimeout(async () => {
+        await saveSchoolName(value.trim());
+        setSchoolSaved(true);
+      }, 800);
+    }
+  };
+
+  const SESSION1_CHAPTERS = ['impact_terrestre', 'rockets', 'social'];
+  const SESSION2_CHAPTERS = ['satellites', 'exploration', 'entreprises_spatiales', 'accompagnement', 'faq_questions'];
+
+  const s1done = !!session?.session1_completed_at;
+  const s2done = !!session?.session2_completed_at;
+
+  const s1chapitres = session ? SESSION1_CHAPTERS.filter(s => session.completed_sections.includes(s)).length : 0;
+  const s2chapitres = session ? SESSION2_CHAPTERS.filter(s => session.completed_sections.includes(s)).length : 0;
+
+  const s1status = s1done ? 'completed' : s1chapitres > 0 ? 'in_progress' : 'not_started';
+  const s2status = s2done ? 'completed' : s2chapitres > 0 ? 'in_progress' : 'not_started';
+
+  const handleConfirmRestart = async () => {
+    setIsRestarting(true);
+    await restartSession();
+    setIsRestarting(false);
+    setShowRestartModal(false);
+  };
 
   useEffect(() => {
     const talkDuration = 2400;
@@ -58,6 +101,13 @@ export function StartPage({ onStartSession1, onStartSession2 }: StartPageProps) 
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-deepspace text-white font-sans">
+      {showRestartModal && (
+        <RestartConfirmModal
+          onConfirm={handleConfirmRestart}
+          onCancel={() => setShowRestartModal(false)}
+          isLoading={isRestarting}
+        />
+      )}
       {/* Starry background */}
       <div className="starry-background absolute inset-0" />
 
@@ -146,6 +196,27 @@ export function StartPage({ onStartSession1, onStartSession2 }: StartPageProps) 
           </div>
         </section>
 
+        {/* School name — optional */}
+        <div className="flex items-center gap-3 max-w-sm">
+          <div className="relative flex-1">
+            <School className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/35 pointer-events-none" strokeWidth={1.75} />
+            <input
+              type="text"
+              value={schoolInput}
+              onChange={e => handleSchoolChange(e.target.value)}
+              maxLength={150}
+              placeholder="Ton établissement (facultatif)"
+              className="w-full bg-white/[0.04] border border-white/10 rounded-lg pl-9 pr-4 py-2.5 text-sm text-white placeholder-white/30 focus:outline-none focus:border-magenta focus:ring-2 focus:ring-magenta/20 transition-colors"
+            />
+          </div>
+          {schoolSaved && (
+            <span className="flex items-center gap-1.5 text-[11px] text-white/45 whitespace-nowrap">
+              <Check className="w-3.5 h-3.5 text-magenta" strokeWidth={2.5} />
+              Enregistré
+            </span>
+          )}
+        </div>
+
         {/* Sessions */}
         <section className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <SessionCard
@@ -155,8 +226,11 @@ export function StartPage({ onStartSession1, onStartSession2 }: StartPageProps) 
             titleAccent="quotidien"
             lede="Comment le spatial influence ta vie, les lanceurs qui partent de Kourou, et où suivre l'actualité spatiale."
             topics={SESSION_1_TOPICS}
-            cta="Commencer la partie 1"
+            cta={s1status === 'completed' ? 'Revoir la partie 1' : s1status === 'in_progress' ? 'Reprendre la partie 1' : 'Commencer la partie 1'}
             bigNum="1"
+            completionStatus={s1status}
+            completedChapters={s1chapitres}
+            totalChapters={SESSION1_CHAPTERS.length}
             onClick={onStartSession1}
           />
           <SessionCard
@@ -166,11 +240,26 @@ export function StartPage({ onStartSession1, onStartSession2 }: StartPageProps) 
             titleAccent="l'espace"
             lede="Les satellites en orbite, les missions lointaines vers Mars et au-delà, et comment t'orienter vers ces métiers."
             topics={SESSION_2_TOPICS}
-            cta="Commencer la partie 2"
+            cta={s2status === 'completed' ? 'Revoir la partie 2' : s2status === 'in_progress' ? 'Reprendre la partie 2' : 'Commencer la partie 2'}
             bigNum="2"
+            completionStatus={s2status}
+            completedChapters={s2chapitres}
+            totalChapters={SESSION2_CHAPTERS.length}
             onClick={onStartSession2}
           />
         </section>
+
+        {/* Restart session */}
+        <div className="flex justify-center">
+          <button
+            type="button"
+            onClick={() => setShowRestartModal(true)}
+            className="inline-flex items-center gap-2 text-white/40 hover:text-white/70 text-[13px] font-medium transition-colors duration-150"
+          >
+            <RotateCcw className="w-3.5 h-3.5" strokeWidth={2} />
+            Recommencer une nouvelle séance
+          </button>
+        </div>
 
         {/* Partners */}
         <div className="flex flex-col items-center gap-3.5 mt-4 opacity-90">
@@ -198,6 +287,8 @@ export function StartPage({ onStartSession1, onStartSession2 }: StartPageProps) 
 /* ─────────────────────────────────────────────────────────
  * SessionCard — two contrasting variants (white / magenta)
  * ────────────────────────────────────────────────────────*/
+type CompletionStatus = 'not_started' | 'in_progress' | 'completed';
+
 interface SessionCardProps {
   variant: 'do' | 'inspire';
   tag: string;
@@ -208,9 +299,12 @@ interface SessionCardProps {
   cta: string;
   bigNum: string;
   onClick: () => void;
+  completionStatus: CompletionStatus;
+  completedChapters: number;
+  totalChapters: number;
 }
 
-function SessionCard({ variant, tag, title, titleAccent, lede, topics, cta, bigNum, onClick }: SessionCardProps) {
+function SessionCard({ variant, tag, title, titleAccent, lede, topics, cta, bigNum, onClick, completionStatus, completedChapters, totalChapters }: SessionCardProps) {
   const isDo = variant === 'do';
   const surface  = isDo ? 'bg-white text-black hover:shadow-2xl'        : 'bg-magenta text-white hover:bg-magenta-700';
   const tagClass = isDo ? 'text-magenta'                                : 'text-white/85';
@@ -221,6 +315,11 @@ function SessionCard({ variant, tag, title, titleAccent, lede, topics, cta, bigN
   const arrowBg  = isDo ? 'bg-black text-white'                         : 'bg-white text-magenta';
   const bigCol   = isDo ? 'text-black/[0.04]'                           : 'text-white/10';
 
+  const badgeClass = isDo
+    ? 'bg-magenta/10 text-magenta border border-magenta/25'
+    : 'bg-white/20 text-white border border-white/30';
+  const progressClass = isDo ? 'text-magenta/70' : 'text-white/70';
+
   return (
     <button
       type="button"
@@ -228,8 +327,21 @@ function SessionCard({ variant, tag, title, titleAccent, lede, topics, cta, bigN
       className={`group relative overflow-hidden rounded-2xl p-8 pb-7 text-left flex flex-col gap-4 transition-all duration-200 hover:-translate-y-0.5 ${surface}`}
     >
       <div className="flex items-center justify-between gap-3">
-        <span className={`text-[11px] font-semibold tracking-[0.18em] uppercase ${tagClass}`}>{tag}</span>
-        <div className={`w-11 h-11 rounded-full grid place-items-center transition-transform duration-200 group-hover:translate-x-1 ${arrowBg}`}>
+        <div className="flex flex-col gap-1.5">
+          <span className={`text-[11px] font-semibold tracking-[0.18em] uppercase ${tagClass}`}>{tag}</span>
+          {completionStatus === 'completed' && (
+            <span className={`inline-flex items-center gap-1.5 self-start text-[10.5px] font-semibold tracking-[0.08em] uppercase rounded-full px-2.5 py-0.5 ${badgeClass}`}>
+              <Check className="w-3 h-3" strokeWidth={2.5} />
+              Terminée
+            </span>
+          )}
+          {completionStatus === 'in_progress' && (
+            <span className={`text-[11px] font-medium ${progressClass}`}>
+              {completedChapters}/{totalChapters} chapitres complétés
+            </span>
+          )}
+        </div>
+        <div className={`w-11 h-11 rounded-full grid place-items-center transition-transform duration-200 group-hover:translate-x-1 flex-shrink-0 ${arrowBg}`}>
           <ArrowRight className="w-5 h-5" strokeWidth={2.25} />
         </div>
       </div>

@@ -20,7 +20,7 @@ export function SessionBreakPage({ onContinue }: SessionBreakPageProps) {
           Bravo, <span className="text-magenta">c'est fini !</span>
         </h1>
         <p className="text-white/60 text-center text-[17px] max-w-xl mb-12 leading-relaxed">
-          Tu as couvert l'impact terrestre du spatial, les lanceurs et les réseaux. La session 2 t'attend à l'accueil quand tu veux.
+          Tu as vu comment le spatial façonne la vie au sol. La session 2 t'emmène en orbite : satellites, missions lointaines, et les structures qui peuvent t'ouvrir la porte de ce secteur.
         </p>
 
         {/* Recap */}
@@ -48,10 +48,10 @@ export function SessionBreakPage({ onContinue }: SessionBreakPageProps) {
           <p className="text-[11px] font-semibold tracking-[0.16em] uppercase text-white/40 mb-4">Session 2 — t'attend à l'accueil</p>
           <div className="space-y-2">
             {[
-              { num: '01', title: 'Orbite', desc: 'Les satellites et leurs usages concrets' },
-              { num: '02', title: 'Au-delà', desc: 'Exploration lointaine et défis futurs' },
-              { num: '03', title: 'Accompagnement', desc: 'Associations, ressources, mentorat' },
-              { num: '04', title: 'FAQ & Questions', desc: 'Vos questions aux professionnels' },
+              { num: '01', title: 'Orbite', desc: '7 500 satellites actifs : leur anatomie, leurs orbites, et les débris qu\'ils laissent.' },
+              { num: '02', title: 'Exploration', desc: 'James Webb, Artemis, Mars. Les missions qui repoussent ce que l\'humanité sait être possible.' },
+              { num: '03', title: 'Accompagnement', desc: 'Les associations, les ressources et les personnes qui peuvent t\'ouvrir la porte de ce secteur.' },
+              { num: '04', title: 'FAQ & Questions', desc: 'Tes questions, posées à des professionnels du spatial.' },
             ].map(({ num, title, desc }) => (
               <div key={num} className="flex items-center gap-4">
                 <span className="text-xs font-mono text-white/30 w-6 flex-shrink-0">{num}</span>
