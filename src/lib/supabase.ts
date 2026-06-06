@@ -19,6 +19,10 @@ export interface StudentSession {
   current_section: Section;
   completed_sections: string[];
   total_time_spent: number;
+  school_name: string | null;
+  abandoned_at: string | null;
+  session1_completed_at: string | null;
+  session2_completed_at: string | null;
 }
 
 export interface StudentResponse {
