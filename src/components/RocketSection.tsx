@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { CheckCircle, ExternalLink, Zap, X, BookOpen } from 'lucide-react';
 import { useSession } from '../contexts/SessionContext';
+import { Quiz } from './Quiz';
 import { Ariane6Diagram } from './Ariane6Diagram';
 import { MissionSimulator } from './MissionSimulator';
 import { SectionCanvas, SectionTopBar, SectionProgress, ChapterShell, ChapterRecap } from './ChapterShell';
@@ -186,6 +187,75 @@ const CLEAN_ROOM_RULES = [
 ];
 
 
+const quizQuestions = [
+  {
+    id: 'rocket_q1',
+    question: 'Quelle est la température maximale que peuvent atteindre les moteurs de lanceur ?',
+    options: [
+      { id: 'a', text: '500 °C', isCorrect: false },
+      { id: 'b', text: '1 500 °C', isCorrect: false },
+      { id: 'c', text: '3 000 °C', isCorrect: true },
+      { id: 'd', text: '5 000 °C', isCorrect: false },
+    ],
+    explanation: "Les moteurs de lanceur peuvent atteindre 3 000 °C. Des matériaux composites céramiques et des systèmes de refroidissement actifs sont indispensables.",
+  },
+  {
+    id: 'rocket_q2',
+    question: "Combien de pays contribuent à la construction d'Ariane 6 ?",
+    options: [
+      { id: 'a', text: '2', isCorrect: false },
+      { id: 'b', text: '4', isCorrect: false },
+      { id: 'c', text: '6', isCorrect: true },
+      { id: 'd', text: '12', isCorrect: false },
+    ],
+    explanation: "Ariane 6 est le fruit de la coopération de 6 nations européennes. Plus de 600 personnes travaillent sur le chantier de construction.",
+  },
+  {
+    id: 'rocket_q3',
+    question: "Quel gaz est utilisé comme carburant principal dans le moteur Vulcain d'Ariane 6 ?",
+    options: [
+      { id: 'a', text: 'Kérosène', isCorrect: false },
+      { id: 'b', text: 'Méthane', isCorrect: false },
+      { id: 'c', text: 'Hydrogène liquide', isCorrect: true },
+      { id: 'd', text: 'Propane', isCorrect: false },
+    ],
+    explanation: "Le moteur Vulcain brûle de l'hydrogène liquide avec de l'oxygène liquide. C'est l'un des carburants les plus énergétiques disponibles, et sa combustion ne produit que de la vapeur d'eau.",
+  },
+  {
+    id: 'rocket_q4',
+    question: "Pourquoi le Centre Spatial Guyanais à Kourou est-il idéal pour les lancements ?",
+    options: [
+      { id: 'a', text: "Il est proche du pôle Nord, ce qui refroidit les moteurs", isCorrect: false },
+      { id: 'b', text: "Sa proximité de l'équateur donne un boost de vitesse grâce à la rotation de la Terre", isCorrect: true },
+      { id: 'c', text: "Il est au bord de la mer pour faciliter la récupération des étages", isCorrect: false },
+      { id: 'd', text: "Le climat tropical protège les structures des tempêtes", isCorrect: false },
+    ],
+    explanation: "Proche de l'équateur, Kourou bénéficie de la vitesse de rotation terrestre (environ 460 m/s). Ce bonus gratuit réduit la quantité de carburant nécessaire pour atteindre l'orbite géostationnaire.",
+  },
+  {
+    id: 'rocket_q5',
+    question: "Quelle est la principale différence entre Ariane 62 et Ariane 64 ?",
+    options: [
+      { id: 'a', text: "Ariane 64 est réutilisable, Ariane 62 ne l'est pas", isCorrect: false },
+      { id: 'b', text: "Ariane 62 emporte 2 boosters latéraux, Ariane 64 en emporte 4", isCorrect: true },
+      { id: 'c', text: "Ariane 64 vole vers la Lune, Ariane 62 reste en orbite basse", isCorrect: false },
+      { id: 'd', text: "Ariane 64 utilise de l'hydrogène, Ariane 62 du kérosène", isCorrect: false },
+    ],
+    explanation: "Le chiffre après «Ariane 6» indique le nombre de boosters à propergol solide P120C. Ariane 62 (2 boosters) cible les orbites basses ou polaires légères ; Ariane 64 (4 boosters) vise les lourdes charges en orbite géostationnaire.",
+  },
+  {
+    id: 'rocket_q6',
+    question: "À quelle vitesse un satellite doit-il se déplacer pour rester en orbite basse (LEO) autour de la Terre ?",
+    options: [
+      { id: 'a', text: "1 000 km/h", isCorrect: false },
+      { id: 'b', text: "5 000 km/h", isCorrect: false },
+      { id: 'c', text: "11 000 km/h", isCorrect: false },
+      { id: 'd', text: "28 000 km/h", isCorrect: true },
+    ],
+    explanation: "En orbite basse (environ 400 km d'altitude), un satellite file à près de 28 000 km/h, soit 7,7 km par seconde. À cette vitesse, la force centrifuge équilibre exactement l'attraction terrestre.",
+  },
+];
+
 // ── Resource links helper ──
 function ResourceLinks({ title, links }: { title: string; links: { label: string; url: string; desc?: string }[] }) {
   return (
@@ -232,6 +302,7 @@ export function RocketSection({ onComplete, onHome }: RocketSectionProps) {
 
   // Existing state
   const [selectedChallenge, setSelectedChallenge] = useState<number | null>(null);
+  const [quizCompleted, setQuizCompleted] = useState(false);
   const [reflection, setReflection] = useState('');
 
   // Derived booleans
@@ -244,6 +315,7 @@ export function RocketSection({ onComplete, onHome }: RocketSectionProps) {
       const r = await getResponses('rockets');
       if (r.chapter) setChapter(Math.min(parseInt(r.chapter, 10) || 0, TOTAL_CHAPTERS - 1));
       if (r.selectedChallenge) setSelectedChallenge(parseInt(r.selectedChallenge, 10));
+      if (r.quizCompleted === 'true') setQuizCompleted(true);
       if (r.reflection) setReflection(r.reflection);
       if (r.orderClicks) setOrderClicks(JSON.parse(r.orderClicks));
       if (r.tfAnswers) setTfAnswers(JSON.parse(r.tfAnswers));
@@ -307,6 +379,12 @@ export function RocketSection({ onComplete, onHome }: RocketSectionProps) {
   const handleReflectionChange = async (v: string) => {
     setReflection(v);
     if (hydrated) await saveResponse('rockets', 'reflection', v);
+  };
+
+  const handleQuizComplete = async () => {
+    setQuizCompleted(true);
+    if (hydrated) await saveResponse('rockets', 'quizCompleted', 'true');
+    goTo(7);
   };
 
   return (
@@ -894,7 +972,7 @@ export function RocketSection({ onComplete, onHome }: RocketSectionProps) {
             titleAccent="de la mise à feu au déploiement."
             lede="Regarde un vrai lancement Ariane 6 (mission VA262) et retrouve les étapes clés. Le simulateur te permet ensuite de revivre chaque décision de mission."
             onPrev={() => goTo(4)} onNext={() => goTo(6)} nextEnabled={true}
-            nextLabel="Continue · Réflexion →"
+            nextLabel="Continue · Quiz éclair →"
           >
             <div className="space-y-6">
               <div className="rounded-xl overflow-hidden border border-white/10">
@@ -945,8 +1023,22 @@ export function RocketSection({ onComplete, onHome }: RocketSectionProps) {
           </ChapterShell>
         )}
 
-        {/* ── Ch 6 : Réflexion ── */}
-        {chapter === 6 && (
+        {/* ── Ch 6 : Quiz éclair ── */}
+        {chapter === 6 && !quizCompleted && (
+          <ChapterShell
+            kicker="07" title="Quiz éclair"
+            titlePrefix="Six questions pour"
+            titleAccent="valider le chapitre."
+            lede="Une réponse par question. Pas de mauvaise réponse définitive — l'objectif c'est d'apprendre."
+            onPrev={() => goTo(5)} onNext={() => {}} nextEnabled={false}
+            nextLabel="Réponds aux questions d'abord"
+          >
+            <Quiz questions={quizQuestions} onComplete={handleQuizComplete} />
+          </ChapterShell>
+        )}
+
+        {/* ── Ch 6 : Réflexion (après quiz) ── */}
+        {chapter === 6 && quizCompleted && (
           <ChapterShell
             kicker="07" title="Réflexion"
             titlePrefix="Quel est le défi le plus impressionnant"
@@ -984,7 +1076,7 @@ export function RocketSection({ onComplete, onHome }: RocketSectionProps) {
             stats={[
               { v: selectedChallenge !== null ? challenges[selectedChallenge].name : '—', t: 'défi technique exploré' },
               { v: orderComplete ? '4 / 4' : `${orderClicks.length} / 4`, t: 'vitesses triées correctement' },
-              { v: reflection.trim().length > 0 ? 'Rédigée' : 'Non rédigée', t: 'réflexion personnelle' },
+              { v: quizCompleted ? `${quizQuestions.length} / ${quizQuestions.length}` : '0 / ' + quizQuestions.length, t: 'questions du quiz' },
             ]}
             nextTitle="Réseaux Sociaux"
             nextDesc="Découvre les comptes et ressources pour rester connecté à l'actualité spatiale."
