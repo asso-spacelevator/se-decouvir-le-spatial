@@ -135,6 +135,7 @@ const challenges = [
     problem: "Les moteurs de lanceur peuvent atteindre 3 000 °C, tandis que l'espace oscille entre -150 °C et +150 °C.",
     solution: "Utilisation de matériaux composites céramiques ultra-résistants et de systèmes de refroidissement actifs avec circulation d'hydrogène liquide.",
     innovation: "Les boucliers thermiques modernes supportent des gradients de 3 000 °C sur quelques centimètres d'épaisseur.",
+    comparaison: "Ton four de cuisine monte à 250 °C au maximum. Le moteur Vulcain brûle à 3 000 °C — soit 12 fours superposés. Et il doit tenir ces températures pendant les 8 minutes que dure la montée.",
     funFact: "Le nez d'un lanceur lors de la rentrée atmosphérique chauffe tellement qu'il crée un plasma qui bloque temporairement les communications radio.",
     link: { label: "Propulsion spatiale — CNES", url: "https://cnes.fr/fr/propulsion-spatiale" },
   },
@@ -143,6 +144,7 @@ const challenges = [
     problem: "Il faut générer plus de 1 000 tonnes de poussée pour vaincre la gravité terrestre.",
     solution: "Moteurs à combustion d'hydrogène et oxygène liquides, brûlant 300 kg de carburant par seconde.",
     innovation: "Un seul moteur Vulcain 2.1 produit une puissance équivalente à 1 500 voitures de F1 combinées.",
+    comparaison: "300 kg de carburant brûlés chaque seconde, c'est l'équivalent d'une baignoire entière vidée en flammes toutes les secondes. En 8 minutes de vol, Ariane 6 consomme autant de carburant qu'une voiture en parcourant 800 000 km.",
     funFact: "Si on pouvait canaliser toute la puissance d'un moteur de lanceur dans une ampoule, elle brillerait 190 fois plus fort que le Soleil vu depuis la Terre.",
     link: { label: "Le moteur Vulcain 2.1 — ArianeGroup", url: "https://www.ariane.group/fr/lanceur/ariane-6/" },
   },
@@ -151,6 +153,7 @@ const challenges = [
     problem: "Une erreur de 0,1° lors du lancement peut manquer la cible orbitale de milliers de kilomètres.",
     solution: "Systèmes de guidage inertiel couplés au GPS, avec corrections en temps réel toutes les millisecondes.",
     innovation: "Les gyroscopes laser actuels détectent des rotations de l'ordre du milliardième de degré.",
+    comparaison: "0,1° d'erreur, c'est comme lancer une fléchette depuis Paris et rater la cible à New York de 400 km — soit l'équivalent de viser New York et atterrir à Boston.",
     funFact: "La précision requise est équivalente à lancer une fléchette depuis Paris et toucher le centre d'une cible à New York.",
     link: { label: "Navigation et guidage — ONERA", url: "https://www.onera.fr/fr" },
   },
@@ -159,6 +162,7 @@ const challenges = [
     problem: "Chaque kilogramme de structure en trop réduit la charge utile possible.",
     solution: "Alliages aluminium-lithium et composites carbone ultra-légers, avec optimisation par intelligence artificielle.",
     innovation: "Les nouveaux matériaux permettent un rapport résistance/poids 5 fois supérieur à l'acier.",
+    comparaison: "C'est comme préparer ton sac pour un voyage avec un quota de 20 kg : chaque kilo de sac vide économisé te permet d'emporter 100 kg de matériel utile de plus. Chaque gramme gagné sur la structure profite directement au satellite.",
     funFact: "Économiser 1 kg sur la structure d'un lanceur peut permettre de placer 100 kg supplémentaires en orbite.",
     link: { label: "Matériaux spatiaux — CNES R&T", url: "https://cnes.fr/fr/recherche-technologie" },
   },
@@ -167,6 +171,7 @@ const challenges = [
     problem: "Au décollage, les moteurs génèrent des vibrations si violentes qu'elles peuvent endommager les satellites embarqués.",
     solution: "Isolation vibratoire par des systèmes amortisseurs et des structures en nid d'abeille pour absorber les chocs.",
     innovation: "Des capteurs piézoélectriques actifs contrent les vibrations en temps réel, comme un casque antibruit géant pour satellite.",
+    comparaison: "Un concert de rock c'est environ 110 dB — déjà douloureux. Au décollage, Ariane 6 atteint 165 dB : acoustiquement, c'est 100 000 fois plus intense qu'un concert. À cette puissance, les tympans humains éclateraient en moins d'une seconde.",
     funFact: "La pression acoustique au décollage atteint 165 dB. Sans protection, un satellite se briserait en vol avant même d'atteindre l'atmosphère.",
     link: { label: "Centre d'essais ESA — ESTEC", url: "https://www.esa.int/Enabling_Support/Space_Engineering_Technology/Test_Centre" },
   },
@@ -376,14 +381,31 @@ export function RocketSection({ onComplete, onHome }: RocketSectionProps) {
                 </div>
                 <div className="border-t border-white/10 px-6 py-5">
                   <p className="text-[13px] text-white/55 mb-3">Ariane 6 est le fruit direct de <span className="text-white font-medium">6 nations européennes</span>. Voici comment le travail est réparti :</p>
-                  <div className="rounded-xl overflow-hidden border border-white/10">
-                    <img
-                      src="https://cnes.fr/sites/default/files/styles/native_format/public/2025-02/ariane-6-organisation-industrielle.png?itok=PAgtKtio"
-                      alt="Organisation industrielle Ariane 6"
-                      className="w-full object-contain bg-white"
-                    />
+                  <div className="rounded-xl border border-white/10 overflow-hidden">
+                    {[
+                      { flag: '🇫🇷', country: 'France', pct: 52, role: "Maître d'œuvre · ArianeGroup (Les Mureaux, Évry)" },
+                      { flag: '🇩🇪', country: 'Allemagne', pct: 22, role: 'Étage supérieur · ArianeGroup Bremen, MT Aerospace' },
+                      { flag: '🇮🇹', country: 'Italie', pct: 15, role: 'Accélérateurs P120C · Avio, Thales Alenia Space' },
+                      { flag: '🇪🇸', country: 'Espagne', pct: 4, role: 'Systèmes embarqués · Indra, SENER, GMV' },
+                      { flag: '🇧🇪', country: 'Belgique', pct: 4, role: 'Structures · Thales Alenia Space Belgium' },
+                      { flag: '🇨🇭', country: 'Suisse', pct: 3, role: 'Coiffes et structures · RUAG Space' },
+                    ].map(({ flag, country, pct, role }) => (
+                      <div key={country} className="flex items-center gap-3 px-4 py-2.5 border-b border-white/[0.06] last:border-0">
+                        <span className="text-xl leading-none w-7 shrink-0">{flag}</span>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-[13px] font-semibold text-white leading-none mb-0.5">{country}</p>
+                          <p className="text-[11px] text-white/45 truncate">{role}</p>
+                        </div>
+                        <div className="flex items-center gap-2 shrink-0">
+                          <div className="w-16 h-1.5 rounded-full bg-white/10 overflow-hidden">
+                            <div className="h-full rounded-full bg-magenta" style={{ width: `${pct}%` }} />
+                          </div>
+                          <span className="text-[12px] font-bold text-magenta w-8 text-right">{pct}%</span>
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                  <p className="text-[11px] italic text-white/35 mt-2 text-center">Source : CNES — Organisation industrielle Ariane 6</p>
+                  <p className="text-[10.5px] italic text-white/35 mt-2 text-center">Source : ESA / CNES — Répartition industrielle Ariane 6</p>
                 </div>
               </div>
 
@@ -558,6 +580,10 @@ export function RocketSection({ onComplete, onHome }: RocketSectionProps) {
                   <div>
                     <h4 className="font-semibold text-magenta text-[11px] uppercase tracking-[0.12em] mb-2">Innovation clé</h4>
                     <p className="text-white/80 leading-relaxed text-[14px]">{challenges[selectedChallenge].innovation}</p>
+                  </div>
+                  <div className="border border-white/15 bg-white/[0.04] rounded-xl px-5 py-4">
+                    <p className="text-[10px] font-bold tracking-[0.12em] uppercase text-white/40 mb-2">Pour te donner une idée</p>
+                    <p className="text-[13px] text-white/80 leading-[1.6] italic">{challenges[selectedChallenge].comparaison}</p>
                   </div>
                   <div className="bg-white/[0.04] border border-white/10 rounded-xl px-5 py-4">
                     <p className="text-[13px] text-white/70 leading-[1.55]">{challenges[selectedChallenge].funFact}</p>
