@@ -381,31 +381,14 @@ export function RocketSection({ onComplete, onHome }: RocketSectionProps) {
                 </div>
                 <div className="border-t border-white/10 px-6 py-5">
                   <p className="text-[13px] text-white/55 mb-3">Ariane 6 est le fruit direct de <span className="text-white font-medium">6 nations européennes</span>. Voici comment le travail est réparti :</p>
-                  <div className="rounded-xl border border-white/10 overflow-hidden">
-                    {[
-                      { flag: '🇫🇷', country: 'France', pct: 52, role: "Maître d'œuvre · ArianeGroup (Les Mureaux, Évry)" },
-                      { flag: '🇩🇪', country: 'Allemagne', pct: 22, role: 'Étage supérieur · ArianeGroup Bremen, MT Aerospace' },
-                      { flag: '🇮🇹', country: 'Italie', pct: 15, role: 'Accélérateurs P120C · Avio, Thales Alenia Space' },
-                      { flag: '🇪🇸', country: 'Espagne', pct: 4, role: 'Systèmes embarqués · Indra, SENER, GMV' },
-                      { flag: '🇧🇪', country: 'Belgique', pct: 4, role: 'Structures · Thales Alenia Space Belgium' },
-                      { flag: '🇨🇭', country: 'Suisse', pct: 3, role: 'Coiffes et structures · RUAG Space' },
-                    ].map(({ flag, country, pct, role }) => (
-                      <div key={country} className="flex items-center gap-3 px-4 py-2.5 border-b border-white/[0.06] last:border-0">
-                        <span className="text-xl leading-none w-7 shrink-0">{flag}</span>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-[13px] font-semibold text-white leading-none mb-0.5">{country}</p>
-                          <p className="text-[11px] text-white/45 truncate">{role}</p>
-                        </div>
-                        <div className="flex items-center gap-2 shrink-0">
-                          <div className="w-16 h-1.5 rounded-full bg-white/10 overflow-hidden">
-                            <div className="h-full rounded-full bg-magenta" style={{ width: `${pct}%` }} />
-                          </div>
-                          <span className="text-[12px] font-bold text-magenta w-8 text-right">{pct}%</span>
-                        </div>
-                      </div>
-                    ))}
+                  <div className="rounded-xl overflow-hidden border border-white/10">
+                    <img
+                      src="https://www.caia.net/images/upload/135/p033-001.png"
+                      alt="Organisation industrielle Ariane 6 — répartition par nation"
+                      className="w-full object-contain bg-white"
+                    />
                   </div>
-                  <p className="text-[10.5px] italic text-white/35 mt-2 text-center">Source : ESA / CNES — Répartition industrielle Ariane 6</p>
+                  <p className="text-[10.5px] italic text-white/45 mt-2 text-center">Image : ArianeGroup — Organisation industrielle Ariane 6</p>
                 </div>
               </div>
 
