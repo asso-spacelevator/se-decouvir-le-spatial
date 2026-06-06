@@ -16,7 +16,7 @@ import { useSession } from '../contexts/SessionContext';
  *  2. Session 2 en détail      — 5 section cards + CTA
  * ═══════════════════════════════════════════════════════════════════*/
 
-const TOTAL_PAGES = 2;
+const TOTAL_PAGES = 1;
 
 const WELCOME_LINES = [
   { speaker: 'girl' as const, text: "Bienvenue en session 2. Tu reviens — c'est la preuve que la session 1 t'a accroché·e." },
@@ -134,7 +134,7 @@ export function IntroductionPage2({ onContinue, onHome, onBack }: IntroductionPa
 
       <div className="relative z-[1] max-w-[1120px] mx-auto px-8 pt-14 pb-24">
 
-        {/* ── Page 1 : Bienvenue + Le parcours ── */}
+        {/* ── Page unique : Bienvenue + Le parcours ── */}
         {page === 0 && (
           <div className="flex flex-col gap-16 animate-[chapterIn_480ms_cubic-bezier(.2,0,0,1)]">
 
@@ -162,7 +162,7 @@ export function IntroductionPage2({ onContinue, onHome, onBack }: IntroductionPa
 
             <div className="h-px bg-white/10" />
 
-            {/* Chapter 2 — Le parcours (with footer nav) */}
+            {/* Chapter 2 — Le parcours (with footer nav → start session 2) */}
             <ChapterShell
               kicker="02"
               title="Le parcours"
@@ -170,30 +170,13 @@ export function IntroductionPage2({ onContinue, onHome, onBack }: IntroductionPa
               titleAccent="la suite"
               lede="Voici où tu en es dans le programme. Les sections de la session 1 sont terminées. Aujourd'hui tu attaques les cinq sections de la session 2."
               onPrev={onBack}
-              onNext={() => goTo(1)}
+              onNext={onContinue}
               nextEnabled={true}
-              nextLabel="Continue · Session 2 en détail →"
+              nextLabel="Commencer la session 2 →"
             >
               <PageJourney />
             </ChapterShell>
           </div>
-        )}
-
-        {/* ── Page 2 : Session 2 en détail ── */}
-        {page === 1 && (
-          <ChapterShell
-            kicker="03"
-            title="Session 2 en détail"
-            titlePrefix="Cinq sections pour"
-            titleAccent="aller plus loin"
-            lede="Voici ce que tu vas explorer aujourd'hui. Chaque section est divisée en chapitres progressifs avec des quizzes et des moments de réflexion."
-            onPrev={() => goTo(0)}
-            onNext={onContinue}
-            nextEnabled={true}
-            nextLabel="Commencer la session 2 →"
-          >
-            <PageSession2Detail />
-          </ChapterShell>
         )}
       </div>
     </SectionCanvas>
@@ -201,109 +184,106 @@ export function IntroductionPage2({ onContinue, onHome, onBack }: IntroductionPa
 }
 
 /* ═══════════════════════════════════════════════════════════════════
- *  PageJourney — full overview with S1 done / S2 to come
+ *  PageJourney — full overview with S1 done / S2 to come + S2 detail
  * ══════════════════════════════════════════════════════════════════*/
 function PageJourney() {
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-12">
 
-      <div className="flex items-center gap-3">
-        <span className="text-[11px] font-bold tracking-[0.16em] uppercase text-white/50">Parcours complet</span>
-        <div className="flex-1 h-px bg-white/10" />
-        <span className="text-[11px] text-white/35">2 sessions · 8 sections</span>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
-
-        {/* Session 1 — déjà vu */}
-        <div className="bg-white/[0.02] border border-white/[0.07] rounded-2xl p-6">
-          <div className="flex items-center gap-2.5 mb-5">
-            <span className="bg-white/10 text-white/45 rounded-full px-3 py-1 text-[11px] font-bold tracking-[0.08em] uppercase">Session 1</span>
-            <div className="inline-flex items-center gap-1.5">
-              <CheckCircle className="w-3.5 h-3.5 text-magenta" strokeWidth={2} />
-              <span className="text-[11px] text-magenta font-semibold tracking-[0.06em] uppercase">Déjà vu</span>
-            </div>
-          </div>
-          <div className="flex flex-col gap-4">
-            {SESSION1_DONE.map((s, i) => (
-              <div key={i} className="flex items-center gap-3">
-                <div className="w-6 h-6 rounded-full bg-magenta/15 border border-magenta/30 grid place-items-center flex-shrink-0">
-                  <CheckCircle className="w-3.5 h-3.5 text-magenta" strokeWidth={2.5} />
-                </div>
-                <span className="text-[13.5px] font-medium text-white/50 line-through decoration-white/25">{s.title}</span>
-              </div>
-            ))}
-          </div>
+      {/* Full journey — both sessions */}
+      <div className="flex flex-col gap-5">
+        <div className="flex items-center gap-3">
+          <span className="text-[11px] font-bold tracking-[0.16em] uppercase text-white/50">Parcours complet</span>
+          <div className="flex-1 h-px bg-white/10" />
+          <span className="text-[11px] text-white/35">2 sessions · 8 sections</span>
         </div>
 
-        {/* Session 2 — aujourd'hui */}
-        <div className="relative overflow-hidden bg-white/[0.04] border border-magenta/30 rounded-2xl p-6">
-          <div className="absolute inset-0 bg-magenta/[0.03]" />
-          <div className="relative z-[1]">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+
+          {/* Session 1 — déjà vu */}
+          <div className="bg-white/[0.02] border border-white/[0.07] rounded-2xl p-6">
             <div className="flex items-center gap-2.5 mb-5">
-              <span className="bg-magenta text-white rounded-full px-3 py-1 text-[11px] font-bold tracking-[0.08em] uppercase">Session 2</span>
-              <span className="text-[11px] text-magenta/90 font-semibold tracking-[0.08em] uppercase">Aujourd'hui</span>
+              <span className="bg-white/10 text-white/45 rounded-full px-3 py-1 text-[11px] font-bold tracking-[0.08em] uppercase">Session 1</span>
+              <div className="inline-flex items-center gap-1.5">
+                <CheckCircle className="w-3.5 h-3.5 text-magenta" strokeWidth={2} />
+                <span className="text-[11px] text-magenta font-semibold tracking-[0.06em] uppercase">Déjà vu</span>
+              </div>
             </div>
             <div className="flex flex-col gap-4">
-              {SESSION2_FULL.map((s, i) => (
-                <div key={i} className="flex items-center gap-2.5">
-                  <span className="w-5 h-5 rounded-full bg-magenta/20 border border-magenta/50 text-magenta text-[10px] font-bold grid place-items-center flex-shrink-0">
-                    {i + 1}
-                  </span>
-                  <span className="text-[13.5px] font-semibold text-white">{s.title}</span>
+              {SESSION1_DONE.map((s, i) => (
+                <div key={i} className="flex items-center gap-3">
+                  <div className="w-6 h-6 rounded-full bg-magenta/15 border border-magenta/30 grid place-items-center flex-shrink-0">
+                    <CheckCircle className="w-3.5 h-3.5 text-magenta" strokeWidth={2.5} />
+                  </div>
+                  <span className="text-[13.5px] font-medium text-white/50 line-through decoration-white/25">{s.title}</span>
                 </div>
               ))}
+            </div>
+          </div>
+
+          {/* Session 2 — aujourd'hui */}
+          <div className="relative overflow-hidden bg-white/[0.04] border border-magenta/30 rounded-2xl p-6">
+            <div className="absolute inset-0 bg-magenta/[0.03]" />
+            <div className="relative z-[1]">
+              <div className="flex items-center gap-2.5 mb-5">
+                <span className="bg-magenta text-white rounded-full px-3 py-1 text-[11px] font-bold tracking-[0.08em] uppercase">Session 2</span>
+                <span className="text-[11px] text-magenta/90 font-semibold tracking-[0.08em] uppercase">Aujourd'hui</span>
+              </div>
+              <div className="flex flex-col gap-5">
+                {SESSION2_FULL.map((s, i) => (
+                  <div key={i}>
+                    <div className="flex items-center gap-2.5 mb-2">
+                      <span className="w-5 h-5 rounded-full bg-magenta/20 border border-magenta/50 text-magenta text-[10px] font-bold grid place-items-center flex-shrink-0">
+                        {i + 1}
+                      </span>
+                      <span className="text-[13.5px] font-semibold text-white">{s.title}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Context note */}
-      <div className="border-l-2 border-magenta/50 pl-5">
-        <p className="text-[14px] text-white/65 leading-[1.65] m-0">
-          La session 2 est plus dense : elle couvre les satellites, l'exploration du système solaire, les entreprises européennes du secteur et les ressources pour construire ton parcours. Prends le temps de chaque section.
+      {/* Session 2 detail cards */}
+      <div className="flex flex-col gap-5">
+        <div className="flex items-center gap-3">
+          <span className="text-[11px] font-bold tracking-[0.16em] uppercase text-white/50">Session 2 · En détail</span>
+          <div className="flex-1 h-px bg-white/10" />
+        </div>
+
+        <p className="text-[14px] text-white/65 leading-[1.6] m-0">
+          Aujourd'hui tu explores le cœur de l'industrie spatiale : les satellites et leurs orbites, les grandes missions d'exploration, les entreprises européennes du secteur, et les ressources pour construire ton parcours après la session.
         </p>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+          {SESSION2_FULL.map((s) => (
+            <div
+              key={s.num}
+              className="bg-white/[0.04] border border-white/10 hover:border-magenta hover:bg-magenta/[0.03] hover:-translate-y-0.5 rounded-2xl p-6 transition-all duration-200 flex flex-col gap-4"
+            >
+              <div className="flex items-start justify-between">
+                <span className="text-magenta"><s.Icon className="w-8 h-8" strokeWidth={1.75} /></span>
+                <span className="text-[11px] font-bold text-white/25 tracking-[0.08em]">{s.num}</span>
+              </div>
+              <div>
+                <h4 className="font-semibold text-[16px] m-0 mb-2">{s.title}</h4>
+                <p className="text-[13px] text-white/65 leading-[1.55] m-0">{s.desc}</p>
+              </div>
+              <div className="pt-1 border-t border-white/[0.08] flex flex-col gap-1.5">
+                {s.chapters.map((ch, j) => (
+                  <div key={j} className="flex items-center gap-2">
+                    <span className="text-[10px] font-bold text-magenta/60 tabular-nums w-4 flex-shrink-0">{String(j + 1).padStart(2, '0')}</span>
+                    <span className="text-[12px] text-white/55">{ch}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
 }
 
-/* ═══════════════════════════════════════════════════════════════════
- *  PageSession2Detail — 5 section cards in detail
- * ══════════════════════════════════════════════════════════════════*/
-function PageSession2Detail() {
-  return (
-    <div className="flex flex-col gap-5">
-
-      <p className="text-[14px] text-white/65 leading-[1.6] m-0">
-        Cinq sections t'attendent aujourd'hui. Chacune est divisée en chapitres courts avec des temps d'interaction pour consolider ce que tu apprends.
-      </p>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-        {SESSION2_FULL.map((s) => (
-          <div
-            key={s.num}
-            className="bg-white/[0.04] border border-white/10 hover:border-magenta hover:bg-magenta/[0.03] hover:-translate-y-0.5 rounded-2xl p-6 transition-all duration-200 flex flex-col gap-4"
-          >
-            <div className="flex items-start justify-between">
-              <span className="text-magenta"><s.Icon className="w-8 h-8" strokeWidth={1.75} /></span>
-              <span className="text-[11px] font-bold text-white/25 tracking-[0.08em]">{s.num}</span>
-            </div>
-            <div>
-              <h4 className="font-semibold text-[16px] m-0 mb-2">{s.title}</h4>
-              <p className="text-[13px] text-white/65 leading-[1.55] m-0">{s.desc}</p>
-            </div>
-            <div className="pt-1 border-t border-white/[0.08] flex flex-col gap-1.5">
-              {s.chapters.map((ch, j) => (
-                <div key={j} className="flex items-center gap-2">
-                  <span className="text-[10px] font-bold text-magenta/60 tabular-nums w-4 flex-shrink-0">{String(j + 1).padStart(2, '0')}</span>
-                  <span className="text-[12px] text-white/55">{ch}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
