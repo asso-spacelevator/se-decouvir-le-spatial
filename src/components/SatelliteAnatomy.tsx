@@ -46,7 +46,7 @@ const ANATOMY_CSS = `
 .sa-court .sa-svc-c{position:absolute;height:2px;background:rgba(255,255,255,.85);top:50%}
 `;
 
-export function SatelliteAnatomy() {
+export function SatelliteAnatomy({ onGameComplete }: { onGameComplete?: () => void }) {
   return (
     <div className="space-y-16">
       <style>{ANATOMY_CSS}</style>
@@ -210,7 +210,7 @@ export function SatelliteAnatomy() {
         <p className="m-0 text-[13px] text-white/60 leading-relaxed mb-6">
           Glisse les étiquettes sous le bon satellite, puis compare leur masse, leur taille et leur durée de vie.
         </p>
-        <SatelliteLabelGame />
+        <SatelliteLabelGame onComplete={onGameComplete} />
       </div>
 
       <div className="text-right">

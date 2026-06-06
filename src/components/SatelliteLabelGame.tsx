@@ -172,7 +172,7 @@ function ComparisonPanel({ satellites }: { satellites: SatelliteData[] }) {
 
 /* ─── Main game component ─────────────────────────────────────── */
 
-export function SatelliteLabelGame() {
+export function SatelliteLabelGame({ onComplete }: { onComplete?: () => void }) {
   // Shuffle satellites order for display
   const [displayOrder] = useState(() => [...SATELLITES].sort(() => Math.random() - 0.5));
   // Shuffle labels for drag
@@ -247,7 +247,10 @@ export function SatelliteLabelGame() {
     setDraggedFromSlot(null);
   };
 
-  const handleCheck = () => setChecked(true);
+  const handleCheck = () => {
+    setChecked(true);
+    onComplete?.();
+  };
 
   const handleReset = () => {
     setSlots(Array(SATELLITES.length).fill(null));

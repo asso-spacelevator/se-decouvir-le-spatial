@@ -207,6 +207,7 @@ export function SatelliteSection({ onComplete, onHome }: SatelliteSectionProps) 
   const [chapter, setChapter] = useState(0);
   const [hydrated, setHydrated] = useState(false);
   const [selectedOrbit, setSelectedOrbit] = useState<number | null>(null);
+  const [anatomyGameCompleted, setAnatomyGameCompleted] = useState(false);
   const [quizCompleted, setQuizCompleted] = useState(false);
   const [missionIdea, setMissionIdea] = useState('');
   const [instrumentsExplored, setInstrumentsExplored] = useState<Set<string>>(new Set());
@@ -219,6 +220,7 @@ export function SatelliteSection({ onComplete, onHome }: SatelliteSectionProps) 
       const r = await getResponses('satellites');
       if (r.chapter) setChapter(Math.min(parseInt(r.chapter, 10) || 0, TOTAL_CHAPTERS - 1));
       if (r.selectedOrbit) setSelectedOrbit(parseInt(r.selectedOrbit, 10));
+      if (r.anatomy_game_completed === 'true') setAnatomyGameCompleted(true);
       if (r.quizCompleted === 'true') setQuizCompleted(true);
       if (r.mission_idea) setMissionIdea(r.mission_idea);
       if (r.instruments_explored) setInstrumentsExplored(new Set(r.instruments_explored.split(',')));
@@ -257,6 +259,11 @@ export function SatelliteSection({ onComplete, onHome }: SatelliteSectionProps) 
   const handleEsaLinkVisit = async () => {
     setEsaLinkVisited(true);
     if (hydrated) await saveResponse('satellites', 'esa_link_visited', 'true');
+  };
+
+  const handleAnatomyGameComplete = async () => {
+    setAnatomyGameCompleted(true);
+    if (hydrated) await saveResponse('satellites', 'anatomy_game_completed', 'true');
   };
 
   const handleQuizComplete = async () => {
@@ -305,10 +312,10 @@ export function SatelliteSection({ onComplete, onHome }: SatelliteSectionProps) 
             titlePrefix="Une machine conçue pour fonctionner seule,"
             titleAccent="sans technicien, pendant 15 ans."
             lede="+150 °C d'un côté, -150 °C de l'autre. Radiations. Aucune réparation possible. Voilà ce qu'un satellite doit encaisser. Explore l'architecture qui rend ça possible, puis identifie les composants sur le schéma."
-            onPrev={() => goTo(0)} onNext={() => goTo(2)} nextEnabled={true}
-            nextLabel="Continue · Les orbites →"
+            onPrev={() => goTo(0)} onNext={() => goTo(2)} nextEnabled={anatomyGameCompleted}
+            nextLabel={anatomyGameCompleted ? "Continue · Les orbites →" : "Complète le mini-jeu d'abord"}
           >
-            <SatelliteAnatomy />
+            <SatelliteAnatomy onGameComplete={handleAnatomyGameComplete} />
           </ChapterShell>
         )}
 
