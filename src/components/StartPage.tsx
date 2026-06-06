@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
-import { Globe, Rocket, Wifi, Satellite, Compass, Users, MessageCircle, ArrowRight, RotateCcw, Check, School } from 'lucide-react';
+import { Globe, Rocket, Wifi, Satellite, Compass, Users, MessageCircle, ArrowRight, RotateCcw, Check, School, Info } from 'lucide-react';
 import { GirlAvatar, BoyAvatar } from './AvatarGuide';
 import { useSession } from '../contexts/SessionContext';
 import { RestartConfirmModal } from './RestartConfirmModal';
@@ -197,24 +197,38 @@ export function StartPage({ onStartSession1, onStartSession2 }: StartPageProps) 
         </section>
 
         {/* School name — optional */}
-        <div className="flex items-center gap-3 max-w-sm">
-          <div className="relative flex-1">
-            <School className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/35 pointer-events-none" strokeWidth={1.75} />
-            <input
-              type="text"
-              value={schoolInput}
-              onChange={e => handleSchoolChange(e.target.value)}
-              maxLength={150}
-              placeholder="Ton établissement (facultatif)"
-              className="w-full bg-white/[0.04] border border-white/10 rounded-lg pl-9 pr-4 py-2.5 text-sm text-white placeholder-white/30 focus:outline-none focus:border-magenta focus:ring-2 focus:ring-magenta/20 transition-colors"
-            />
-          </div>
-          {schoolSaved && (
-            <span className="flex items-center gap-1.5 text-[11px] text-white/45 whitespace-nowrap">
-              <Check className="w-3.5 h-3.5 text-magenta" strokeWidth={2.5} />
-              Enregistré
+        <div className="flex flex-col gap-1.5 max-w-sm">
+          <div className="flex items-center gap-1.5">
+            <span className="text-[12px] text-white/45">
+              Si tu participes avec ton établissement, renseigne le nom ici
             </span>
-          )}
+            <div className="relative group/rgpd flex-shrink-0">
+              <Info className="w-3.5 h-3.5 text-white/30 hover:text-white/60 cursor-help transition-colors duration-150" strokeWidth={1.75} />
+              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-[260px] bg-[#1a1f3a] border border-white/10 rounded-lg px-3 py-2.5 text-[11px] text-white/65 leading-relaxed opacity-0 group-hover/rgpd:opacity-100 pointer-events-none transition-opacity duration-150 z-20">
+                Cette information sert aux analyses d'utilisation du site et n'est conservée qu'1 an en base de données.
+                <span className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-[#1a1f3a]" />
+              </div>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="relative flex-1">
+              <School className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/35 pointer-events-none" strokeWidth={1.75} />
+              <input
+                type="text"
+                value={schoolInput}
+                onChange={e => handleSchoolChange(e.target.value)}
+                maxLength={150}
+                placeholder="Ton établissement (facultatif)"
+                className="w-full bg-white/[0.04] border border-white/10 rounded-lg pl-9 pr-4 py-2.5 text-sm text-white placeholder-white/30 focus:outline-none focus:border-magenta focus:ring-2 focus:ring-magenta/20 transition-colors"
+              />
+            </div>
+            {schoolSaved && (
+              <span className="flex items-center gap-1.5 text-[11px] text-white/45 whitespace-nowrap">
+                <Check className="w-3.5 h-3.5 text-magenta" strokeWidth={2.5} />
+                Enregistré
+              </span>
+            )}
+          </div>
         </div>
 
         {/* Sessions */}
