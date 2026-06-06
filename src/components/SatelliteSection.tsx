@@ -6,6 +6,7 @@ import { SatelliteAnatomy } from './SatelliteAnatomy';
 import { SatelliteTimeline } from './SatelliteTimeline';
 import { SatelliteDistribution } from './SatelliteDistribution';
 import { SectionCanvas, SectionTopBar, SectionProgress, ChapterShell, ChapterRecap } from './ChapterShell';
+import { YouTubeEmbed } from './YouTubeEmbed';
 
 const TOTAL_CHAPTERS = 7;
 
@@ -415,13 +416,7 @@ export function SatelliteSection({ onComplete, onHome }: SatelliteSectionProps) 
                   <p className="text-[13px] font-semibold">Les éboueurs de l'espace — Active Debris Removal (ADR)</p>
                 </div>
                 <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
-                  <iframe
-                    className="absolute inset-0 w-full h-full"
-                    src="https://www.youtube.com/embed/_dFmgoCO1ww"
-                    title="C'est pour quand les éboueurs de l'espace ? — CNES"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  />
+                  <YouTubeEmbed videoId="_dFmgoCO1ww" title="C'est pour quand les éboueurs de l'espace ? — CNES" />
                 </div>
                 <p className="text-[11px] italic text-white/35 px-5 py-3 border-t border-white/10">"C'est pour quand les éboueurs de l'espace ?" — CNES / Prodigima Films, avril 2024 (5 min 33)</p>
               </div>

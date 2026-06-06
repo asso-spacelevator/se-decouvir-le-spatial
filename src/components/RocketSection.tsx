@@ -5,6 +5,7 @@ import { Quiz } from './Quiz';
 import { Ariane6Diagram } from './Ariane6Diagram';
 import { MissionSimulator } from './MissionSimulator';
 import { SectionCanvas, SectionTopBar, SectionProgress, ChapterShell, ChapterRecap } from './ChapterShell';
+import { YouTubeEmbed } from './YouTubeEmbed';
 
 const TOTAL_CHAPTERS = 8;
 
@@ -911,13 +912,7 @@ export function RocketSection({ onComplete, onHome }: RocketSectionProps) {
                   </div>
                 </div>
                 <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
-                  <iframe
-                    className="absolute inset-0 w-full h-full"
-                    src="https://www.youtube.com/embed/DhxJ6Z7u-YU?start=1805"
-                    title="Lancement Ariane 6 — Replay rideshare VA262"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  />
+                  <YouTubeEmbed videoId="DhxJ6Z7u-YU" title="Lancement Ariane 6 — Replay rideshare VA262" start={1805} />
                 </div>
               </div>
               <MissionSimulator />

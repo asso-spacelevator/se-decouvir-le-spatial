@@ -3,6 +3,7 @@ import { ISSViewer } from './ISSViewer';
 import { ChevronLeft, ChevronRight, CheckCircle, ExternalLink, Globe, Radio, Rocket, Satellite, Trophy, Users } from 'lucide-react';
 import { useSession } from '../contexts/SessionContext';
 import { ChapterShell, SectionTopBar, SectionProgress } from './ChapterShell';
+import { YouTubeEmbed } from './YouTubeEmbed';
 
 /* ════════════════════════════════════════════════════════════════
  *  ImpactTerrestreSection — chapter-based interactive flow
@@ -1065,15 +1066,7 @@ function OpsBlock({ onGameComplete, gameCompleted }: { onGameComplete: () => voi
             <div key={a.name} className="bg-white/[0.04] border border-white/10 rounded-2xl overflow-hidden flex flex-col">
               <div className="aspect-video bg-black/70 relative">
                 {a.videoId ? (
-                  <iframe
-                    className="absolute inset-0 w-full h-full"
-                    src={`https://www.youtube-nocookie.com/embed/${a.videoId}`}
-                    title={`${a.name} — présentation`}
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                    referrerPolicy="strict-origin-when-cross-origin"
-                    allowFullScreen
-                  />
+                  <YouTubeEmbed videoId={a.videoId} title={`${a.name} — présentation`} nocookie />
                 ) : (
                   <div className="absolute inset-0 flex flex-col items-center justify-center gap-2.5">
                     <Rocket className="w-9 h-9 text-white/15" strokeWidth={1.5} />
@@ -1236,7 +1229,9 @@ const QUESTIONS = [
     e: "La mousse à mémoire de forme a été inventée par la NASA en 1966 pour absorber les chocs au décollage. Aujourd'hui dans nos matelas, sièges auto et équipements médicaux. Ces innovations nées du spatial qui entrent dans nos vies s'appellent des retombées — spinoffs.",
   },
   {
-    q: "Quelle est la taille de la plus grande antenne de radiotélécommunications américaine ?",
+    q: "Quelle est la taille de la plus grande antenne de radiotélécommunications du monde ?",
+    img: 'https://www.nasa.gov/wp-content/uploads/2020/03/dsn-stadium-final.jpg?resize=900,900',
+    imgCredit: 'NASA/JPL-Caltech',
     options: [
       { t: '30 mètres', ok: false },
       { t: '50 mètres', ok: false },
@@ -1332,6 +1327,18 @@ function Quiz({ onDone, initial }: { onDone: (score: number) => void; initial: n
         </span>
       </div>
       <p className="text-[22px] font-semibold leading-[1.3] m-0 mb-5">{QUESTIONS[step].q}</p>
+      {QUESTIONS[step].img && (
+        <div className="relative mb-5 rounded-xl overflow-hidden">
+          <img
+            src={QUESTIONS[step].img}
+            alt=""
+            className="w-full max-h-56 object-cover"
+          />
+          <span className="absolute bottom-2 right-3 text-[10.5px] italic text-white/45">
+            Image : {QUESTIONS[step].imgCredit}
+          </span>
+        </div>
+      )}
       <div className="flex flex-col gap-2.5">
         {QUESTIONS[step].options.map((o, i) => {
           const isChosen = chosen === i;
