@@ -302,21 +302,21 @@ export function SatelliteDistribution() {
         </div>
       </div>
 
-      {/* Satellite Xplorer link */}
+      {/* Stuff in Space link */}
       <div className="bg-magenta/10 border border-magenta/20 rounded-2xl p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h4 className="font-bold text-white mb-1">Explorer en temps réel</h4>
           <p className="text-sm text-gray-300">
-            <strong className="text-magenta">Satellite Xplorer</strong> montre tous les satellites actuellement en orbite en 3D, en temps réel. Filtre par usage, pays, orbite.
+            <strong className="text-magenta">Stuff in Space</strong> montre tous les satellites et débris actuellement en orbite en 3D, en temps réel.
           </p>
         </div>
         <a
-          href="https://satellitexplorer.nasaspaceflight.com"
+          href="https://stuffin.space"
           target="_blank"
           rel="noopener noreferrer"
           className="flex-shrink-0 flex items-center gap-2 px-5 py-3 bg-magenta hover:bg-magenta-700 text-white font-bold text-sm rounded-xl transition-all hover:scale-105 shadow-lg shadow-magenta/20"
         >
-          Ouvrir Satellite Xplorer
+          Ouvrir Stuff in Space
           <ExternalLink className="w-4 h-4" />
         </a>
       </div>
