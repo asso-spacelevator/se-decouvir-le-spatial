@@ -28,7 +28,7 @@ interface ImpactTerrestreSectionProps {
 }
 
 export function ImpactTerrestreSection({ onComplete, onHome }: ImpactTerrestreSectionProps) {
-  const { saveResponse, getResponses } = useSession();
+  const { saveResponse, getResponses, session } = useSession();
   const [chapter, setChapter] = useState(0);
   const [satellites, setSatellites] = useState(0);
   const [flipsCount, setFlipsCount] = useState(0);
@@ -38,8 +38,9 @@ export function ImpactTerrestreSection({ onComplete, onHome }: ImpactTerrestreSe
   const [collaboGame, setCollaboGame] = useState(false);
   const [hydrated, setHydrated] = useState(false);
 
-  // Hydrate from supabase
+  // Hydrate from supabase — depends on session.id so it waits for auth to resolve
   useEffect(() => {
+    if (!session) return;
     (async () => {
       const r = await getResponses('impact_terrestre');
       if (r.chapter) setChapter(Math.min(parseInt(r.chapter, 10) || 0, TOTAL_CHAPTERS - 1));
@@ -52,7 +53,7 @@ export function ImpactTerrestreSection({ onComplete, onHome }: ImpactTerrestreSe
       setHydrated(true);
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [session?.id]);
 
   const goTo = async (i: number) => {
     if (i < 0 || i >= TOTAL_CHAPTERS) return;
