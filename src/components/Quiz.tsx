@@ -26,8 +26,15 @@ export function Quiz({ questions, onComplete }: QuizProps) {
   const [showFeedback, setShowFeedback] = useState(false);
   const [answeredQuestions, setAnsweredQuestions] = useState<Set<number>>(new Set());
 
-  const currentQuestion = questions[currentQuestionIndex];
-  const isLastQuestion = currentQuestionIndex === questions.length - 1;
+  const [shuffledQuestions] = useState(() =>
+    questions.map(q => ({
+      ...q,
+      options: [...q.options].sort(() => Math.random() - 0.5),
+    }))
+  );
+
+  const currentQuestion = shuffledQuestions[currentQuestionIndex];
+  const isLastQuestion = currentQuestionIndex === shuffledQuestions.length - 1;
   const selectedOption = currentQuestion.options.find(opt => opt.id === selectedAnswer);
   const isCorrect = selectedOption?.isCorrect || false;
 
@@ -59,7 +66,7 @@ export function Quiz({ questions, onComplete }: QuizProps) {
       <div className="mb-6">
         <h3 className="text-2xl font-semibold">Quiz Interactif</h3>
         <p className="text-gray-400 text-sm mt-1">
-          Question {currentQuestionIndex + 1} sur {questions.length}
+          Question {currentQuestionIndex + 1} sur {shuffledQuestions.length}
         </p>
       </div>
 
