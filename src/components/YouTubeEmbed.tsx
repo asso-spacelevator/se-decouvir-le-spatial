@@ -9,12 +9,12 @@ function readConsent(): ConsentValue | null {
   try {
     const v = localStorage.getItem(STORAGE_KEY);
     if (v === 'accepted' || v === 'refused') return v;
-  } catch {}
+  } catch { /* ignore localStorage errors */ }
   return null;
 }
 
 function writeConsent(value: ConsentValue) {
-  try { localStorage.setItem(STORAGE_KEY, value); } catch {}
+  try { localStorage.setItem(STORAGE_KEY, value); } catch { /* ignore localStorage errors */ }
   window.dispatchEvent(new CustomEvent(CONSENT_EVENT, { detail: value }));
 }
 

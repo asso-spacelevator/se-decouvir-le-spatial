@@ -85,10 +85,10 @@ export function SocialReferencesSection({ onComplete, onHome }: SocialReferences
       if (r.chapter) setChapter(Math.min(parseInt(r.chapter, 10) || 0, TOTAL_CHAPTERS - 1));
       if (r.favorite) setFavorite(r.favorite);
       if (r.visitedAccounts) {
-        try { setVisitedAccounts(JSON.parse(r.visitedAccounts)); } catch {}
+        try { setVisitedAccounts(JSON.parse(r.visitedAccounts)); } catch { /* ignore parse errors */ }
       }
       if (r.visitedSites) {
-        try { setVisitedSites(JSON.parse(r.visitedSites)); } catch {}
+        try { setVisitedSites(JSON.parse(r.visitedSites)); } catch { /* ignore parse errors */ }
       }
       setHydrated(true);
     })();
