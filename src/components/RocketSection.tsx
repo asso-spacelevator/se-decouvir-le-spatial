@@ -65,48 +65,36 @@ const SPEED_DISPLAY_ORDER = [2, 0, 3, 1];
 const TRUE_FALSE_ITEMS = [
   {
     id: 0,
-    statement: "Une salle blanche spatiale est environ 20 fois plus propre qu'un bloc opératoire.",
-    isTrue: true,
-    explication: "Un bloc opératoire tolère jusqu'à 10 000 particules/m³. Une salle blanche ISO 5 descend à 3 520/m³ — soit bien plus propre qu'une salle d'opération.",
-  },
-  {
-    id: 1,
-    statement: "Tu peux porter un parfum léger si tu le dilues à l'eau avant d'entrer.",
-    isTrue: false,
-    explication: "Aucun parfum, cosmétique ni lotion n'est toléré. Les molécules volatiles se déposent sur les optiques et capteurs, les rendant inutilisables en orbite.",
-  },
-  {
-    id: 2,
     statement: "Chaque outil entrant dans la salle blanche est répertorié et tracé.",
     isTrue: true,
     explication: "Un tournevis oublié peut provoquer un court-circuit ou un déséquilibre mécanique en orbite. La traçabilité est absolue — rien ne rentre sans être enregistré.",
   },
   {
-    id: 3,
+    id: 1,
     statement: "La température peut varier de quelques degrés selon les saisons, c'est toléré.",
     isTrue: false,
     explication: "21 °C et 45 % d'humidité sont maintenus en permanence. Les matériaux de précision se dilatent avec la chaleur et les circuits réagissent aux variations hydriques.",
   },
   {
-    id: 4,
+    id: 2,
     statement: "Les tests acoustiques et vibratoires d'un satellite peuvent durer plusieurs semaines à eux seuls.",
     isTrue: true,
     explication: "À l'ESTEC (Pays-Bas), une campagne complète de tests — vibrations, chocs, vide thermique, compatibilité électromagnétique — peut s'étendre sur 6 à 12 mois. Les seuls tests de vide thermique (TVAC) durent souvent 3 à 6 semaines en continu, 24 h/24.",
   },
   {
-    id: 5,
+    id: 3,
     statement: "Une équipe de 10 à 15 techniciens suffit pour intégrer un grand satellite comme Gaia ou Euclid.",
     isTrue: false,
     explication: "Pour un satellite scientifique de grande envergure, l'équipe complète dépasse généralement 200 personnes : ingénieurs d'intégration, spécialistes système, experts en tests, représentants industriels. Ils ne sont pas tous présents en salle blanche simultanément, mais la coordination mobilise des centaines d'experts.",
   },
   {
-    id: 6,
+    id: 4,
     statement: "L'Europe dispose d'une dizaine de grandes salles blanches capables d'accueillir un satellite de plusieurs tonnes.",
     isTrue: true,
     explication: "On dénombre en Europe une dizaine d'installations majeures : l'ESTEC aux Pays-Bas (deux grandes salles), Airbus à Toulouse et à Bremen, Thales Alenia Space à Cannes et à Rome, OHB à Bremen, IABG à Ottobrunn — auxquelles s'ajoute le Centre Spatial Guyanais à Kourou.",
   },
   {
-    id: 7,
+    id: 5,
     statement: "L'ESTEC, le principal centre d'essais de l'ESA, est situé en Allemagne.",
     isTrue: false,
     explication: "L'ESTEC (European Space Research and Technology Centre) est situé à Noordwijk, aux Pays-Bas. C'est le plus grand établissement de l'ESA avec environ 2 500 personnes sur site. Il abrite les plus grandes chambres de vide thermique et de test acoustique d'Europe : presque tous les satellites européens y passent avant d'être expédiés à Kourou.",
