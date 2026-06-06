@@ -677,6 +677,25 @@ export function RocketSection({ onComplete, onHome }: RocketSectionProps) {
                 </a>
               </div>
 
+              {/* Rêve d'espace — intégration et tests de Gaia */}
+              <div className="rounded-xl p-6 flex flex-col sm:flex-row items-start sm:items-center gap-5 bg-white/[0.04] border border-white/10">
+                <div className="flex-1">
+                  <div className="text-[11px] font-bold tracking-[0.16em] uppercase text-magenta mb-1">Rêve d'espace · Gaia · Airbus DS / ESA</div>
+                  <h3 className="text-[17px] font-semibold m-0 mb-2">Intégration et tests de Gaia</h3>
+                  <p className="text-[13px] text-white/70 m-0 leading-[1.5]">
+                    Suis pas à pas l'intégration du satellite Gaia en salle blanche : découvre comment les équipes Airbus DS ont assemblé ce télescope de précision et l'ont soumis à des tests extrêmes avant son lancement.
+                  </p>
+                </div>
+                <a
+                  href="https://reves-d-espace.com/gaia-un-satellite-pour-les-etoiles/les-phases-dintegration-et-de-tests/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 border border-white/20 hover:border-magenta/60 hover:bg-magenta/[0.08] text-white/80 hover:text-white rounded-lg px-5 py-3.5 text-[14px] font-semibold transition flex-shrink-0"
+                >
+                  <ExternalLink className="w-4 h-4" strokeWidth={1.75} /> Voir le reportage
+                </a>
+              </div>
+
               {/* True/False game */}
               <div className="border border-magenta/20 bg-magenta/[0.02] rounded-2xl p-6">
                 <div className="mb-5">
@@ -741,7 +760,6 @@ export function RocketSection({ onComplete, onHome }: RocketSectionProps) {
                 title="Pour aller plus loin"
                 links={[
                   { label: "ESA ESTEC — Centre d'essais", url: "https://www.esa.int/Enabling_Support/Space_Engineering_Technology/Test_Centre", desc: "Le centre de test de l'ESA aux Pays-Bas" },
-                  { label: "Rêve d'espace — Intégration et tests de Gaia", url: "https://reves-d-espace.com/gaia-un-satellite-pour-les-etoiles/les-phases-dintegration-et-de-tests/", desc: "Phases d'intégration et de tests du satellite Gaia en salle blanche · © Rêves d'espace / Airbus DS / ESA" },
                 ]}
               />
             </div>
