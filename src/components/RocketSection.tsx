@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { CheckCircle, ExternalLink, Zap, X, BookOpen } from 'lucide-react';
 import { useSession } from '../contexts/SessionContext';
-import { Quiz } from './Quiz';
 import { Ariane6Diagram } from './Ariane6Diagram';
 import { MissionSimulator } from './MissionSimulator';
 import { SectionCanvas, SectionTopBar, SectionProgress, ChapterShell, ChapterRecap } from './ChapterShell';
@@ -186,30 +185,6 @@ const CLEAN_ROOM_RULES = [
   { rule: 'Zéro maquillage ni parfum', detail: "Les substances chimiques volatiles se déposent sur les optiques et capteurs, les rendant inutilisables." },
 ];
 
-const quizQuestions = [
-  {
-    id: 'rocket_q1',
-    question: 'Quelle est la température maximale que peuvent atteindre les moteurs de lanceur ?',
-    options: [
-      { id: 'a', text: '500 °C', isCorrect: false },
-      { id: 'b', text: '1 500 °C', isCorrect: false },
-      { id: 'c', text: '3 000 °C', isCorrect: true },
-      { id: 'd', text: '5 000 °C', isCorrect: false },
-    ],
-    explanation: "Les moteurs de lanceur peuvent atteindre 3 000 °C. Des matériaux composites céramiques et des systèmes de refroidissement actifs sont indispensables.",
-  },
-  {
-    id: 'rocket_q2',
-    question: "Combien de pays contribuent à la construction d'Ariane 6 ?",
-    options: [
-      { id: 'a', text: '2', isCorrect: false },
-      { id: 'b', text: '4', isCorrect: false },
-      { id: 'c', text: '6', isCorrect: true },
-      { id: 'd', text: '12', isCorrect: false },
-    ],
-    explanation: "Ariane 6 est le fruit de la coopération de 6 nations européennes. Plus de 600 personnes travaillent sur le chantier de construction.",
-  },
-];
 
 // ── Resource links helper ──
 function ResourceLinks({ title, links }: { title: string; links: { label: string; url: string; desc?: string }[] }) {
@@ -257,7 +232,6 @@ export function RocketSection({ onComplete, onHome }: RocketSectionProps) {
 
   // Existing state
   const [selectedChallenge, setSelectedChallenge] = useState<number | null>(null);
-  const [quizCompleted, setQuizCompleted] = useState(false);
   const [reflection, setReflection] = useState('');
 
   // Derived booleans
@@ -270,7 +244,6 @@ export function RocketSection({ onComplete, onHome }: RocketSectionProps) {
       const r = await getResponses('rockets');
       if (r.chapter) setChapter(Math.min(parseInt(r.chapter, 10) || 0, TOTAL_CHAPTERS - 1));
       if (r.selectedChallenge) setSelectedChallenge(parseInt(r.selectedChallenge, 10));
-      if (r.quizCompleted === 'true') setQuizCompleted(true);
       if (r.reflection) setReflection(r.reflection);
       if (r.orderClicks) setOrderClicks(JSON.parse(r.orderClicks));
       if (r.tfAnswers) setTfAnswers(JSON.parse(r.tfAnswers));
@@ -334,12 +307,6 @@ export function RocketSection({ onComplete, onHome }: RocketSectionProps) {
   const handleReflectionChange = async (v: string) => {
     setReflection(v);
     if (hydrated) await saveResponse('rockets', 'reflection', v);
-  };
-
-  const handleQuizComplete = async () => {
-    setQuizCompleted(true);
-    if (hydrated) await saveResponse('rockets', 'quizCompleted', 'true');
-    goTo(7);
   };
 
   return (
@@ -911,8 +878,7 @@ export function RocketSection({ onComplete, onHome }: RocketSectionProps) {
                 links={[
                   { label: "ESA — Transport spatial", url: "https://www.esa.int/Enabling_Support/Space_Transportation", desc: "Politique de transport spatial européenne" },
                   { label: "CNES — Accès à l'espace", url: "https://cnes.fr/fr/acces-espace", desc: "Stratégie d'accès à l'espace" },
-                  { label: "ArianeGroup", url: "https://www.ariane.group/fr/", desc: "Le constructeur d'Ariane" },
-                  { label: "Le Desk CNES", url: "https://ledesk.cnes.fr/", desc: "Actualité spatiale par le CNES" },
+                  { label: "ArianeGroup", url: "https://www.ariane.group/", desc: "Le constructeur d'Ariane" },
                   { label: "ESA — Themis", url: "https://www.esa.int/Enabling_Support/Space_Transportation/Themis", desc: "Futur lanceur réutilisable européen" },
                 ]}
               />
@@ -928,7 +894,7 @@ export function RocketSection({ onComplete, onHome }: RocketSectionProps) {
             titleAccent="de la mise à feu au déploiement."
             lede="Regarde un vrai lancement Ariane 6 (mission VA262) et retrouve les étapes clés. Le simulateur te permet ensuite de revivre chaque décision de mission."
             onPrev={() => goTo(4)} onNext={() => goTo(6)} nextEnabled={true}
-            nextLabel="Continue · Quiz éclair →"
+            nextLabel="Continue · Réflexion →"
           >
             <div className="space-y-6">
               <div className="rounded-xl overflow-hidden border border-white/10">
@@ -979,21 +945,8 @@ export function RocketSection({ onComplete, onHome }: RocketSectionProps) {
           </ChapterShell>
         )}
 
-        {/* ── Ch 6 : Quiz + Réflexion (était Ch 5) ── */}
-        {chapter === 6 && !quizCompleted && (
-          <ChapterShell
-            kicker="07" title="Quiz éclair"
-            titlePrefix="Deux questions pour"
-            titleAccent="valider le chapitre."
-            lede="Une réponse par question. Pas de mauvaise réponse définitive — l'objectif c'est d'apprendre."
-            onPrev={() => goTo(5)} onNext={() => {}} nextEnabled={false}
-            nextLabel="Réponds aux questions d'abord"
-          >
-            <Quiz questions={quizQuestions} onComplete={handleQuizComplete} />
-          </ChapterShell>
-        )}
-
-        {chapter === 6 && quizCompleted && (
+        {/* ── Ch 6 : Réflexion ── */}
+        {chapter === 6 && (
           <ChapterShell
             kicker="07" title="Réflexion"
             titlePrefix="Quel est le défi le plus impressionnant"
@@ -1031,7 +984,7 @@ export function RocketSection({ onComplete, onHome }: RocketSectionProps) {
             stats={[
               { v: selectedChallenge !== null ? challenges[selectedChallenge].name : '—', t: 'défi technique exploré' },
               { v: orderComplete ? '4 / 4' : `${orderClicks.length} / 4`, t: 'vitesses triées correctement' },
-              { v: quizCompleted ? '2 / 2' : '0 / 2', t: 'questions du quiz' },
+              { v: reflection.trim().length > 0 ? 'Rédigée' : 'Non rédigée', t: 'réflexion personnelle' },
             ]}
             nextTitle="Réseaux Sociaux"
             nextDesc="Découvre les comptes et ressources pour rester connecté à l'actualité spatiale."
