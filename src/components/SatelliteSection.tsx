@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
+import { Camera, Radio, Layers, Waves, Thermometer, Globe, ExternalLink } from 'lucide-react';
 import { useSession } from '../contexts/SessionContext';
 import { Quiz } from './Quiz';
-import { SatelliteLabelGame } from './SatelliteLabelGame';
+import { SatelliteAnatomy } from './SatelliteAnatomy';
 import { SatelliteTimeline } from './SatelliteTimeline';
 import { SatelliteDistribution } from './SatelliteDistribution';
 import { SectionCanvas, SectionTopBar, SectionProgress, ChapterShell, ChapterRecap } from './ChapterShell';
 
-const TOTAL_CHAPTERS = 6;
+const TOTAL_CHAPTERS = 7;
 
 interface SatelliteSectionProps {
   onComplete: () => void;
@@ -21,7 +22,7 @@ const orbits = [
     period: '90 – 120 min par tour',
     engineering: "Satellites plus petits et moins coûteux à lancer. Pour assurer une couverture continue, il faut des constellations de dizaines à des milliers de satellites (Starlink : plus de 5 000 unités). La friction atmosphérique résiduelle fait descendre progressivement l'orbite : les satellites doivent embarquer des petits moteurs pour se maintenir et se désorbiter en fin de vie.",
     challenges: "Collision avoidance permanent, gestion des débris spatiaux, renouvellement fréquent de la flotte.",
-    funFact: "L'ISS est visible à l'oeil nu ! Elle traverse le ciel en 2 à 5 minutes. Des applications comme Spot The Station (NASA) indiquent exactement où et quand regarder.",
+    funFact: "Un CubeSat 1U mesure exactement 10 × 10 × 10 cm — la taille d'une brique de lait. Des lycéens européens en ont construit et lancé en orbite pour moins de 50 000 €, là où un satellite classique coûte 300 millions.",
   },
   {
     name: 'Orbite Moyenne (MEO)',
@@ -43,7 +44,7 @@ const orbits = [
     name: 'Orbites Polaires & Héliosynchrones',
     altitude: '400 – 1 000 km',
     period: 'Variable selon altitude',
-    engineering: "En inclinant l'orbite à ~98°, le satellite survole les pôles et passe au-dessus de chaque point de la Terre une fois par jour. L'orbite héliosynchrone garantit un éclairage constant d'une image à l'autre, essentiel pour comparer des photos prises à des mois d'intervalle.",
+    engineering: "En inclinant l'orbite à ~98°, le satellite survole les pôles. L'orbite héliosynchrone garantit que le satellite repasse au-dessus d'un même endroit toujours à la même heure solaire locale, assurant ainsi un éclairage identique d'une image à l'autre.",
     challenges: "Consommation élevée de carburant pour maintien d'orbite, fenêtres de lancement très précises.",
     funFact: "Les satellites Sentinel-2 de Copernicus prennent des images à 10 m de résolution, couvrent l'intégralité des terres émergées tous les 5 jours et produisent 1,6 To de données par jour — en accès libre.",
   },
@@ -74,6 +75,132 @@ const quizQuestions = [
   },
 ];
 
+const instruments = [
+  {
+    id: 'optical',
+    Icon: Camera,
+    name: 'Imageur optique multispectral',
+    tagline: 'La photo de la Terre en 13 couleurs',
+    detail: "Capte la lumière visible et proche infrarouge en plusieurs bandes spectrales simultanément. Sentinel-2 utilise 13 bandes pour distinguer cultures saines, forêts en stress hydrique, zones inondées et surfaces urbanisées. Résolution : 10 à 60 m selon la bande. Limite principale : inutilisable sous les nuages.",
+    example: 'Sentinel-2 (ESA) · MSI — fauchée de 290 km, 12 bits',
+    usage: 'Agriculture de précision, gestion des forêts, suivi des catastrophes',
+  },
+  {
+    id: 'sar',
+    Icon: Radio,
+    name: 'Radar SAR',
+    tagline: 'Voit de nuit et à travers les nuages',
+    detail: "Le Radar à Synthèse d'Ouverture émet des impulsions micro-ondes et mesure leur écho. Indépendant du soleil et des conditions météo. Grâce à l'interférométrie (InSAR), il détecte des déformations du sol au millimètre : glissements de terrain, subsidences, activité volcanique. Repère aussi les navires et les inondations.",
+    example: 'Sentinel-1 (ESA) · C-SAR — bande C, 5,4 GHz',
+    usage: "Suivi du sol, détection d'inondations, surveillance maritime",
+  },
+  {
+    id: 'spectrometer',
+    Icon: Layers,
+    name: 'Spectromètre atmosphérique',
+    tagline: "Lire la composition de l'air depuis l'espace",
+    detail: "Analyse la lumière solaire traversant ou réfléchie par l'atmosphère. Identifie les empreintes spectrales de chaque molécule : CO₂, NO₂, O₃, CH₄, SO₂. TROPOMI (Sentinel-5P) cartographie la pollution à l'échelle planétaire avec une résolution de 3,5 × 5,5 km et peut isoler la plume d'une seule centrale à charbon.",
+    example: 'Sentinel-5P (ESA) · TROPOMI — couverture mondiale quotidienne',
+    usage: "Qualité de l'air, suivi des émissions industrielles, bilan carbone",
+  },
+  {
+    id: 'altimeter',
+    Icon: Waves,
+    name: 'Altimètre radar',
+    tagline: 'Mesurer le niveau des mers au centimètre',
+    detail: "Émet une impulsion radar vers la surface et mesure le temps de retour. Calcule la hauteur de la mer à 3 cm près depuis 1 300 km d'altitude. Couplé à un modèle de marées, il révèle la montée du niveau des mers (actuellement +3,6 mm/an en moyenne) et suit l'épaisseur de la banquise arctique.",
+    example: 'Sentinel-6 Michael Freilich (ESA/NASA) · POSEIDON-4',
+    usage: "Niveau des mers, prévision des tempêtes, épaisseur des glaces",
+  },
+  {
+    id: 'radiometer',
+    Icon: Thermometer,
+    name: 'Radiomètre thermique',
+    tagline: 'Prendre la température de la planète',
+    detail: "Mesure l'énergie infrarouge émise par la surface terrestre et l'atmosphère. Détermine la température de surface des océans, des terres et des sommets nuageux. Ces données alimentent chaque modèle de prévision météo mondial : Météo-France, ECMWF, NOAA. Sans elles, aucune prévision au-delà de 24 h ne serait fiable.",
+    example: 'Sentinel-3 (ESA) · SLSTR — 500 m à 1 km de résolution',
+    usage: 'Prévision météo, suivi climatique, température des océans',
+  },
+  {
+    id: 'gravimeter',
+    Icon: Globe,
+    name: 'Gradiomètre gravitationnel',
+    tagline: 'Peser les glaces et les nappes phréatiques',
+    detail: "Mesure les infimes variations du champ gravitationnel terrestre (à 10⁻¹⁰ g près). Une variation de gravité révèle un déplacement de masse : fonte des glaces, variation des nappes souterraines, déformation post-sismique. GRACE-FO a montré que le Groenland perd 280 milliards de tonnes de glace par an.",
+    example: 'GRACE-FO (NASA/GFZ) · SuperSTAR — accéléromètres différentiels',
+    usage: 'Ressources en eau souterraine, fonte des glaces, sismologie',
+  },
+];
+
+const jobs = [
+  {
+    id: 'opticien',
+    category: 'Conception',
+    title: 'Ingénieur·e optronique',
+    tagline: 'Concevoir les yeux du satellite',
+    description: "Conçoit les télescopes, objectifs et détecteurs embarqués : choisit les matériaux des miroirs (céramique Zerodur, carbure de silicium SiC), calcule les tolérances optiques au nanomètre et simule les performances avant fabrication. Un miroir de satellite doit rester parfait après un lancement à 9 g de vibration puis fonctionner à -100 °C dans le vide pendant 15 ans.",
+    skills: ['Optique physique', 'Zemax / Code V', 'Mécanique de précision', 'Bac+5 Physique · Optique'],
+    employers: 'Thales Alenia Space · Airbus DS · CNES · CNRS · OHB',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/JWST-HST-primary-mirrors.jpg/960px-JWST-HST-primary-mirrors.jpg',
+    credit: 'Image : NASA / Chris Gunn, domaine public — Miroirs primaires de JWST et Hubble',
+  },
+  {
+    id: 'physicien',
+    category: 'Conception',
+    title: 'Physicien·ne des instruments',
+    tagline: 'Traduire la science en spécifications',
+    description: "Traduit les besoins scientifiques (« mesurer le CO₂ à ±1 ppm ») en spécifications d'ingénierie (résolution spectrale, rapport signal/bruit, taux d'échantillonnage). Pilote ensuite la calibration du capteur au sol et en orbite pour garantir que la mesure reste fiable 15 ans après le lancement, même si les détecteurs vieillissent.",
+    skills: ['Radiométrie', 'Traitement du signal', 'Python · IDL', 'Doctorat en physique recommandé'],
+    employers: 'ESA · CNES · DLR · IPSL · LATMOS · ICARE',
+    image: 'https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=960&h=540&fit=crop&auto=format&q=80',
+    credit: 'Image : Unsplash / licence libre',
+  },
+  {
+    id: 'salle_blanche',
+    category: 'Fabrication',
+    title: 'Technicien·ne salle blanche',
+    tagline: "Assembler dans l'air le plus pur au monde",
+    description: "Assemble les composants optiques et électroniques dans des salles ISO 5–ISO 7, 1 000 fois plus pures qu'une salle d'opération chirurgicale. Combinaison intégrale, gants doubles, zéro parfum : une seule particule de 1 µm sur un miroir dégrade les mesures. Utilise des microscopes de contrôle et des robots de positionnement à la micron.",
+    skills: ['Métrologie', 'Procédures ISO', 'Montage de précision', 'BTS Électronique · DUT Mesures Physiques'],
+    employers: 'Safran Electronics · Thales · SODERN · MBDA · sous-traitants aéro',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Sentinel-2_satellite_model_in_ESTEC_test_centre.jpg/960px-Sentinel-2_satellite_model_in_ESTEC_test_centre.jpg',
+    credit: 'Image : ESA / Remy Decourt, CC BY-SA 3.0 IGO — Satellite Sentinel-2 au centre de test ESTEC',
+  },
+  {
+    id: 'integration',
+    category: 'Fabrication',
+    title: 'Ingénieur·e intégration & test',
+    tagline: "Prouver que le satellite survivra au lancement",
+    description: "Vérifie que l'instrument survit aux conditions les plus extrêmes avant de quitter la Terre : tests de vibration (simulation du lancement), choc pyrotechnique (séparation d'étage), cycles thermiques en chambre à vide (-150 °C / +150 °C sous 10⁻⁶ mbar). Si quelque chose casse ici, on peut encore réparer. Une fois en orbite, c'est impossible.",
+    skills: ['Mécanique vibratoire', 'Thermique spatiale', 'Normes ECSS', 'Bac+5 Génie mécanique · aérospatial'],
+    employers: 'ArianeGroup · Airbus DS · CNES · OHB · Thales · Arianespace',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Webb_being_prepared_for_testing_in_Houston.jpg/960px-Webb_being_prepared_for_testing_in_Houston.jpg',
+    credit: 'Image : NASA / Chris Gunn, domaine public — JWST en préparation pour tests thermiques',
+  },
+  {
+    id: 'mission_controller',
+    category: 'Exploitation',
+    title: 'Contrôleur·se de mission',
+    tagline: "Piloter un satellite depuis le sol",
+    description: "Pilote les satellites depuis les centres de contrôle (ESOC pour l'ESA à Darmstadt, CNES à Toulouse). Programme les fenêtres d'acquisition, met à jour les paramètres des instruments, gère les anomalies en temps réel. En cas de panne, quelques heures peuvent suffire à sauver ou perdre un satellite à 700 millions d'euros.",
+    skills: ['Systèmes satellitaires', 'Télécommunications', 'Gestion d\'anomalies', 'Bac+5 Aérospatial · Télécoms'],
+    employers: 'ESA / ESOC · CNES · DLR · Eumetsat · SES · Eutelsat',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/ESOC_Main_Control_Room_MCR.jpg/960px-ESOC_Main_Control_Room_MCR.jpg',
+    credit: 'Image : ESA / Jürgen Mai, CC BY-SA 3.0 IGO — Salle de contrôle principale ESOC, Darmstadt',
+  },
+  {
+    id: 'teledetection',
+    category: 'Exploitation',
+    title: 'Scientifique en télédétection',
+    tagline: "Transformer des pixels en connaissance",
+    description: "Transforme des paquets de données brutes en cartes exploitables : cartographie d'inondations après une catastrophe, suivi de la déforestation en Amazonie, bilan de la fonte des glaces arctiques. Développe des algorithmes de traitement d'images et de machine learning pour extraire l'information des téraoctets que les satellites produisent chaque jour.",
+    skills: ['Python · Google Earth Engine', 'Traitement d\'images', 'Machine learning', 'Bac+5 Géographie · Physique'],
+    employers: 'ESA / Copernicus · Météo-France · ONGs · collectivités · start-ups GeoAI',
+    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=960&h=540&fit=crop&auto=format&q=80',
+    credit: 'Image : Unsplash / licence libre',
+  },
+];
+
 export function SatelliteSection({ onComplete, onHome }: SatelliteSectionProps) {
   const { saveResponse, getResponses } = useSession();
   const [chapter, setChapter] = useState(0);
@@ -81,6 +208,10 @@ export function SatelliteSection({ onComplete, onHome }: SatelliteSectionProps) 
   const [selectedOrbit, setSelectedOrbit] = useState<number | null>(null);
   const [quizCompleted, setQuizCompleted] = useState(false);
   const [missionIdea, setMissionIdea] = useState('');
+  const [instrumentsExplored, setInstrumentsExplored] = useState<Set<string>>(new Set());
+  const [selectedInstrument, setSelectedInstrument] = useState<string | null>(null);
+  const [esaLinkVisited, setEsaLinkVisited] = useState(false);
+  const [selectedJob, setSelectedJob] = useState<string | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -89,6 +220,8 @@ export function SatelliteSection({ onComplete, onHome }: SatelliteSectionProps) 
       if (r.selectedOrbit) setSelectedOrbit(parseInt(r.selectedOrbit, 10));
       if (r.quizCompleted === 'true') setQuizCompleted(true);
       if (r.mission_idea) setMissionIdea(r.mission_idea);
+      if (r.instruments_explored) setInstrumentsExplored(new Set(r.instruments_explored.split(',')));
+      if (r.esa_link_visited === 'true') setEsaLinkVisited(true);
       setHydrated(true);
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -111,15 +244,29 @@ export function SatelliteSection({ onComplete, onHome }: SatelliteSectionProps) 
     if (hydrated) await saveResponse('satellites', 'mission_idea', v);
   };
 
+  const handleInstrumentOpen = async (id: string) => {
+    setSelectedInstrument(prev => prev === id ? null : id);
+    if (instrumentsExplored.has(id)) return;
+    const next = new Set(instrumentsExplored);
+    next.add(id);
+    setInstrumentsExplored(next);
+    if (hydrated) await saveResponse('satellites', 'instruments_explored', Array.from(next).join(','));
+  };
+
+  const handleEsaLinkVisit = async () => {
+    setEsaLinkVisited(true);
+    if (hydrated) await saveResponse('satellites', 'esa_link_visited', 'true');
+  };
+
   const handleQuizComplete = async () => {
     setQuizCompleted(true);
     if (hydrated) await saveResponse('satellites', 'quizCompleted', 'true');
-    goTo(5);
+    goTo(6);
   };
 
   return (
     <SectionCanvas>
-      <SectionTopBar label="Session 2 · Chapitre 1 sur 5 · Satellites & Orbites" onHome={onHome} />
+      <SectionTopBar label={`Session 2 · Chapitre ${chapter + 1} sur ${TOTAL_CHAPTERS} · Satellites & Orbites`} onHome={onHome} />
       <SectionProgress current={chapter} total={TOTAL_CHAPTERS} onGoTo={goTo} />
 
       <div className="relative z-[1] max-w-[1120px] mx-auto px-8 pt-14 pb-24">
@@ -128,12 +275,24 @@ export function SatelliteSection({ onComplete, onHome }: SatelliteSectionProps) 
         {chapter === 0 && (
           <ChapterShell
             kicker="01" title="70 ans de satellites"
-            titlePrefix="De Spoutnik à aujourd'hui,"
-            titleAccent="une révolution en quelques décennies."
-            lede="De Spoutnik en 1957 à plus de 7 500 satellites actifs aujourd'hui. Parcours la frise chronologique pour comprendre comment on en est arrivé là."
+            titlePrefix="Tout a commencé le 4 octobre 1957 :"
+            titleAccent="7 500 satellites au-dessus de ta tête aujourd'hui."
+            lede="En 70 ans, l'humanité est passée de zéro à une infrastructure qui conditionne chaque GPS, chaque prévision météo, chaque appel international. Parcours la frise pour voir comment cette révolution silencieuse s'est construite."
             onPrev={null} onNext={() => goTo(1)} nextEnabled={true}
             nextLabel="Continue · Anatomie d'un satellite →"
           >
+            <div className="grid grid-cols-3 gap-3 mb-8">
+              {[
+                { value: '7 500+', label: 'satellites actifs en orbite' },
+                { value: '70 ans', label: 'depuis le premier satellite' },
+                { value: '80+', label: 'pays opérateurs de satellites' },
+              ].map(stat => (
+                <div key={stat.label} className="bg-white/[0.04] border border-white/10 rounded-xl p-4 text-center">
+                  <div className="text-[28px] font-bold text-magenta leading-none">{stat.value}</div>
+                  <div className="text-[11px] text-white/45 mt-1.5 leading-tight uppercase tracking-[0.08em]">{stat.label}</div>
+                </div>
+              ))}
+            </div>
             <SatelliteTimeline />
           </ChapterShell>
         )}
@@ -142,52 +301,13 @@ export function SatelliteSection({ onComplete, onHome }: SatelliteSectionProps) 
         {chapter === 1 && (
           <ChapterShell
             kicker="02" title="Anatomie d'un satellite"
-            titlePrefix="Comment est-il construit,"
-            titleAccent="et comment survit-il dans l'espace ?"
-            lede="Chaque satellite a une mission unique, mais tous partagent la même architecture fondamentale : une plateforme et une charge utile. Identifie ensuite les composants sur le schéma."
+            titlePrefix="Une machine conçue pour fonctionner seule,"
+            titleAccent="sans technicien, pendant 15 ans."
+            lede="+150 °C d'un côté, -150 °C de l'autre. Radiations. Aucune réparation possible. Voilà ce qu'un satellite doit encaisser. Explore l'architecture qui rend ça possible, puis identifie les composants sur le schéma."
             onPrev={() => goTo(0)} onNext={() => goTo(2)} nextEnabled={true}
             nextLabel="Continue · Les orbites →"
           >
-            <div className="space-y-5">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="bg-magenta/[0.06] border border-magenta/20 rounded-2xl p-5">
-                  <h4 className="font-bold text-magenta mb-3 text-[15px]">La Plateforme (Bus)</h4>
-                  <p className="text-[13px] text-white/65 leading-relaxed mb-3">La plateforme fournit toutes les ressources nécessaires au fonctionnement du satellite :</p>
-                  <ul className="space-y-1.5">
-                    {["Navigation & contrôle d'attitude", "Propulsion (réservoirs + moteurs-fusées)", "Communications avec la Terre", "Gestion thermique (-150 °C à +150 °C)", "Alimentation électrique (batteries)"].map(item => (
-                      <li key={item} className="flex items-start gap-2 text-[13px] text-white/75">
-                        <span className="text-magenta flex-shrink-0 mt-0.5">·</span>{item}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                <div className="bg-magenta/[0.06] border border-magenta/20 rounded-2xl p-5">
-                  <h4 className="font-bold text-magenta mb-3 text-[15px]">La Charge Utile</h4>
-                  <p className="text-[13px] text-white/65 leading-relaxed mb-3">La charge utile, c'est le passager à bord — les instruments qui réalisent la vraie mission :</p>
-                  <ul className="space-y-1.5">
-                    {["Appareil de prise de vue (optique, radar)", "Altimètre (mesure le niveau des océans)", "Télescope (observation de l'Univers)", "Transpondeur de télécommunications", "Horloge atomique (navigation GNSS)"].map(item => (
-                      <li key={item} className="flex items-start gap-2 text-[13px] text-white/75">
-                        <span className="text-magenta flex-shrink-0 mt-0.5">·</span>{item}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-
-              <div className="bg-white/[0.04] border border-white/10 rounded-2xl p-5">
-                <h4 className="font-semibold text-white mb-2 text-[14px]">Panneaux solaires — l'énergie autonome</h4>
-                <p className="text-[13px] text-white/65 leading-relaxed">Chaque satellite produit sa propre énergie. Les panneaux de la sonde <strong className="text-white">Juice</strong> (ESA, en route vers Jupiter) font <strong className="text-white">27 m de long</strong> — plus grands qu'un terrain de tennis. À 800 millions de km du Soleil, la lumière est 25 fois plus faible qu'en orbite terrestre.</p>
-              </div>
-
-              <div className="bg-white/[0.04] border border-white/10 rounded-2xl p-5 text-center">
-                <p className="text-[13px] text-white/55 mb-4">Identifie les composants du satellite ci-dessous :</p>
-                <SatelliteLabelGame />
-              </div>
-
-              <div className="text-right">
-                <a href="https://cnes.fr/dossiers/satellites" target="_blank" rel="noopener noreferrer" className="text-[12px] text-magenta hover:underline">Source : CNES — Dossier Les Satellites ↗</a>
-              </div>
-            </div>
+            <SatelliteAnatomy />
           </ChapterShell>
         )}
 
@@ -195,9 +315,9 @@ export function SatelliteSection({ onComplete, onHome }: SatelliteSectionProps) 
         {chapter === 2 && (
           <ChapterShell
             kicker="03" title="Les orbites"
-            titlePrefix="Chaque altitude impose ses propres"
-            titleAccent="contraintes d'ingénierie."
-            lede="Sélectionne une orbite pour voir ses défis techniques spécifiques. La répartition des satellites actifs est visible en bas de page."
+            titlePrefix="Pas n'importe quelle altitude :"
+            titleAccent="chaque orbite a ses propres règles d'ingénierie."
+            lede="Starlink en LEO pour l'internet. GPS en MEO pour la navigation. La météo et la TV en GEO. Copernicus en héliosynchrone pour les images. Ces choix ne sont pas arbitraires. Sélectionne une orbite pour voir ce que ses ingénieurs doivent résoudre."
             onPrev={() => goTo(1)} onNext={() => goTo(3)} nextEnabled={selectedOrbit !== null}
             nextLabel={selectedOrbit !== null ? "Continue · Débris spatiaux →" : "Sélectionne une orbite d'abord"}
           >
@@ -253,9 +373,9 @@ export function SatelliteSection({ onComplete, onHome }: SatelliteSectionProps) 
             kicker="04" title="Débris spatiaux"
             titlePrefix="Quand l'espace devient"
             titleAccent="une décharge à 28 000 km/h."
-            lede="Un satellite est conçu pour 5 à 15 ans. Le facteur limitant n'est généralement pas la panne des instruments, mais l'épuisement du carburant. Ce qui arrive ensuite est devenu un enjeu mondial."
+            lede="Un satellite en fin de vie ne disparaît pas. Il reste en orbite pendant des décennies. Deux débris en collision créent des milliers de nouveaux fragments : c'est le Syndrome de Kessler, et c'est un problème que l'humanité doit résoudre maintenant."
             onPrev={() => goTo(2)} onNext={() => goTo(4)} nextEnabled={true}
-            nextLabel="Continue · Quiz →"
+            nextLabel="Continue · Instruments de mesure →"
           >
             <div className="space-y-5">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -314,27 +434,181 @@ export function SatelliteSection({ onComplete, onHome }: SatelliteSectionProps) 
           </ChapterShell>
         )}
 
-        {/* ── Ch 5 : Quiz + Mission ── */}
-        {chapter === 4 && !quizCompleted && (
+        {/* ── Ch 5 : Instruments de mesure ── */}
+        {chapter === 4 && (() => {
+          const canContinue = instrumentsExplored.size >= 3 || esaLinkVisited;
+          return (
+            <ChapterShell
+              kicker="05" title="Instruments de mesure"
+              titlePrefix="Un satellite, c'est avant tout"
+              titleAccent="une plateforme d'instruments scientifiques."
+              lede="Chaque satellite embarque des capteurs spécialisés pour observer la Terre sous un angle précis. Explore les 6 familles d'instruments et découvre l'outil de visualisation de l'ESA pour voir ce que ces capteurs perçoivent réellement."
+              onPrev={() => goTo(3)} onNext={() => goTo(5)} nextEnabled={canContinue}
+              nextLabel={canContinue ? "Continue · Quiz →" : "Explore au moins 3 instruments"}
+            >
+              <div className="space-y-6">
+
+                {/* ESA Visuals featured link */}
+                <a
+                  href="https://visuals.earth.esa.int/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={handleEsaLinkVisit}
+                  className="group flex items-center gap-5 bg-magenta/[0.10] border-[1.5px] border-magenta rounded-2xl p-5 hover:bg-magenta/[0.18] transition-all"
+                >
+                  <div className="shrink-0 w-12 h-12 rounded-xl bg-magenta flex items-center justify-center">
+                    <ExternalLink className="w-6 h-6 text-white" strokeWidth={1.75} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[11px] uppercase tracking-[0.14em] text-magenta font-semibold mb-0.5">Outil interactif ESA</p>
+                    <p className="font-bold text-white text-[16px] leading-tight group-hover:underline">visuals.earth.esa.int</p>
+                    <p className="text-[13px] text-white/60 mt-1 leading-snug">Visualise en temps réel ce que chaque satellite ESA observe et quels instruments il utilise pour le mesurer.</p>
+                  </div>
+                  <ExternalLink className="w-5 h-5 text-magenta shrink-0 opacity-70 group-hover:opacity-100" strokeWidth={1.75} />
+                </a>
+
+                {/* Instrument cards */}
+                <div>
+                  <p className="text-[12px] uppercase tracking-[0.12em] text-white/40 font-semibold mb-3">
+                    Les 6 familles d'instruments · {instrumentsExplored.size}/6 explorés
+                  </p>
+                  <div className="space-y-2">
+                    {instruments.map(inst => {
+                      const isOpen = selectedInstrument === inst.id;
+                      const seen = instrumentsExplored.has(inst.id);
+                      return (
+                        <div key={inst.id}>
+                          <button
+                            onClick={() => handleInstrumentOpen(inst.id)}
+                            className={`w-full p-4 rounded-2xl border text-left transition-all flex items-center gap-4 ${
+                              isOpen
+                                ? 'border-magenta bg-magenta/10'
+                                : 'border-white/10 bg-white/[0.04] hover:border-magenta/50 hover:bg-white/[0.07]'
+                            }`}
+                          >
+                            <div className={`shrink-0 w-9 h-9 rounded-lg flex items-center justify-center transition-colors ${isOpen ? 'bg-magenta' : 'bg-white/[0.07]'}`}>
+                              <inst.Icon className="w-4.5 h-4.5" strokeWidth={1.75} style={{ width: 18, height: 18 }} />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2">
+                                <h4 className="font-semibold text-[15px] leading-tight">{inst.name}</h4>
+                                {seen && !isOpen && <span className="text-[10px] text-magenta border border-magenta/40 rounded-full px-2 py-0.5 shrink-0">vu</span>}
+                              </div>
+                              <p className="text-[12px] text-white/50 mt-0.5">{inst.tagline}</p>
+                            </div>
+                          </button>
+                          {isOpen && (
+                            <div className="mt-2 bg-magenta/[0.06] border border-magenta/25 rounded-2xl p-5 space-y-4 animate-[chapterIn_320ms_cubic-bezier(.2,0,0,1)]">
+                              <p className="text-white/80 leading-relaxed text-[14px]">{inst.detail}</p>
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                <div className="bg-white/[0.04] border border-white/10 rounded-xl px-4 py-3">
+                                  <p className="text-[10.5px] uppercase tracking-[0.1em] text-magenta font-semibold mb-1">Exemple concret</p>
+                                  <p className="text-[13px] text-white/75">{inst.example}</p>
+                                </div>
+                                <div className="bg-white/[0.04] border border-white/10 rounded-xl px-4 py-3">
+                                  <p className="text-[10.5px] uppercase tracking-[0.1em] text-magenta font-semibold mb-1">Applications principales</p>
+                                  <p className="text-[13px] text-white/75">{inst.usage}</p>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+                {/* Jobs section */}
+                <div className="border-t border-white/[0.08] pt-8">
+                  <div className="mb-6">
+                    <span className="bg-magenta text-white rounded-full px-3 py-1 text-[11px] font-semibold tracking-[0.1em] uppercase">Métiers</span>
+                    <h3 className="font-bold text-[20px] mt-3 uppercase tracking-[0.04em]">
+                      De la conception à <span className="text-magenta">l'exploitation</span>
+                    </h3>
+                    <p className="text-white/55 text-[14px] mt-2 max-w-[640px] leading-relaxed">
+                      Les instruments embarqués font vivre des filières entières d'ingénierie et de science. Clique sur un métier pour en savoir plus.
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {(['Conception', 'Fabrication', 'Exploitation'] as const).map(cat => (
+                      <div key={cat}>
+                        <p className="text-[11px] uppercase tracking-[0.14em] text-magenta font-semibold mb-3 pb-2 border-b border-magenta/20">{cat}</p>
+                        <div className="space-y-3">
+                          {jobs.filter(j => j.category === cat).map(job => {
+                            const isJobOpen = selectedJob === job.id;
+                            return (
+                              <div key={job.id}>
+                                <button
+                                  onClick={() => setSelectedJob(isJobOpen ? null : job.id)}
+                                  className={`w-full text-left rounded-2xl border overflow-hidden transition-all ${isJobOpen ? 'border-magenta' : 'border-white/10 hover:border-magenta/40'}`}
+                                >
+                                  <div className="relative h-36 overflow-hidden">
+                                    <img
+                                      src={job.image}
+                                      alt={job.title}
+                                      className="w-full h-full object-cover"
+                                      loading="lazy"
+                                    />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                                    <div className="absolute bottom-0 left-0 right-0 p-3">
+                                      <p className="font-bold text-white text-[14px] leading-tight">{job.title}</p>
+                                      <p className="text-[11px] text-white/60 mt-0.5">{job.tagline}</p>
+                                    </div>
+                                  </div>
+                                </button>
+                                {isJobOpen && (
+                                  <div className="mt-1.5 bg-white/[0.04] border border-magenta/25 rounded-2xl p-4 space-y-3 animate-[chapterIn_320ms_cubic-bezier(.2,0,0,1)]">
+                                    <p className="text-[13px] text-white/78 leading-relaxed">{job.description}</p>
+                                    <div>
+                                      <p className="text-[10.5px] uppercase tracking-[0.1em] text-magenta font-semibold mb-2">Compétences clés</p>
+                                      <div className="flex flex-wrap gap-1.5">
+                                        {job.skills.map(s => (
+                                          <span key={s} className="text-[11px] bg-magenta/10 border border-magenta/20 rounded-full px-2.5 py-0.5 text-magenta/90">{s}</span>
+                                        ))}
+                                      </div>
+                                    </div>
+                                    <div className="border-t border-white/[0.07] pt-3">
+                                      <p className="text-[10.5px] uppercase tracking-[0.1em] text-white/40 font-semibold mb-1">Employeurs typiques</p>
+                                      <p className="text-[12px] text-white/55">{job.employers}</p>
+                                    </div>
+                                    <p className="text-[10px] italic text-white/30">{job.credit}</p>
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+              </div>
+            </ChapterShell>
+          );
+        })()}
+
+        {/* ── Ch 6 : Quiz + Mission ── */}
+        {chapter === 5 && !quizCompleted && (
           <ChapterShell
-            kicker="05" title="Quiz éclair"
+            kicker="06" title="Quiz éclair"
             titlePrefix="Deux questions pour"
             titleAccent="valider le chapitre."
             lede="Une réponse par question. L'objectif, c'est d'apprendre."
-            onPrev={() => goTo(3)} onNext={() => {}} nextEnabled={false}
+            onPrev={() => goTo(4)} onNext={() => {}} nextEnabled={false}
             nextLabel="Réponds aux questions d'abord"
           >
             <Quiz questions={quizQuestions} onComplete={handleQuizComplete} />
           </ChapterShell>
         )}
 
-        {chapter === 4 && quizCompleted && (
+        {chapter === 5 && quizCompleted && (
           <ChapterShell
-            kicker="05" title="Imagine ta mission"
+            kicker="06" title="Imagine ta mission"
             titlePrefix="Si tu devais concevoir un satellite,"
             titleAccent="quelle serait ta mission ?"
             lede="Décris l'orbite que tu choisirais, l'objectif de la mission et les principaux défis d'ingénierie que tu anticiperais."
-            onPrev={() => goTo(3)} onNext={() => goTo(5)} nextEnabled={missionIdea.trim().length > 0}
+            onPrev={() => goTo(4)} onNext={() => goTo(6)} nextEnabled={missionIdea.trim().length > 0}
             nextLabel={missionIdea.trim().length > 0 ? "Terminer le chapitre →" : "Décris ta mission d'abord"}
           >
             <div>
@@ -354,18 +628,19 @@ export function SatelliteSection({ onComplete, onHome }: SatelliteSectionProps) 
         )}
 
         {/* ── Récap ── */}
-        {chapter === 5 && (
+        {chapter === 6 && (
           <ChapterRecap
             chapterLabel="Satellites & Orbites"
-            summary="Tu as exploré 70 ans d'histoire des satellites, leur anatomie, les différentes orbites et leurs contraintes, le problème des débris spatiaux, et imaginé ta propre mission."
+            summary="Tu as exploré 70 ans d'histoire des satellites, leur anatomie, les différentes orbites et leurs contraintes, le problème des débris spatiaux, les instruments de mesure, et imaginé ta propre mission."
             stats={[
               { v: selectedOrbit !== null ? orbits[selectedOrbit].name : '—', t: 'orbite explorée' },
+              { v: `${instrumentsExplored.size} / 6`, t: 'instruments découverts' },
               { v: quizCompleted ? '2 / 2' : '0 / 2', t: 'questions du quiz' },
             ]}
             nextTitle="Exploration Spatiale"
             nextDesc="James Webb, Artemis, Mars : les grandes missions qui repoussent les frontières."
             onContinue={onComplete}
-            onPrev={() => goTo(4)}
+            onPrev={() => goTo(5)}
           />
         )}
       </div>

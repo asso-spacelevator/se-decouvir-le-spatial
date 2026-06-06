@@ -8,16 +8,18 @@ export interface SatelliteData {
   label: string;
   shortLabel: string;
   orbit: string;
-  mass: string;    // kg
-  size: string;    // e.g. "3.5 × 2.1 m"
+  mass: string;
+  size: string;
   lifetime: string;
   mission: string;
-  complexity: number; // 1-5
+  complexity: number;
   examples: string;
   color: string;
   accentColor: string;
   description: string;
   funFact: string;
+  photo: string;
+  credit: string;
 }
 
 const SATELLITES: SatelliteData[] = [
@@ -36,6 +38,8 @@ const SATELLITES: SatelliteData[] = [
     accentColor: '#38bdf8',
     description: 'Géant de l\'orbite : immobile dans le ciel, il couvre un tiers de la Terre depuis 36 000 km.',
     funFact: 'Un seul satellite GEO peut remplacer des milliers de stations relais terrestres !',
+    photo: 'telecom.jpg',
+    credit: '© Thales Alenia Space / E.Briot',
   },
   {
     id: 'scientific_cnes',
@@ -52,6 +56,8 @@ const SATELLITES: SatelliteData[] = [
     accentColor: '#34d399',
     description: 'Instrument scientifique de précision : mesure le niveau des océans au millimètre près depuis l\'espace.',
     funFact: 'Jason-3 mesure la hauteur des océans avec une précision de 3 cm depuis 1 300 km d\'altitude !',
+    photo: 'scientifique.jpg',
+    credit: '© NASA / JPL-Caltech / CNES',
   },
   {
     id: 'cubesat',
@@ -68,6 +74,8 @@ const SATELLITES: SatelliteData[] = [
     accentColor: '#fbbf24',
     description: 'Nanosatellite standardisé : peut être construit par une équipe étudiante en quelques mois.',
     funFact: 'Un CubeSat 1U tient dans la main. Des lycéens français en ont déjà fabriqué et lancé !',
+    photo: 'cubesat.jpg',
+    credit: '© ESA / illustration',
   },
   {
     id: 'starlink',
@@ -84,176 +92,10 @@ const SATELLITES: SatelliteData[] = [
     accentColor: '#a78bfa',
     description: 'Satellite de constellation en série : produit en masse, conçu pour être remplacé régulièrement.',
     funFact: 'SpaceX lance plus de 60 Starlink d\'un coup ! Ils sont visibles en "train" dans le ciel la nuit.',
+    photo: 'starlink.avif',
+    credit: '© SpaceX',
   },
 ];
-
-/* ─── Visual satellite renderers (pure CSS/SVG) ─────────────── */
-
-function GeoTelecomSVG({ size = 200 }: { size?: number }) {
-  return (
-    <svg viewBox="0 0 200 180" width={size} height={size * 0.9} className="drop-shadow-lg">
-      {/* Main bus */}
-      <rect x="70" y="50" width="60" height="80" rx="4" fill="#1e4060" stroke="#0ea5e9" strokeWidth="1.5" />
-      <rect x="73" y="53" width="54" height="74" rx="2" fill="#0c2d48" />
-      {/* Solar panel left */}
-      <rect x="5" y="60" width="60" height="18" rx="3" fill="#1e3a5f" stroke="#38bdf8" strokeWidth="1" />
-      <line x1="15" y1="60" x2="15" y2="78" stroke="#38bdf8" strokeWidth="0.5" opacity="0.5" />
-      <line x1="25" y1="60" x2="25" y2="78" stroke="#38bdf8" strokeWidth="0.5" opacity="0.5" />
-      <line x1="35" y1="60" x2="35" y2="78" stroke="#38bdf8" strokeWidth="0.5" opacity="0.5" />
-      <line x1="45" y1="60" x2="45" y2="78" stroke="#38bdf8" strokeWidth="0.5" opacity="0.5" />
-      <line x1="55" y1="60" x2="55" y2="78" stroke="#38bdf8" strokeWidth="0.5" opacity="0.5" />
-      {/* Solar panel right */}
-      <rect x="135" y="60" width="60" height="18" rx="3" fill="#1e3a5f" stroke="#38bdf8" strokeWidth="1" />
-      <line x1="145" y1="60" x2="145" y2="78" stroke="#38bdf8" strokeWidth="0.5" opacity="0.5" />
-      <line x1="155" y1="60" x2="155" y2="78" stroke="#38bdf8" strokeWidth="0.5" opacity="0.5" />
-      <line x1="165" y1="60" x2="165" y2="78" stroke="#38bdf8" strokeWidth="0.5" opacity="0.5" />
-      <line x1="175" y1="60" x2="175" y2="78" stroke="#38bdf8" strokeWidth="0.5" opacity="0.5" />
-      <line x1="185" y1="60" x2="185" y2="78" stroke="#38bdf8" strokeWidth="0.5" opacity="0.5" />
-      {/* Antenna dish */}
-      <ellipse cx="100" cy="42" rx="22" ry="10" fill="#2d6a9f" stroke="#38bdf8" strokeWidth="1.5" />
-      <ellipse cx="100" cy="42" rx="15" ry="7" fill="#1e4060" stroke="#38bdf8" strokeWidth="0.5" />
-      <line x1="100" y1="42" x2="100" y2="52" stroke="#38bdf8" strokeWidth="2" />
-      {/* Side reflectors */}
-      <ellipse cx="80" cy="138" rx="10" ry="5" fill="#1a3a5c" stroke="#0ea5e9" strokeWidth="1" transform="rotate(-15, 80, 138)" />
-      <ellipse cx="120" cy="138" rx="10" ry="5" fill="#1a3a5c" stroke="#0ea5e9" strokeWidth="1" transform="rotate(15, 120, 138)" />
-      {/* Panel connectors */}
-      <line x1="65" y1="69" x2="70" y2="69" stroke="#38bdf8" strokeWidth="2" />
-      <line x1="130" y1="69" x2="135" y2="69" stroke="#38bdf8" strokeWidth="2" />
-      {/* Body detail */}
-      <rect x="80" y="65" width="40" height="8" rx="1" fill="#0a1f30" stroke="#0ea5e9" strokeWidth="0.5" opacity="0.8" />
-      <rect x="80" y="80" width="40" height="8" rx="1" fill="#0a1f30" stroke="#0ea5e9" strokeWidth="0.5" opacity="0.8" />
-      <circle cx="95" cy="100" r="3" fill="#0ea5e9" opacity="0.7" />
-      <circle cx="105" cy="100" r="3" fill="#0ea5e9" opacity="0.7" />
-      {/* Thruster */}
-      <rect x="88" y="128" width="24" height="6" rx="2" fill="#1a4060" stroke="#38bdf8" strokeWidth="1" />
-      <polygon points="94,134 106,134 102,142 98,142" fill="#0e3050" stroke="#38bdf8" strokeWidth="0.8" />
-    </svg>
-  );
-}
-
-function ScientificSVG({ size = 200 }: { size?: number }) {
-  return (
-    <svg viewBox="0 0 200 180" width={size} height={size * 0.9} className="drop-shadow-lg">
-      {/* Main bus - hexagonal-ish body */}
-      <polygon points="100,30 135,50 135,120 100,140 65,120 65,50" fill="#0d3825" stroke="#10b981" strokeWidth="1.5" />
-      <polygon points="100,38 128,55 128,113 100,130 72,113 72,55" fill="#072a1a" />
-      {/* Solar panel left — angled */}
-      <rect x="8" y="55" width="52" height="22" rx="3" fill="#0d3825" stroke="#34d399" strokeWidth="1" transform="rotate(-8, 34, 66)" />
-      <line x1="18" y1="52" x2="16" y2="74" stroke="#34d399" strokeWidth="0.5" opacity="0.5" />
-      <line x1="30" y1="51" x2="28" y2="73" stroke="#34d399" strokeWidth="0.5" opacity="0.5" />
-      <line x1="42" y1="50" x2="40" y2="72" stroke="#34d399" strokeWidth="0.5" opacity="0.5" />
-      <line x1="54" y1="49" x2="52" y2="71" stroke="#34d399" strokeWidth="0.5" opacity="0.5" />
-      {/* Solar panel right */}
-      <rect x="140" y="55" width="52" height="22" rx="3" fill="#0d3825" stroke="#34d399" strokeWidth="1" transform="rotate(8, 166, 66)" />
-      <line x1="150" y1="49" x2="152" y2="71" stroke="#34d399" strokeWidth="0.5" opacity="0.5" />
-      <line x1="162" y1="50" x2="164" y2="72" stroke="#34d399" strokeWidth="0.5" opacity="0.5" />
-      <line x1="174" y1="51" x2="176" y2="73" stroke="#34d399" strokeWidth="0.5" opacity="0.5" />
-      <line x1="184" y1="53" x2="186" y2="74" stroke="#34d399" strokeWidth="0.5" opacity="0.5" />
-      {/* Main instrument (radar altimeter) */}
-      <rect x="82" y="22" width="36" height="12" rx="2" fill="#0d3825" stroke="#10b981" strokeWidth="1.5" />
-      <rect x="85" y="24" width="30" height="8" fill="#06231a" />
-      <line x1="90" y1="28" x2="110" y2="28" stroke="#10b981" strokeWidth="1" opacity="0.7" />
-      {/* Star tracker */}
-      <circle cx="78" cy="55" r="5" fill="#0d3825" stroke="#34d399" strokeWidth="1" />
-      <circle cx="78" cy="55" r="2" fill="#34d399" opacity="0.8" />
-      {/* Body instruments grid */}
-      <rect x="78" y="65" width="44" height="6" rx="1" fill="#07200f" stroke="#10b981" strokeWidth="0.5" opacity="0.8" />
-      <rect x="78" y="78" width="44" height="6" rx="1" fill="#07200f" stroke="#10b981" strokeWidth="0.5" opacity="0.8" />
-      <rect x="78" y="91" width="44" height="6" rx="1" fill="#07200f" stroke="#10b981" strokeWidth="0.5" opacity="0.8" />
-      {/* Thruster bottom */}
-      <ellipse cx="100" cy="140" rx="12" ry="5" fill="#0d3825" stroke="#34d399" strokeWidth="1" />
-      <polygon points="94,144 106,144 103,155 97,155" fill="#072a1a" stroke="#34d399" strokeWidth="0.8" />
-      {/* Connector arms */}
-      <line x1="60" y1="69" x2="65" y2="69" stroke="#34d399" strokeWidth="2" />
-      <line x1="135" y1="69" x2="140" y2="69" stroke="#34d399" strokeWidth="2" />
-    </svg>
-  );
-}
-
-function CubeSatSVG({ size = 200 }: { size?: number }) {
-  // Scale down for realism (CubeSat is TINY)
-  const scale = size * 0.45;
-  return (
-    <svg viewBox="0 0 200 180" width={size} height={size * 0.9} className="drop-shadow-lg">
-      {/* Isometric cube body */}
-      <g transform={`translate(${50 + (200 - scale) / 2 - 50}, ${20 + (180 - scale * 0.9) / 2 - 20})`}>
-        {/* Top face */}
-        <polygon points={`${scale*0.5},0 ${scale},${scale*0.25} ${scale*0.5},${scale*0.5} 0,${scale*0.25}`}
-          fill="#3d2a00" stroke="#fbbf24" strokeWidth="1.5" />
-        {/* Left face */}
-        <polygon points={`0,${scale*0.25} ${scale*0.5},${scale*0.5} ${scale*0.5},${scale} 0,${scale*0.75}`}
-          fill="#2a1d00" stroke="#f59e0b" strokeWidth="1.5" />
-        {/* Right face */}
-        <polygon points={`${scale*0.5},${scale*0.5} ${scale},${scale*0.25} ${scale},${scale*0.75} ${scale*0.5},${scale}`}
-          fill="#4d3500" stroke="#fbbf24" strokeWidth="1.5" />
-        {/* Grid on top face */}
-        <line x1={scale*0.25} y1={scale*0.125} x2={scale*0.75} y2={scale*0.375} stroke="#fbbf24" strokeWidth="0.5" opacity="0.4" />
-        <line x1={scale*0.5} y1={0} x2={scale*0.5} y2={scale*0.5} stroke="#fbbf24" strokeWidth="0.5" opacity="0.4" />
-        {/* PCB detail left face */}
-        <line x1={scale*0.05} y1={scale*0.45} x2={scale*0.45} y2={scale*0.7} stroke="#f59e0b" strokeWidth="0.5" opacity="0.3" />
-        <line x1={scale*0.05} y1={scale*0.55} x2={scale*0.45} y2={scale*0.8} stroke="#f59e0b" strokeWidth="0.5" opacity="0.3" />
-        <circle cx={scale*0.15} cy={scale*0.6} r={scale*0.03} fill="#fbbf24" opacity="0.7" />
-        <circle cx={scale*0.3} cy={scale*0.68} r={scale*0.03} fill="#fbbf24" opacity="0.7" />
-        {/* Solar cells right face */}
-        <rect x={scale*0.52} y={scale*0.53} width={scale*0.1} height={scale*0.08} rx="1" fill="#1a1000" stroke="#fbbf24" strokeWidth="0.5" />
-        <rect x={scale*0.65} y={scale*0.47} width={scale*0.1} height={scale*0.08} rx="1" fill="#1a1000" stroke="#fbbf24" strokeWidth="0.5" />
-        <rect x={scale*0.52} y={scale*0.65} width={scale*0.1} height={scale*0.08} rx="1" fill="#1a1000" stroke="#fbbf24" strokeWidth="0.5" />
-        <rect x={scale*0.65} y={scale*0.59} width={scale*0.1} height={scale*0.08} rx="1" fill="#1a1000" stroke="#fbbf24" strokeWidth="0.5" />
-        {/* Tiny antenna */}
-        <line x1={scale*0.5} y1={0} x2={scale*0.5} y2={-scale*0.2} stroke="#fbbf24" strokeWidth="1" />
-        <circle cx={scale*0.5} cy={-scale*0.2} r={2} fill="#fbbf24" />
-      </g>
-      {/* Size indicator label */}
-      <text x="100" y="168" textAnchor="middle" fill="#fbbf2480" fontSize="9" fontFamily="monospace">10 cm × 10 cm × 10 cm</text>
-    </svg>
-  );
-}
-
-function StarlinkSVG({ size = 200 }: { size?: number }) {
-  return (
-    <svg viewBox="0 0 200 180" width={size} height={size * 0.9} className="drop-shadow-lg">
-      {/* Flat body (Starlink is very flat) */}
-      <rect x="55" y="70" width="90" height="50" rx="6" fill="#1a1030" stroke="#a78bfa" strokeWidth="1.5" />
-      <rect x="58" y="73" width="84" height="44" rx="4" fill="#110a24" />
-      {/* Single large solar panel */}
-      <rect x="15" y="78" width="170" height="34" rx="4" fill="#1a1030" stroke="#8b5cf6" strokeWidth="1" />
-      {/* Solar cells pattern */}
-      {Array.from({ length: 8 }).map((_, i) => (
-        <rect key={i} x={18 + i * 20} y={80} width="17" height="30" rx="1" fill="#0d0820" stroke="#7c3aed" strokeWidth="0.5" />
-      ))}
-      {/* Phased array antennas (flat tiles) */}
-      <rect x="62" y="76" width="25" height="18" rx="2" fill="#0d0820" stroke="#a78bfa" strokeWidth="0.8" />
-      <rect x="90" y="76" width="25" height="18" rx="2" fill="#0d0820" stroke="#a78bfa" strokeWidth="0.8" />
-      <rect x="118" y="76" width="25" height="18" rx="2" fill="#0d0820" stroke="#a78bfa" strokeWidth="0.8" />
-      {/* Dots on antenna tiles */}
-      {[70, 98, 126].map(x => (
-        <g key={x}>
-          <circle cx={x} cy={82} r={1.5} fill="#a78bfa" opacity="0.6" />
-          <circle cx={x + 6} cy={82} r={1.5} fill="#a78bfa" opacity="0.6" />
-          <circle cx={x + 12} cy={82} r={1.5} fill="#a78bfa" opacity="0.6" />
-          <circle cx={x} cy={88} r={1.5} fill="#a78bfa" opacity="0.6" />
-          <circle cx={x + 6} cy={88} r={1.5} fill="#a78bfa" opacity="0.6" />
-          <circle cx={x + 12} cy={88} r={1.5} fill="#a78bfa" opacity="0.6" />
-        </g>
-      ))}
-      {/* Hall thruster (ion) */}
-      <circle cx="100" cy="124" r="6" fill="#1a1030" stroke="#8b5cf6" strokeWidth="1" />
-      <circle cx="100" cy="124" r="3" fill="#7c3aed" opacity="0.7" />
-      {/* Body labels */}
-      <rect x="62" y="100" width="76" height="8" rx="1" fill="#0d0820" stroke="#8b5cf6" strokeWidth="0.5" opacity="0.7" />
-      <rect x="62" y="111" width="76" height="5" rx="1" fill="#0d0820" stroke="#8b5cf6" strokeWidth="0.5" opacity="0.5" />
-      {/* SpaceX logo text placeholder */}
-      <text x="100" y="108" textAnchor="middle" fill="#a78bfa" fontSize="6" fontFamily="monospace" opacity="0.8">STARLINK</text>
-    </svg>
-  );
-}
-
-const SATELLITE_SVGS: Record<string, (props: { size?: number }) => JSX.Element> = {
-  geo_telecom: GeoTelecomSVG,
-  scientific_cnes: ScientificSVG,
-  cubesat: CubeSatSVG,
-  starlink: StarlinkSVG,
-};
 
 /* ─── Comparison bar ─────────────────────────────────────────── */
 
@@ -328,42 +170,6 @@ function ComparisonPanel({ satellites }: { satellites: SatelliteData[] }) {
   );
 }
 
-/* ─── Scale comparison (visual size) ────────────────────────── */
-
-function ScaleComparison() {
-  // relative sizes in pixels for visual representation
-  const items = [
-    { id: 'geo_telecom', label: 'GEO Télécom', width: 160, color: '#0ea5e9', detail: '~8 m (corps + antennes)' },
-    { id: 'scientific_cnes', label: 'Scientifique', width: 100, color: '#10b981', detail: '~3–5 m' },
-    { id: 'starlink', label: 'Starlink', width: 72, color: '#8b5cf6', detail: '~3 m (panneau déployé)' },
-    { id: 'cubesat', label: 'CubeSat', width: 16, color: '#f59e0b', detail: '10 cm' },
-  ];
-
-  return (
-    <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
-      <h4 className="text-sm font-semibold text-gray-300 mb-1 flex items-center gap-2">
-        <span>📏</span> Comparaison de taille relative
-      </h4>
-      <p className="text-xs text-gray-500 mb-5">Les rectangles sont proportionnels à la taille réelle des satellites.</p>
-      <div className="space-y-4">
-        {items.map(item => (
-          <div key={item.id} className="flex items-center gap-3">
-            <div className="w-24 text-right text-xs text-gray-400 flex-shrink-0">{item.label}</div>
-            <div className="flex items-center gap-2">
-              <div
-                className="h-8 rounded flex-shrink-0 flex items-center justify-center"
-                style={{ width: item.width, backgroundColor: item.color + '30', border: `1px solid ${item.color}60` }}
-              />
-              <span className="text-xs text-gray-500">{item.detail}</span>
-            </div>
-          </div>
-        ))}
-      </div>
-      <p className="text-xs text-gray-600 mt-4">* Un humain mesure ~1.75 m — le GEO est plus grand qu'un bus scolaire !</p>
-    </div>
-  );
-}
-
 /* ─── Main game component ─────────────────────────────────────── */
 
 export function SatelliteLabelGame() {
@@ -379,7 +185,6 @@ export function SatelliteLabelGame() {
   const [draggedFromSlot, setDraggedFromSlot] = useState<number | null>(null);
   const [checked, setChecked] = useState(false);
   const [showComparison, setShowComparison] = useState(false);
-  const [showScale, setShowScale] = useState(false);
   const [revealedCard, setRevealedCard] = useState<string | null>(null);
 
   const correctCount = checked
@@ -474,7 +279,6 @@ export function SatelliteLabelGame() {
       {/* Game grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {displayOrder.map((sat, i) => {
-          const SvgComp = SATELLITE_SVGS[sat.id];
           const slotLabel = slots[i];
           const slotSat = slotLabel ? SATELLITES.find(s => s.id === slotLabel) : null;
 
@@ -483,20 +287,28 @@ export function SatelliteLabelGame() {
               {/* Satellite visual */}
               <button
                 onClick={() => setRevealedCard(revealedCard === sat.id ? null : sat.id)}
-                className="w-full bg-white/5 hover:bg-white/8 border border-white/10 hover:border-white/20 rounded-2xl p-4 transition-all group cursor-pointer"
+                className="w-full bg-white/5 hover:bg-white/8 border border-white/10 hover:border-white/20 rounded-2xl overflow-hidden transition-all group cursor-pointer"
               >
-                <div className="flex items-center justify-center mb-2">
-                  <SvgComp size={140} />
+                <div className="relative">
+                  <img
+                    src={`${import.meta.env.BASE_URL}satellites/${sat.photo}`}
+                    alt={sat.label}
+                    className="w-full h-[140px] object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                  {sat.credit && (
+                    <p className="absolute bottom-1 right-2 text-[9px] italic text-white/45 leading-none">{sat.credit}</p>
+                  )}
                 </div>
-                <div className="flex items-center justify-center gap-1 text-xs text-gray-500 group-hover:text-gray-400">
+                <div className="flex items-center justify-center gap-1 text-xs text-gray-500 group-hover:text-gray-400 py-2">
                   <Info className="w-3 h-3" /> fiche info
                 </div>
               </button>
 
-              {/* Info card (revealed on click, only after checking) */}
-              {revealedCard === sat.id && checked && (
+              {/* Info card: auto-unfold all after check, or show teaser on click before check */}
+              {checked && (
                 <div
-                  className="w-full rounded-xl p-4 border text-xs space-y-1.5 text-left"
+                  className="w-full rounded-xl p-4 border text-xs space-y-1.5 text-left animate-[chapterIn_320ms_cubic-bezier(.2,0,0,1)]"
                   style={{ backgroundColor: sat.color + '15', borderColor: sat.color + '40' }}
                 >
                   <p className="font-bold" style={{ color: sat.accentColor }}>{sat.label}</p>
@@ -656,30 +468,6 @@ export function SatelliteLabelGame() {
         </button>
         {showComparison && <ComparisonPanel satellites={SATELLITES} />}
 
-        <button
-          onClick={() => setShowScale(v => !v)}
-          className="w-full flex items-center justify-between px-5 py-3 bg-white/5 hover:bg-white/8 border border-white/10 rounded-xl transition-all text-sm font-medium text-gray-300 hover:text-white"
-        >
-          <span className="flex items-center gap-2">
-            <span>📏</span> Voir la comparaison de taille
-          </span>
-          {showScale ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-        </button>
-        {showScale && <ScaleComparison />}
-      </div>
-
-      {/* Fun facts strip */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-        {SATELLITES.map(sat => (
-          <div
-            key={sat.id}
-            className="rounded-xl p-4 border text-sm"
-            style={{ backgroundColor: sat.color + '0d', borderColor: sat.color + '30' }}
-          >
-            <p className="font-semibold mb-1" style={{ color: sat.accentColor }}>{sat.shortLabel}</p>
-            <p className="text-gray-300 text-xs leading-relaxed">{sat.funFact}</p>
-          </div>
-        ))}
       </div>
     </div>
   );
