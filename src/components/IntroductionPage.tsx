@@ -93,6 +93,16 @@ const SESSION2_FULL = [
   },
   {
     num: '03',
+    title: 'Entreprises du spatial européen',
+    chapters: [
+      'Carte interactive',
+      'Startups vs Entreprises historiques',
+      'Les métiers en action',
+      'Récap',
+    ],
+  },
+  {
+    num: '04',
     title: 'Ton accompagnement',
     chapters: [
       'Associations',
@@ -101,7 +111,7 @@ const SESSION2_FULL = [
     ],
   },
   {
-    num: '04',
+    num: '05',
     title: 'Questions & réponses',
     chapters: [
       'Questions fréquentes',
@@ -153,7 +163,7 @@ const QUOTES_DATA = [
   },
 ];
 
-const AUTHORS_LIST = QUOTES_DATA.map(q => q.author);
+const AUTHORS_LIST = [...QUOTES_DATA.map(q => q.author)].sort((a, b) => a.localeCompare(b));
 
 interface IntroductionPageProps {
   onContinue: () => void;
