@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Camera, Radio, Layers, Waves, Thermometer, Globe, ExternalLink } from 'lucide-react';
+import { Camera, Radio, Layers, Waves, Thermometer, Globe, ExternalLink, Lock } from 'lucide-react';
 import { useSession } from '../contexts/SessionContext';
 import { Quiz } from './Quiz';
 import { SatelliteAnatomy } from './SatelliteAnatomy';
-import { SatelliteTimeline } from './SatelliteTimeline';
+import { MosaiqueSatellites } from './MosaiqueSatellites';
 import { SatelliteDistribution } from './SatelliteDistribution';
 import { SectionCanvas, SectionTopBar, SectionProgress, ChapterShell, ChapterRecap } from './ChapterShell';
 import { YouTubeEmbed } from './YouTubeEmbed';
@@ -24,6 +24,8 @@ const orbits = [
     engineering: "Satellites plus petits et moins coûteux à lancer. Pour assurer une couverture continue, il faut des constellations de dizaines à des milliers de satellites (Starlink : plus de 5 000 unités). La friction atmosphérique résiduelle fait descendre progressivement l'orbite : les satellites doivent embarquer des petits moteurs pour se maintenir et se désorbiter en fin de vie.",
     challenges: "Collision avoidance permanent, gestion des débris spatiaux, renouvellement fréquent de la flotte.",
     funFact: "Un CubeSat 1U mesure exactement 10 × 10 × 10 cm — la taille d'une brique de lait. Des lycéens européens en ont construit et lancé en orbite pour moins de 50 000 €, là où un satellite classique coûte 300 millions.",
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/01/Starlink_Mission_%2847926144123%29.jpg/960px-Starlink_Mission_%2847926144123%29.jpg',
+    credit: 'Image : SpaceX, CC0 domaine public — Satellites Starlink déployés en orbite basse (550 km)',
   },
   {
     name: 'Orbite Moyenne (MEO)',
@@ -32,6 +34,8 @@ const orbits = [
     engineering: "Zone idéale pour la navigation (GPS, Galileo). Un satellite MEO couvre une large zone terrestre. La conception doit résister aux ceintures de radiation de Van Allen — des protections spéciales sont indispensables. Les satellites GPS embarquent des horloges atomiques d'une précision de 1 nanoseconde.",
     challenges: "Radiations Van Allen intenses, coût de lancement plus élevé, orbites encombrées par les débris.",
     funFact: "Les horloges atomiques de Galileo ne se décalent que d'une seconde en 3 millions d'années. Sans cette précision, le GPS aurait une erreur de kilomètres, pas de mètres.",
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/GPS_Satellite_NASA_art-iif.jpg/960px-GPS_Satellite_NASA_art-iif.jpg',
+    credit: 'Image : NASA, domaine public — Satellite GPS Block IIF, constellation de navigation en MEO (20 200 km)',
   },
   {
     name: 'Orbite Géostationnaire (GEO)',
@@ -40,6 +44,8 @@ const orbits = [
     engineering: "Un satellite GEO pèse souvent plusieurs tonnes et coûte 300 à 500 millions d'euros. Il doit maintenir sa position précisément grâce à de petits propulseurs tout au long de ses 15 ans de vie. D'un côté du satellite il fait +150 °C, de l'autre -150 °C.",
     challenges: "Orbite très encombrée (moins de 1 800 positions disponibles, régulées par l'ITU), latence de 500 ms pour les signaux.",
     funFact: "Il n'existe qu'UNE SEULE orbite géostationnaire — un anneau de 36 000 km de diamètre. Les positions dessus sont attribuées par un organisme de l'ONU, comme des terrains à construire.",
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/Meteosat_Third_Generation_ESA25562401.jpg/960px-Meteosat_Third_Generation_ESA25562401.jpg',
+    credit: 'Image : ESA / ATG medialab, CC BY-SA 3.0 IGO — Meteosat Troisième Génération (MTG) en orbite géostationnaire',
   },
   {
     name: 'Orbites Polaires & Héliosynchrones',
@@ -48,6 +54,8 @@ const orbits = [
     engineering: "En inclinant l'orbite à ~98°, le satellite survole les pôles. L'orbite héliosynchrone garantit que le satellite repasse au-dessus d'un même endroit toujours à la même heure solaire locale, assurant ainsi un éclairage identique d'une image à l'autre.",
     challenges: "Consommation élevée de carburant pour maintien d'orbite, fenêtres de lancement très précises.",
     funFact: "Les satellites Sentinel-2 de Copernicus prennent des images à 10 m de résolution, couvrent l'intégralité des terres émergées tous les 5 jours et produisent 1,6 To de données par jour — en accès libre.",
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Sentinel-2.jpg/960px-Sentinel-2.jpg',
+    credit: 'Image : ESA / ATG medialab, CC BY-SA 3.0 IGO — Satellite Sentinel-2, programme Copernicus (SSO, 786 km)',
   },
 ];
 
@@ -73,6 +81,50 @@ const quizQuestions = [
       { id: 'd', text: "Environ 200 000", isCorrect: false },
     ],
     explanation: "Plus de 34 000 débris de plus de 10 cm sont suivis en orbite. On estime 900 000 objets de plus d'1 cm et 128 millions de fragments de plus d'1 mm — tous potentiellement létaux à 7 km/s.",
+  },
+  {
+    id: 'satellite_q3',
+    question: "À quelle altitude orbite la Station spatiale internationale (ISS) ?",
+    options: [
+      { id: 'a', text: "Environ 36 000 km", isCorrect: false },
+      { id: 'b', text: "Environ 400 km", isCorrect: true },
+      { id: 'c', text: "Environ 20 000 km", isCorrect: false },
+      { id: 'd', text: "Environ 2 000 km", isCorrect: false },
+    ],
+    explanation: "L'ISS orbite en LEO à environ 400 km d'altitude, à une vitesse de 7,7 km/s. Elle effectue 15,5 orbites par jour, ce qui explique les multiples levers et couchers de soleil observés depuis le bord.",
+  },
+  {
+    id: 'satellite_q4',
+    question: "Pourquoi les satellites géostationnaires (GEO) sont-ils utiles pour la télévision et les télécoms ?",
+    options: [
+      { id: 'a', text: "Ils couvrent les pôles mieux que les autres orbites", isCorrect: false },
+      { id: 'b', text: "Ils ont une meilleure résolution d'image", isCorrect: false },
+      { id: 'c', text: "Ils consomment moins d'énergie en orbite haute", isCorrect: false },
+      { id: 'd', text: "À 36 000 km, leur période orbitale est de 24 h : ils restent fixes au-dessus d'un même point", isCorrect: true },
+    ],
+    explanation: "En orbite géostationnaire, le satellite tourne à la même vitesse que la Terre. Il reste fixe au-dessus du même point de l'équateur, ce qui permet de pointer une antenne une seule fois. Trois satellites GEO suffisent à couvrir presque toute la surface terrestre.",
+  },
+  {
+    id: 'satellite_q5',
+    question: "Quel instrument peut cartographier les émissions de CO₂ d'une seule centrale à charbon depuis l'espace ?",
+    options: [
+      { id: 'a', text: "Le spectromètre atmosphérique TROPOMI (Sentinel-5P)", isCorrect: true },
+      { id: 'b', text: "L'altimètre radar de Sentinel-6", isCorrect: false },
+      { id: 'c', text: "L'imageur optique multispectral de Sentinel-2", isCorrect: false },
+      { id: 'd', text: "Le radiomètre thermique de Sentinel-3", isCorrect: false },
+    ],
+    explanation: "TROPOMI (Sentinel-5P) analyse la lumière solaire réfléchie par l'atmosphère et identifie les empreintes spectrales de CO₂, NO₂, CH₄ et SO₂ avec une résolution de 3,5 × 5,5 km. C'est assez fin pour isoler la plume polluante d'une seule centrale.",
+  },
+  {
+    id: 'satellite_q6',
+    question: "Qu'est-ce que le syndrome de Kessler ?",
+    options: [
+      { id: 'a', text: "Un bug logiciel affectant la synchronisation des horloges GPS", isCorrect: false },
+      { id: 'b', text: "Une saturation des fréquences radio utilisées par les satellites", isCorrect: false },
+      { id: 'c', text: "Une réaction en chaîne où les collisions de débris génèrent toujours plus de débris, rendant une orbite inutilisable", isCorrect: true },
+      { id: 'd', text: "Une panne en cascade des satellites de télécommunications", isCorrect: false },
+    ],
+    explanation: "Proposé par Donald Kessler en 1978 : au-delà d'une certaine densité d'objets en orbite, chaque collision produit des milliers de fragments qui percutent d'autres satellites, déclenchant une cascade incontrôlable. L'orbite basse concentre déjà la majorité des risques.",
   },
 ];
 
@@ -153,8 +205,8 @@ const jobs = [
     description: "Traduit les besoins scientifiques (« mesurer le CO₂ à ±1 ppm ») en spécifications d'ingénierie (résolution spectrale, rapport signal/bruit, taux d'échantillonnage). Pilote ensuite la calibration du capteur au sol et en orbite pour garantir que la mesure reste fiable 15 ans après le lancement, même si les détecteurs vieillissent.",
     skills: ['Radiométrie', 'Traitement du signal', 'Python · IDL', 'Doctorat en physique recommandé'],
     employers: 'ESA · CNES · DLR · IPSL · LATMOS · ICARE',
-    image: 'https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=960&h=540&fit=crop&auto=format&q=80',
-    credit: 'Image : Unsplash / licence libre',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Sentinel-5P_satellite_model_ESA383082.jpg/960px-Sentinel-5P_satellite_model_ESA383082.jpg',
+    credit: 'Image : ESA / ATG medialab, CC BY-SA 3.0 IGO — Satellite Sentinel-5P embarquant l\'instrument TROPOMI',
   },
   {
     id: 'salle_blanche',
@@ -197,8 +249,8 @@ const jobs = [
     description: "Transforme des paquets de données brutes en cartes exploitables : cartographie d'inondations après une catastrophe, suivi de la déforestation en Amazonie, bilan de la fonte des glaces arctiques. Développe des algorithmes de traitement d'images et de machine learning pour extraire l'information des téraoctets que les satellites produisent chaque jour.",
     skills: ['Python · Google Earth Engine', 'Traitement d\'images', 'Machine learning', 'Bac+5 Géographie · Physique'],
     employers: 'ESA / Copernicus · Météo-France · ONGs · collectivités · start-ups GeoAI',
-    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=960&h=540&fit=crop&auto=format&q=80',
-    credit: 'Image : Unsplash / licence libre',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Fires_in_Portugal_%28as_seen_from_Sentinel-2%29.jpg/960px-Fires_in_Portugal_%28as_seen_from_Sentinel-2%29.jpg',
+    credit: 'Image : ESA / Copernicus Sentinel-2, CC BY-SA 3.0 IGO — Feux de forêt au Portugal détectés par Sentinel-2',
   },
 ];
 
@@ -207,6 +259,7 @@ export function SatelliteSection({ onComplete, onHome }: SatelliteSectionProps) 
   const [chapter, setChapter] = useState(0);
   const [hydrated, setHydrated] = useState(false);
   const [selectedOrbit, setSelectedOrbit] = useState<number | null>(null);
+  const [anatomyGameCompleted, setAnatomyGameCompleted] = useState(false);
   const [quizCompleted, setQuizCompleted] = useState(false);
   const [missionIdea, setMissionIdea] = useState('');
   const [instrumentsExplored, setInstrumentsExplored] = useState<Set<string>>(new Set());
@@ -219,6 +272,7 @@ export function SatelliteSection({ onComplete, onHome }: SatelliteSectionProps) 
       const r = await getResponses('satellites');
       if (r.chapter) setChapter(Math.min(parseInt(r.chapter, 10) || 0, TOTAL_CHAPTERS - 1));
       if (r.selectedOrbit) setSelectedOrbit(parseInt(r.selectedOrbit, 10));
+      if (r.anatomy_game_completed === 'true') setAnatomyGameCompleted(true);
       if (r.quizCompleted === 'true') setQuizCompleted(true);
       if (r.mission_idea) setMissionIdea(r.mission_idea);
       if (r.instruments_explored) setInstrumentsExplored(new Set(r.instruments_explored.split(',')));
@@ -259,6 +313,11 @@ export function SatelliteSection({ onComplete, onHome }: SatelliteSectionProps) 
     if (hydrated) await saveResponse('satellites', 'esa_link_visited', 'true');
   };
 
+  const handleAnatomyGameComplete = async () => {
+    setAnatomyGameCompleted(true);
+    if (hydrated) await saveResponse('satellites', 'anatomy_game_completed', 'true');
+  };
+
   const handleQuizComplete = async () => {
     setQuizCompleted(true);
     if (hydrated) await saveResponse('satellites', 'quizCompleted', 'true');
@@ -294,7 +353,7 @@ export function SatelliteSection({ onComplete, onHome }: SatelliteSectionProps) 
                 </div>
               ))}
             </div>
-            <SatelliteTimeline />
+            <MosaiqueSatellites />
           </ChapterShell>
         )}
 
@@ -305,10 +364,10 @@ export function SatelliteSection({ onComplete, onHome }: SatelliteSectionProps) 
             titlePrefix="Une machine conçue pour fonctionner seule,"
             titleAccent="sans technicien, pendant 15 ans."
             lede="+150 °C d'un côté, -150 °C de l'autre. Radiations. Aucune réparation possible. Voilà ce qu'un satellite doit encaisser. Explore l'architecture qui rend ça possible, puis identifie les composants sur le schéma."
-            onPrev={() => goTo(0)} onNext={() => goTo(2)} nextEnabled={true}
-            nextLabel="Continue · Les orbites →"
+            onPrev={() => goTo(0)} onNext={() => goTo(2)} nextEnabled={anatomyGameCompleted}
+            nextLabel={anatomyGameCompleted ? "Continue · Les orbites →" : "Complète le mini-jeu d'abord"}
           >
-            <SatelliteAnatomy />
+            <SatelliteAnatomy onGameComplete={handleAnatomyGameComplete} />
           </ChapterShell>
         )}
 
@@ -341,17 +400,29 @@ export function SatelliteSection({ onComplete, onHome }: SatelliteSectionProps) 
                       <p className="text-[12px] text-white/50">Période orbitale : {orbit.period}</p>
                     </button>
                     {selectedOrbit === i && (
-                      <div className="mt-3 bg-magenta/[0.06] border border-magenta/25 rounded-2xl p-6 space-y-4 animate-[chapterIn_320ms_cubic-bezier(.2,0,0,1)]">
-                        <div>
-                          <h4 className="font-semibold text-magenta text-[11px] uppercase tracking-[0.12em] mb-2">Contraintes d'ingénierie</h4>
-                          <p className="text-white/80 leading-relaxed text-[14px]">{orbit.engineering}</p>
+                      <div className="mt-3 bg-magenta/[0.06] border border-magenta/25 rounded-2xl overflow-hidden animate-[chapterIn_320ms_cubic-bezier(.2,0,0,1)]">
+                        <div className="relative h-48 overflow-hidden">
+                          <img
+                            src={orbit.image}
+                            alt={orbit.name}
+                            className="w-full h-full object-cover"
+                            loading="lazy"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
+                          <p className="absolute bottom-2 right-3 text-[10px] italic text-white/50">{orbit.credit}</p>
                         </div>
-                        <div>
-                          <h4 className="font-semibold text-magenta text-[11px] uppercase tracking-[0.12em] mb-2">Défis principaux</h4>
-                          <p className="text-white/80 text-[14px]">{orbit.challenges}</p>
-                        </div>
-                        <div className="bg-white/[0.04] border border-white/10 rounded-xl px-5 py-4">
-                          <p className="text-[13px] text-white/70 leading-[1.55]">{orbit.funFact}</p>
+                        <div className="p-6 space-y-4">
+                          <div>
+                            <h4 className="font-semibold text-magenta text-[11px] uppercase tracking-[0.12em] mb-2">Contraintes d'ingénierie</h4>
+                            <p className="text-white/80 leading-relaxed text-[14px]">{orbit.engineering}</p>
+                          </div>
+                          <div>
+                            <h4 className="font-semibold text-magenta text-[11px] uppercase tracking-[0.12em] mb-2">Défis principaux</h4>
+                            <p className="text-white/80 text-[14px]">{orbit.challenges}</p>
+                          </div>
+                          <div className="bg-white/[0.04] border border-white/10 rounded-xl px-5 py-4">
+                            <p className="text-[13px] text-white/70 leading-[1.55]">{orbit.funFact}</p>
+                          </div>
                         </div>
                       </div>
                     )}
@@ -431,13 +502,13 @@ export function SatelliteSection({ onComplete, onHome }: SatelliteSectionProps) 
 
         {/* ── Ch 5 : Instruments de mesure ── */}
         {chapter === 4 && (() => {
-          const canContinue = instrumentsExplored.size >= 3 || esaLinkVisited;
+          const canContinue = instrumentsExplored.size >= 3;
           return (
             <ChapterShell
               kicker="05" title="Instruments de mesure"
               titlePrefix="Un satellite, c'est avant tout"
               titleAccent="une plateforme d'instruments scientifiques."
-              lede="Chaque satellite embarque des capteurs spécialisés pour observer la Terre sous un angle précis. Explore les 6 familles d'instruments et découvre l'outil de visualisation de l'ESA pour voir ce que ces capteurs perçoivent réellement."
+              lede="Chaque satellite embarque des capteurs spécialisés pour observer la Terre sous un angle précis. Commence par l'outil interactif de l'ESA, puis explore les 6 familles d'instruments."
               onPrev={() => goTo(3)} onNext={() => goTo(5)} nextEnabled={canContinue}
               nextLabel={canContinue ? "Continue · Quiz →" : "Explore au moins 3 instruments"}
             >
@@ -455,65 +526,80 @@ export function SatelliteSection({ onComplete, onHome }: SatelliteSectionProps) 
                     <ExternalLink className="w-6 h-6 text-white" strokeWidth={1.75} />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-[11px] uppercase tracking-[0.14em] text-magenta font-semibold mb-0.5">Outil interactif ESA</p>
+                    <p className="text-[11px] uppercase tracking-[0.14em] text-magenta font-semibold mb-0.5">Outil interactif ESA · Étape 1</p>
                     <p className="font-bold text-white text-[16px] leading-tight group-hover:underline">visuals.earth.esa.int</p>
                     <p className="text-[13px] text-white/60 mt-1 leading-snug">Visualise en temps réel ce que chaque satellite ESA observe et quels instruments il utilise pour le mesurer.</p>
                   </div>
                   <ExternalLink className="w-5 h-5 text-magenta shrink-0 opacity-70 group-hover:opacity-100" strokeWidth={1.75} />
                 </a>
 
-                {/* Instrument cards */}
-                <div>
-                  <p className="text-[12px] uppercase tracking-[0.12em] text-white/40 font-semibold mb-3">
-                    Les 6 familles d'instruments · {instrumentsExplored.size}/6 explorés
-                  </p>
-                  <div className="space-y-2">
-                    {instruments.map(inst => {
-                      const isOpen = selectedInstrument === inst.id;
-                      const seen = instrumentsExplored.has(inst.id);
-                      return (
-                        <div key={inst.id}>
-                          <button
-                            onClick={() => handleInstrumentOpen(inst.id)}
-                            className={`w-full p-4 rounded-2xl border text-left transition-all flex items-center gap-4 ${
-                              isOpen
-                                ? 'border-magenta bg-magenta/10'
-                                : 'border-white/10 bg-white/[0.04] hover:border-magenta/50 hover:bg-white/[0.07]'
-                            }`}
-                          >
-                            <div className={`shrink-0 w-9 h-9 rounded-lg flex items-center justify-center transition-colors ${isOpen ? 'bg-magenta' : 'bg-white/[0.07]'}`}>
-                              <inst.Icon className="w-4.5 h-4.5" strokeWidth={1.75} style={{ width: 18, height: 18 }} />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-2">
-                                <h4 className="font-semibold text-[15px] leading-tight">{inst.name}</h4>
-                                {seen && !isOpen && <span className="text-[10px] text-magenta border border-magenta/40 rounded-full px-2 py-0.5 shrink-0">vu</span>}
-                              </div>
-                              <p className="text-[12px] text-white/50 mt-0.5">{inst.tagline}</p>
-                            </div>
-                          </button>
-                          {isOpen && (
-                            <div className="mt-2 bg-magenta/[0.06] border border-magenta/25 rounded-2xl p-5 space-y-4 animate-[chapterIn_320ms_cubic-bezier(.2,0,0,1)]">
-                              <p className="text-white/80 leading-relaxed text-[14px]">{inst.detail}</p>
-                              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                <div className="bg-white/[0.04] border border-white/10 rounded-xl px-4 py-3">
-                                  <p className="text-[10.5px] uppercase tracking-[0.1em] text-magenta font-semibold mb-1">Exemple concret</p>
-                                  <p className="text-[13px] text-white/75">{inst.example}</p>
-                                </div>
-                                <div className="bg-white/[0.04] border border-white/10 rounded-xl px-4 py-3">
-                                  <p className="text-[10.5px] uppercase tracking-[0.1em] text-magenta font-semibold mb-1">Applications principales</p>
-                                  <p className="text-[13px] text-white/75">{inst.usage}</p>
-                                </div>
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
+                {/* Instrument cards — gated behind ESA tool visit */}
+                {!esaLinkVisited ? (
+                  <div className="flex flex-col items-center justify-center gap-4 border border-white/10 rounded-2xl p-10 bg-white/[0.02]">
+                    <div className="w-12 h-12 rounded-xl bg-white/[0.06] flex items-center justify-center">
+                      <Lock className="w-6 h-6 text-white/30" strokeWidth={1.75} />
+                    </div>
+                    <div className="text-center">
+                      <p className="font-semibold text-white/50 text-[15px]">Familles d'instruments</p>
+                      <p className="text-[13px] text-white/35 mt-1.5 max-w-[360px] leading-relaxed">
+                        Utilise l'outil interactif ESA ci-dessus pour débloquer les 6 familles d'instruments.
+                      </p>
+                    </div>
                   </div>
-                </div>
-                {/* Jobs section */}
-                <div className="border-t border-white/[0.08] pt-8">
+                ) : (
+                  <div className="space-y-4 animate-[chapterIn_320ms_cubic-bezier(.2,0,0,1)]">
+                    <p className="text-[12px] uppercase tracking-[0.12em] text-white/40 font-semibold">
+                      Les 6 familles d'instruments · {instrumentsExplored.size}/6 explorés
+                    </p>
+                    <div className="space-y-2">
+                      {instruments.map(inst => {
+                        const isOpen = selectedInstrument === inst.id;
+                        const seen = instrumentsExplored.has(inst.id);
+                        return (
+                          <div key={inst.id}>
+                            <button
+                              onClick={() => handleInstrumentOpen(inst.id)}
+                              className={`w-full p-4 rounded-2xl border text-left transition-all flex items-center gap-4 ${
+                                isOpen
+                                  ? 'border-magenta bg-magenta/10'
+                                  : 'border-white/10 bg-white/[0.04] hover:border-magenta/50 hover:bg-white/[0.07]'
+                              }`}
+                            >
+                              <div className={`shrink-0 w-9 h-9 rounded-lg flex items-center justify-center transition-colors ${isOpen ? 'bg-magenta' : 'bg-white/[0.07]'}`}>
+                                <inst.Icon className="w-4.5 h-4.5" strokeWidth={1.75} style={{ width: 18, height: 18 }} />
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-2">
+                                  <h4 className="font-semibold text-[15px] leading-tight">{inst.name}</h4>
+                                  {seen && !isOpen && <span className="text-[10px] text-magenta border border-magenta/40 rounded-full px-2 py-0.5 shrink-0">vu</span>}
+                                </div>
+                                <p className="text-[12px] text-white/50 mt-0.5">{inst.tagline}</p>
+                              </div>
+                            </button>
+                            {isOpen && (
+                              <div className="mt-2 bg-magenta/[0.06] border border-magenta/25 rounded-2xl p-5 space-y-4 animate-[chapterIn_320ms_cubic-bezier(.2,0,0,1)]">
+                                <p className="text-white/80 leading-relaxed text-[14px]">{inst.detail}</p>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                  <div className="bg-white/[0.04] border border-white/10 rounded-xl px-4 py-3">
+                                    <p className="text-[10.5px] uppercase tracking-[0.1em] text-magenta font-semibold mb-1">Exemple concret</p>
+                                    <p className="text-[13px] text-white/75">{inst.example}</p>
+                                  </div>
+                                  <div className="bg-white/[0.04] border border-white/10 rounded-xl px-4 py-3">
+                                    <p className="text-[10.5px] uppercase tracking-[0.1em] text-magenta font-semibold mb-1">Applications principales</p>
+                                    <p className="text-[13px] text-white/75">{inst.usage}</p>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* Jobs section — only visible once instrument families are unlocked */}
+                {esaLinkVisited && <div className="border-t border-white/[0.08] pt-8">
                   <div className="mb-6">
                     <span className="bg-magenta text-white rounded-full px-3 py-1 text-[11px] font-semibold tracking-[0.1em] uppercase">Métiers</span>
                     <h3 className="font-bold text-[20px] mt-3 uppercase tracking-[0.04em]">
@@ -576,7 +662,7 @@ export function SatelliteSection({ onComplete, onHome }: SatelliteSectionProps) 
                       </div>
                     ))}
                   </div>
-                </div>
+                </div>}
 
               </div>
             </ChapterShell>
@@ -630,7 +716,7 @@ export function SatelliteSection({ onComplete, onHome }: SatelliteSectionProps) 
             stats={[
               { v: selectedOrbit !== null ? orbits[selectedOrbit].name : '—', t: 'orbite explorée' },
               { v: `${instrumentsExplored.size} / 6`, t: 'instruments découverts' },
-              { v: quizCompleted ? '2 / 2' : '0 / 2', t: 'questions du quiz' },
+              { v: quizCompleted ? '6 / 6' : '0 / 6', t: 'questions du quiz' },
             ]}
             nextTitle="Exploration Spatiale"
             nextDesc="James Webb, Artemis, Mars : les grandes missions qui repoussent les frontières."
