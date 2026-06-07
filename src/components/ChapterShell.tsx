@@ -109,6 +109,8 @@ export interface ChapterShellProps {
   onNext: () => void;
   nextEnabled: boolean;
   nextLabel: string;
+  nextTitle?: string;
+  nextDesc?: string;
   children: React.ReactNode;
 }
 
@@ -129,6 +131,23 @@ export function ChapterShell(props: ChapterShellProps) {
 
       {props.children}
 
+      {props.nextTitle && (
+        <div className="mt-10 bg-white/5 border border-white/10 rounded-2xl p-7 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+          <div className="flex flex-col gap-1">
+            <span className="text-[11px] font-semibold tracking-[0.16em] uppercase text-white/55">Prochaine section</span>
+            <span className="text-[22px] font-semibold">{props.nextTitle}</span>
+            {props.nextDesc && <span className="text-[13px] text-white/60">{props.nextDesc}</span>}
+          </div>
+          <button
+            onClick={props.onNext}
+            disabled={!props.nextEnabled}
+            className="inline-flex items-center gap-2 bg-magenta text-white rounded-lg px-6 py-4 text-[14px] font-semibold hover:bg-magenta-700 disabled:bg-white/10 disabled:text-white/40 disabled:cursor-not-allowed transition whitespace-nowrap"
+          >
+            {props.nextLabel}
+          </button>
+        </div>
+      )}
+
       <div className="mt-12 pt-6 border-t border-white/10 flex items-center justify-between gap-4">
         {props.onPrev ? (
           <button
@@ -139,13 +158,15 @@ export function ChapterShell(props: ChapterShellProps) {
           </button>
         ) : <div />}
 
-        <button
-          onClick={props.onNext}
-          disabled={!props.nextEnabled}
-          className="inline-flex items-center gap-2 rounded-lg px-5 py-3.5 text-[14px] font-semibold bg-magenta text-white hover:bg-magenta-700 disabled:bg-white/10 disabled:text-white/40 disabled:cursor-not-allowed transition"
-        >
-          {props.nextLabel}
-        </button>
+        {!props.nextTitle && (
+          <button
+            onClick={props.onNext}
+            disabled={!props.nextEnabled}
+            className="inline-flex items-center gap-2 rounded-lg px-5 py-3.5 text-[14px] font-semibold bg-magenta text-white hover:bg-magenta-700 disabled:bg-white/10 disabled:text-white/40 disabled:cursor-not-allowed transition"
+          >
+            {props.nextLabel}
+          </button>
+        )}
       </div>
     </section>
   );

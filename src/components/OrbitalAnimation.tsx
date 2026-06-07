@@ -17,10 +17,6 @@ interface OrbitData {
 interface SatelliteInfo {
   name: string;
   icon: string;
-  image: string;
-  imageCredit: string;
-  missionImage: string;
-  missionCredit: string;
   description: string;
 }
 
@@ -57,19 +53,11 @@ const ORBITS: OrbitData[] = [
       {
         name: 'ISS',
         icon: '🛸',
-        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/ISS_above_the_Clouds.jpg/400px-ISS_above_the_Clouds.jpg',
-        imageCredit: 'NASA, domaine public',
-        missionImage: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/ISS_Columbus_module.jpg/400px-ISS_Columbus_module.jpg',
-        missionCredit: 'NASA/ESA, domaine public',
         description: 'Station Spatiale Internationale · 408 km · Inclinaison 51,6° · Laboratoire orbital habité depuis 2000'
       },
       {
         name: 'Starlink',
         icon: '📡',
-        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/01/Starlink_Mission_%2847926144123%29.jpg/400px-Starlink_Mission_%2847926144123%29.jpg',
-        imageCredit: 'SpaceX, CC0 domaine public',
-        missionImage: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Black_Marble_2016_-_Americas.jpg/400px-Black_Marble_2016_-_Americas.jpg',
-        missionCredit: 'NASA Earth Observatory, domaine public',
         description: 'Starlink · 550 km · Constellation de +5 000 satellites pour internet mondial à haut débit'
       }
     ]
@@ -88,19 +76,11 @@ const ORBITS: OrbitData[] = [
       {
         name: 'Galileo',
         icon: '🧭',
-        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Galileo_satellite_navigation_%28artwork%29.jpg/400px-Galileo_satellite_navigation_%28artwork%29.jpg',
-        imageCredit: 'ESA / J. Huart',
-        missionImage: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/Galileo_iov_satellites.jpg/400px-Galileo_iov_satellites.jpg',
-        missionCredit: 'ESA / P. Carril',
         description: 'Galileo (ESA) · 23 222 km · Inclinaison 56° · Système européen de navigation — précision centimétrique'
       },
       {
         name: 'GPS',
         icon: '📍',
-        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/GPS_Satellite_NASA_art-iif.jpg/400px-GPS_Satellite_NASA_art-iif.jpg',
-        imageCredit: 'NASA, domaine public',
-        missionImage: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/GPS_Constellation_USAF_12th_ICBM_Squadron_Schriever_AFB.jpg/400px-GPS_Constellation_USAF_12th_ICBM_Squadron_Schriever_AFB.jpg',
-        missionCredit: 'USAF, domaine public',
         description: 'GPS (USA) · 20 200 km · Inclinaison 55° · 31 satellites, horloges atomiques à 1 nanoseconde près'
       }
     ]
@@ -119,19 +99,11 @@ const ORBITS: OrbitData[] = [
       {
         name: 'Météosat',
         icon: '🌦️',
-        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/Meteosat_Third_Generation_ESA25562401.jpg/400px-Meteosat_Third_Generation_ESA25562401.jpg',
-        imageCredit: 'ESA / ATG medialab, CC BY-SA 3.0 IGO',
-        missionImage: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Meteosat-10_Colour_Full_Disk.jpg/400px-Meteosat-10_Colour_Full_Disk.jpg',
-        missionCredit: 'EUMETSAT, CC BY-SA 3.0 IGO',
         description: 'Météosat (EUMETSAT) · 35 786 km · Inclinaison 0° · Immobile dans le ciel européen, images météo toutes les 10 min'
       },
       {
         name: 'Astra',
         icon: '📺',
-        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Astra_2G_integration.jpg/400px-Astra_2G_integration.jpg',
-        imageCredit: 'SES / Airbus DS',
-        missionImage: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/ESOC_Main_Control_Room_MCR.jpg/400px-ESOC_Main_Control_Room_MCR.jpg',
-        missionCredit: 'ESA / Jürgen Mai, CC BY-SA 3.0 IGO',
         description: 'Astra (SES) · 35 786 km · Inclinaison 0° · Diffuse 1 000+ chaînes TV vers 135 millions de foyers européens'
       }
     ]
@@ -150,19 +122,11 @@ const ORBITS: OrbitData[] = [
       {
         name: 'Sentinel-2',
         icon: '🌿',
-        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Sentinel-2.jpg/400px-Sentinel-2.jpg',
-        imageCredit: 'ESA / ATG medialab, CC BY-SA 3.0 IGO',
-        missionImage: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Fires_in_Portugal_%28as_seen_from_Sentinel-2%29.jpg/400px-Fires_in_Portugal_%28as_seen_from_Sentinel-2%29.jpg',
-        missionCredit: 'ESA / Copernicus Sentinel-2, CC BY-SA 3.0 IGO',
         description: 'Sentinel-2 (Copernicus) · 786 km · Inclinaison 98,6° · Couvre toute la Terre tous les 5 jours en 10 m de résolution'
       },
       {
         name: 'SPOT',
         icon: '🌍',
-        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/SPOT_5_satellite_-_artist_view.jpg/400px-SPOT_5_satellite_-_artist_view.jpg',
-        imageCredit: 'CNES / P. Carril',
-        missionImage: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Spot_Image_Paris.jpg/400px-Spot_Image_Paris.jpg',
-        missionCredit: 'CNES / Airbus DS',
         description: 'SPOT (France) · 832 km · Inclinaison 98,7° · Pionnier de l\'observation commerciale depuis 1986'
       }
     ]
@@ -565,28 +529,6 @@ export function OrbitalAnimation() {
               <div className="flex items-center gap-2 mb-3">
                 <span className="text-2xl">{selectedSatData.icon}</span>
                 <h4 className="font-bold text-white text-lg">{selectedSatData.name}</h4>
-              </div>
-              <div className="grid grid-cols-2 gap-2 mb-3">
-                <div className="rounded-lg overflow-hidden bg-white/[0.04]">
-                  <img
-                    src={selectedSatData.image}
-                    alt={`${selectedSatData.name} satellite`}
-                    className="w-full h-24 object-cover"
-                    onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-                  />
-                  <p className="text-xs text-center text-gray-500 py-1">Satellite</p>
-                  <p className="text-[9px] italic text-white/30 text-center px-1 pb-1 leading-tight">{selectedSatData.imageCredit}</p>
-                </div>
-                <div className="rounded-lg overflow-hidden bg-white/[0.04]">
-                  <img
-                    src={selectedSatData.missionImage}
-                    alt={`${selectedSatData.name} mission`}
-                    className="w-full h-24 object-cover"
-                    onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-                  />
-                  <p className="text-xs text-center text-gray-500 py-1">Mission</p>
-                  <p className="text-[9px] italic text-white/30 text-center px-1 pb-1 leading-tight">{selectedSatData.missionCredit}</p>
-                </div>
               </div>
               <p className="text-sm text-gray-300 leading-relaxed">{selectedSatData.description}</p>
             </div>
