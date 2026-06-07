@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
-import { Globe, Rocket, Wifi, Satellite, Compass, Users, MessageCircle, ArrowRight, RotateCcw, Check, School, Info } from 'lucide-react';
+import { Globe, Rocket, Wifi, Satellite, Compass, Building2, Users, MessageCircle, ArrowRight, RotateCcw, Check, School, Info } from 'lucide-react';
 import { GirlAvatar, BoyAvatar } from './AvatarGuide';
 import { useSession } from '../contexts/SessionContext';
 import { RestartConfirmModal } from './RestartConfirmModal';
@@ -28,6 +28,7 @@ const SESSION_1_TOPICS = [
 const SESSION_2_TOPICS = [
   { icon: <Satellite className="w-4 h-4" />,     label: 'Satellites & orbite' },
   { icon: <Compass className="w-4 h-4" />,       label: 'Exploration lointaine' },
+  { icon: <Building2 className="w-4 h-4" />,     label: 'Entreprises du spatial' },
   { icon: <Users className="w-4 h-4" />,         label: 'Associations & mentorat' },
   { icon: <MessageCircle className="w-4 h-4" />, label: 'FAQ & questions' },
 ];
@@ -256,7 +257,7 @@ export function StartPage({ onStartSession1, onStartSession2 }: StartPageProps) 
           />
           <SessionCard
             variant="inspire"
-            tag="Partie 2 · 4 chapitres"
+            tag="Partie 2 · 5 chapitres"
             title="Explorer"
             titleAccent="l'espace"
             lede="Les satellites en orbite, les missions lointaines vers Mars et au-delà, et comment t'orienter vers ces métiers."
