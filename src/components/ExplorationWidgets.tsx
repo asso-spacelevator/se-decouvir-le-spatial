@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Play, Pause, RotateCcw, Check, ChevronUp, ChevronDown, GripVertical } from 'lucide-react';
+import { Play, Pause, RotateCcw, Check, ChevronUp, ChevronDown, GripVertical, X } from 'lucide-react';
 
 /* ════════════════════════════════════════════════════════════════
  *  ExplorationWidgets — interactive pieces for ExplorationSection
@@ -228,6 +228,51 @@ export function Trajectory({ decor, path, steps }: TrajConfig) {
 }
 
 /* ════════════════════════════════════════════════════════════════
+ *  JWSTTrajectoryFigure — ESA diagram + milestone cards
+ * ════════════════════════════════════════════════════════════════*/
+interface JWSTMilestone {
+  day: string;
+  title: string;
+  body: string;
+}
+
+const JWST_MILESTONES: JWSTMilestone[] = [
+  { day: 'Jour 0', title: 'Lancement', body: "Décollage depuis Kourou à bord d'une fusée Ariane 5 — le télescope voyage replié, façon origami, dans la coiffe." },
+  { day: 'Jour 3', title: 'Déploiement du bouclier solaire', body: 'Les cinq couches du pare-soleil se déploient puis se tendent, plongeant les instruments dans le noir et le froid.' },
+  { day: 'Jour 13', title: 'Déploiement du miroir primaire', body: 'Les deux ailes du miroir primaire de 6,5 m se déplient et se verrouillent, complétant les 18 segments dorés.' },
+  { day: 'Jour 30', title: 'Déploiement du miroir secondaire', body: 'Le miroir secondaire se déploie au bout de son tripode : la silhouette du télescope est désormais complète.' },
+  { day: 'Jour ~29', title: 'Arrivée au point L2', body: 'Une dernière poussée place Webb en orbite de halo autour de L2, à 1,5 million de km de la Terre, côté nuit.' },
+];
+
+export function JWSTTrajectoryFigure() {
+  return (
+    <div>
+      <figure className="m-0 rounded-xl overflow-hidden border border-white/10 bg-[#03030f]">
+        <Img
+          src="https://www.esa.int/var/esa/storage/images/esa_multimedia/images/2022/01/webb_trajectory_diagram/23914393-1-eng-GB/Webb_trajectory_diagram.jpg"
+          alt="Schéma de la trajectoire de Webb depuis la Terre jusqu'à son orbite de halo autour du point de Lagrange L2"
+          fallback="TRAJECTOIRE TERRE → L2"
+          className="w-full block"
+        />
+        <figcaption className="px-4 py-3">
+          <p className="m-0 text-[10.5px] italic text-white/45">Image : ESA / NASA, 2022 — vue d'artiste de la trajectoire et de l'orbite de halo de Webb autour de L2.</p>
+        </figcaption>
+      </figure>
+
+      <div className="mt-4 grid sm:grid-cols-2 gap-2.5">
+        {JWST_MILESTONES.map((m, i) => (
+          <div key={i} className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
+            <span className="text-[11px] font-bold tracking-[0.14em] uppercase text-magenta">{m.day}</span>
+            <p className="m-0 text-[14px] font-bold text-white mt-1">{m.title}</p>
+            <p className="m-0 text-[12.5px] text-white/65 leading-relaxed mt-1">{m.body}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ════════════════════════════════════════════════════════════════
  *  MissionGallery — credited image grid
  * ════════════════════════════════════════════════════════════════*/
 export interface GalleryItem {
@@ -252,6 +297,45 @@ export function MissionGallery({ items }: { items: GalleryItem[] }) {
         </figure>
       ))}
     </div>
+  );
+}
+
+/* ════════════════════════════════════════════════════════════════
+ *  MissionLog — day-by-day flight log, displayed as a timeline
+ * ════════════════════════════════════════════════════════════════*/
+export interface LogEntry {
+  day: string;
+  date: string;
+  title: string;
+  body: string;
+  stat?: { value: string; label: string };
+}
+export function MissionLog({ entries }: { entries: LogEntry[] }) {
+  return (
+    <ol className="m-0 p-0 list-none flex flex-col">
+      {entries.map((e, i) => (
+        <li key={i} className="grid grid-cols-[28px_1fr] gap-4">
+          <div className="flex flex-col items-center">
+            <span className="w-[11px] h-[11px] rounded-full bg-magenta border-2 border-deepspace shrink-0 mt-2" />
+            {i < entries.length - 1 && <span className="w-px flex-1 bg-white/12 my-1" />}
+          </div>
+          <div className={`bg-white/[0.04] border border-white/10 rounded-2xl p-5 sm:p-6 ${i < entries.length - 1 ? 'mb-5' : ''}`}>
+            <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 mb-1.5">
+              <span className="text-[11px] font-bold tracking-[0.14em] uppercase text-magenta">{e.day}</span>
+              <span className="text-[11px] text-white/45">{e.date}</span>
+            </div>
+            <p className="m-0 text-[15px] font-bold text-white">{e.title}</p>
+            <p className="m-0 text-[13.5px] text-white/65 leading-relaxed mt-1.5">{e.body}</p>
+            {e.stat && (
+              <div className="inline-flex items-baseline gap-2 mt-3.5 rounded-lg bg-magenta/[0.08] border border-magenta/25 px-3 py-1.5">
+                <span className="text-[17px] font-bold text-magenta leading-none">{e.stat.value}</span>
+                <span className="text-[11px] text-white/55 uppercase tracking-wide">{e.stat.label}</span>
+              </div>
+            )}
+          </div>
+        </li>
+      ))}
+    </ol>
   );
 }
 
@@ -345,6 +429,150 @@ export function MoonEssay({
         className="w-full rounded-xl bg-deepspace/60 border border-white/12 focus:border-magenta focus:outline-none text-[14px] text-white placeholder-white/30 p-4 leading-relaxed resize-y"
       />
       <p className="m-0 text-[11px] text-white/40 mt-2">Ta réponse est sauvegardée et tu peux y revenir plus tard.</p>
+    </div>
+  );
+}
+
+/* ════════════════════════════════════════════════════════════════
+ *  PlanetCompareGame — guess the Mars/Earth ratio, fill in a number
+ * ════════════════════════════════════════════════════════════════*/
+interface CompareQuestion {
+  id: string;
+  prompt: string;
+  unit?: string;
+  answer: number;
+  tolerance: number;
+  explanation: string;
+}
+
+const COMPARE_QUESTIONS: CompareQuestion[] = [
+  {
+    id: 'gravity',
+    prompt: 'La gravité à la surface de Mars est environ ___ fois plus faible que sur Terre.',
+    unit: '× plus faible',
+    answer: 2.6,
+    tolerance: 0.7,
+    explanation: "Mars est plus petite et moins massive : on y pèserait environ 38 % de son poids terrestre, soit une gravité environ 2,6 fois plus faible. Un objet de 10 kg sur Terre ne pèserait qu'environ 3,8 kg sur Mars.",
+  },
+  {
+    id: 'atmosphere',
+    prompt: "L'atmosphère de Mars est environ ___ fois moins dense (en pression au sol) que celle de la Terre.",
+    unit: '× moins dense',
+    answer: 100,
+    tolerance: 45,
+    explanation: "La pression au sol sur Mars représente moins de 1 % de la pression terrestre — environ une centaine de fois plus fine. C'est pour cela que le son y porte moins loin et que l'eau liquide s'y évapore presque aussitôt.",
+  },
+  {
+    id: 'diameter',
+    prompt: 'Le diamètre de Mars est environ ___ fois plus petit que celui de la Terre.',
+    unit: '× plus petit',
+    answer: 1.9,
+    tolerance: 0.5,
+    explanation: "Mars mesure environ 6 779 km de diamètre contre 12 742 km pour la Terre — un peu plus de la moitié, soit presque deux fois plus petite.",
+  },
+  {
+    id: 'year',
+    prompt: 'Une année sur Mars (un tour complet autour du Soleil) dure environ ___ fois plus longtemps qu\'une année terrestre.',
+    unit: '× plus longue',
+    answer: 1.9,
+    tolerance: 0.4,
+    explanation: "Mars met environ 687 jours terrestres à faire le tour du Soleil — soit près de deux années terrestres pour une seule année martienne.",
+  },
+  {
+    id: 'temperature',
+    prompt: 'La température moyenne à la surface de Mars avoisine ___ °C.',
+    unit: '°C',
+    answer: -63,
+    tolerance: 17,
+    explanation: "En moyenne, il fait environ -63 °C sur Mars (contre +15 °C sur Terre) : son atmosphère trop fine ne retient presque pas la chaleur, et les nuits peuvent descendre sous les -100 °C.",
+  },
+];
+
+export function PlanetCompareGame() {
+  const [values, setValues] = useState<Record<string, string>>({});
+  const [checked, setChecked] = useState(false);
+
+  const setValue = (id: string, v: string) => {
+    setValues((prev) => ({ ...prev, [id]: v }));
+    if (checked) setChecked(false);
+  };
+
+  const allFilled = COMPARE_QUESTIONS.every((q) => values[q.id]?.trim());
+  const score = checked
+    ? COMPARE_QUESTIONS.filter((q) => {
+        const v = parseFloat(values[q.id]);
+        return !Number.isNaN(v) && Math.abs(v - q.answer) <= q.tolerance;
+      }).length
+    : 0;
+
+  return (
+    <div>
+      <div className="flex flex-col gap-3">
+        {COMPARE_QUESTIONS.map((q) => {
+          const raw = values[q.id] ?? '';
+          const v = parseFloat(raw);
+          const close = checked && !Number.isNaN(v) && Math.abs(v - q.answer) <= q.tolerance;
+          const wrong = checked && !close;
+          return (
+            <div
+              key={q.id}
+              className={
+                'rounded-xl border bg-white/[0.04] p-4 sm:p-5 transition ' +
+                (close ? 'border-emerald-400/50' : wrong ? 'border-magenta/60' : 'border-white/12')
+              }
+            >
+              <p className="m-0 text-[14px] text-white/85 leading-relaxed">{q.prompt}</p>
+              <div className="mt-3 flex items-center gap-2.5 flex-wrap">
+                <input
+                  type="number"
+                  inputMode="decimal"
+                  value={raw}
+                  disabled={checked}
+                  onChange={(e) => setValue(q.id, e.target.value)}
+                  placeholder="?"
+                  className="w-24 rounded-lg bg-deepspace/60 border border-white/15 focus:border-magenta focus:outline-none text-[16px] font-bold text-white text-center py-2 disabled:opacity-60"
+                />
+                {q.unit && <span className="text-[12.5px] text-white/50">{q.unit}</span>}
+                {close && (
+                  <span className="inline-flex items-center gap-1.5 text-[12px] font-semibold text-emerald-300">
+                    <Check className="w-4 h-4" /> Bonne estimation — réponse : {q.answer}
+                  </span>
+                )}
+                {wrong && (
+                  <span className="inline-flex items-center gap-1.5 text-[12px] font-semibold text-magenta">
+                    <X className="w-4 h-4" /> La vraie valeur est environ {q.answer}
+                  </span>
+                )}
+              </div>
+              {checked && (
+                <p className="m-0 text-[12.5px] text-white/60 leading-relaxed mt-2.5">{q.explanation}</p>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="mt-4 flex items-center gap-3 flex-wrap">
+        {!checked ? (
+          <button
+            onClick={() => setChecked(true)}
+            disabled={!allFilled}
+            className="inline-flex items-center gap-1.5 rounded-lg bg-magenta hover:bg-magenta-700 disabled:bg-white/10 disabled:text-white/40 disabled:cursor-not-allowed text-white text-[12px] font-semibold px-4 py-2.5 transition"
+          >
+            <Check className="w-3.5 h-3.5" /> Vérifier mes estimations
+          </button>
+        ) : (
+          <>
+            <span className="text-[13px] font-semibold text-white">{score} / {COMPARE_QUESTIONS.length} estimations proches de la réalité</span>
+            <button
+              onClick={() => { setValues({}); setChecked(false); }}
+              className="rounded-lg border border-white/15 hover:border-white/35 text-white/70 hover:text-white text-[12px] font-medium px-3 py-2 transition"
+            >
+              Recommencer
+            </button>
+          </>
+        )}
+      </div>
     </div>
   );
 }
