@@ -323,7 +323,9 @@ export function IntroductionPage({ onContinue, onHome, onBack }: IntroductionPag
             onPrev={() => goTo(1)}
             onNext={onContinue}
             nextEnabled={canStartExploration}
-            nextLabel={canStartExploration ? "Commencer l'exploration →" : `Écris au moins 3 mots (${filledWords}/3)`}
+            nextLabel={canStartExploration ? "Commencer →" : `Écris au moins 3 mots (${filledWords}/3)`}
+            nextTitle="Les retombées terrestres"
+            nextDesc="GPS, météo, agriculture de précision. Comment le spatial transforme ta vie au quotidien."
           >
             <PageWords words={words} onChange={handleWordChange} />
           </ChapterShell>

@@ -172,7 +172,9 @@ export function IntroductionPage2({ onContinue, onHome, onBack }: IntroductionPa
               onPrev={onBack}
               onNext={onContinue}
               nextEnabled={true}
-              nextLabel="Commencer la session 2 →"
+              nextLabel="Commencer →"
+              nextTitle="Les satellites"
+              nextDesc="70 ans d'histoire en orbite : anatomie, trajectoires, débris. De Spoutnik aux méga-constellations."
             >
               <PageJourney />
             </ChapterShell>
