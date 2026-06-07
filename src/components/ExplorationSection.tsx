@@ -293,8 +293,8 @@ export function ExplorationSection({ onComplete, onHome }: ExplorationSectionPro
           <ChapterRecap
             chapterLabel="Exploration Spatiale"
             summary="Tu as exploré les grandes missions en cours, découvert les défis de l'exploration et partagé ta vision de l'avenir."
-            nextTitle="Associations et accompagnement"
-            nextDesc="Comment t'engager dans le spatial : associations, ressources et mentorat."
+            nextTitle="Entreprises spatiales"
+            nextDesc="Découvre les acteurs privés du spatial et les opportunités de carrière."
             onContinue={onComplete}
             onPrev={() => goTo(1)}
           />
