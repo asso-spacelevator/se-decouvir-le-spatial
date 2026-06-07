@@ -24,8 +24,6 @@ const orbits = [
     engineering: "Satellites plus petits et moins coûteux à lancer. Pour assurer une couverture continue, il faut des constellations de dizaines à des milliers de satellites (Starlink : plus de 5 000 unités). La friction atmosphérique résiduelle fait descendre progressivement l'orbite : les satellites doivent embarquer des petits moteurs pour se maintenir et se désorbiter en fin de vie.",
     challenges: "Collision avoidance permanent, gestion des débris spatiaux, renouvellement fréquent de la flotte.",
     funFact: "Un CubeSat 1U mesure exactement 10 × 10 × 10 cm — la taille d'une brique de lait. Des lycéens européens en ont construit et lancé en orbite pour moins de 50 000 €, là où un satellite classique coûte 300 millions.",
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/01/Starlink_Mission_%2847926144123%29.jpg/960px-Starlink_Mission_%2847926144123%29.jpg',
-    credit: 'Image : SpaceX, CC0 domaine public — Satellites Starlink déployés en orbite basse (550 km)',
   },
   {
     name: 'Orbite Moyenne (MEO)',
@@ -34,8 +32,6 @@ const orbits = [
     engineering: "Zone idéale pour la navigation (GPS, Galileo). Un satellite MEO couvre une large zone terrestre. La conception doit résister aux ceintures de radiation de Van Allen — des protections spéciales sont indispensables. Les satellites GPS embarquent des horloges atomiques d'une précision de 1 nanoseconde.",
     challenges: "Radiations Van Allen intenses, coût de lancement plus élevé, orbites encombrées par les débris.",
     funFact: "Les horloges atomiques de Galileo ne se décalent que d'une seconde en 3 millions d'années. Sans cette précision, le GPS aurait une erreur de kilomètres, pas de mètres.",
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/GPS_Satellite_NASA_art-iif.jpg/960px-GPS_Satellite_NASA_art-iif.jpg',
-    credit: 'Image : NASA, domaine public — Satellite GPS Block IIF, constellation de navigation en MEO (20 200 km)',
   },
   {
     name: 'Orbite Géostationnaire (GEO)',
@@ -44,8 +40,6 @@ const orbits = [
     engineering: "Un satellite GEO pèse souvent plusieurs tonnes et coûte 300 à 500 millions d'euros. Il doit maintenir sa position précisément grâce à de petits propulseurs tout au long de ses 15 ans de vie. D'un côté du satellite il fait +150 °C, de l'autre -150 °C.",
     challenges: "Orbite très encombrée (moins de 1 800 positions disponibles, régulées par l'ITU), latence de 500 ms pour les signaux.",
     funFact: "Il n'existe qu'UNE SEULE orbite géostationnaire — un anneau de 36 000 km de diamètre. Les positions dessus sont attribuées par un organisme de l'ONU, comme des terrains à construire.",
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/Meteosat_Third_Generation_ESA25562401.jpg/960px-Meteosat_Third_Generation_ESA25562401.jpg',
-    credit: 'Image : ESA / ATG medialab, CC BY-SA 3.0 IGO — Meteosat Troisième Génération (MTG) en orbite géostationnaire',
   },
   {
     name: 'Orbites Polaires & Héliosynchrones',
@@ -54,8 +48,6 @@ const orbits = [
     engineering: "En inclinant l'orbite à ~98°, le satellite survole les pôles. L'orbite héliosynchrone garantit que le satellite repasse au-dessus d'un même endroit toujours à la même heure solaire locale, assurant ainsi un éclairage identique d'une image à l'autre.",
     challenges: "Consommation élevée de carburant pour maintien d'orbite, fenêtres de lancement très précises.",
     funFact: "Les satellites Sentinel-2 de Copernicus prennent des images à 10 m de résolution, couvrent l'intégralité des terres émergées tous les 5 jours et produisent 1,6 To de données par jour — en accès libre.",
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Sentinel-2.jpg/960px-Sentinel-2.jpg',
-    credit: 'Image : ESA / ATG medialab, CC BY-SA 3.0 IGO — Satellite Sentinel-2, programme Copernicus (SSO, 786 km)',
   },
 ];
 
@@ -401,16 +393,6 @@ export function SatelliteSection({ onComplete, onHome }: SatelliteSectionProps) 
                     </button>
                     {selectedOrbit === i && (
                       <div className="mt-3 bg-magenta/[0.06] border border-magenta/25 rounded-2xl overflow-hidden animate-[chapterIn_320ms_cubic-bezier(.2,0,0,1)]">
-                        <div className="relative h-48 overflow-hidden">
-                          <img
-                            src={orbit.image}
-                            alt={orbit.name}
-                            className="w-full h-full object-cover"
-                            loading="lazy"
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
-                          <p className="absolute bottom-2 right-3 text-[10px] italic text-white/50">{orbit.credit}</p>
-                        </div>
                         <div className="p-6 space-y-4">
                           <div>
                             <h4 className="font-semibold text-magenta text-[11px] uppercase tracking-[0.12em] mb-2">Contraintes d'ingénierie</h4>
