@@ -63,6 +63,39 @@ const quizQuestions = [
     ],
     explanation: "Le télescope James Webb doit rester à -233 °C pour fonctionner correctement. Son bouclier solaire, de la taille d'un court de tennis, protège ses instruments ultra-sensibles de la chaleur du Soleil.",
   },
+  {
+    id: 'exploration_q2',
+    question: 'Quel est l\'objectif principal de la mission Artemis ?',
+    options: [
+      { id: 'a', text: 'Envoyer un rover sur Mars', isCorrect: false },
+      { id: 'b', text: 'Ramener des humains sur la Lune, dont la première femme', isCorrect: true },
+      { id: 'c', text: 'Construire une station spatiale autour de Jupiter', isCorrect: false },
+      { id: 'd', text: 'Déployer de nouveaux satellites GPS', isCorrect: false },
+    ],
+    explanation: "Artemis vise à ramener des humains sur la Lune, dont la première femme et la prochaine personne à marcher sur la surface lunaire. C'est un tremplin vers l'exploration de Mars.",
+  },
+  {
+    id: 'exploration_q3',
+    question: 'Combien de temps dure un voyage vers Mars ?',
+    options: [
+      { id: 'a', text: 'Quelques jours', isCorrect: false },
+      { id: 'b', text: '1 à 2 mois', isCorrect: false },
+      { id: 'c', text: '6 à 9 mois', isCorrect: true },
+      { id: 'd', text: 'Plus de 2 ans', isCorrect: false },
+    ],
+    explanation: "Un voyage vers Mars dure entre 6 et 9 mois selon la position des deux planètes. C'est l'un des défis majeurs : astronautes, systèmes de survie et équipements doivent tenir sur toute la durée.",
+  },
+  {
+    id: 'exploration_q4',
+    question: 'Quel rover de la NASA cherche des traces de vie ancienne sur Mars ?',
+    options: [
+      { id: 'a', text: 'Opportunity', isCorrect: false },
+      { id: 'b', text: 'Spirit', isCorrect: false },
+      { id: 'c', text: 'Curiosity', isCorrect: false },
+      { id: 'd', text: 'Perseverance', isCorrect: true },
+    ],
+    explanation: "Perseverance, lancé en 2020, est conçu spécifiquement pour rechercher des traces de vie microbienne passée. Il collecte aussi des échantillons de roche qui seront ramenés sur Terre lors d'une future mission.",
+  },
 ];
 
 export function ExplorationSection({ onComplete, onHome }: ExplorationSectionProps) {
@@ -219,11 +252,11 @@ export function ExplorationSection({ onComplete, onHome }: ExplorationSectionPro
         {chapter === 1 && !quizCompleted && (
           <ChapterShell
             kicker="02" title="Quiz éclair"
-            titlePrefix="Une question."
-            titleAccent="Elle sépare ceux qui ont lu vite de ceux qui ont vraiment retenu."
-            lede="Une seule réponse. L'objectif, c'est l'apprentissage."
+            titlePrefix="Qu'est-ce que tu as retenu ?"
+            titleAccent="4 questions pour ancrer l'essentiel."
+            lede="Pas de piège. L'objectif, c'est l'apprentissage."
             onPrev={() => goTo(0)} onNext={() => goTo(2)} nextEnabled={false}
-            nextLabel="Réponds à la question d'abord"
+            nextLabel="Réponds à toutes les questions d'abord"
           >
             <Quiz questions={quizQuestions} onComplete={handleQuizComplete} />
           </ChapterShell>
