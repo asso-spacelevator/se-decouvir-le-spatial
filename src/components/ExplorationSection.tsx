@@ -1,16 +1,20 @@
 import { useEffect, useState } from 'react';
-import { ChevronLeft, ChevronRight, Telescope, Rocket, Radio, Globe, Trophy, Box } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Telescope, Rocket, Radio, Globe, Trophy, Sun, Plane, Lightbulb } from 'lucide-react';
+import { PerseveranceViewer } from './PerseveranceViewer';
+import { PlanetCompareViewer } from './PlanetCompareViewer';
 import { useSession } from '../contexts/SessionContext';
 import { SectionCanvas, SectionTopBar, SectionProgress } from './ChapterShell';
 import {
   Img,
-  Trajectory,
+  JWSTTrajectoryFigure,
   MissionGallery,
+  MissionLog,
   MoonQuiz,
   MoonEssay,
+  PlanetCompareGame,
   RoverGame,
-  type TrajConfig,
   type GalleryItem,
+  type LogEntry,
 } from './ExplorationWidgets';
 
 /* ════════════════════════════════════════════════════════════════
@@ -130,9 +134,9 @@ export function ExplorationSection({ onComplete, onHome }: ExplorationSectionPro
           <MissionShell
             num="05" kicker="Rovers & hélicoptère · planète Mars"
             title={<>Mars — vingt-cinq ans<br /><span className="text-magenta">de rovers sur une autre planète.</span></>}
-            lede="De la petite Sojourner à Perseverance et son hélicoptère Ingenuity : remets les rovers dans l'ordre, puis explore le premier engin à avoir volé sur une autre planète."
+            lede="Explore la planète rouge, son rover et son hélicoptère, puis termine en remettant les rovers dans l'ordre chronologique."
             onPrev={() => goTo(3)} onNext={() => goTo(5)} nextEnabled={roverSolved}
-            nextLabel={roverSolved ? 'Voir le récap →' : 'Reconstitue la photo de famille'}
+            nextLabel={roverSolved ? 'Voir le récap →' : 'Termine la photo de famille'}
           >
             <Mars solved={roverSolved} onSolved={handleRoverSolved} />
           </MissionShell>
@@ -301,21 +305,6 @@ function InfoCard({ label, title, children }: { label: string; title?: string; c
 /* ─────────────────────────────────────────────────────────
  *  Chapter 1 — James Webb
  * ────────────────────────────────────────────────────────*/
-const JWST_TRAJ: TrajConfig = {
-  decor:
-    "<circle cx='90' cy='280' r='34' fill='#1d4ed8'/><circle cx='90' cy='280' r='34' fill='none' stroke='rgba(255,255,255,.25)' stroke-width='1.5'/><text x='90' y='332' fill='rgba(255,255,255,.55)' font-family='monospace' font-size='12' text-anchor='middle'>TERRE</text>" +
-    "<circle cx='700' cy='90' r='4' fill='#c8257a'/><circle cx='700' cy='90' r='13' fill='none' stroke='rgba(200,37,122,.5)' stroke-width='1.5' stroke-dasharray='3 4'/><text x='700' y='66' fill='rgba(255,255,255,.6)' font-family='monospace' font-size='12' text-anchor='middle'>POINT L2</text><text x='700' y='118' fill='rgba(255,255,255,.4)' font-family='monospace' font-size='10' text-anchor='middle'>1,5 M km</text>" +
-    "<circle cx='250' cy='235' r='9' fill='#9ca3af'/><text x='250' y='262' fill='rgba(255,255,255,.4)' font-family='monospace' font-size='10' text-anchor='middle'>Lune</text>",
-  path: 'M 90 280 C 220 250, 300 210, 420 170 S 620 110, 700 90',
-  steps: [
-    { short: 'Lancement', title: 'Décollage façon origami', date: '25 déc. 2021', t: 0.0, body: 'Lancement par une fusée Ariane 5 depuis le Centre spatial guyanais (Kourou). Le télescope voyage plié — un pliage « origami » pour tenir dans la coiffe.' },
-    { short: 'Vers L2', title: 'Un mois de voyage vers L2', date: 'déc. 2021 – janv. 2022', t: 0.42, body: 'Cap sur le point de Lagrange L2, à 1,5 million de km de la Terre (4× la distance Terre–Lune), avec de fines corrections de trajectoire.' },
-    { short: 'Déploiement', title: 'Le déploiement le plus complexe', date: '1er mois', t: 0.66, body: "Au fil du premier mois, une séquence pilotée point par point (~344 mécanismes) déplie l'observatoire.", stages: ['Antenne', 'Bouclier solaire déplié', 'Bouclier tendu', 'Miroir secondaire', 'Ailes du miroir primaire'] },
-    { short: 'Orbite L2', title: 'Insertion en orbite autour de L2', date: '~29 jours après', t: 0.9, body: 'Environ 29 jours après le lancement (fin janvier 2022), une dernière poussée place Webb en orbite autour de L2.' },
-    { short: 'Science', title: 'Mise en service, puis premières images', date: 'juillet 2022', t: 1.0, body: 'Six mois de réglages (refroidissement, alignement des 18 segments au nanomètre), puis les premières images scientifiques en juillet 2022.' },
-  ],
-};
-
 const JWST_GALLERY: GalleryItem[] = [
   { img: 'https://commons.wikimedia.org/wiki/Special:FilePath/Webb%27s%20First%20Deep%20Field.jpg?width=700', alt: 'Premier champ profond de Webb (amas SMACS 0723)', fallback: 'CHAMP PROFOND · SMACS 0723', title: 'Premier champ profond', credit: 'Amas SMACS 0723 · NASA, ESA, CSA, STScI' },
   { img: "https://commons.wikimedia.org/wiki/Special:FilePath/Pillars%20of%20Creation%20(NIRCam%20Image).jpg?width=700", alt: "Les Piliers de la création dans la nébuleuse de l'Aigle", fallback: 'PILIERS DE LA CRÉATION', title: 'Piliers de la création', credit: "Nébuleuse de l'Aigle · NASA, ESA, CSA, STScI" },
@@ -357,9 +346,35 @@ function JamesWebb() {
 
       <SectionLabel>La mission, étape par étape</SectionLabel>
       <p className="text-[14px] text-white/65 leading-relaxed max-w-[720px] mb-4">Du décollage au point L2, puis le déploiement le plus complexe jamais tenté. Lance l'animation ou clique chaque étape.</p>
-      <div className="mb-12"><Trajectory {...JWST_TRAJ} /></div>
+      <div className="mb-12"><JWSTTrajectoryFigure /></div>
+
+      <SectionLabel>Le défi du repliage et du déploiement</SectionLabel>
+      <p className="text-[14px] text-white/65 leading-relaxed max-w-[720px] mb-4">Pour tenir dans la coiffe d'Ariane 5, Webb a voyagé plié comme un origami : miroir replié, pare-soleil compressé en accordéon. Une fois en route vers le point L2, environ 344 mécanismes à risque (aucune réparation possible si l'un d'eux bloque) ont dû s'ouvrir un par un, dans le bon ordre et au bon moment.</p>
+      <div className="mb-12">
+        <figure className="m-0 max-w-[640px] mx-auto">
+          <div className="rounded-2xl overflow-hidden border border-white/12 bg-black aspect-video">
+            <video
+              src="https://svs.gsfc.nasa.gov/vis/a020000/a020300/a020339/WEBB_Deployment_v2_30fps_4k_h264.mp4"
+              controls
+              playsInline
+              preload="metadata"
+              className="w-full h-full object-cover"
+            />
+          </div>
+          <figcaption className="mt-2 flex items-start gap-2 text-[11px] text-white/45">
+            <span className="font-mono uppercase tracking-wide text-magenta-300 shrink-0">Crédit</span>
+            <span>La séquence complète, du télescope replié à sa silhouette finale en orbite (« Webb wide view deployment »). Image : NASA / Adriana Manrique Gutierrez, Jacquelyn DeMink (USRA), 2021 · NASA Scientific Visualization Studio (Goddard Space Flight Center), animations de déploiement de Webb</span>
+          </figcaption>
+        </figure>
+      </div>
 
       <SectionLabel>Pourquoi il change tout</SectionLabel>
+      <p className="text-[14px] text-white/65 leading-relaxed max-w-[720px] mb-4">Conçu pour voir plus loin que Hubble, James Webb observe l'univers en infrarouge : il traverse les nuages de poussière, repère les galaxies les plus lointaines et analyse l'atmosphère de planètes situées autour d'autres étoiles. Chaque observation rapproche l'humanité de quelques grandes questions :</p>
+      <ul className="text-[14px] text-white/65 leading-relaxed max-w-[720px] mb-6 list-disc pl-5 space-y-1">
+        <li>Comment se sont formées les toutes premières galaxies ?</li>
+        <li>Existe-t-il des planètes semblables à la Terre ailleurs dans l'univers ?</li>
+        <li>De quoi sont faits les objets les plus lointains du cosmos ?</li>
+      </ul>
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-12">
         {JWST_APPS.map((a) => (
           <div key={a.title} className="bg-magenta/[0.06] border border-magenta/20 rounded-2xl p-5">
@@ -382,19 +397,51 @@ function JamesWebb() {
 /* ─────────────────────────────────────────────────────────
  *  Chapter 2 — Artémis
  * ────────────────────────────────────────────────────────*/
-const ARTEMIS_TRAJ: TrajConfig = {
-  decor:
-    "<circle cx='120' cy='260' r='40' fill='#1d4ed8'/><circle cx='120' cy='260' r='40' fill='none' stroke='rgba(255,255,255,.25)' stroke-width='1.5'/><text x='120' y='320' fill='rgba(255,255,255,.55)' font-family='monospace' font-size='12' text-anchor='middle'>TERRE</text>" +
-    "<circle cx='660' cy='110' r='26' fill='#9ca3af'/><circle cx='660' cy='110' r='26' fill='none' stroke='rgba(255,255,255,.25)' stroke-width='1.5'/><text x='660' y='62' fill='rgba(255,255,255,.6)' font-family='monospace' font-size='12' text-anchor='middle'>LUNE</text>",
-  path: 'M 120 300 C 180 320, 250 300, 300 250 C 380 175, 520 120, 620 130 C 700 138, 690 90, 640 86 C 560 80, 470 150, 360 210 C 260 264, 175 250, 150 300',
-  steps: [
-    { short: 'Orbite Terre', title: 'Orbite terrestre', date: 'J+0', t: 0.04, body: 'Le SLS place Orion en orbite basse. Vérifications des systèmes avant de viser la Lune.' },
-    { short: 'Injection', title: 'Injection translunaire (TLI)', date: 'J+0', t: 0.22, body: "Une poussée envoie Orion sur sa trajectoire vers la Lune — c'est le Module de service européen (ESM) qui fournit la propulsion." },
-    { short: 'Survol Lune', title: 'Survol et orbite lunaire', date: 'J+4 à J+10', t: 0.5, body: 'Orion contourne la Lune, en visant à terme la région du pôle Sud, riche en glace d\'eau.' },
-    { short: 'Retour', title: 'Retour vers la Terre', date: 'fin de mission', t: 0.78, body: "Nouvelle poussée pour quitter l'influence lunaire et revenir vers la Terre." },
-    { short: 'Amerrissage', title: 'Rentrée et amerrissage', date: 'fin de mission', t: 1.0, body: 'Rentrée atmosphérique à grande vitesse, boucliers thermiques à l\'épreuve, puis amerrissage sous parachutes dans le Pacifique.' },
-  ],
-};
+const ARTEMIS_GALLERY: GalleryItem[] = [
+  { img: 'https://commons.wikimedia.org/wiki/Special:FilePath/Launch%20of%20Artemis%201%20(NHQ202211160002).jpg?width=700', alt: 'Décollage de la fusée SLS avec le vaisseau Orion, mission Artemis I', fallback: 'DÉCOLLAGE · ARTEMIS I', title: 'Décollage de la fusée SLS', credit: 'Cap Canaveral, nov. 2022 · NASA' },
+  { img: 'https://commons.wikimedia.org/wiki/Special:FilePath/Artemis%20II%20Group%20Shot%20(art002e013361).jpg?width=700', alt: "L'équipage d'Artemis II réuni à bord du vaisseau Orion", fallback: 'ÉQUIPAGE · ARTEMIS II', title: "L'équipage d'Artemis II", credit: 'Reid Wiseman, Victor Glover, Christina Koch, Jeremy Hansen · NASA' },
+  { img: 'https://commons.wikimedia.org/wiki/Special:FilePath/Lunar%20Flyby%20Observations%20%E2%80%93%20NASA%20astronaut%20Victor%20Glover%20(art002e016198).jpg?width=700', alt: "L'astronaute Victor Glover observe la Lune depuis le hublot d'Orion", fallback: 'OBSERVATION DE LA LUNE · ARTEMIS II', title: 'Observation lors du survol lunaire', credit: 'Victor Glover (NASA) au hublot d’Orion · NASA' },
+  { img: 'https://commons.wikimedia.org/wiki/Special:FilePath/Life%20in%20Orion%20during%20the%20Artemis%20II%20Mission%20(art002e025756).jpg?width=700', alt: "Vie quotidienne de l'équipage à bord du vaisseau Orion", fallback: 'À BORD D’ORION · ARTEMIS II', title: "La vie à bord d'Orion", credit: 'Quotidien des astronautes en vol · NASA' },
+  { img: 'https://commons.wikimedia.org/wiki/Special:FilePath/Flight%20Day%2022-%20Orion%20and%20Crescent%20Earth%20(art001e002190).jpeg?width=700', alt: 'La Terre en croissant photographiée par le vaisseau Orion', fallback: 'LA TERRE VUE PAR ORION', title: 'La Terre, un croissant dans le noir', credit: "Artemis I · caméra d'Orion · NASA" },
+  { img: 'https://commons.wikimedia.org/wiki/Special:FilePath/Flight%20Day%2020-%20Lunar%20Close-up%20(art001e002581).jpeg?width=700', alt: 'Gros plan sur la surface de la Lune photographiée par le vaisseau Orion', fallback: 'LA LUNE VUE PAR ORION', title: 'La Lune de tout près', credit: "Artemis I · caméra d'Orion · NASA" },
+];
+
+const ARTEMIS_LOG: LogEntry[] = [
+  {
+    day: 'Jour de vol 1', date: '1ᵉʳ avril 2026',
+    title: 'Décollage et mise en orbite',
+    body: "Décollage de nuit depuis le centre spatial Kennedy. La fusée SLS place Orion sur une première orbite elliptique, puis un allumage de l'étage ICPS l'élève au-delà de 74 000 km d'altitude. L'équipage prend ensuite les commandes pendant environ 70 minutes pour un test de pilotage manuel à proximité de l'étage, avant le déploiement de quatre nano-satellites.",
+    stat: { value: '185 → 74 000 km', label: 'altitude de la deuxième orbite' },
+  },
+  {
+    day: 'Jour de vol 2', date: '2 avril 2026',
+    title: 'Cap sur la Lune',
+    body: "Un allumage de moteur de six minutes, l'injection translunaire, arrache Orion à l'orbite terrestre et le place sur sa trajectoire vers la Lune.",
+    stat: { value: '6 min 05', label: "durée de l'allumage translunaire" },
+  },
+  {
+    day: 'Jours de vol 3 à 5', date: '3 – 5 avril 2026',
+    title: 'Quatre jours de croisière',
+    body: "Direction la Lune. L'équipage teste les liaisons vidéo avec la Terre et vérifie les systèmes de survie, de communication et de navigation. Au cinquième jour, Orion entre dans la sphère d'influence lunaire : la gravité de la Lune devient la force dominante sur sa trajectoire.",
+  },
+  {
+    day: 'Jour de vol 6', date: '6 avril 2026',
+    title: 'Le survol de la Lune',
+    body: "Orion passe à 6 544 km de la surface lunaire : le premier survol habité depuis Apollo 17, en 1972. Sept heures d'observation des reliefs lunaires, une éclipse solaire vue depuis l'habitacle, puis 40 minutes de silence radio lorsque la Lune coupe le contact avec la Terre. À son point le plus éloigné, Orion dépasse de 6 600 km le record de distance d'Apollo 13.",
+    stat: { value: '406 773 km', label: 'distance maximale à la Terre · record battu' },
+  },
+  {
+    day: 'Jours de vol 7 à 9', date: '7 – 9 avril 2026',
+    title: 'Le chemin du retour',
+    body: "Orion quitte la sphère d'influence lunaire et entame un trajet retour de quatre jours, porté par une trajectoire dite « de retour libre » : même en cas de problème, la seule gravité de la Lune suffirait à ramener le vaisseau vers la Terre.",
+  },
+  {
+    day: 'Jour de vol 10', date: '10 avril 2026',
+    title: 'Rentrée et amerrissage',
+    body: "Rentrée dans l'atmosphère à 35 fois la vitesse du son, puis amerrissage dans l'océan Pacifique, au large de San Diego. Au total : 9 jours, 1 heure et 32 minutes de vol, et plus de 1,2 million de kilomètres parcourus.",
+    stat: { value: '1,2 million km', label: 'parcourus en un peu plus de neuf jours' },
+  },
+];
 
 function Artemis({ moonQuiz, onMoonQuiz, moonEssay, onMoonEssay }: {
   moonQuiz: number | null; onMoonQuiz: (v: number) => void;
@@ -430,7 +477,21 @@ function Artemis({ moonQuiz, onMoonQuiz, moonEssay, onMoonEssay }: {
       </div>
 
       <SectionLabel>La trajectoire</SectionLabel>
-      <div className="mb-12"><Trajectory {...ARTEMIS_TRAJ} /></div>
+      <figure className="m-0 mb-12">
+        <div className="rounded-2xl overflow-hidden border border-white/12 bg-black aspect-video">
+          <video
+            src="https://svs.gsfc.nasa.gov/vis/a000000/a005600/a005632/a2_mission_trajectory_1080p60.mp4"
+            controls
+            playsInline
+            preload="metadata"
+            className="w-full h-full object-cover"
+          />
+        </div>
+        <figcaption className="mt-2 flex items-center gap-2 text-[11px] text-white/45">
+          <span className="font-mono uppercase tracking-wide text-magenta-300">Crédit</span>
+          Image : NASA / Kel Elkins (Science and Technology Corporation), Ernie Wright (USRA), 2026 · NASA Scientific Visualization Studio, mission Artemis II
+        </figcaption>
+      </figure>
 
       <SectionLabel>La frise des vols</SectionLabel>
       <div className="grid md:grid-cols-3 gap-4 mb-12">
@@ -448,6 +509,15 @@ function Artemis({ moonQuiz, onMoonQuiz, moonEssay, onMoonEssay }: {
         </div>
       </div>
 
+      <SectionLabel>Journal de bord · Artemis II, jour après jour</SectionLabel>
+      <p className="text-[14px] text-white/65 leading-relaxed max-w-[720px] mb-6">Du décollage à l'amerrissage, dix jours de vol autour de la Lune. Voici, jour après jour, ce qu'a vécu l'équipage d'Orion.</p>
+      <div className="mb-12"><MissionLog entries={ARTEMIS_LOG} /></div>
+
+      <SectionLabel>Galerie de la mission</SectionLabel>
+      <p className="text-[14px] text-white/65 leading-relaxed max-w-[720px] mb-4">Du décollage à l'équipage, en passant par ce qu'Orion a vu par son hublot : un aperçu en images d'Artemis I et II.</p>
+      <MissionGallery items={ARTEMIS_GALLERY} />
+      <p className="text-[11px] text-white/40 mt-3 mb-12">Images : NASA — domaine public.</p>
+
       <div className="rounded-2xl border border-magenta/25 bg-gradient-to-br from-magenta/[0.10] to-transparent p-6 sm:p-7 mb-6">
         <div className="inline-flex items-center gap-2 px-3 py-1 bg-magenta/15 border border-magenta/30 rounded-full text-magenta text-[12px] font-semibold mb-3">
           <span className="w-3.5 h-3.5 rounded-sm bg-magenta inline-block" /> Quiz
@@ -459,7 +529,7 @@ function Artemis({ moonQuiz, onMoonQuiz, moonEssay, onMoonEssay }: {
 
       <MoonEssay initial={moonEssay} onSave={onMoonEssay} />
 
-      <div className="text-[11px] text-white/40 mt-4">⚠ Dates Artémis à reconfirmer à la publication (nasa.gov / esa.int). Crédits images : NASA / NASA-JPL (domaine public) ; visuels ESA en CC BY-SA 3.0 IGO si utilisés.</div>
+      <div className="text-[11px] text-white/40 mt-4">Crédits images : NASA / NASA-JPL (domaine public) ; visuels ESA en CC BY-SA 3.0 IGO si utilisés.</div>
     </>
   );
 }
@@ -467,6 +537,84 @@ function Artemis({ moonQuiz, onMoonQuiz, moonEssay, onMoonEssay }: {
 /* ─────────────────────────────────────────────────────────
  *  Chapter 3 — Voyager 1
  * ────────────────────────────────────────────────────────*/
+const DISTANCE_STEPS = [
+  { label: 'Lune', factor: '× 1', distance: '384 400 km', detail: 'distance de référence' },
+  { label: 'Soleil', factor: '× 390', distance: '150 millions de km', detail: '1 UA' },
+  { label: 'Mars', factor: '× 585', distance: '225 millions de km', detail: '1,5 UA' },
+  { label: 'Jupiter', factor: '× 1 950', distance: '750 millions de km', detail: '5 UA' },
+  { label: 'Pluton', factor: '× 15 600', distance: '6 milliards de km', detail: '40 UA' },
+  { label: 'Voyager 2', factor: '× 55 400', distance: '21,3 milliards de km', detail: '142 UA' },
+  { label: 'Voyager 1', factor: '× 66 100', distance: '25,4 milliards de km', detail: '170 UA' },
+];
+
+function DistanceScale() {
+  const [visibleCount, setVisibleCount] = useState(1);
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      setVisibleCount((c) => {
+        if (c >= DISTANCE_STEPS.length) {
+          clearInterval(id);
+          return c;
+        }
+        return c + 1;
+      });
+    }, 1500);
+    return () => clearInterval(id);
+  }, []);
+
+  return (
+    <div className="mt-5 space-y-2">
+      {DISTANCE_STEPS.map((s, i) => {
+        const shown = i < visibleCount;
+        return (
+          <div
+            key={s.label}
+            className={`flex items-center gap-4 rounded-lg border px-4 py-2.5 transition-all duration-500 ease-[cubic-bezier(0.2,0,0,1)] ${shown ? 'opacity-100 translate-x-0 border-magenta/30 bg-magenta/[0.06]' : 'opacity-0 -translate-x-2 border-white/5'}`}
+          >
+            <span className="text-[15px] font-bold text-magenta w-[92px] shrink-0">{s.factor}</span>
+            <span className="text-[13px] text-white/80 flex-1">Terre ↔ {s.label}</span>
+            <span className="text-[11.5px] text-white/45 whitespace-nowrap">{s.distance} · {s.detail}</span>
+          </div>
+        );
+      })}
+      <p className="m-0 text-[11px] text-white/40 mt-1">Chaque ligne montre combien de fois la distance Terre-Lune (384 400 km) tient dans la distance affichée.</p>
+    </div>
+  );
+}
+
+const VOYAGER_PROBES = [
+  {
+    name: 'Voyager 1',
+    launch: 'lancée 09/1977',
+    distanceKm: '25,4 milliards de km',
+    distanceUA: '170 UA · espace interstellaire',
+    delay: '~23 h 30 min',
+    delayDesc: "pour qu'un signal arrive de la Terre",
+    speed: '60 000 km/h',
+    speedDesc: 'soit 17 km par seconde',
+    note: "Record absolu · objet le plus loin jamais envoyé par l'Humanité",
+  },
+  {
+    name: 'Voyager 2',
+    launch: 'lancée 08/1977',
+    distanceKm: '21,3 milliards de km',
+    distanceUA: '142 UA · espace interstellaire',
+    delay: '~19 h 30 min',
+    delayDesc: "pour qu'un signal arrive de la Terre",
+    speed: '55 000 km/h',
+    speedDesc: 'soit 15 km par seconde',
+    note: 'Seule sonde à avoir survolé Uranus et Neptune',
+  },
+];
+
+const VOYAGER_COMPARISONS = [
+  { Icon: Globe, line1: '× 2 000 fois la distance Terre–Lune', line2: 'pour atteindre Voyager 1', value: '× 2 000' },
+  { Icon: Sun, line1: '170 fois la distance Terre–Soleil', line2: 'Voyager 1 est à 170 UA', value: '170 UA' },
+  { Icon: Plane, line1: 'En avion de ligne à 900 km/h', line2: 'il faudrait 3,2 millions d\'années', value: '3,2 M ans' },
+  { Icon: Lightbulb, line1: 'La lumière (300 000 km/s)', line2: 'met 23 h 30 min pour arriver', value: '23,5 h' },
+];
+
 function Voyager() {
   return (
     <>
@@ -477,6 +625,66 @@ function Voyager() {
         credit="NASA/JPL-Caltech — Vue d'artiste de Voyager. Domaine public."
       />
       <FlagStrip flags={[{ code: 'us', label: 'NASA / JPL', title: 'États-Unis — NASA / JPL' }]} />
+
+      <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-6 sm:p-7 mb-4">
+        <p className="m-0 text-[11px] font-mono uppercase tracking-wide text-magenta-300">Échelle des distances</p>
+        <h4 className="m-0 text-[16px] font-bold text-white mt-1">Combien de fois la distance Terre-Lune faut-il pour atteindre chaque destination ?</h4>
+        <p className="m-0 text-[12.5px] text-white/55 leading-relaxed mt-1.5 max-w-[640px]">En partant de la distance Terre-Lune comme unité de mesure, la même distance s'empile encore et encore pour atteindre le Soleil, puis Mars, Jupiter, Pluton — et enfin les deux sondes Voyager.</p>
+        <DistanceScale />
+        <p className="m-0 text-[12px] text-white/45 mt-4">1 UA (Unité Astronomique) = distance Terre-Soleil = 150 millions de km</p>
+      </div>
+
+      <div className="grid md:grid-cols-2 gap-4 mb-4">
+        {VOYAGER_PROBES.map((p) => (
+          <div key={p.name} className="bg-white/[0.04] border border-white/10 rounded-2xl p-6">
+            <div className="flex items-center justify-between gap-3">
+              <p className="m-0 text-[15px] font-bold text-white flex items-center gap-2"><span className="w-2.5 h-2.5 rounded-full bg-magenta inline-block" />{p.name.toUpperCase()}</p>
+              <p className="m-0 text-[11px] text-white/45">{p.launch}</p>
+            </div>
+            <div className="border-t border-white/10 my-3" />
+            <div className="grid grid-cols-3 gap-3">
+              <div>
+                <p className="m-0 text-[10px] uppercase tracking-[0.08em] text-white/45">Distance</p>
+                <p className="m-0 text-[15px] font-bold text-magenta mt-1 leading-tight">{p.distanceKm}</p>
+                <p className="m-0 text-[11px] text-white/55 mt-0.5">{p.distanceUA}</p>
+              </div>
+              <div>
+                <p className="m-0 text-[10px] uppercase tracking-[0.08em] text-white/45">Délai signal</p>
+                <p className="m-0 text-[15px] font-bold text-magenta mt-1 leading-tight">{p.delay}</p>
+                <p className="m-0 text-[11px] text-white/55 mt-0.5">{p.delayDesc}</p>
+              </div>
+              <div>
+                <p className="m-0 text-[10px] uppercase tracking-[0.08em] text-white/45">Vitesse</p>
+                <p className="m-0 text-[15px] font-bold text-magenta mt-1 leading-tight">{p.speed}</p>
+                <p className="m-0 text-[11px] text-white/55 mt-0.5">{p.speedDesc}</p>
+              </div>
+            </div>
+            <p className="m-0 text-[11.5px] text-white/60 mt-4">{p.note}</p>
+          </div>
+        ))}
+      </div>
+
+      <InfoCard label="Pour se représenter les distances">
+        <div className="grid sm:grid-cols-2 gap-4 mt-3">
+          {VOYAGER_COMPARISONS.map(({ Icon, line1, line2, value }) => (
+            <div key={line1} className="flex items-start gap-3">
+              <Icon className="w-5 h-5 text-magenta shrink-0 mt-0.5" strokeWidth={1.75} />
+              <div className="flex-1">
+                <p className="m-0 text-[12.5px] text-white/75 leading-snug">{line1}</p>
+                <p className="m-0 text-[11px] text-white/45 leading-snug">{line2}</p>
+              </div>
+              <p className="m-0 text-[14px] font-bold text-magenta whitespace-nowrap">{value}</p>
+            </div>
+          ))}
+        </div>
+      </InfoCard>
+
+      <div className="border border-magenta rounded-lg p-4 border-[1.5px] mt-4 mb-4 flex items-start gap-3">
+        <Rocket className="w-5 h-5 text-magenta shrink-0 mt-0.5" strokeWidth={1.75} />
+        <p className="m-0 text-[13px] text-white/75 leading-relaxed"><strong className="text-white">Prochain record · novembre 2026 :</strong> Voyager 1 atteindra 1 jour-lumière de la Terre (~25,9 milliards de km) — le premier objet humain à franchir cette distance.</p>
+      </div>
+
+      <p className="m-0 text-[11px] text-white/35 mb-12">Sources : NASA/JPL · données juin 2026 · 1 UA = 149,6 millions de km</p>
 
       <div className="grid md:grid-cols-2 gap-4 mb-4">
         <InfoCard label="But & lancement">
@@ -557,30 +765,183 @@ function Mars({ solved, onSolved }: { solved: boolean; onSolved: () => void }) {
         { code: 'no', label: 'Norvège', title: 'Norvège — contributions instrumentales' },
       ]} />
 
-      <div className="rounded-2xl border border-magenta/25 bg-gradient-to-br from-magenta/[0.10] to-transparent p-6 sm:p-7 mb-4">
-        <div className="inline-flex items-center gap-2 px-3 py-1 bg-magenta/15 border border-magenta/30 rounded-full text-magenta text-[12px] font-semibold mb-3">
-          <span className="w-3.5 h-3.5 rounded-sm bg-magenta inline-block" /> Mini-jeu · la photo de famille
-        </div>
-        <h4 className="m-0 text-[20px] font-bold text-white mb-4">Remets les rovers dans l'ordre chronologique</h4>
-        <RoverGame solved={solved} onSolved={onSolved} />
+      <SectionLabel>Mars dans la culture</SectionLabel>
+      <p className="text-[14px] text-white/65 leading-relaxed max-w-[720px] mb-4">Bien avant les rovers, Mars peuplait déjà notre imaginaire. La planète rouge a inspiré des récits d'invasion, des rêves de civilisations disparues, et des films qui imaginent ce que serait vraiment l'exploration spatiale.</p>
+      <div className="grid md:grid-cols-3 gap-4 mb-12">
+        <InfoCard label="L'idée des « Martiens »" title="Une planète, un mythe">
+          <p className="m-0 text-[13px] text-white/65 leading-relaxed mt-2">À la fin du XIXᵉ siècle, des astronomes croient apercevoir des « canaux » à la surface de Mars — on imagine alors une civilisation capable de les avoir creusés. Le roman <strong className="text-white/85">La Guerre des mondes</strong> de H. G. Wells (1898) invente l'image d'envahisseurs venus de Mars, reprise en 1938 dans une dramatique radio si réaliste qu'une partie du public américain l'a crue véridique. L'idée du « petit homme vert » est née de cet imaginaire — la science n'a jamais trouvé trace d'une telle vie.</p>
+        </InfoCard>
+        <InfoCard label="Au cinéma · 2001, l'Odyssée de l'espace" title="Imaginer l'inconnu">
+          <p className="m-0 text-[13px] text-white/65 leading-relaxed mt-2">Le film de Stanley Kubrick (1968) ne se déroule pas sur Mars, mais il a posé, avant les premières sondes, les grandes questions de l'exploration spatiale : comment vivre et naviguer loin de la Terre, et jusqu'où une mission peut-elle dépendre de ses machines ? Une œuvre fondatrice pour tout le cinéma spatial qui a suivi.</p>
+        </InfoCard>
+        <InfoCard label="Au cinéma · Seul sur Mars" title="Survivre, avec la science">
+          <p className="m-0 text-[13px] text-white/65 leading-relaxed mt-2">Dans le film de Ridley Scott (2015), un astronaute abandonné sur Mars doit produire sa propre eau, cultiver de la nourriture et communiquer avec la Terre pour survivre. Contrairement aux récits d'invasion, l'histoire mise sur ce que l'on sait vraiment de la planète — son atmosphère fine, son sol, ses tempêtes — pour imaginer une exploration crédible.</p>
+        </InfoCard>
       </div>
-      <p className="text-[11px] text-white/40 mb-12">Les 5 rovers de la NASA. À noter : le rover <strong className="text-white/60">Zhurong</strong> (Chine, CNSA, 2021) a aussi opéré sur Mars.</p>
+
+      <SectionLabel>La Terre et Mars, côte à côte</SectionLabel>
+      <p className="text-[14px] text-white/65 leading-relaxed max-w-[720px] mb-4">Place les deux planètes côte à côte — leurs tailles respectent leur véritable rapport. Fais-les tourner pour comparer.</p>
+      <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 sm:p-6 mb-12">
+        <PlanetCompareViewer className="w-full h-[360px] sm:h-[440px] rounded-xl overflow-hidden" />
+        <p className="m-0 text-[11px] text-white/40 mt-3 text-center">Modèles 3D à l'échelle relative (Mars ≈ 0,53 × le diamètre de la Terre) · clique-glisse pour tourner, molette pour zoomer.</p>
+      </div>
+
+      <SectionLabel>Pourquoi explorer Mars ?</SectionLabel>
+      <div className="grid md:grid-cols-2 gap-4 mb-12">
+        <InfoCard label="À la recherche de l'eau — et peut-être de la vie" title="Suivre l'eau pour suivre la vie">
+          <p className="m-0 text-[13px] text-white/65 leading-relaxed mt-2">Sur Terre, partout où il y a de l'eau liquide, on trouve de la vie. Perseverance explore le cratère Jezero, ancien lit d'un lac et d'un delta de rivière : si Mars a un jour porté des organismes microscopiques, c'est dans ces sédiments anciens que leurs traces auraient le plus de chances d'être préservées.</p>
+        </InfoCard>
+        <InfoCard label="Comprendre comment naissent les planètes" title="Mars, une archive intacte">
+          <p className="m-0 text-[13px] text-white/65 leading-relaxed mt-2">Sans océans ni tectonique des plaques pour effacer son passé, Mars a conservé des roches vieilles de plusieurs milliards d'années. Les étudier, c'est comprendre comment les planètes rocheuses — dont la Terre — se sont formées et ont évolué au début du système solaire.</p>
+        </InfoCard>
+      </div>
+
+      <SectionLabel>Mars : une planète sœur, mais pas jumelle</SectionLabel>
+      <p className="text-[14px] text-white/65 leading-relaxed max-w-[720px] mb-4">Les robots envoyés sur Mars révèlent le portrait d'une planète qui ressemblait autrefois à la Terre — avant de devenir le désert glacé que l'on connaît aujourd'hui.</p>
+      <div className="grid sm:grid-cols-3 gap-3 mb-12">
+        <div className="bg-white/[0.04] border border-white/10 rounded-2xl p-5">
+          <span className="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-magenta/15 border border-magenta/30 text-magenta text-[12px] font-bold mb-2">1</span>
+          <p className="m-0 text-[13.5px] font-bold text-white">Un noyau qui s'éteint</p>
+          <p className="m-0 text-[12.5px] text-white/60 leading-relaxed mt-1.5">Comme la Terre, Mars possédait un noyau métallique en mouvement, générateur d'un champ magnétique. Mais une planète plus petite se refroidit plus vite : son noyau s'est figé, et le champ magnétique qui l'entourait a fini par s'éteindre, il y a environ 4 milliards d'années.</p>
+        </div>
+        <div className="bg-white/[0.04] border border-white/10 rounded-2xl p-5">
+          <span className="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-magenta/15 border border-magenta/30 text-magenta text-[12px] font-bold mb-2">2</span>
+          <p className="m-0 text-[13.5px] font-bold text-white">Le vent solaire balaie l'atmosphère</p>
+          <p className="m-0 text-[12.5px] text-white/60 leading-relaxed mt-1.5">Sur Terre, le champ magnétique dévie le vent solaire, ce flot de particules chargées émis par le Soleil. Privée de ce bouclier, Mars a vu son atmosphère arrachée peu à peu par ce vent, au fil de centaines de millions d'années.</p>
+        </div>
+        <div className="bg-white/[0.04] border border-white/10 rounded-2xl p-5">
+          <span className="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-magenta/15 border border-magenta/30 text-magenta text-[12px] font-bold mb-2">3</span>
+          <p className="m-0 text-[13.5px] font-bold text-white">D'une planète bleue à un désert rouge</p>
+          <p className="m-0 text-[12.5px] text-white/60 leading-relaxed mt-1.5">En perdant son atmosphère, Mars a perdu la pression et la chaleur nécessaires à l'eau liquide : ses rivières et ses lacs se sont asséchés ou ont gelé, laissant la planète rouge, froide et presque sans air que les rovers explorent aujourd'hui.</p>
+        </div>
+      </div>
+
+      <div className="rounded-2xl border border-magenta/25 bg-gradient-to-br from-magenta/[0.10] to-transparent p-6 sm:p-7 mb-12">
+        <div className="inline-flex items-center gap-2 px-3 py-1 bg-magenta/15 border border-magenta/30 rounded-full text-magenta text-[12px] font-semibold mb-3">
+          <span className="w-3.5 h-3.5 rounded-sm bg-magenta inline-block" /> Jeu · Mars contre la Terre
+        </div>
+        <h4 className="m-0 text-[20px] font-bold text-white mb-1">À ton avis, à quel point Mars diffère-t-elle de la Terre ?</h4>
+        <p className="m-0 text-[13px] text-white/60 leading-relaxed mb-5">Pour chaque comparaison, écris le chiffre qui te semble le plus juste — une estimation suffit.</p>
+        <PlanetCompareGame />
+      </div>
+
+      <SectionLabel>Comment commande-t-on un rover, à des millions de kilomètres ?</SectionLabel>
+      <div className="grid md:grid-cols-2 gap-4 mb-12">
+        <InfoCard label="Un aller-retour de plusieurs minutes" title="Pas de pilotage en direct">
+          <p className="m-0 text-[13px] text-white/65 leading-relaxed mt-2">Selon la position des deux planètes, un signal radio met entre <strong className="text-white/85">environ 5 et 20 minutes</strong> pour parcourir la distance Terre-Mars. Impossible donc de « conduire » le rover avec une manette : chaque ordre envoyé met de longues minutes à arriver, et la réponse tout autant à revenir.</p>
+        </InfoCard>
+        <InfoCard label="Le réseau Deep Space Network" title="De grandes antennes sur Terre">
+          <p className="m-0 text-[13px] text-white/65 leading-relaxed mt-2">Les communications passent par un réseau de grandes antennes paraboliques réparties sur le globe (États-Unis, Espagne, Australie), qui se relaient pour garder le contact avec Mars à mesure que la Terre tourne.</p>
+        </InfoCard>
+        <InfoCard label="Des plans de mission, pas des manettes" title="Une journée préparée à l'avance">
+          <p className="m-0 text-[13px] text-white/65 leading-relaxed mt-2">Chaque jour martien (un « sol »), les équipes du JPL envoient une liste d'instructions au rover : où aller, quelles roches photographier ou analyser, quels instruments utiliser. Le rover exécute ce programme tout seul, puis transmet ses résultats et ses images.</p>
+        </InfoCard>
+        <InfoCard label="AutoNav, l'art de se débrouiller seul" title="Un rover qui voit où il marche">
+          <p className="m-0 text-[13px] text-white/65 leading-relaxed mt-2">Pour avancer sans attendre un ordre à chaque pas, le rover utilise un système de navigation autonome : ses caméras repèrent les rochers et les pentes, et il choisit lui-même le chemin le plus sûr — un peu comme une voiture qui se conduirait seule, mais sur un terrain inconnu.</p>
+        </InfoCard>
+      </div>
+
+      <SectionLabel>À quoi servent les instruments d'un rover ?</SectionLabel>
+      <p className="text-[14px] text-white/65 leading-relaxed max-w-[720px] mb-4">Perseverance n'est pas qu'une caméra sur roues : c'est un petit laboratoire de géologie et de chimie, conçu pour répondre à une question précise — Mars a-t-elle un jour pu abriter la vie ?</p>
+      <div className="grid sm:grid-cols-2 gap-3 mb-10">
+        {[
+          { t: 'Mastcam-Z', d: "Deux caméras zoom sur le mât du rover : elles prennent des images en couleur et en relief du paysage, pour repérer les roches intéressantes à étudier de plus près." },
+          { t: 'SuperCam', d: "Tire un laser sur une roche à distance pour en analyser la composition chimique, et embarque un micro qui enregistre le son de chaque impact." },
+          { t: 'PIXL & SHERLOC', d: "Deux instruments montés au bout du bras robotique : ils examinent la composition minérale et chimique des roches, à la recherche de structures qui pourraient être les traces d'une vie microbienne très ancienne." },
+          { t: 'MOXIE', d: "Une expérience qui a fabriqué de l'oxygène respirable à partir du dioxyde de carbone de l'atmosphère martienne — une technologie clé pour de futures missions habitées." },
+          { t: 'Système de carottage', d: "Une perceuse prélève des échantillons de roche, scellés dans des tubes posés au sol : un dépôt que de futures missions iront récupérer pour les ramener sur Terre." },
+          { t: 'Microphones', d: "Deux micros embarqués captent pour la première fois les sons de Mars : le vent, le crissement des roues sur les cailloux, le vol d'Ingenuity." },
+        ].map((x) => (
+          <div key={x.t} className="bg-white/[0.04] border border-white/10 rounded-2xl p-5">
+            <p className="m-0 text-[14px] font-bold text-white">{x.t}</p>
+            <p className="m-0 text-[12.5px] text-white/60 leading-relaxed mt-1.5">{x.d}</p>
+          </div>
+        ))}
+      </div>
+
+      <SectionLabel>Écoute Mars</SectionLabel>
+      <p className="text-[14px] text-white/65 leading-relaxed max-w-[720px] mb-4">Perseverance est le premier engin à avoir enregistré le son de la planète rouge. Voici un extrait capté par son microphone, alors qu'il roulait sur le sol martien.</p>
+      <div className="rounded-2xl border border-white/10 bg-white/[0.04] overflow-hidden mb-3">
+        <iframe
+          title="Sons de Mars enregistrés par le rover Perseverance"
+          width="100%"
+          height="166"
+          allow="autoplay"
+          src="https://w.soundcloud.com/player/?url=https%3A%2F%2Fsoundcloud.com%2Fnasa%2Fsounds-of-perseverance-mars-rover-driving-sol-16-90-second-highlights&color=%23c8257a&auto_play=false&show_user=true&visual=false"
+          className="block w-full"
+        />
+      </div>
+      <p className="text-[11px] text-white/40 mb-6">Crédit : NASA/JPL-Caltech — extrait audio capté par les microphones de Perseverance, sol 16.</p>
+      <div className="rounded-2xl border border-magenta/25 bg-gradient-to-br from-magenta/[0.10] to-transparent p-6 sm:p-7 mb-12">
+        <h4 className="m-0 text-[18px] font-bold text-white mb-1.5">Qu'est-ce qu'on entend ?</h4>
+        <p className="m-0 text-[13.5px] text-white/65 leading-relaxed">Écoute l'extrait : peux-tu reconnaître le bruit des roues du rover sur les cailloux, le souffle du vent martien, ou le bourdonnement des mécanismes du rover lui-même ? Mars a une atmosphère 100 fois plus fine que celle de la Terre — le son s'y propage différemment, plus faiblement et avec des aigus atténués.</p>
+      </div>
 
       <SectionLabel>Zoom · Perseverance en 3D</SectionLabel>
-      <div className="rounded-2xl border border-dashed border-white/20 bg-white/[0.03] p-8 mb-12 text-center">
-        <div className="mx-auto w-12 h-12 rounded-xl bg-magenta/15 border border-magenta/30 grid place-items-center mb-3">
-          <Box className="w-5 h-5 text-magenta" />
-        </div>
-        <p className="m-0 text-[15px] font-bold text-white">Emplacement du modèle 3D <span className="font-mono text-white/50">perseverance.glb</span></p>
-        <p className="m-0 text-[12.5px] text-white/55 leading-relaxed mt-1.5 max-w-[560px] mx-auto">Brancher ici le modèle GLB officiel NASA/JPL (~4,8 Mo) via <span className="font-mono text-white/70">&lt;model-viewer&gt;</span>, comme l'emplacement déjà en place pour l'ISS. Auteur du modèle : Brian Kumanchik, NASA/JPL-Caltech.</p>
+      <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 sm:p-6 mb-12">
+        <PerseveranceViewer className="w-full h-[420px] sm:h-[480px] rounded-xl overflow-hidden" />
+        <p className="m-0 text-[11px] text-white/40 mt-3 text-center">Modèle 3D du rover Perseverance · clique-glisse pour tourner, molette pour zoomer. Modélisation : Brian Kumanchik, NASA/JPL-Caltech.</p>
       </div>
 
-      <SectionLabel>Ingenuity · journal de vol</SectionLabel>
+      <SectionLabel>Cartographier une autre planète</SectionLabel>
+      <figure className="m-0 mb-12">
+        <div className="rounded-2xl overflow-hidden border border-white/12 bg-black aspect-[16/9]">
+          <Img
+            src="https://commons.wikimedia.org/wiki/Special:FilePath/Mars%20topography%20(MOLA%20dataset)%20HiRes.jpg?width=1400"
+            alt="Carte topographique de Mars établie à partir des données de l'altimètre laser MOLA"
+            fallback="CARTE TOPOGRAPHIQUE DE MARS · MOLA / NASA"
+            tone="mars"
+            className="w-full h-full object-cover"
+          />
+        </div>
+        <figcaption className="mt-2 flex items-start gap-2 text-[11px] text-white/45">
+          <span className="font-mono uppercase tracking-wide text-magenta-300 shrink-0">Crédit</span>
+          <span>Carte du relief de Mars construite à partir de millions de mesures laser de l'altimètre MOLA, en orbite autour de la planète entre 1997 et 2001 — du bleu (les bassins, comme Hellas) au blanc (les sommets, comme le mont Olympe). Image : NASA / MOLA Science Team / Mars Global Surveyor.</span>
+        </figcaption>
+      </figure>
+      <p className="text-[13.5px] text-white/60 leading-relaxed max-w-[760px] mb-12">Cette carte n'a pas été dessinée à la main : elle assemble des millions de mesures de distance, prises depuis l'orbite, pour reconstituer le relief de toute une planète — montagnes, cratères et vastes plaines — bien avant que le moindre rover ne pose une roue au sol.</p>
+
+      <SectionLabel>La météo sur Mars</SectionLabel>
+      <div className="grid md:grid-cols-2 gap-4 mb-4">
+        <InfoCard label="Des écarts extrêmes" title="Chaud le jour, glacial la nuit">
+          <p className="m-0 text-[13px] text-white/65 leading-relaxed mt-2">Avec une atmosphère 100 fois plus fine que celle de la Terre, Mars retient très peu la chaleur : la température peut dépasser <strong className="text-white/85">0 °C</strong> à midi près de l'équateur et chuter sous <strong className="text-white/85">-100 °C</strong> la nuit, parfois en quelques heures.</p>
+        </InfoCard>
+        <InfoCard label="Des tempêtes de poussière géantes" title="Parfois, toute la planète">
+          <p className="m-0 text-[13px] text-white/65 leading-relaxed mt-2">Le vent soulève une fine poussière rougeâtre qui peut former des « dust devils » (tourbillons), et certaines années, des tempêtes assez puissantes pour envelopper Mars tout entière pendant plusieurs semaines.</p>
+        </InfoCard>
+      </div>
+      <p className="text-[13.5px] text-white/60 leading-relaxed max-w-[760px] mb-12">Perseverance embarque sa propre petite station météo (l'instrument MEDA) : elle mesure chaque jour la température, la pression, le vent, l'humidité et la poussière dans l'air — un bulletin météo martien, transmis sol après sol vers la Terre.</p>
+
+      <SectionLabel>Ingenuity · le premier vol motorisé sur une autre planète</SectionLabel>
+      <div className="grid md:grid-cols-2 gap-4 mb-6">
+        <InfoCard label="Des pales deux fois plus grandes que prévu" title="1,2 m de bout en bout">
+          <p className="m-0 text-[13px] text-white/65 leading-relaxed mt-2">Pour un appareil d'à peine <strong className="text-white/85">1,8 kg</strong>, Ingenuity porte deux rotors contrarotatifs de <strong className="text-white/85">1,2 m d'envergure</strong> — bien plus longs, à l'échelle, que ceux d'un drone terrestre comparable. Il leur fallait brasser un volume d'air énorme pour produire la moindre portance.</p>
+        </InfoCard>
+        <InfoCard label="Pourquoi c'était si difficile" title="Voler dans presque rien">
+          <p className="m-0 text-[13px] text-white/65 leading-relaxed mt-2">L'atmosphère de Mars est environ <strong className="text-white/85">100 fois plus fine</strong> que celle de la Terre : il y a presque rien sur quoi prendre appui. Pour compenser, les pales d'Ingenuity tournent à environ <strong className="text-white/85">2 500 tours par minute</strong> — près de cinq fois plus vite qu'un hélicoptère terrestre — et l'appareil devait rester assez léger pour décoller malgré tout, tout en survivant seul à des nuits à -90 °C.</p>
+        </InfoCard>
+      </div>
+
       <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-6 sm:p-8">
         <div className="flex flex-wrap items-baseline justify-between gap-2 mb-6">
-          <h4 className="m-0 text-[18px] font-bold text-white">Le premier vol motorisé sur une autre planète</h4>
+          <h4 className="m-0 text-[18px] font-bold text-white">Journal de vol</h4>
           <span className="text-[12px] text-white/45">19 avril 2021 → 18 janvier 2024</span>
         </div>
+        <figure className="m-0 mb-6">
+          <div className="rounded-xl overflow-hidden border border-white/10 bg-black aspect-video">
+            <video
+              src="https://assets.science.nasa.gov/content/dam/science/psd/mars/videos/2024/6014_20210507_HelicopterFliesOnMars-1280.m4v"
+              controls
+              playsInline
+              preload="metadata"
+              className="w-full h-full object-cover"
+            />
+          </div>
+          <figcaption className="mt-2 flex items-start gap-2 text-[11px] text-white/45">
+            <span className="font-mono uppercase tracking-wide text-magenta-300 shrink-0">Crédit</span>
+            <span>Ingenuity filmé en plein vol par la caméra de Perseverance, depuis le sol du cratère Jezero. Image : NASA/JPL-Caltech.</span>
+          </figcaption>
+        </figure>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           {INGENUITY_STATS.map((s, i) => (
             <div key={i}>
@@ -591,6 +952,15 @@ function Mars({ solved, onSolved }: { solved: boolean; onSolved: () => void }) {
         </div>
         <p className="m-0 text-[11px] text-white/40 mt-6">Conçu pour 5 vols en 30 jours, Ingenuity en a réalisé 72 sur près de 3 ans. Crédit : NASA/JPL-Caltech.</p>
       </div>
+
+      <div className="rounded-2xl border border-magenta/25 bg-gradient-to-br from-magenta/[0.10] to-transparent p-6 sm:p-7 mb-4 mt-4">
+        <div className="inline-flex items-center gap-2 px-3 py-1 bg-magenta/15 border border-magenta/30 rounded-full text-magenta text-[12px] font-semibold mb-3">
+          <span className="w-3.5 h-3.5 rounded-sm bg-magenta inline-block" /> Mini-jeu · la photo de famille
+        </div>
+        <h4 className="m-0 text-[20px] font-bold text-white mb-4">Remets les rovers dans l'ordre chronologique</h4>
+        <RoverGame solved={solved} onSolved={onSolved} />
+      </div>
+      <p className="text-[11px] text-white/40">Les 5 rovers de la NASA. À noter : le rover <strong className="text-white/60">Zhurong</strong> (Chine, CNSA, 2021) a aussi opéré sur Mars.</p>
     </>
   );
 }
