@@ -371,7 +371,7 @@ export function SatelliteSection({ onComplete, onHome }: SatelliteSectionProps) 
             titleAccent="chaque orbite a ses propres règles d'ingénierie."
             lede="Starlink en LEO pour l'internet. GPS en MEO pour la navigation. La météo et la TV en GEO. Copernicus en héliosynchrone pour les images. Ces choix ne sont pas arbitraires. Sélectionne une orbite pour voir ce que ses ingénieurs doivent résoudre."
             onPrev={() => goTo(1)} onNext={() => goTo(3)} nextEnabled={selectedOrbit !== null}
-            nextLabel={selectedOrbit !== null ? "Continue · Débris spatiaux →" : "Sélectionne une orbite d'abord"}
+            nextLabel={selectedOrbit !== null ? "Continue · Instruments de mesure →" : "Sélectionne une orbite d'abord"}
           >
             <div className="space-y-6">
               <div className="space-y-3">
@@ -421,15 +421,15 @@ export function SatelliteSection({ onComplete, onHome }: SatelliteSectionProps) 
           </ChapterShell>
         )}
 
-        {/* ── Ch 4 : Débris spatiaux ── */}
-        {chapter === 3 && (
+        {/* ── Ch 5 : Débris spatiaux ── */}
+        {chapter === 4 && (
           <ChapterShell
-            kicker="04" title="Débris spatiaux"
+            kicker="05" title="Débris spatiaux"
             titlePrefix="Quand l'espace devient"
             titleAccent="une décharge à 28 000 km/h."
             lede="Un satellite en fin de vie ne disparaît pas. Il reste en orbite pendant des décennies. Deux débris en collision créent des milliers de nouveaux fragments : c'est le Syndrome de Kessler, et c'est un problème que l'humanité doit résoudre maintenant."
-            onPrev={() => goTo(2)} onNext={() => goTo(4)} nextEnabled={true}
-            nextLabel="Continue · Instruments de mesure →"
+            onPrev={() => goTo(3)} onNext={() => goTo(5)} nextEnabled={true}
+            nextLabel="Continue · Quiz →"
           >
             <div className="space-y-5">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -482,17 +482,17 @@ export function SatelliteSection({ onComplete, onHome }: SatelliteSectionProps) 
           </ChapterShell>
         )}
 
-        {/* ── Ch 5 : Instruments de mesure ── */}
-        {chapter === 4 && (() => {
+        {/* ── Ch 4 : Instruments de mesure ── */}
+        {chapter === 3 && (() => {
           const canContinue = instrumentsExplored.size >= 3;
           return (
             <ChapterShell
-              kicker="05" title="Instruments de mesure"
+              kicker="04" title="Instruments de mesure"
               titlePrefix="Un satellite, c'est avant tout"
               titleAccent="une plateforme d'instruments scientifiques."
               lede="Chaque satellite embarque des capteurs spécialisés pour observer la Terre sous un angle précis. Commence par l'outil interactif de l'ESA, puis explore les 6 familles d'instruments."
-              onPrev={() => goTo(3)} onNext={() => goTo(5)} nextEnabled={canContinue}
-              nextLabel={canContinue ? "Continue · Quiz →" : "Explore au moins 3 instruments"}
+              onPrev={() => goTo(2)} onNext={() => goTo(4)} nextEnabled={canContinue}
+              nextLabel={canContinue ? "Continue · Débris spatiaux →" : "Explore au moins 3 instruments"}
             >
               <div className="space-y-6">
 
@@ -694,7 +694,7 @@ export function SatelliteSection({ onComplete, onHome }: SatelliteSectionProps) 
         {chapter === 6 && (
           <ChapterRecap
             chapterLabel="Satellites & Orbites"
-            summary="Tu as exploré 70 ans d'histoire des satellites, leur anatomie, les différentes orbites et leurs contraintes, le problème des débris spatiaux, les instruments de mesure, et imaginé ta propre mission."
+            summary="Tu as exploré 70 ans d'histoire des satellites, leur anatomie, les différentes orbites et leurs contraintes, les instruments de mesure, le problème des débris spatiaux, et imaginé ta propre mission."
             stats={[
               { v: selectedOrbit !== null ? orbits[selectedOrbit].name : '—', t: 'orbite explorée' },
               { v: `${instrumentsExplored.size} / 6`, t: 'instruments découverts' },
