@@ -377,7 +377,7 @@ export function RocketSection({ onComplete, onHome }: RocketSectionProps) {
 
   return (
     <SectionCanvas>
-      <SectionTopBar label="Session 1 · Chapitre 2 sur 3 · Lanceurs et Ariane 6" onHome={onHome} />
+      <SectionTopBar label="Session 1 · Chapitre 2 sur 4 · Lanceurs et Ariane 6" onHome={onHome} />
       <SectionProgress current={chapter} total={TOTAL_CHAPTERS} onGoTo={goTo} />
 
       <div className="relative z-[1] max-w-[1120px] mx-auto px-8 pt-14 pb-24">

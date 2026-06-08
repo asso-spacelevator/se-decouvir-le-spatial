@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ChevronLeft, ChevronRight, Telescope, Rocket, Radio, Globe, Trophy, Sun, Plane, Lightbulb } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Telescope, Rocket, Radio, Globe, Trophy, Sun, Plane, Lightbulb, Atom, Star, Sparkles, FlaskConical, Eye, Search, Mountain, Dna, Orbit } from 'lucide-react';
 import { PerseveranceViewer } from './PerseveranceViewer';
 import { PlanetCompareViewer } from './PlanetCompareViewer';
 import { useSession } from '../contexts/SessionContext';
@@ -27,7 +27,8 @@ import {
  *    2. Artémis      → plan de mission + trajectoire + frise + quiz + essai
  *    3. Voyager 1    → fiches + Disque d'or + héritage
  *    4. Mars         → jeu d'ordonnancement des rovers + journal Ingenuity
- *    5. Récap        → célébration + CTA section suivante
+ *    5. Métiers      → les métiers de l'exploration spatiale + portrait vidéo
+ *    6. Récap        → célébration + CTA section suivante
  *
  *  Persistence (via useSession → 'exploration'):
  *    chapter · moon_quiz · moon_essay · rover_solved
@@ -35,7 +36,7 @@ import {
  *  Same props as the original section — App.tsx needs no change.
  * ════════════════════════════════════════════════════════════════*/
 
-const TOTAL_CHAPTERS = 6;
+const TOTAL_CHAPTERS = 7;
 
 const MISSIONS_PREVIEW = [
   { label: 'James Webb', desc: 'Le télescope qui capte la lumière des premières galaxies de l\'Univers.', Icon: Telescope },
@@ -136,13 +137,23 @@ export function ExplorationSection({ onComplete, onHome }: ExplorationSectionPro
             title={<>Mars — vingt-cinq ans<br /><span className="text-magenta">de rovers sur une autre planète.</span></>}
             lede="Explore la planète rouge, son rover et son hélicoptère, puis termine en remettant les rovers dans l'ordre chronologique."
             onPrev={() => goTo(3)} onNext={() => goTo(5)} nextEnabled={roverSolved}
-            nextLabel={roverSolved ? 'Voir le récap →' : 'Termine la photo de famille'}
+            nextLabel={roverSolved ? 'Continue · Les métiers →' : 'Termine la photo de famille'}
           >
             <Mars solved={roverSolved} onSolved={handleRoverSolved} />
           </MissionShell>
         )}
         {chapter === 5 && (
-          <Recap moonQuiz={moonQuiz} roverSolved={roverSolved} onContinue={onComplete} onPrev={() => goTo(4)} />
+          <MissionShell
+            num="06" kicker="Carrières · exploration spatiale"
+            title={<>Quels métiers<br /><span className="text-magenta">derrière ces missions ?</span></>}
+            lede="Avant qu'une sonde ne décolle ou qu'un télescope ne s'ouvre, des centaines de spécialistes ont conçu, testé et analysé pendant des années. Voici quelques métiers qui font avancer l'exploration spatiale."
+            onPrev={() => goTo(4)} onNext={() => goTo(6)} nextLabel="Voir le récap →"
+          >
+            <Metiers />
+          </MissionShell>
+        )}
+        {chapter === 6 && (
+          <Recap moonQuiz={moonQuiz} roverSolved={roverSolved} onContinue={onComplete} onPrev={() => goTo(5)} />
         )}
       </main>
     </SectionCanvas>
@@ -966,7 +977,140 @@ function Mars({ solved, onSolved }: { solved: boolean; onSolved: () => void }) {
 }
 
 /* ─────────────────────────────────────────────────────────
- *  Chapter 5 — Récap
+ *  Chapter 5 — Les métiers de l'exploration spatiale
+ * ────────────────────────────────────────────────────────*/
+const METIERS = [
+  { label: 'Physicien·ne', desc: "Étudie les lois fondamentales — gravité, lumière, matière — qui permettent de comprendre ce que les missions observent.", Icon: Atom },
+  { label: 'Planétologue', desc: "Analyse la formation et l'évolution des planètes, des lunes et des astéroïdes à partir des données et échantillons rapportés.", Icon: Globe },
+  { label: 'Astronome', desc: "Observe et cartographie les objets célestes — étoiles, galaxies, exoplanètes — depuis le sol ou depuis l'espace.", Icon: Star },
+  { label: 'Astrophysicien·ne', desc: "Combine physique et astronomie pour expliquer les mécanismes des objets célestes : trous noirs, étoiles, origines de l'Univers.", Icon: Sparkles },
+  { label: 'Laborantin·e', desc: "Prépare, analyse et conserve en laboratoire les échantillons rapportés par les missions : roches martiennes, poussières, données de capteurs.", Icon: FlaskConical },
+  { label: 'Technicien·ne en optique', desc: "Conçoit, fabrique et règle les miroirs, lentilles et capteurs des télescopes et des instruments embarqués.", Icon: Eye },
+] as const;
+
+const METIERS_RECHERCHE = [
+  {
+    label: 'Astrogéologue',
+    desc: "Étudie la structure géologique des corps célestes du système solaire — roches, cratères, volcans, glaces.",
+    exemple: "Exemple concret : il analyse les roches martiennes collectées par le rover Perseverance pour reconstituer l'histoire géologique de Mars.",
+    Icon: Mountain,
+  },
+  {
+    label: 'Exobiologiste',
+    desc: "Recherche les conditions et les traces possibles de vie au-delà de la Terre, notamment sur les exoplanètes.",
+    exemple: "Exemple concret : il étudie les échantillons martiens à la recherche de traces de vie passée, ou les océans cachés sous la glace d'Europe et d'Encelade, des lunes de Jupiter et de Saturne.",
+    Icon: Dna,
+  },
+  {
+    label: 'Météorologue spatial',
+    desc: "Étudie la météo de l'espace — vent solaire, éruptions, tempêtes magnétiques — dans notre système solaire et au-delà.",
+    exemple: "Exemple concret : il surveille les éruptions solaires qui peuvent perturber les satellites, le GPS et les réseaux électriques, et provoquer des aurores polaires.",
+    Icon: Orbit,
+  },
+] as const;
+
+function Metiers() {
+  return (
+    <>
+      <SectionLabel>Des métiers, pas seulement des astronautes</SectionLabel>
+      <p className="text-[14px] text-white/65 leading-relaxed max-w-[720px] mb-6">
+        Une mission spatiale est avant tout une aventure scientifique et technique collective. Voici quelques-uns
+        des métiers qui, en coulisses, conçoivent les instruments, analysent les données et percent les mystères de l'Univers.
+      </p>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 mb-12">
+        {METIERS.map((m) => (
+          <div key={m.label} className="p-5 rounded-2xl border border-white/10 bg-white/[0.04]">
+            <div className="flex items-center gap-3 mb-2">
+              <span className="flex-shrink-0 text-magenta/70"><m.Icon className="w-6 h-6" strokeWidth={1.75} /></span>
+              <h4 className="font-semibold text-white text-[15px] flex-1 text-left m-0">{m.label}</h4>
+            </div>
+            <p className="m-0 text-[12px] text-white/55 leading-snug">{m.desc}</p>
+          </div>
+        ))}
+      </div>
+
+      <SectionLabel>Zoom · le métier de chercheur</SectionLabel>
+      <p className="text-[14px] text-white/65 leading-relaxed max-w-[720px] mb-3">
+        Tous les spécialistes ci-dessus ont un point commun : ce sont des chercheur·euses. Un chercheur en astronomie
+        ou en sciences spatiales formule des questions sur l'Univers, observe, recueille des données — avec des
+        télescopes, des sondes, des rovers — puis les analyse pour construire et tester des hypothèses. Son travail
+        est ensuite publié, discuté et vérifié par d'autres chercheur·euses du monde entier, afin que les connaissances
+        avancent collectivement.
+      </p>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 mb-6">
+        <div className="p-5 rounded-2xl border border-white/10 bg-white/[0.04]">
+          <div className="flex items-center gap-3 mb-2">
+            <span className="flex-shrink-0 text-magenta/70"><Search className="w-6 h-6" strokeWidth={1.75} /></span>
+            <h4 className="font-semibold text-white text-[15px] flex-1 text-left m-0">Au quotidien</h4>
+          </div>
+          <p className="m-0 text-[12px] text-white/55 leading-snug">
+            Lire et écrire des articles scientifiques, programmer pour traiter des données, passer du temps sur de
+            grands télescopes ou avec les données envoyées par des sondes, échanger avec une équipe internationale.
+          </p>
+        </div>
+        <div className="p-5 rounded-2xl border border-white/10 bg-white/[0.04]">
+          <div className="flex items-center gap-3 mb-2">
+            <span className="flex-shrink-0 text-magenta/70"><Lightbulb className="w-6 h-6" strokeWidth={1.75} /></span>
+            <h4 className="font-semibold text-white text-[15px] flex-1 text-left m-0">Exemple concret</h4>
+          </div>
+          <p className="m-0 text-[12px] text-white/55 leading-snug">
+            Une chercheuse du télescope spatial James Webb compare les spectres de lumière de différentes exoplanètes
+            pour repérer des traces de vapeur d'eau ou de méthane dans leur atmosphère.
+          </p>
+        </div>
+      </div>
+
+      <SectionLabel>D'autres chercheur·euses au cœur de l'étude de l'Univers</SectionLabel>
+      <p className="text-[14px] text-white/65 leading-relaxed max-w-[720px] mb-6">
+        Certains métiers de la recherche spatiale restent méconnus du grand public, mais sont essentiels pour
+        comprendre la galaxie qui nous entoure.
+      </p>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 mb-12">
+        {METIERS_RECHERCHE.map((m) => (
+          <div key={m.label} className="p-5 rounded-2xl border border-white/10 bg-white/[0.04]">
+            <div className="flex items-center gap-3 mb-2">
+              <span className="flex-shrink-0 text-magenta/70"><m.Icon className="w-6 h-6" strokeWidth={1.75} /></span>
+              <h4 className="font-semibold text-white text-[15px] flex-1 text-left m-0">{m.label}</h4>
+            </div>
+            <p className="m-0 text-[12px] text-white/55 leading-snug mb-2">{m.desc}</p>
+            <p className="m-0 text-[11.5px] text-white/45 leading-snug italic">{m.exemple}</p>
+          </div>
+        ))}
+      </div>
+
+      <SectionLabel>Portrait · une astrophysicienne raconte son métier</SectionLabel>
+      <p className="text-[14px] text-white/65 leading-relaxed max-w-[720px] mb-4">
+        Découvre le quotidien d'une astrophysicienne : ses recherches, son parcours, et ce qui l'a menée vers ce métier.
+      </p>
+      <figure className="m-0 mb-3 max-w-[640px]">
+        <div className="rounded-2xl overflow-hidden border border-white/12 bg-black aspect-video">
+          <video
+            src=""
+            controls
+            playsInline
+            preload="metadata"
+            poster=""
+            className="w-full h-full object-cover"
+          />
+        </div>
+        <figcaption className="mt-2 flex items-start gap-2 text-[11px] text-white/45">
+          <span className="font-mono uppercase tracking-wide text-magenta-300 shrink-0">Crédit</span>
+          <span>Vidéo à ajouter : portrait d'un·e astrophysicien·ne (source et crédit à compléter ici).</span>
+        </figcaption>
+      </figure>
+
+      <div className="border border-magenta rounded-lg p-4 border-[1.5px]">
+        <p className="m-0 text-[13px] text-white/70 leading-relaxed">
+          <strong className="text-white">Le saviez-vous ?</strong> Une mission comme Perseverance a mobilisé plus de 7&nbsp;000 personnes,
+          ingénieur·es, scientifiques et technicien·nes, avant même son décollage. Chacun de ces métiers est une porte d'entrée possible vers le spatial.
+        </p>
+      </div>
+    </>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────
+ *  Chapter 6 — Récap
  * ────────────────────────────────────────────────────────*/
 function Recap({ moonQuiz, roverSolved, onContinue, onPrev }: {
   moonQuiz: number | null; roverSolved: boolean;
@@ -1004,7 +1148,7 @@ function Recap({ moonQuiz, roverSolved, onContinue, onPrev }: {
       </div>
       <div className="mt-12 pt-6 border-t border-white/10 flex">
         <button onClick={onPrev} className="inline-flex items-center gap-2 rounded-lg px-5 py-3.5 text-[14px] font-semibold border border-white/10 text-white/70 hover:border-white/30 hover:text-white transition">
-          <ChevronLeft className="w-4 h-4" /> Revenir à Mars
+          <ChevronLeft className="w-4 h-4" /> Revenir aux métiers
         </button>
       </div>
     </section>

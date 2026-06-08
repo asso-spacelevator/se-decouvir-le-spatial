@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
-import { MapPin, Play, Building2, Rocket } from 'lucide-react';
+import { Play, Building2, Rocket } from 'lucide-react';
 import { SectionTopBar, SectionProgress, ChapterShell, ChapterRecap } from './ChapterShell';
+import { EuropeActorsMap } from './EuropeActorsMap';
+import { EUROPEAN_SPACE_COMPANIES } from '../data/europeanSpaceCompanies';
 import { useSession } from '../contexts/SessionContext';
 
 /* ════════════════════════════════════════════════════════════════════
@@ -15,73 +17,6 @@ import { useSession } from '../contexts/SessionContext';
 
 const SECTION = 'entreprises_spatiales';
 const TOTAL_CHAPTERS = 4;
-
-// ── Secteurs — palette data-viz (exception à la charte monochrome) ────
-const SECTORS = {
-  propulsion:  { color: '#C8257A', label: 'Propulsion & Lanceurs' },
-  electronics: { color: '#60A5FA', label: 'Électronique & Capteurs' },
-  it:          { color: '#34D399', label: 'Informatique & Données' },
-  telecom:     { color: '#A78BFA', label: 'Télécommunications' },
-  consulting:  { color: '#FBBF24', label: 'Conseil & Finance' },
-  chemistry:   { color: '#F97316', label: 'Chimie & Matériaux' },
-  parts:       { color: '#94A3B8', label: 'Fournisseurs & Sous-systèmes' },
-  technicians: { color: '#06B6D4', label: 'Techniciens & Formation' },
-} as const;
-type SectorKey = keyof typeof SECTORS;
-
-// ── Données entreprises ───────────────────────────────────────────────
-interface Company {
-  id: string; name: string; country: string; sector: SectorKey;
-  x: number; y: number; // % dans le conteneur carte
-  description: string; employees?: string;
-  isStartup?: boolean; partners?: string[];
-}
-
-const COMPANIES: Company[] = [
-  // France
-  { id:'ariane',     name:'ArianeGroup',         country:'France',          sector:'propulsion',  x:36, y:52, employees:'8 000+',   isStartup:false, partners:['safran','airbusds','avio'],    description:"Maître d'œuvre d'Ariane 6. Co-entreprise Airbus/Safran, garant de l'accès autonome de l'Europe à l'espace." },
-  { id:'tas',        name:'Thales Alenia Space',  country:'France / Italie', sector:'electronics', x:41, y:57, employees:'8 500+',   isStartup:false, partners:['ariane','telespazio'],         description:"Premier fournisseur de l'ESA : satellites télécom, observation de la Terre, navigation Galileo." },
-  { id:'safran',     name:'Safran',               country:'France',          sector:'propulsion',  x:30, y:54, employees:'92 000+',  isStartup:false, partners:['ariane','airbusds'],           description:"Moteur Vulcain 2.1 (cœur d'Ariane 6), propulseurs auxiliaires, systèmes embarqués." },
-  { id:'kineis',     name:'Kinéis',               country:'France',          sector:'telecom',     x:27, y:49, employees:'100+',     isStartup:true,                                            description:"Constellation IoT de 25 nanosatellites. Spin-off CNES/CLS pour connecter les objets partout dans le monde." },
-  { id:'latitude',   name:'Latitude',             country:'France',          sector:'propulsion',  x:34, y:63, employees:'150+',     isStartup:true,                                            description:"Microlanceur Zephyr en développement — propulsion LOX/méthane, dédié aux petits satellites." },
-  { id:'loft',       name:'Loft Orbital',         country:'France / USA',    sector:'it',          x:25, y:54, employees:'200+',     isStartup:true,                                            description:"Satellites-as-a-service : hébergement de charges utiles standardisées sur des plateformes partagées." },
-  // Allemagne
-  { id:'airbusds',   name:'Airbus D&S',           country:'Allemagne',       sector:'parts',       x:52, y:40, employees:'35 000+',  isStartup:false, partners:['ariane','tas','sstl','tesat'], description:"Premier constructeur spatial européen : satellites haute performance, structures de lanceurs, observation." },
-  { id:'ohb',        name:'OHB SE',               country:'Allemagne',       sector:'electronics', x:56, y:34, employees:'3 000+',   isStartup:false, partners:['rfa'],                         description:"Satellites scientifiques (Galileo, JUICE, Copernicus). Intégrateur de microsatellites européens." },
-  { id:'isar',       name:'Isar Aerospace',       country:'Allemagne',       sector:'propulsion',  x:59, y:43, employees:'350+',     isStartup:true,                                            description:"Lanceur Spectrum en qualification : 1 000 kg en LEO, propulsion LOX/kérosène, conçu pour être réutilisable." },
-  { id:'rfa',        name:'RFA',                  country:'Allemagne',       sector:'propulsion',  x:57, y:37, employees:'200+',     isStartup:true,  partners:['ohb'],                         description:"Rocket Factory Augsburg : micro-lanceur RFA ONE, filiale OHB Group, propulsion LOX/kérosène." },
-  { id:'tesat',      name:'Tesat-Spacecom',       country:'Allemagne',       sector:'electronics', x:50, y:44, employees:'1 600+',   isStartup:false, partners:['airbusds'],                    description:"Leader mondial des terminaux laser inter-satellites et répéteurs RF très hautes performances." },
-  { id:'mt_aero',    name:'MT Aerospace',         country:'Allemagne',       sector:'parts',       x:54, y:47, employees:'800+',     isStartup:false, partners:['ariane'],                      description:"Structures composites pour lanceurs : jupes, adaptateurs, cônes. Fournisseur critique d'ArianeGroup." },
-  // Italie
-  { id:'leonardo',   name:'Leonardo',             country:'Italie',          sector:'electronics', x:56, y:67, employees:'51 000+',  isStartup:false, partners:['tas','avio'],                  description:"Capteurs optiques, radar SAR, électronique embarquée haute fiabilité pour satellites civils et de défense." },
-  { id:'avio',       name:'Avio',                 country:'Italie',          sector:'propulsion',  x:53, y:70, employees:'1 000+',   isStartup:false, partners:['ariane','tas'],                description:"Étage supérieur Ariane 6 (moteur VINCI), propulseur P120C, lanceur Vega-C." },
-  { id:'telespazio', name:'Telespazio',            country:'Italie / France', sector:'it',          x:59, y:72, employees:'2 800+',   isStartup:false, partners:['tas','leonardo'],              description:"Opérations satellite, centres de contrôle mission, services de données Earth observation." },
-  // Royaume-Uni
-  { id:'sstl',       name:'SSTL',                 country:'Royaume-Uni',     sector:'parts',       x:25, y:30, employees:'500+',     isStartup:false, partners:['airbusds'],                    description:"Surrey Satellite Technology : pionniers des petits satellites commerciaux. Filiale Airbus DS." },
-  { id:'orbex',      name:'Orbex',                country:'Royaume-Uni',     sector:'propulsion',  x:27, y:20, employees:'200+',     isStartup:true,                                            description:"Micro-lanceur Prime au biocarburant propane. Site de lancement : Space Hub Sutherland, Écosse." },
-  { id:'inmarsat',   name:'Inmarsat',             country:'Royaume-Uni',     sector:'telecom',     x:21, y:33, employees:'2 000+',   isStartup:false,                                           description:"Opérateur mondial de connectivité maritime, aviation et gouvernement par satellite." },
-  // Espagne
-  { id:'gmv',        name:'GMV',                  country:'Espagne',         sector:'it',          x:19, y:67, employees:'2 800+',   isStartup:false, partners:['airbusds'],                    description:"Leader européen du software spatial : navigation GNSS, contrôle de mission, autonomie embarquée." },
-  { id:'sener',      name:'SENER',                country:'Espagne',         sector:'parts',       x:16, y:62, employees:'2 000+',   isStartup:false, partners:['airbusds'],                    description:"Mécanismes de précision, antennes déployables, systèmes de pointage pour satellites ESA." },
-  { id:'pld',        name:'PLD Space',            country:'Espagne',         sector:'propulsion',  x:18, y:71, employees:'150+',     isStartup:true,                                            description:"Miura 5 : premier micro-lanceur réutilisable espagnol. Site de lancement : Huelva, Andalousie." },
-  // Benelux
-  { id:'spacebel',   name:'Spacebel',             country:'Belgique',        sector:'it',          x:44, y:37, employees:'300+',     isStartup:false, partners:['airbusds'],                    description:"Software temps-réel embarqué pour satellites et systèmes sol ESA (GAIA, Herschel, ExoMars)." },
-  { id:'ses',        name:'SES',                  country:'Luxembourg',      sector:'telecom',     x:47, y:44, employees:'2 000+',   isStartup:false,                                           description:"2ème opérateur mondial de satellites : 70+ satellites GEO & MEO, connectivité haut-débit mondiale." },
-  // Scandinavie
-  { id:'ssc',        name:'SSC',                  country:'Suède',           sector:'technicians', x:55, y:20, employees:'600+',     isStartup:false,                                           description:"Swedish Space Corporation : base de lancement Esrange, réseau mondial de stations sol et services." },
-  { id:'gkn',        name:'GKN Aerospace',        country:'Suède',           sector:'parts',       x:51, y:22, employees:'1 500+',   isStartup:false, partners:['ariane','safran'],             description:"Structures moteurs, nacelles composites, systèmes thermiques pour lanceurs Ariane et Vega." },
-];
-
-const COUNTRY_LABELS = [
-  { name:'FRANCE',       x:33, y:70 },
-  { name:'ALLEMAGNE',    x:55, y:58 },
-  { name:'ITALIE',       x:56, y:80 },
-  { name:'ESPAGNE',      x:18, y:80 },
-  { name:'ROYAUME-UNI',  x:25, y:42 },
-  { name:'BELGIQUE',     x:44, y:31 },
-  { name:'LUXEMBOURG',   x:49, y:49 },
-  { name:'SUÈDE',        x:54, y:28 },
-];
 
 // ── Données comparaison startups vs historiques ───────────────────────
 const COMPARISON = [
@@ -148,18 +83,12 @@ interface EntreprisesSpatialeSectionProps {
 export function EntreprisesSpatialesSection({ onComplete, onHome }: EntreprisesSpatialeSectionProps) {
   const { saveResponse, getResponses } = useSession();
   const [chapter, setChapter] = useState(0);
-  const [selected, setSelected] = useState<string | null>(null);
-  const [filter, setFilter] = useState<SectorKey | null>(null);
-  const [viewed, setViewed] = useState<Set<string>>(new Set());
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
     (async () => {
       const r = await getResponses(SECTION);
       if (r.chapter) setChapter(Math.min(parseInt(r.chapter) || 0, TOTAL_CHAPTERS - 1));
-      if (r.viewed) {
-        try { setViewed(new Set(JSON.parse(r.viewed))); } catch { /* noop */ }
-      }
       setHydrated(true);
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -171,20 +100,6 @@ export function EntreprisesSpatialesSection({ onComplete, onHome }: EntreprisesS
     window.scrollTo({ top: 0, behavior: 'smooth' });
     if (hydrated) await saveResponse(SECTION, 'chapter', String(i));
   };
-
-  const handleSelect = async (id: string | null) => {
-    setSelected(id);
-    if (id) {
-      const next = new Set(viewed);
-      next.add(id);
-      setViewed(next);
-      if (hydrated) await saveResponse(SECTION, 'viewed', JSON.stringify([...next]));
-    }
-  };
-
-  const viewedCount = viewed.size;
-  const selectedCompany = selected ? (COMPANIES.find(c => c.id === selected) ?? null) : null;
-  const filteredCompanies = filter ? COMPANIES.filter(c => c.sector === filter) : COMPANIES;
 
   return (
     <div className="relative min-h-screen bg-deepspace text-white font-sans overflow-x-hidden">
@@ -210,197 +125,10 @@ export function EntreprisesSpatialesSection({ onComplete, onHome }: EntreprisesS
             lede="Clique sur un point pour découvrir une entreprise, ses partenaires et ses chiffres clés. Filtre par secteur pour voir qui fait quoi à travers l'Europe."
             onPrev={null}
             onNext={() => goTo(1)}
-            nextEnabled={viewedCount >= 4}
-            nextLabel={
-              viewedCount < 4
-                ? `Explore encore ${4 - viewedCount} entreprise(s) pour continuer`
-                : 'Continue · Startups vs Historiques →'
-            }
+            nextEnabled
+            nextLabel="Continue · Startups vs Historiques →"
           >
-            {/* Filtres secteurs */}
-            <div className="flex flex-wrap gap-2 mb-5">
-              <button
-                onClick={() => setFilter(null)}
-                className={`px-3 py-1 rounded-full text-[12px] font-semibold border transition-all ${
-                  filter === null
-                    ? 'bg-white text-deepspace border-white'
-                    : 'border-white/20 text-white/60 hover:border-white/40 hover:text-white/80'
-                }`}
-              >
-                Tous
-              </button>
-              {(Object.entries(SECTORS) as [SectorKey, { color: string; label: string }][]).map(([key, s]) => (
-                <button
-                  key={key}
-                  onClick={() => setFilter(filter === key ? null : key)}
-                  className="px-3 py-1 rounded-full text-[12px] font-semibold border transition-all"
-                  style={{
-                    backgroundColor: filter === key ? s.color : 'transparent',
-                    borderColor: s.color,
-                    color: filter === key ? '#0B0F2A' : s.color,
-                  }}
-                >
-                  {s.label}
-                </button>
-              ))}
-            </div>
-
-            {/* Carte + panneau détail */}
-            <div className="grid grid-cols-[1fr_300px] gap-4">
-              {/*
-               * Canvas carte — padding-top crée la hauteur de façon fiable même
-               * quand tous les enfants sont position:absolute (minHeight ne suffit
-               * pas dans ce cas en grid).
-               */}
-              <div className="relative" style={{ paddingTop: '62%' }}>
-                <div className="absolute inset-0 bg-white/[0.025] border border-white/[0.08] rounded-2xl overflow-hidden">
-
-                  {/* Grille géographique subtile */}
-                  <div
-                    className="absolute inset-0 opacity-[0.035] pointer-events-none"
-                    style={{
-                      backgroundImage:
-                        'linear-gradient(rgba(255,255,255,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.6) 1px, transparent 1px)',
-                      backgroundSize: '50px 50px',
-                    }}
-                  />
-
-                  {/* Labels pays */}
-                  {COUNTRY_LABELS.map(cl => (
-                    <span
-                      key={cl.name}
-                      className="absolute text-[9px] font-bold tracking-[0.22em] text-white/[0.07] select-none pointer-events-none"
-                      style={{ left: `${cl.x}%`, top: `${cl.y}%`, transform: 'translate(-50%, -50%)' }}
-                    >
-                      {cl.name}
-                    </span>
-                  ))}
-
-                  {/*
-                   * Points entreprises — le div extérieur porte le transform positionnel,
-                   * le button intérieur porte hover:scale-125 sans conflit.
-                   */}
-                  {filteredCompanies.map(c => {
-                    const isSelected = selected === c.id;
-                    const isViewed = viewed.has(c.id);
-                    const s = SECTORS[c.sector];
-                    return (
-                      <div
-                        key={c.id}
-                        className="absolute"
-                        style={{
-                          left: `${c.x}%`,
-                          top: `${c.y}%`,
-                          transform: 'translate(-50%, -50%)',
-                          zIndex: isSelected ? 20 : 1,
-                          opacity: filter && c.sector !== filter ? 0.2 : 1,
-                          transition: 'opacity 0.2s',
-                        }}
-                      >
-                        <button
-                          onClick={() => handleSelect(c.id === selected ? null : c.id)}
-                          title={c.name}
-                          className="block rounded-full border-2 border-[#0B0F2A] hover:scale-125 focus:outline-none"
-                          style={{
-                            width: isSelected ? 20 : 14,
-                            height: isSelected ? 20 : 14,
-                            backgroundColor: s.color,
-                            boxShadow: isSelected
-                              ? `0 0 0 4px ${s.color}33, 0 0 16px ${s.color}66`
-                              : isViewed
-                                ? `0 0 0 2px ${s.color}55`
-                                : undefined,
-                            transition: 'width 0.15s, height 0.15s, box-shadow 0.15s, transform 0.15s',
-                          }}
-                        />
-                      </div>
-                    );
-                  })}
-
-                  {/* Barre stats en bas */}
-                  <div className="absolute bottom-0 left-0 right-0 bg-deepspace/70 backdrop-blur-sm border-t border-white/5 px-4 py-2 flex items-center gap-3">
-                    <span className="text-[11px] text-white/35">{COMPANIES.length} entreprises cartographiées</span>
-                    <span className="text-[11px] text-white/20">·</span>
-                    <span className="text-[11px]">
-                      <span className="text-magenta font-bold">{viewedCount}</span>
-                      <span className="text-white/35"> explorée(s)</span>
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Panneau détail */}
-              <div className="bg-white/[0.04] border border-white/10 rounded-2xl p-5 flex flex-col gap-4 min-h-[500px]">
-                {selectedCompany ? (
-                  <>
-                    {/* En-tête entreprise */}
-                    <div className="flex items-start gap-2">
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1 flex-wrap">
-                          <span
-                            className="inline-block w-2.5 h-2.5 rounded-full flex-shrink-0"
-                            style={{ backgroundColor: SECTORS[selectedCompany.sector].color }}
-                          />
-                          <span
-                            className="text-[10px] font-bold tracking-[0.12em] uppercase"
-                            style={{ color: SECTORS[selectedCompany.sector].color }}
-                          >
-                            {SECTORS[selectedCompany.sector].label}
-                          </span>
-                        </div>
-                        <h3 className="text-[17px] font-bold leading-tight">{selectedCompany.name}</h3>
-                        <p className="text-[11px] text-white/45 mt-0.5">
-                          {selectedCompany.country}
-                          {selectedCompany.isStartup ? ' · New Space' : ''}
-                        </p>
-                      </div>
-                      {selectedCompany.isStartup && (
-                        <span className="flex-shrink-0 text-[10px] font-bold tracking-[0.1em] uppercase bg-magenta/15 text-magenta border border-magenta/25 rounded-full px-2 py-0.5">
-                          Startup
-                        </span>
-                      )}
-                    </div>
-
-                    <p className="text-[13px] text-white/70 leading-[1.55]">{selectedCompany.description}</p>
-
-                    {selectedCompany.employees && (
-                      <div className="flex items-baseline gap-2">
-                        <span className="text-[28px] font-bold text-magenta leading-none">{selectedCompany.employees}</span>
-                        <span className="text-[12px] text-white/45">employés</span>
-                      </div>
-                    )}
-
-                    {selectedCompany.partners && selectedCompany.partners.length > 0 && (
-                      <div>
-                        <p className="text-[10px] uppercase tracking-[0.12em] text-white/30 mb-2">Partenaires & Clients</p>
-                        <div className="flex flex-wrap gap-1.5">
-                          {selectedCompany.partners.map(pid => {
-                            const partner = COMPANIES.find(co => co.id === pid);
-                            if (!partner) return null;
-                            return (
-                              <button
-                                key={pid}
-                                onClick={() => handleSelect(pid)}
-                                className="text-[11px] px-2 py-0.5 rounded border border-white/15 hover:border-white/35 text-white/55 hover:text-white transition"
-                              >
-                                {partner.name}
-                              </button>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    )}
-                  </>
-                ) : (
-                  <div className="flex-1 flex flex-col items-center justify-center text-center gap-3 py-12">
-                    <MapPin className="w-7 h-7 text-white/20" />
-                    <p className="text-[12px] text-white/30 max-w-[180px] leading-relaxed">
-                      Clique sur un point de la carte pour explorer une entreprise.
-                    </p>
-                  </div>
-                )}
-              </div>
-            </div>
+            <EuropeActorsMap />
           </ChapterShell>
         )}
 
@@ -525,8 +253,7 @@ export function EntreprisesSpatialesSection({ onComplete, onHome }: EntreprisesS
             chapterLabel="Entreprises du spatial européen"
             summary="Tu as cartographié l'écosystème spatial européen, comparé les deux modèles économiques qui le structurent et découvert la diversité des métiers qui y recrutent."
             stats={[
-              { v: viewedCount, t: 'entreprises explorées sur la carte' },
-              { v: COMPANIES.length, t: 'acteurs référencés en Europe' },
+              { v: EUROPEAN_SPACE_COMPANIES.length, t: 'acteurs cartographiés en Europe' },
               { v: VIDEO_CARDS.length, t: 'métiers présentés dans cette section' },
             ]}
             nextTitle="Accompagnement & Orientation"

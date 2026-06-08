@@ -50,8 +50,9 @@ export function SessionBreakPage({ onContinue }: SessionBreakPageProps) {
             {[
               { num: '01', title: 'Orbite', desc: '7 500 satellites actifs : leur anatomie, leurs orbites, et les débris qu\'ils laissent.' },
               { num: '02', title: 'Exploration', desc: 'James Webb, Artemis, Mars. Les missions qui repoussent ce que l\'humanité sait être possible.' },
-              { num: '03', title: 'Accompagnement', desc: 'Les associations, les ressources et les personnes qui peuvent t\'ouvrir la porte de ce secteur.' },
-              { num: '04', title: 'FAQ & Questions', desc: 'Tes questions, posées à des professionnels du spatial.' },
+              { num: '03', title: 'Entreprises du spatial', desc: 'Startups, géants historiques et métiers : qui construit le secteur spatial européen.' },
+              { num: '04', title: 'Accompagnement', desc: 'Les associations, les ressources et les personnes qui peuvent t\'ouvrir la porte de ce secteur.' },
+              { num: '05', title: 'FAQ & Questions', desc: 'Tes questions, posées à des professionnels du spatial.' },
             ].map(({ num, title, desc }) => (
               <div key={num} className="flex items-center gap-4">
                 <span className="text-xs font-mono text-white/30 w-6 flex-shrink-0">{num}</span>

@@ -23,6 +23,7 @@ const SESSION_1_TOPICS = [
   { icon: <Globe className="w-4 h-4" />,    label: 'Impact terrestre' },
   { icon: <Rocket className="w-4 h-4" />,   label: 'Lanceurs & Ariane 6' },
   { icon: <Wifi className="w-4 h-4" />,     label: 'Réseaux & médias spatiaux' },
+  { icon: <MessageCircle className="w-4 h-4" />, label: 'Questions & échanges' },
 ];
 
 const SESSION_2_TOPICS = [
@@ -60,7 +61,7 @@ export function StartPage({ onStartSession1, onStartSession2 }: StartPageProps) 
     }
   };
 
-  const SESSION1_CHAPTERS = ['impact_terrestre', 'rockets', 'social'];
+  const SESSION1_CHAPTERS = ['impact_terrestre', 'rockets', 'social', 'questions_session1'];
   const SESSION2_CHAPTERS = ['satellites', 'exploration', 'entreprises_spatiales', 'accompagnement', 'faq_questions'];
 
   const s1done = !!session?.session1_completed_at;
@@ -216,7 +217,7 @@ export function StartPage({ onStartSession1, onStartSession2 }: StartPageProps) 
             <div className="relative group/rgpd flex-shrink-0 mt-0.5">
               <Info className="w-4 h-4 text-white/25 hover:text-white/55 cursor-help transition-colors duration-150" strokeWidth={1.75} />
               <div className="absolute bottom-full right-0 mb-2 w-[270px] bg-[#1a1f3a] border border-white/10 rounded-xl px-3.5 py-3 text-[11px] text-white/65 leading-relaxed opacity-0 group-hover/rgpd:opacity-100 pointer-events-none transition-opacity duration-150 z-20">
-                Cette information sert aux analyses d'utilisation du site et n'est conservée qu'1 an en base de données.
+                Cette information sert aux analyses d'utilisation du site et n'est conservée qu'1 an.
                 <span className="absolute top-full right-3 border-4 border-transparent border-t-[#1a1f3a]" />
               </div>
             </div>
@@ -227,7 +228,7 @@ export function StartPage({ onStartSession1, onStartSession2 }: StartPageProps) 
               value={schoolInput}
               onChange={e => handleSchoolChange(e.target.value)}
               maxLength={150}
-              placeholder="Ex : Lycée Jules Verne, Paris 19e"
+              placeholder="Nom de l'établissement (Facultatif)"
               className="flex-1 bg-white/[0.05] border border-white/10 rounded-lg px-4 py-3 text-[14px] text-white placeholder-white/25 focus:outline-none focus:border-magenta focus:ring-2 focus:ring-magenta/20 transition-colors"
             />
             {schoolSaved && (
@@ -243,7 +244,7 @@ export function StartPage({ onStartSession1, onStartSession2 }: StartPageProps) 
         <section className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <SessionCard
             variant="do"
-            tag="Partie 1 · 3 chapitres"
+            tag="Partie 1 · 4 chapitres"
             title="L'espace au"
             titleAccent="quotidien"
             lede="Comment le spatial influence ta vie, les lanceurs qui partent de Kourou, et où suivre l'actualité spatiale."

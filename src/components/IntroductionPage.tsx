@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Rocket, Satellite, Globe, CheckCircle, XCircle, Users, BookOpen } from 'lucide-react';
+import { Rocket, Satellite, Globe, CheckCircle, XCircle, Users, BookOpen, MessageCircle } from 'lucide-react';
 import {
   SectionCanvas,
   SectionTopBar,
@@ -66,6 +66,15 @@ const SESSION1_FULL = [
       'Ton inspiration',
     ],
   },
+  {
+    num: '04',
+    title: 'Tes questions',
+    desc: "Un moment pour poser tes propres questions sur l'espace au quotidien, les lanceurs ou l'actualité spatiale.",
+    Icon: MessageCircle,
+    chapters: [
+      'Pose ta question',
+    ],
+  },
 ];
 
 const SESSION2_FULL = [
@@ -76,6 +85,7 @@ const SESSION2_FULL = [
       '70 ans de satellites',
       "Anatomie d'un satellite",
       'Les orbites',
+      'Instruments de mesure',
       'Débris spatiaux',
       'Quiz éclair',
       'Imagine ta mission',
@@ -399,7 +409,7 @@ function PageOverview() {
         <div className="flex items-center gap-3">
           <span className="text-[11px] font-bold tracking-[0.16em] uppercase text-white/50">Parcours complet</span>
           <div className="flex-1 h-px bg-white/10" />
-          <span className="text-[11px] text-white/35">2 sessions · 7 sections</span>
+          <span className="text-[11px] text-white/35">2 sessions · 9 sections</span>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
@@ -462,7 +472,7 @@ function PageOverview() {
           Aujourd'hui, tu explores les fondations de l'industrie spatiale : comment l'espace impacte notre planète, qui construit les fusées qui y accèdent, et quelles ressources suivre pour continuer à apprendre après cette session.
         </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {SESSION1_FULL.map((s) => (
             <div
               key={s.num}
