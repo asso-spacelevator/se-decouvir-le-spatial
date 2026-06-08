@@ -6,6 +6,7 @@ import { IntroductionPage2 } from './components/IntroductionPage2';
 import { ImpactTerrestreSection } from './components/ImpactTerrestreSection';
 import { RocketSection } from './components/RocketSection';
 import { SocialReferencesSection } from './components/SocialReferencesSection';
+import { Session1QuestionsSection } from './components/Session1QuestionsSection';
 import { SessionBreakPage } from './components/SessionBreakPage';
 import { SatelliteSection } from './components/SatelliteSection';
 import { ExplorationSection } from './components/ExplorationSection';
@@ -17,13 +18,13 @@ import type { Section } from './lib/supabase';
 
 const sectionOrder: Section[] = [
   'start', 'introduction',
-  'impact_terrestre', 'rockets', 'social',
+  'impact_terrestre', 'rockets', 'social', 'questions_session1',
   'session_break',
   'introduction_s2', 'satellites', 'exploration', 'entreprises_spatiales', 'accompagnement', 'faq_questions',
   'completed',
 ];
 
-const SESSION1_SECTIONS: Section[] = ['introduction', 'impact_terrestre', 'rockets', 'social', 'session_break'];
+const SESSION1_SECTIONS: Section[] = ['introduction', 'impact_terrestre', 'rockets', 'social', 'questions_session1', 'session_break'];
 const SESSION2_SECTIONS: Section[] = ['introduction_s2', 'satellites', 'exploration', 'entreprises_spatiales', 'accompagnement', 'faq_questions'];
 
 function AppContent() {
@@ -127,6 +128,13 @@ function AppContent() {
       )}
       {currentView === 'social' && (
         <SocialReferencesSection
+          onComplete={() => handleSectionComplete('questions_session1')}
+          onHome={handleHome}
+          onBack={handleBack}
+        />
+      )}
+      {currentView === 'questions_session1' && (
+        <Session1QuestionsSection
           onComplete={() => handleSectionComplete('session_break')}
           onHome={handleHome}
           onBack={handleBack}

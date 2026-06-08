@@ -102,7 +102,7 @@ export function ImpactTerrestreSection({ onComplete, onHome }: ImpactTerrestreSe
       </div>
 
       <SectionTopBar
-        label="Session 1 · Chapitre 1 sur 3 · L'espace au quotidien"
+        label="Session 1 · Chapitre 1 sur 4 · L'espace au quotidien"
         onHome={onHome}
       />
       <SectionProgress current={chapter} total={TOTAL_CHAPTERS} onGoTo={goTo} />

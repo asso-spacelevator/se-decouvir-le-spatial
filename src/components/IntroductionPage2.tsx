@@ -29,6 +29,7 @@ const SESSION1_DONE = [
   { num: '01', title: 'Les retombées terrestres', Icon: Globe },
   { num: '02', title: 'Les lanceurs spatiaux',    Icon: Rocket },
   { num: '03', title: 'Références & communautés', Icon: Users },
+  { num: '04', title: 'Tes questions',            Icon: MessageCircle },
 ];
 
 const SESSION2_FULL = [
@@ -41,6 +42,7 @@ const SESSION2_FULL = [
       '70 ans de satellites',
       "Anatomie d'un satellite",
       'Les orbites',
+      'Instruments de mesure',
       'Débris spatiaux',
       'Quiz éclair',
       'Imagine ta mission',
@@ -197,7 +199,7 @@ function PageJourney() {
         <div className="flex items-center gap-3">
           <span className="text-[11px] font-bold tracking-[0.16em] uppercase text-white/50">Parcours complet</span>
           <div className="flex-1 h-px bg-white/10" />
-          <span className="text-[11px] text-white/35">2 sessions · 8 sections</span>
+          <span className="text-[11px] text-white/35">2 sessions · 9 sections</span>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
