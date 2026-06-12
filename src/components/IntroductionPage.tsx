@@ -254,7 +254,7 @@ export function IntroductionPage({ onContinue, onHome, onBack }: IntroductionPag
   return (
     <SectionCanvas>
       <SectionTopBar label="Introduction · Avant de commencer" onHome={onHome} />
-      <SectionProgress current={page} total={TOTAL_PAGES} onGoTo={goTo} />
+      <SectionProgress current={page} total={TOTAL_PAGES} />
 
       <div className="relative z-[1] max-w-[1120px] mx-auto px-8 pt-14 pb-24">
 

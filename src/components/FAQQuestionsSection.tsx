@@ -8,7 +8,6 @@ const TOTAL_CHAPTERS = 2;
 interface FAQItem {
   question: string;
   answer: string;
-  answeredBy: string;
 }
 
 interface FAQCategory {
@@ -24,12 +23,30 @@ interface FAQQuestionsSectionProps {
 }
 
 const faqItems: FAQItem[] = [
-  { question: 'Le spatial, c\'est un monde fermé ?', answer: '[Réponse à venir — à collecter auprès des professionnels interviewés]', answeredBy: 'À compléter' },
-  { question: 'Le spatial, c\'est que pour les gens très intelligents ?', answer: '[Réponse à venir — à collecter auprès des professionnels interviewés]', answeredBy: 'À compléter' },
-  { question: 'Faut-il forcément faire une grande école pour travailler dans le spatial ?', answer: '[Réponse à venir — à collecter auprès des professionnels interviewés]', answeredBy: 'À compléter' },
-  { question: 'Quels sont les métiers accessibles dans le spatial ?', answer: '[Réponse à venir — à collecter auprès des professionnels interviewés]', answeredBy: 'À compléter' },
-  { question: 'Comment se former au spatial en France ?', answer: '[Réponse à venir — à collecter auprès des professionnels interviewés]', answeredBy: 'À compléter' },
-  { question: 'Y a-t-il de la place pour les femmes dans le spatial ?', answer: '[Réponse à venir — à collecter auprès des professionnels interviewés]', answeredBy: 'À compléter' },
+  {
+    question: 'Le spatial, c\'est un monde fermé ?',
+    answer: 'Le secteur reste petit comparé à d\'autres industries, mais il est loin d\'être réservé à un cercle restreint. Agences spatiales, grands groupes, PME et start-up recrutent en permanence des profils très variés : ingénieurs, techniciens, juristes, financiers, communicants. Beaucoup de professionnels y arrivent par des chemins détournés, en passant d\'abord par l\'aéronautique, la défense, le numérique ou la recherche.',
+  },
+  {
+    question: 'Le spatial, c\'est que pour les gens très intelligents ?',
+    answer: 'Non. Travailler dans le spatial demande surtout de la curiosité, de la rigueur et de l\'envie d\'apprendre, pas un don particulier. Sur un même projet de lanceur ou de satellite cohabitent des ingénieurs, mais aussi des techniciens, des monteurs, des logisticiens, des acheteurs ou des chargés de communication. Chacun apporte une compétence différente, et toutes sont nécessaires pour faire voler une mission.',
+  },
+  {
+    question: 'Faut-il forcément faire une grande école pour travailler dans le spatial ?',
+    answer: 'Une grande école d\'ingénieurs ouvre certaines portes, notamment pour les postes de conception, mais ce n\'est pas le seul chemin. BTS, DUT/BUT, licences professionnelles et écoles spécialisées mènent à de nombreux métiers techniques (production, essais, qualité, contrôle commande). Le secteur valorise aussi de plus en plus les profils en alternance et la formation continue.',
+  },
+  {
+    question: 'Quels sont les métiers accessibles dans le spatial ?',
+    answer: 'Bien plus que "astronaute" ou "ingénieur fusée" : on trouve des métiers de conception (mécanique, électronique, logiciel, propulsion), de fabrication et d\'essais, mais aussi du contrôle qualité, de la gestion de projet, du droit spatial, de l\'achat, de la communication ou de l\'analyse de données issues des satellites. Les débouchés se trouvent aussi bien chez les fabricants de lanceurs et satellites que chez les opérateurs, les agences ou les entreprises qui exploitent les données spatiales.',
+  },
+  {
+    question: 'Comment se former au spatial en France ?',
+    answer: 'Plusieurs voies existent selon le métier visé : BTS et BUT pour les fonctions techniques, écoles d\'ingénieurs généralistes ou spécialisées (aéronautique, mécanique, électronique, informatique) pour la conception, et écoles de commerce ou universités pour les fonctions support. Certains établissements proposent des parcours ou options dédiées au spatial, mais une formation généraliste de qualité, complétée par un stage ou une alternance dans le secteur, reste un excellent point d\'entrée.',
+  },
+  {
+    question: 'Y a-t-il de la place pour les femmes dans le spatial ?',
+    answer: 'Oui, et le secteur cherche activement à diversifier ses équipes. Les femmes restent minoritaires dans certains métiers techniques, mais leur présence progresse, notamment via des programmes de mentorat, de sensibilisation dès le lycée et des réseaux professionnels dédiés. De plus en plus de femmes occupent aujourd\'hui des postes d\'ingénieures, de cheffes de projet ou de dirigeantes dans des entreprises du secteur.',
+  },
 ];
 
 const categories: FAQCategory[] = [
@@ -107,7 +124,7 @@ export function FAQQuestionsSection({ onComplete, onHome }: FAQQuestionsSectionP
   return (
     <SectionCanvas>
       <SectionTopBar label="Session 2 · Chapitre 5 sur 5 · Zone FAQ" onHome={onHome} />
-      <SectionProgress current={chapter} total={TOTAL_CHAPTERS} onGoTo={goTo} />
+      <SectionProgress current={chapter} total={TOTAL_CHAPTERS} />
 
       <div className="relative z-[1] max-w-[1120px] mx-auto px-8 pt-14 pb-24">
 
@@ -138,11 +155,7 @@ export function FAQQuestionsSection({ onComplete, onHome }: FAQQuestionsSectionP
 
                   {selectedFAQ === index && (
                     <div className="px-5 pb-5 pt-4">
-                      <p className="text-[13px] text-white/70 leading-relaxed mb-2">{item.answer}</p>
-                      <p className="text-[11px] text-white/40 italic">— {item.answeredBy}</p>
-                      <div className="mt-3 bg-white/[0.03] border border-white/8 rounded-lg px-4 py-2.5">
-                        <p className="text-[11px] text-white/40">Les réponses complètes seront ajoutées après la collecte des interviews.</p>
-                      </div>
+                      <p className="text-[13px] text-white/70 leading-relaxed">{item.answer}</p>
                     </div>
                   )}
                 </div>

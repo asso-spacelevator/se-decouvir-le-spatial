@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react';
 import { Rocket, Satellite, Globe, Users, GraduationCap, MessageCircle, Building2, CheckCircle } from 'lucide-react';
 import {
   SectionCanvas,
@@ -7,7 +6,6 @@ import {
   ChapterShell,
 } from './ChapterShell';
 import { AvatarGuide } from './AvatarGuide';
-import { useSession } from '../contexts/SessionContext';
 
 /* ════════════════════════════════════════════════════════════════════
  *  IntroductionPage2 — Session 2 on-boarding (2 pages)
@@ -102,37 +100,13 @@ interface IntroductionPage2Props {
 }
 
 export function IntroductionPage2({ onContinue, onHome, onBack }: IntroductionPage2Props) {
-  const { saveResponse, getResponses } = useSession();
-
-  const [page, setPage] = useState(0);
-  const [hydrated, setHydrated] = useState(false);
-
-  /* Hydrate ------------------------------------------------------------------ */
-  useEffect(() => {
-    (async () => {
-      const saved = await getResponses('introduction_s2');
-      if (saved.page) {
-        const i = parseInt(saved.page, 10);
-        if (!Number.isNaN(i)) setPage(Math.min(Math.max(i, 0), TOTAL_PAGES - 1));
-      }
-      setHydrated(true);
-    })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  /* Navigation --------------------------------------------------------------- */
-  const goTo = async (i: number) => {
-    if (i < 0 || i >= TOTAL_PAGES) return;
-    setPage(i);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    if (hydrated) await saveResponse('introduction_s2', 'page', String(i));
-  };
+  const page = 0;
 
   /* -------------------------------------------------------------------------- */
   return (
     <SectionCanvas>
       <SectionTopBar label="Introduction · Session 2" onHome={onHome} />
-      <SectionProgress current={page} total={TOTAL_PAGES} onGoTo={goTo} />
+      <SectionProgress current={page} total={TOTAL_PAGES} />
 
       <div className="relative z-[1] max-w-[1120px] mx-auto px-8 pt-14 pb-24">
 

@@ -33,9 +33,8 @@ interface SocialReferencesSectionProps {
 
 const references: SocialReference[] = [
   { name: 'Thomas Pesquet', handle: '@thom_astro', description: "Astronaute français de l'ESA, partage ses missions et expériences spatiales", category: 'astronaut', url: 'https://www.instagram.com/thom_astro/', type: 'instagram' },
-  { name: 'Sophie Adenot', handle: '@sophie.adenot', description: "Nouvelle astronaute française de l'ESA, ingénieure et pilote d'essai", category: 'astronaut', url: 'https://www.instagram.com/sophie.adenot/', type: 'instagram' },
+  { name: 'Sophie Adenot', handle: '@soph8astro', description: "Nouvelle astronaute française de l'ESA, ingénieure et pilote d'essai", category: 'astronaut', url: 'https://www.instagram.com/soph8astro/', type: 'instagram' },
   { name: 'CNES', handle: '@cnes_france', description: "L'agence spatiale française — actu spatiale vulgarisée, missions et images", category: 'agency', url: 'https://www.instagram.com/cnes_france/', type: 'instagram' },
-  { name: 'ESA France', handle: '@esafrance', description: "Agence Spatiale Européenne — actualités des missions et découvertes", category: 'agency', url: 'https://www.instagram.com/esafrance/', type: 'instagram' },
   { name: 'CNES YT', handle: 'youtube.com/@CnesFrance', description: "L'agence spatiale française — vidéos pédagogiques sur les missions spatiales", category: 'agency', url: 'https://www.youtube.com/@CnesFrance/', type: 'youtube' },
   { name: 'ESA YT', handle: 'youtube.com/user/ESA', description: "Vidéos immersives sur l'exploration spatiale européenne", category: 'agency', url: 'https://www.youtube.com/user/ESA', type: 'youtube' },
   { name: 'Techniques Spatiales', handle: '@TechniquesSpatiales', description: "Vulgarisation des techniques spatiales en français", category: 'education', url: 'https://www.youtube.com/@TechniquesSpatiales', type: 'youtube' },
@@ -43,7 +42,7 @@ const references: SocialReference[] = [
   { name: 'Spaceexplorerw', handle: '@spaceexplorerw', description: "Une jeune étudiante qui parle de spatial — parcours et passion", category: 'education', url: 'https://www.instagram.com/spaceexplorerw/', type: 'instagram' },
   { name: "Rêves d'Espace", handle: '@revesdespace', description: "Vulgarisation spatiale passionnante et accessible à tous", category: 'education', url: 'https://www.instagram.com/revesdespace/', type: 'instagram' },
   { name: "Cité de l'Espace", handle: '@citeespace', description: "Musée et centre de culture spatiale à Toulouse", category: 'education', url: 'https://www.instagram.com/citeespace/', type: 'instagram' },
-  { name: 'Stardust', handle: '@stardust_space', description: "Média de vulgarisation sur l'espace et l'astronomie", category: 'education', url: 'https://www.instagram.com/stardust_space/', type: 'instagram' },
+  { name: 'Stardust', handle: 'youtube.com/@StardustSpace', description: "Média de vulgarisation sur l'espace et l'astronomie", category: 'education', url: 'https://www.youtube.com/channel/UCdL3UpiseRlvxXuORJjmqZw', type: 'youtube' },
   { name: 'Elles bougent', handle: '@ellesbougent', description: "Témoignages, modèles féminins scientifiques, événements", category: 'female_role_model', url: 'https://www.instagram.com/ellesbougent', type: 'instagram' },
   { name: "The Women's Voices", handle: 'LinkedIn', description: "Témoignages et actualités sur la place des femmes dans les sciences", category: 'female_role_model', url: 'https://www.linkedin.com/company/the-women-s-voices/posts/', type: 'website' },
   { name: 'Astro Allan', handle: '@astro_allan', description: "Jeune ingénieur issu de la diversité — parcours et passion du spatial", category: 'female_role_model', url: 'https://www.instagram.com/astro_allan/', type: 'instagram' },
@@ -54,7 +53,7 @@ const webResources: WebResource[] = [
   { name: 'CNES', description: "Ressources officielles, projets éducatifs (Proximars, SpatioLab)", url: 'https://cnes.fr' },
   { name: 'ESA', description: "Missions spatiales européennes, contenus éducatifs et vidéos", url: 'https://www.esa.int' },
   { name: 'SpaceCal', description: "L'agenda des événements du spatial français — gratuit pour tous", url: 'https://www.spacecal.fr/' },
-  { name: 'Robotique FIRST France', description: "Compétitions de robotique éducative STEM, soutenues par la Fondation EDF", url: 'https://firstfrance.org' },
+  { name: 'Robotique FIRST France', description: "Compétitions de robotique éducative STEM, soutenues par la Fondation EDF", url: 'https://www.robotiquefirstfrance.org/' },
 ];
 
 const categoryLabels: Record<SocialReference['category'], string> = {
@@ -148,7 +147,7 @@ export function SocialReferencesSection({ onComplete, onHome }: SocialReferences
       )}
 
       <SectionTopBar label="Session 1 · Chapitre 3 sur 4 · Réseaux Sociaux" onHome={onHome} />
-      <SectionProgress current={chapter} total={TOTAL_CHAPTERS} onGoTo={goTo} />
+      <SectionProgress current={chapter} total={TOTAL_CHAPTERS} />
 
       <div className="relative z-[1] max-w-[1120px] mx-auto px-8 pt-14 pb-24">
 

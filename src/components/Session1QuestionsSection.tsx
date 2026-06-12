@@ -68,7 +68,7 @@ export function Session1QuestionsSection({ onComplete, onHome }: Session1Questio
   return (
     <SectionCanvas>
       <SectionTopBar label="Session 1 · Chapitre 4 sur 4 · Tes questions" onHome={onHome} />
-      <SectionProgress current={0} total={TOTAL_CHAPTERS} onGoTo={() => {}} />
+      <SectionProgress current={0} total={TOTAL_CHAPTERS} />
 
       <div className="relative z-[1] max-w-[1120px] mx-auto px-8 pt-14 pb-24">
         <ChapterShell
