@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Camera, Radio, Layers, Waves, Thermometer, Globe, ExternalLink, Lock } from 'lucide-react';
+import { Camera, Radio, Layers, Waves, Thermometer, Globe, ExternalLink, Lock, Telescope, Atom, ShieldCheck, Wrench, SatelliteDish, Map } from 'lucide-react';
 import { useSession } from '../contexts/SessionContext';
 import { Quiz } from './Quiz';
 import { SatelliteAnatomy } from './SatelliteAnatomy';
@@ -186,8 +186,7 @@ const jobs = [
     description: "Conçoit les télescopes, objectifs et détecteurs embarqués : choisit les matériaux des miroirs (céramique Zerodur, carbure de silicium SiC), calcule les tolérances optiques au nanomètre et simule les performances avant fabrication. Un miroir de satellite doit rester parfait après un lancement à 9 g de vibration puis fonctionner à -100 °C dans le vide pendant 15 ans.",
     skills: ['Optique physique', 'Zemax / Code V', 'Mécanique de précision', 'Bac+5 Physique · Optique'],
     employers: 'Thales Alenia Space · Airbus DS · CNES · CNRS · OHB',
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/JWST-HST-primary-mirrors.jpg/960px-JWST-HST-primary-mirrors.jpg',
-    credit: 'Image : NASA / Chris Gunn, domaine public — Miroirs primaires de JWST et Hubble',
+    Icon: Telescope,
   },
   {
     id: 'physicien',
@@ -197,8 +196,7 @@ const jobs = [
     description: "Traduit les besoins scientifiques (« mesurer le CO₂ à ±1 ppm ») en spécifications d'ingénierie (résolution spectrale, rapport signal/bruit, taux d'échantillonnage). Pilote ensuite la calibration du capteur au sol et en orbite pour garantir que la mesure reste fiable 15 ans après le lancement, même si les détecteurs vieillissent.",
     skills: ['Radiométrie', 'Traitement du signal', 'Python · IDL', 'Doctorat en physique recommandé'],
     employers: 'ESA · CNES · DLR · IPSL · LATMOS · ICARE',
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Sentinel-5P_satellite_model_ESA383082.jpg/960px-Sentinel-5P_satellite_model_ESA383082.jpg',
-    credit: 'Image : ESA / ATG medialab, CC BY-SA 3.0 IGO — Satellite Sentinel-5P embarquant l\'instrument TROPOMI',
+    Icon: Atom,
   },
   {
     id: 'salle_blanche',
@@ -208,8 +206,7 @@ const jobs = [
     description: "Assemble les composants optiques et électroniques dans des salles ISO 5–ISO 7, 1 000 fois plus pures qu'une salle d'opération chirurgicale. Combinaison intégrale, gants doubles, zéro parfum : une seule particule de 1 µm sur un miroir dégrade les mesures. Utilise des microscopes de contrôle et des robots de positionnement à la micron.",
     skills: ['Métrologie', 'Procédures ISO', 'Montage de précision', 'BTS Électronique · DUT Mesures Physiques'],
     employers: 'Safran Electronics · Thales · SODERN · MBDA · sous-traitants aéro',
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Sentinel-2_satellite_model_in_ESTEC_test_centre.jpg/960px-Sentinel-2_satellite_model_in_ESTEC_test_centre.jpg',
-    credit: 'Image : ESA / Remy Decourt, CC BY-SA 3.0 IGO — Satellite Sentinel-2 au centre de test ESTEC',
+    Icon: ShieldCheck,
   },
   {
     id: 'integration',
@@ -219,8 +216,7 @@ const jobs = [
     description: "Vérifie que l'instrument survit aux conditions les plus extrêmes avant de quitter la Terre : tests de vibration (simulation du lancement), choc pyrotechnique (séparation d'étage), cycles thermiques en chambre à vide (-150 °C / +150 °C sous 10⁻⁶ mbar). Si quelque chose casse ici, on peut encore réparer. Une fois en orbite, c'est impossible.",
     skills: ['Mécanique vibratoire', 'Thermique spatiale', 'Normes ECSS', 'Bac+5 Génie mécanique · aérospatial'],
     employers: 'ArianeGroup · Airbus DS · CNES · OHB · Thales · Arianespace',
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Webb_being_prepared_for_testing_in_Houston.jpg/960px-Webb_being_prepared_for_testing_in_Houston.jpg',
-    credit: 'Image : NASA / Chris Gunn, domaine public — JWST en préparation pour tests thermiques',
+    Icon: Wrench,
   },
   {
     id: 'mission_controller',
@@ -230,8 +226,7 @@ const jobs = [
     description: "Pilote les satellites depuis les centres de contrôle (ESOC pour l'ESA à Darmstadt, CNES à Toulouse). Programme les fenêtres d'acquisition, met à jour les paramètres des instruments, gère les anomalies en temps réel. En cas de panne, quelques heures peuvent suffire à sauver ou perdre un satellite à 700 millions d'euros.",
     skills: ['Systèmes satellitaires', 'Télécommunications', 'Gestion d\'anomalies', 'Bac+5 Aérospatial · Télécoms'],
     employers: 'ESA / ESOC · CNES · DLR · Eumetsat · SES · Eutelsat',
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/ESOC_Main_Control_Room_MCR.jpg/960px-ESOC_Main_Control_Room_MCR.jpg',
-    credit: 'Image : ESA / Jürgen Mai, CC BY-SA 3.0 IGO — Salle de contrôle principale ESOC, Darmstadt',
+    Icon: SatelliteDish,
   },
   {
     id: 'teledetection',
@@ -241,8 +236,7 @@ const jobs = [
     description: "Transforme des paquets de données brutes en cartes exploitables : cartographie d'inondations après une catastrophe, suivi de la déforestation en Amazonie, bilan de la fonte des glaces arctiques. Développe des algorithmes de traitement d'images et de machine learning pour extraire l'information des téraoctets que les satellites produisent chaque jour.",
     skills: ['Python · Google Earth Engine', 'Traitement d\'images', 'Machine learning', 'Bac+5 Géographie · Physique'],
     employers: 'ESA / Copernicus · Météo-France · ONGs · collectivités · start-ups GeoAI',
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Fires_in_Portugal_%28as_seen_from_Sentinel-2%29.jpg/960px-Fires_in_Portugal_%28as_seen_from_Sentinel-2%29.jpg',
-    credit: 'Image : ESA / Copernicus Sentinel-2, CC BY-SA 3.0 IGO — Feux de forêt au Portugal détectés par Sentinel-2',
+    Icon: Map,
   },
 ];
 
@@ -319,7 +313,7 @@ export function SatelliteSection({ onComplete, onHome }: SatelliteSectionProps) 
   return (
     <SectionCanvas>
       <SectionTopBar label={`Session 2 · Chapitre ${chapter + 1} sur ${TOTAL_CHAPTERS} · Satellites & Orbites`} onHome={onHome} />
-      <SectionProgress current={chapter} total={TOTAL_CHAPTERS} onGoTo={goTo} />
+      <SectionProgress current={chapter} total={TOTAL_CHAPTERS} />
 
       <div className="relative z-[1] max-w-[1120px] mx-auto px-8 pt-14 pb-24">
 
@@ -466,6 +460,16 @@ export function SatelliteSection({ onComplete, onHome }: SatelliteSectionProps) 
 
               <div className="rounded-2xl overflow-hidden border border-white/10">
                 <div className="px-5 py-3 bg-white/[0.04] border-b border-white/10">
+                  <p className="text-[13px] font-semibold">Métier · surveiller les débris depuis le sol</p>
+                </div>
+                <div className="relative aspect-video bg-black">
+                  <YouTubeEmbed videoId="UmrUc1aprB0" title="Quentin — présentation" nocookie />
+                </div>
+                <p className="text-[11px] italic text-white/35 px-5 py-3 border-t border-white/10">Quentin, ingénieur surveillance de l'espace chez LookUp : comment éviter qu'un satellite ne percute un débris, à coup de radars, de télescopes et de cartographie.</p>
+              </div>
+
+              <div className="rounded-2xl overflow-hidden border border-white/10">
+                <div className="px-5 py-3 bg-white/[0.04] border-b border-white/10">
                   <p className="text-[13px] font-semibold">Les éboueurs de l'espace — Active Debris Removal (ADR)</p>
                 </div>
                 <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
@@ -605,18 +609,12 @@ export function SatelliteSection({ onComplete, onHome }: SatelliteSectionProps) 
                                   onClick={() => setSelectedJob(isJobOpen ? null : job.id)}
                                   className={`w-full text-left rounded-2xl border overflow-hidden transition-all ${isJobOpen ? 'border-magenta' : 'border-white/10 hover:border-magenta/40'}`}
                                 >
-                                  <div className="relative h-36 overflow-hidden">
-                                    <img
-                                      src={job.image}
-                                      alt={job.title}
-                                      className="w-full h-full object-cover"
-                                      loading="lazy"
-                                    />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-                                    <div className="absolute bottom-0 left-0 right-0 p-3">
-                                      <p className="font-bold text-white text-[14px] leading-tight">{job.title}</p>
-                                      <p className="text-[11px] text-white/60 mt-0.5">{job.tagline}</p>
-                                    </div>
+                                  <div className="relative h-28 flex items-center justify-center bg-magenta/[0.07] border-b border-white/10">
+                                    <job.Icon className="w-9 h-9 text-magenta/70" strokeWidth={1.5} />
+                                  </div>
+                                  <div className="p-3">
+                                    <p className="font-bold text-white text-[14px] leading-tight">{job.title}</p>
+                                    <p className="text-[11px] text-white/55 mt-0.5">{job.tagline}</p>
                                   </div>
                                 </button>
                                 {isJobOpen && (
@@ -634,7 +632,6 @@ export function SatelliteSection({ onComplete, onHome }: SatelliteSectionProps) 
                                       <p className="text-[10.5px] uppercase tracking-[0.1em] text-white/40 font-semibold mb-1">Employeurs typiques</p>
                                       <p className="text-[12px] text-white/55">{job.employers}</p>
                                     </div>
-                                    <p className="text-[10px] italic text-white/30">{job.credit}</p>
                                   </div>
                                 )}
                               </div>

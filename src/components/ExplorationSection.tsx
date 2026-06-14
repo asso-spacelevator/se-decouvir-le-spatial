@@ -4,6 +4,7 @@ import { PerseveranceViewer } from './PerseveranceViewer';
 import { PlanetCompareViewer } from './PlanetCompareViewer';
 import { useSession } from '../contexts/SessionContext';
 import { SectionCanvas, SectionTopBar, SectionProgress } from './ChapterShell';
+import { YouTubeEmbed } from './YouTubeEmbed';
 import {
   Img,
   JWSTTrajectoryFigure,
@@ -93,7 +94,7 @@ export function ExplorationSection({ onComplete, onHome }: ExplorationSectionPro
   return (
     <SectionCanvas>
       <SectionTopBar label={`Session 3 · Chapitre ${chapter + 1} sur ${TOTAL_CHAPTERS} · Exploration`} onHome={onHome} />
-      <SectionProgress current={chapter} total={TOTAL_CHAPTERS} onGoTo={goTo} />
+      <SectionProgress current={chapter} total={TOTAL_CHAPTERS} />
 
       <main className="relative z-[1] max-w-[1120px] mx-auto px-8 pt-12 pb-24">
         {chapter === 0 && <Intro onNext={() => goTo(1)} />}
@@ -536,6 +537,21 @@ function Artemis({ moonQuiz, onMoonQuiz, moonEssay, onMoonEssay }: {
         <h4 className="m-0 text-[20px] font-bold text-white mb-1">Combien de personnes ont marché sur la Lune ?</h4>
         <p className="m-0 text-[13px] text-white/60 leading-relaxed mb-5">Choisis ta réponse — elle est conservée même si tu reviens plus tard.</p>
         <MoonQuiz initial={moonQuiz} onAnswer={onMoonQuiz} />
+      </div>
+
+      <div className="border border-magenta rounded-lg p-4 border-[1.5px] mb-12">
+        <p className="m-0 text-[13px] text-white/70 leading-relaxed mb-4">
+          <strong className="text-white">Le saviez-vous ?</strong> Avant d'aller explorer la Lune ou Mars, il faut comprendre ce que l'espace fait au corps humain. C'est le métier de chercheur·euse en physiologie spatiale : étudier les astronautes pour mieux comprendre des phénomènes comme le vieillissement ou l'isolement, et préparer des missions d'exploration en bonne santé.
+        </p>
+        <figure className="m-0 max-w-[640px]">
+          <div className="relative rounded-2xl overflow-hidden border border-white/12 bg-black aspect-video">
+            <YouTubeEmbed videoId="sq3eyKhe_dE" title="Jérémie Rabinot — présentation" nocookie />
+          </div>
+          <figcaption className="mt-2 flex items-start gap-2 text-[11px] text-white/45">
+            <span className="font-mono uppercase tracking-wide text-magenta-300 shrink-0">Crédit</span>
+            <span>Jérémie Rabinot, chercheur en physiologie spatiale : pourquoi étudier le corps humain en conditions extrêmes, et comment plusieurs disciplines (mathématiques, informatique, médecine) se croisent dans ce métier.</span>
+          </figcaption>
+        </figure>
       </div>
 
       <MoonEssay initial={moonEssay} onSave={onMoonEssay} />
@@ -1083,19 +1099,12 @@ function Metiers() {
         Découvre le quotidien d'une astrophysicienne : ses recherches, son parcours, et ce qui l'a menée vers ce métier.
       </p>
       <figure className="m-0 mb-3 max-w-[640px]">
-        <div className="rounded-2xl overflow-hidden border border-white/12 bg-black aspect-video">
-          <video
-            src=""
-            controls
-            playsInline
-            preload="metadata"
-            poster=""
-            className="w-full h-full object-cover"
-          />
+        <div className="relative rounded-2xl overflow-hidden border border-white/12 bg-black aspect-video">
+          <YouTubeEmbed videoId="zISjqQEh6LY" title="Ines Mertz — présentation" nocookie />
         </div>
         <figcaption className="mt-2 flex items-start gap-2 text-[11px] text-white/45">
           <span className="font-mono uppercase tracking-wide text-magenta-300 shrink-0">Crédit</span>
-          <span>Vidéo à ajouter : portrait d'un·e astrophysicien·ne (source et crédit à compléter ici).</span>
+          <span>Ines Mertz, doctorante en astrophysique à l'Observatoire de Paris : ses recherches sur Mercure et le vent solaire, et son parcours de la prépa jusqu'au JPL en Californie.</span>
         </figcaption>
       </figure>
 

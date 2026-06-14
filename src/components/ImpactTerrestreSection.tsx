@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { ISSViewer } from './ISSViewer';
-import { ChevronLeft, ChevronRight, CheckCircle, ExternalLink, Globe, Radio, Rocket, Satellite, Trophy, Users } from 'lucide-react';
+import { ChevronLeft, ChevronRight, CheckCircle, ExternalLink, Rocket, Satellite, Trophy, Users } from 'lucide-react';
 import { useSession } from '../contexts/SessionContext';
 import { ChapterShell, SectionTopBar, SectionProgress } from './ChapterShell';
 import { YouTubeEmbed } from './YouTubeEmbed';
@@ -105,7 +105,7 @@ export function ImpactTerrestreSection({ onComplete, onHome }: ImpactTerrestreSe
         label="Session 1 · Chapitre 1 sur 4 · L'espace au quotidien"
         onHome={onHome}
       />
-      <SectionProgress current={chapter} total={TOTAL_CHAPTERS} onGoTo={goTo} />
+      <SectionProgress current={chapter} total={TOTAL_CHAPTERS} />
 
       {/* Stage */}
       <div className="relative z-[1] max-w-[1120px] mx-auto px-8 pt-14 pb-24">
@@ -211,31 +211,6 @@ export function ImpactTerrestreSection({ onComplete, onHome }: ImpactTerrestreSe
                   </div>
                 )}
               </div>
-
-              {/* RF engineer video placeholder */}
-              <div>
-                <div className="flex items-center gap-3 mb-5">
-                  <span className="text-[11px] font-bold tracking-[0.16em] uppercase text-white/50">Métier du spatial</span>
-                  <div className="flex-1 h-px bg-white/10" />
-                </div>
-                <div className="bg-white/[0.04] border border-white/10 rounded-xl overflow-hidden">
-                  <div className="aspect-video bg-black/40 flex flex-col items-center justify-center gap-3">
-                    <Radio className="w-10 h-10 text-white/20" strokeWidth={1.5} />
-                    <p className="text-[13px] text-white/30 text-center max-w-[280px] leading-[1.5] m-0">
-                      Vidéo à intégrer : témoignage d'un ingénieur RF
-                    </p>
-                  </div>
-                  <div className="p-5 border-t border-white/10">
-                    <div className="text-[11px] font-bold tracking-[0.16em] uppercase text-magenta mb-1.5">Métier · Ingénieur RF</div>
-                    <h3 className="text-[16px] font-semibold m-0 mb-2">Responsable des liaisons radio satellite-sol</h3>
-                    <p className="text-[13px] text-white/65 leading-[1.55] m-0">
-                      L'ingénieur RF (Radio Fréquence) conçoit les systèmes de communication entre les satellites et les stations au sol. C'est lui qui garantit que tes vidéos, appels et données de navigation arrivent sans erreur depuis l'orbite.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="h-px bg-white/10" />
 
               {/* Spinoff flip cards */}
               <div>
@@ -695,23 +670,6 @@ function OceanScientistSpotlight() {
           </div>
         </div>
       </div>
-
-      {/* Video placeholder */}
-      <div className="bg-white/[0.04] border border-white/10 rounded-2xl overflow-hidden">
-        <div className="aspect-video bg-black/40 flex flex-col items-center justify-center gap-3">
-          <Globe className="w-10 h-10 text-white/20" strokeWidth={1.5} />
-          <p className="text-[13px] text-white/30 text-center max-w-[300px] leading-[1.5] m-0">
-            Vidéo à intégrer : témoignage d'une océanographe satellite
-          </p>
-        </div>
-        <div className="p-5 border-t border-white/10">
-          <div className="text-[11px] font-bold tracking-[0.16em] uppercase text-magenta mb-1.5">Témoignage · Océanographe satellite</div>
-          <h3 className="text-[16px] font-semibold m-0 mb-2">Une journée à lire l'océan depuis l'orbite</h3>
-          <p className="text-[13px] text-white/65 leading-[1.55] m-0">
-            Découvre comment une océanographe satellite passe sa journée à traiter des millions de pixels envoyés par Sentinel-3 : de la donnée brute aux alertes scientifiques qui guident pêcheurs, États côtiers et chercheurs en climatologie.
-          </p>
-        </div>
-      </div>
     </div>
   );
 }
@@ -1055,12 +1013,22 @@ function OpsBlock({ onGameComplete, gameCompleted }: { onGameComplete: () => voi
   return (
     <div className="flex flex-col gap-14">
 
+      <p className="text-[14px] text-white/70 leading-[1.6] max-w-[760px]">
+        Un satellite ne se contente pas de voler tout seul : des équipes d'ingénieurs et d'astronautes le surveillent,
+        le commandent et l'entretiennent depuis le sol, en permanence. Cette coordination réunit des dizaines de pays
+        autour de centres de contrôle, d'agences spatiales et d'une station habitée en continu depuis plus de 25 ans.
+      </p>
+
       {/* French astronaut videos */}
       <div>
         <div className="flex items-center gap-3 mb-6">
           <span className="text-[11px] font-bold tracking-[0.16em] uppercase text-white/50">Astronautes français</span>
           <div className="flex-1 h-px bg-white/10" />
         </div>
+        <p className="text-[13px] text-white/60 leading-[1.55] mb-5 max-w-[760px]">
+          Depuis les années 1980, plusieurs astronautes français ont participé à des missions spatiales internationales,
+          souvent à bord de la Station spatiale internationale. Voici trois d'entre eux.
+        </p>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           {FR_ASTRONAUTS.map(a => (
             <div key={a.name} className="bg-white/[0.04] border border-white/10 rounded-2xl overflow-hidden flex flex-col">
@@ -1095,6 +1063,11 @@ function OpsBlock({ onGameComplete, gameCompleted }: { onGameComplete: () => voi
           <span className="text-[11px] font-bold tracking-[0.16em] uppercase text-white/50">Centre de contrôle</span>
           <div className="flex-1 h-px bg-white/10" />
         </div>
+        <p className="text-[13px] text-white/60 leading-[1.55] mb-5 max-w-[760px]">
+          Derrière chaque astronaute, des centaines de personnes travaillent au sol pour suivre les satellites et les
+          vaisseaux jour et nuit. En Europe, ce travail est centralisé à l'ESOC, où les ingénieurs collaborent avec
+          les autres grandes agences spatiales du monde.
+        </p>
         <div className="grid grid-cols-1 md:grid-cols-[1.4fr_1fr] gap-6">
           <div
             className="aspect-[4/3] rounded-2xl overflow-hidden border border-white/10 bg-black bg-cover bg-center relative"
@@ -1130,6 +1103,12 @@ function OpsBlock({ onGameComplete, gameCompleted }: { onGameComplete: () => voi
       <div className="h-px bg-white/10" />
 
       {/* Drapeaux ISS */}
+      <p className="text-[13px] text-white/60 leading-[1.55] max-w-[760px]">
+        Tous ces centres de contrôle convergent vers un même symbole de la coopération spatiale : la Station spatiale
+        internationale. Construite et exploitée conjointement par plusieurs agences, elle accueille en permanence des
+        équipages venus de différents pays.
+      </p>
+
       <div className="bg-white/5 border border-white/10 rounded-xl p-6">
         <div className="flex items-baseline justify-between gap-4 mb-1.5">
           <h4 className="text-[17px] font-semibold m-0">La Station spatiale internationale</h4>
@@ -1162,6 +1141,10 @@ function OpsBlock({ onGameComplete, gameCompleted }: { onGameComplete: () => voi
           <span className="text-[11px] font-bold tracking-[0.16em] uppercase text-white/50">Jeu · Qui a construit l'ISS ?</span>
           <div className="flex-1 h-px bg-white/10" />
         </div>
+        <p className="text-[13px] text-white/60 leading-[1.55] mb-4 max-w-[760px]">
+          Chaque module de l'ISS a été conçu, construit puis lancé par un pays différent avant d'être assemblé en
+          orbite. À toi de retrouver qui a apporté quoi.
+        </p>
         <p className="text-[15px] font-semibold mb-4">La construction de l'ISS est une oeuvre collective.</p>
         <CollaboGame onComplete={onGameComplete} initial={gameCompleted} />
       </div>

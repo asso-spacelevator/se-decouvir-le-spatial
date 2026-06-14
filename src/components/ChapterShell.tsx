@@ -53,10 +53,9 @@ export function SectionTopBar({ label, onHome }: SectionTopBarProps) {
 interface SectionProgressProps {
   current: number;
   total: number;
-  onGoTo: (i: number) => void;
 }
 
-export function SectionProgress({ current, total, onGoTo }: SectionProgressProps) {
+export function SectionProgress({ current, total }: SectionProgressProps) {
   return (
     <div className="sticky top-[57px] z-10 backdrop-blur-md bg-deepspace/75 border-b border-white/5">
       <div className="max-w-[1240px] mx-auto px-8 py-3.5 flex items-center gap-3.5">
@@ -74,9 +73,8 @@ export function SectionProgress({ current, total, onGoTo }: SectionProgressProps
             const isCurrent = i === current;
             const isDone = i < current;
             return (
-              <button
+              <div
                 key={i}
-                onClick={() => onGoTo(i)}
                 className={
                   'w-6 h-6 rounded-full grid place-items-center text-[11px] font-bold transition-all ' +
                   (isCurrent
@@ -87,7 +85,7 @@ export function SectionProgress({ current, total, onGoTo }: SectionProgressProps
                 }
               >
                 {i + 1}
-              </button>
+              </div>
             );
           })}
         </div>

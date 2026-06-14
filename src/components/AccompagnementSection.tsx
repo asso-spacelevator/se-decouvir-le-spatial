@@ -235,7 +235,7 @@ export function AccompagnementSection({ onComplete, onHome }: AccompagnementSect
   return (
     <SectionCanvas>
       <SectionTopBar label="Session 2 · Chapitre 4 sur 5 · Accompagnement" onHome={onHome} />
-      <SectionProgress current={chapter} total={TOTAL_CHAPTERS} onGoTo={goTo} />
+      <SectionProgress current={chapter} total={TOTAL_CHAPTERS} />
 
       <div className="relative z-[1] max-w-[1120px] mx-auto px-8 pt-14 pb-24">
 

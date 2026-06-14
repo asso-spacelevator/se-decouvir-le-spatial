@@ -378,7 +378,7 @@ export function RocketSection({ onComplete, onHome }: RocketSectionProps) {
   return (
     <SectionCanvas>
       <SectionTopBar label="Session 1 · Chapitre 2 sur 4 · Lanceurs et Ariane 6" onHome={onHome} />
-      <SectionProgress current={chapter} total={TOTAL_CHAPTERS} onGoTo={goTo} />
+      <SectionProgress current={chapter} total={TOTAL_CHAPTERS} />
 
       <div className="relative z-[1] max-w-[1120px] mx-auto px-8 pt-14 pb-24">
 
@@ -639,6 +639,46 @@ export function RocketSection({ onComplete, onHome }: RocketSectionProps) {
                   </a>
                 </div>
               )}
+
+              <div className="rounded-2xl overflow-hidden border border-white/10">
+                <div className="px-5 py-3 bg-white/[0.04] border-b border-white/10">
+                  <p className="text-[13px] font-semibold">Métier · ingénieur structures pour l'hypersonique</p>
+                </div>
+                <div className="aspect-video bg-black/70 relative">
+                  <YouTubeEmbed videoId="kUdCU-x7dKo" title="Allan Petre — présentation" nocookie />
+                </div>
+                <p className="text-[11px] italic text-white/35 px-5 py-3 border-t border-white/10">Allan Petre, ingénieur en mécanique des fluides : dimensionner les structures de capsules, lanceurs et satellites pour qu'elles tiennent aux vitesses hypersoniques. Doctorat à l'Imperial College de Londres et passage à la NASA, à San Francisco.</p>
+              </div>
+
+              <div className="bg-white/[0.04] border border-white/10 rounded-2xl p-5">
+                <h4 className="font-semibold text-white text-[13px] uppercase tracking-[0.1em] mb-3">Pour aller plus loin avec Allan Petre</h4>
+                <ul className="space-y-2 text-[13px]">
+                  <li>
+                    <a href="https://www.imperial.ac.uk/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-magenta hover:underline">
+                      Imperial College London — programmes doctoraux en aérodynamique <ExternalLink className="w-3 h-3" strokeWidth={1.75} />
+                    </a>
+                  </li>
+                  <li>
+                    <a href="https://www.nasa.gov/ames/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-magenta hover:underline">
+                      NASA Ames Research Center, San Francisco <ExternalLink className="w-3 h-3" strokeWidth={1.75} />
+                    </a>
+                  </li>
+                </ul>
+                <a
+                  href="https://www.lesechos.fr/industrie-services/air-defense/du-93-a-la-nasa-le-merveilleux-parcours-dallan-petre-raconte-par-linteresse-2031410"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-4 block rounded-xl border border-white/10 bg-white/[0.02] p-4 transition hover:border-magenta hover:-translate-y-0.5"
+                >
+                  <p className="text-[10px] uppercase tracking-[0.16em] text-white/45 mb-1.5">Les Échos</p>
+                  <p className="text-[13px] font-semibold text-white mb-1">
+                    Du 9-3 à la Nasa : le merveilleux parcours d'Allan Petre raconté par l'intéressé
+                  </p>
+                  <span className="inline-flex items-center gap-1.5 text-[12px] text-magenta hover:underline">
+                    Lire l'article <ExternalLink className="w-3 h-3" strokeWidth={1.75} />
+                  </span>
+                </a>
+              </div>
             </div>
           </ChapterShell>
         )}
