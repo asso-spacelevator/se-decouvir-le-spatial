@@ -9,6 +9,7 @@ interface SessionContextType {
   saveResponse: (section: string, questionId: string, response: string) => Promise<void>;
   getResponses: (section: string) => Promise<Record<string, string>>;
   submitQuestion: (category: string, questionText: string, isAnonymous: boolean) => Promise<void>;
+  recordQuizScore: (section: string, questionId: string, isCorrect: boolean) => Promise<void>;
   saveSchoolName: (name: string) => Promise<void>;
   restartSession: () => Promise<void>;
   markSession1Complete: () => Promise<void>;
@@ -197,6 +198,19 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       });
   };
 
+  const recordQuizScore = async (section: string, questionId: string, isCorrect: boolean) => {
+    if (!session) return;
+
+    await supabase
+      .from('quiz_scores')
+      .insert({
+        session_id: session.id,
+        section,
+        question_id: questionId,
+        is_correct: isCorrect
+      });
+  };
+
   const saveSchoolName = async (name: string) => {
     if (!session) return;
 
@@ -253,7 +267,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <SessionContext.Provider value={{ session, loading, updateSection, completeSection, saveResponse, getResponses, submitQuestion, saveSchoolName, restartSession, markSession1Complete, markSession2Complete }}>
+    <SessionContext.Provider value={{ session, loading, updateSection, completeSection, saveResponse, getResponses, submitQuestion, recordQuizScore, saveSchoolName, restartSession, markSession1Complete, markSession2Complete }}>
       {children}
     </SessionContext.Provider>
   );
