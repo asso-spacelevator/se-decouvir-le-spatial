@@ -338,6 +338,26 @@ export function EntreprisesSpatialesSection({ onComplete, onHome }: EntreprisesS
                 <p className="text-[11px] italic text-white/35 px-5 py-3 border-t border-white/10">Pierre Bertrand, président de l'association Space Elevator et fondateur de Skyhopy : ingénieur formé en France (CentraleSupélec) et au MIT, il a conçu des satellites pour des entreprises européennes et internationales avant de fonder sa propre société.</p>
               </div>
             </div>
+
+            <div className="mt-6 grid sm:grid-cols-2 gap-4">
+              <div className="rounded-2xl overflow-hidden border border-white/10">
+                <div className="px-5 py-3 bg-white/[0.04] border-b border-white/10">
+                  <p className="text-[13px] font-semibold">Métier · ingénieur appel d'offres</p>
+                </div>
+                <div className="relative aspect-[9/16] bg-black">
+                  <YouTubeEmbed videoId="BG5cHnVtj7A" title="Ingénieur appel d'offres — présentation" nocookie />
+                </div>
+              </div>
+
+              <div className="rounded-2xl overflow-hidden border border-white/10">
+                <div className="px-5 py-3 bg-white/[0.04] border-b border-white/10">
+                  <p className="text-[13px] font-semibold">Métier · responsable marketing</p>
+                </div>
+                <div className="relative aspect-[9/16] bg-black">
+                  <YouTubeEmbed videoId="EQV0ZaiPgHE" title="Responsable marketing — présentation" nocookie />
+                </div>
+              </div>
+            </div>
           </ChapterShell>
         )}
 
