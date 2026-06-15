@@ -1,0 +1,299 @@
+/* ------------------------------------------------------------------
+ * Space Elevator - design tokens
+ *
+ * Source of truth:
+ *   - Brand charter (uploads/Charte graphique.docx) for typography +
+ *     primary palette (#000, #C8257A, #808080).
+ *   - Website (spacelevator.org) for usage patterns.
+ *   - Anything else is extrapolated and marked "extrapolated".
+ * ------------------------------------------------------------------ */
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  /* ---------- Colour primitives (from charter) ---------- */
+  --se-black: #000000;
+  --se-white: #ffffff;
+  --se-magenta: #c8257a;   /* RGB 200, 37, 122 - charter "Liens / éléments -  mettre en évidence" */
+  --se-gray-mid: #808080;  /* RGB 128, 128, 128 - charter "Pied de page" */
+
+  /* ---------- Magenta scale (extrapolated from #C8257A) ---------- */
+  --se-magenta-50:  #fdf2f8;
+  --se-magenta-100: #f7e3ee;
+  --se-magenta-200: #efc4d8;
+  --se-magenta-300: #e29ab9;
+  --se-magenta-400: #d56094;
+  --se-magenta-500: #c8257a;  /* brand */
+  --se-magenta-600: #ad1d68;
+  --se-magenta-700: #94154f;
+  --se-magenta-800: #6e0e3d;
+  --se-magenta-900: #5e0830;
+
+  /* ---------- Neutrals (extrapolated, anchored on #808080) ---------- */
+  --se-gray-50:  #fafafa;
+  --se-gray-100: #f5f5f5;
+  --se-gray-200: #e5e5e5;
+  --se-gray-300: #d4d4d4;
+  --se-gray-400: #a3a3a3;
+  --se-gray-500: #808080;  /* charter */
+  --se-gray-600: #525252;
+  --se-gray-700: #3a3a3a;
+  --se-gray-800: #262626;
+  --se-gray-900: #171717;
+
+  /* ---------- Deep-space (extrapolated, for dark sections) ---------- */
+  --se-deepspace: #0b0f2a;
+  --se-deepspace-soft: #161a3d;
+
+  /* ---------- Semantic ---------- */
+  --se-fg-1: var(--se-black);
+  --se-fg-2: var(--se-gray-700);
+  --se-fg-3: var(--se-gray-500);
+  --se-fg-on-dark: var(--se-white);
+  --se-fg-link: var(--se-magenta);
+
+  --se-bg-1: var(--se-white);
+  --se-bg-2: var(--se-gray-50);
+  --se-bg-3: var(--se-gray-100);
+  --se-bg-dark: var(--se-deepspace);
+
+  --se-border: var(--se-gray-200);
+  --se-border-strong: var(--se-gray-300);
+  --se-border-accent: var(--se-magenta);
+
+  --se-accent: var(--se-magenta);
+  --se-accent-hover: var(--se-magenta-700);
+
+  --se-success: #1f8a5b;     /* extrapolated */
+  --se-warning: #d97706;     /* extrapolated */
+  --se-danger:  #b91c1c;     /* extrapolated */
+
+  /* ---------- Type - family ---------- */
+  --se-font-sans: 'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --se-font-display: 'Poppins', system-ui, sans-serif;
+  --se-font-mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+
+  /* ---------- Type - weights ---------- */
+  --se-weight-light: 300;
+  --se-weight-regular: 400;
+  --se-weight-medium: 500;    /* charter "Poppins Medium" for titles */
+  --se-weight-semibold: 600;
+  --se-weight-bold: 700;
+
+  /* ---------- Type - size scale ---------- */
+  --se-size-xs: 12px;     /* charter footer */
+  --se-size-sm: 14px;
+  --se-size-base: 16px;   /* charter body 12pt - 16px web */
+  --se-size-md: 18px;
+  --se-size-lg: 20px;     /* charter title 20pt */
+  --se-size-xl: 24px;
+  --se-size-2xl: 32px;
+  --se-size-3xl: 40px;
+  --se-size-4xl: 56px;
+  --se-size-5xl: 72px;
+  --se-size-6xl: 96px;
+  --se-size-7xl: 128px;
+  --se-size-8xl: 160px;   /* stats hero numerals (+83, 22%, 70%) */
+
+  /* ---------- Line heights (unitless ratios) ---------- */
+  --se-lh-tight: 1.05;   /* @kind other */
+  --se-lh-snug: 1.2;     /* @kind other */
+  --se-lh-normal: 1.5;   /* @kind other */
+  --se-lh-loose: 1.7;    /* @kind other */
+
+  /* ---------- Letter spacing ---------- */
+  --se-tracking-tight: -0.02em;
+  --se-tracking-normal: 0;
+  --se-tracking-wide: 0.04em;
+  --se-tracking-wider: 0.08em;   /* uppercase banners */
+
+  /* ---------- Spacing scale (8-pt rhythm) ---------- */
+  --se-space-0: 0;
+  --se-space-1: 4px;
+  --se-space-2: 8px;
+  --se-space-3: 12px;
+  --se-space-4: 16px;
+  --se-space-5: 24px;
+  --se-space-6: 32px;
+  --se-space-7: 48px;
+  --se-space-8: 64px;
+  --se-space-9: 96px;
+  --se-space-10: 128px;
+
+  /* ---------- Radii ---------- */
+  --se-radius-xs: 2px;
+  --se-radius-sm: 4px;
+  --se-radius-md: 8px;
+  --se-radius-lg: 12px;
+  --se-radius-xl: 16px;
+  --se-radius-2xl: 24px;
+  --se-radius-pill: 999px;   /* used ONLY for the charter "arrow callout" */
+
+  /* ---------- Borders ---------- */
+  --se-border-width-sm: 1px;
+  --se-border-width-md: 1.5px;   /* charter "1 ½ pt" callout */
+  --se-border-width-lg: 2px;
+
+  /* ---------- Shadows (extrapolated, used sparingly) ---------- */
+  --se-shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.06);
+  --se-shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --se-shadow-md: 0 8px 16px rgba(0, 0, 0, 0.06), 0 2px 4px rgba(0, 0, 0, 0.04);
+  --se-shadow-lg: 0 24px 48px rgba(0, 0, 0, 0.08), 0 8px 16px rgba(0, 0, 0, 0.04);
+  --se-shadow-focus: 0 0 0 2px var(--se-white), 0 0 0 4px var(--se-magenta);
+
+  /* ---------- Motion ---------- */
+  --se-ease: cubic-bezier(0.2, 0, 0, 1);   /* @kind other */
+  --se-duration-fast: 120ms;   /* @kind other */
+  --se-duration-base: 200ms;   /* @kind other */
+  --se-duration-slow: 400ms;   /* @kind other */
+
+  /* ---------- Container widths ---------- */
+  --se-content-narrow: 720px;
+  --se-content: 1080px;
+  --se-content-wide: 1280px;
+}
+
+/* ------------------------------------------------------------------
+ * Element defaults - apply to anything inside `.se` or the document
+ * ------------------------------------------------------------------ */
+
+body {
+  font-family: var(--se-font-sans);
+  font-size: var(--se-size-base);
+  font-weight: var(--se-weight-regular);
+  line-height: var(--se-lh-normal);
+  color: var(--se-fg-1);
+  background: var(--se-bg-1);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Headings - banner style (ALL CAPS) used by the website hero/sections */
+.se-banner,
+h1.se-banner {
+  font-family: var(--se-font-display);
+  font-weight: var(--se-weight-bold);
+  font-size: clamp(var(--se-size-4xl), 8vw, var(--se-size-6xl));
+  line-height: var(--se-lh-tight);
+  letter-spacing: var(--se-tracking-wider);
+  text-transform: uppercase;
+  color: var(--se-fg-1);
+}
+
+/* Headings - title style (Title Case), e.g. "The History", "The Idea" */
+h1 {
+  font-family: var(--se-font-display);
+  font-weight: var(--se-weight-medium);
+  font-size: var(--se-size-4xl);
+  line-height: var(--se-lh-tight);
+  letter-spacing: var(--se-tracking-tight);
+  color: var(--se-fg-1);
+  margin: 0 0 var(--se-space-5);
+}
+
+h2 {
+  font-family: var(--se-font-display);
+  font-weight: var(--se-weight-semibold);
+  font-size: var(--se-size-3xl);
+  line-height: var(--se-lh-snug);
+  color: var(--se-fg-1);
+  margin: 0 0 var(--se-space-4);
+}
+
+h3 {
+  font-family: var(--se-font-display);
+  font-weight: var(--se-weight-semibold);
+  font-size: var(--se-size-2xl);
+  line-height: var(--se-lh-snug);
+  color: var(--se-fg-1);
+  margin: 0 0 var(--se-space-3);
+}
+
+h4 {
+  font-family: var(--se-font-display);
+  font-weight: var(--se-weight-medium);
+  font-size: var(--se-size-xl);
+  line-height: var(--se-lh-snug);
+  color: var(--se-fg-1);
+  margin: 0 0 var(--se-space-3);
+}
+
+/* Document title rule from the charter - 20pt Poppins Medium, underlined */
+.se-doc-title {
+  font-family: var(--se-font-display);
+  font-weight: var(--se-weight-medium);
+  font-size: var(--se-size-lg);  /* 20px */
+  color: var(--se-black);
+  text-align: center;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+p {
+  margin: 0 0 var(--se-space-4);
+  font-size: var(--se-size-base);
+  line-height: var(--se-lh-normal);
+  color: var(--se-fg-1);
+  text-wrap: pretty;
+}
+
+small,
+.se-caption {
+  font-size: var(--se-size-xs);
+  color: var(--se-gray-500);   /* charter footer rule */
+  line-height: var(--se-lh-normal);
+}
+
+/* Links - magenta + underline on hover (charter rule for "Liens") */
+a {
+  color: var(--se-magenta);
+  text-decoration: none;
+  transition: color var(--se-duration-fast) var(--se-ease);
+}
+a:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  color: var(--se-magenta-700);
+}
+a:focus-visible {
+  outline: 2px solid var(--se-magenta);
+  outline-offset: 2px;
+  border-radius: var(--se-radius-xs);
+}
+
+/* Lists - bullets default to magenta accent (charter) */
+ul {
+  padding-left: 1.4em;
+  margin: 0 0 var(--se-space-4);
+}
+ul li::marker {
+  color: var(--se-magenta);
+}
+
+/* Numerals - for hero stats (+83, 22%, 70%) */
+.se-stat {
+  font-family: var(--se-font-display);
+  font-weight: var(--se-weight-bold);
+  font-size: clamp(var(--se-size-6xl), 12vw, var(--se-size-8xl));
+  line-height: 0.9;
+  letter-spacing: var(--se-tracking-tight);
+  color: var(--se-magenta);
+}
+
+/* Code (extrapolated) */
+code,
+pre {
+  font-family: var(--se-font-mono);
+  font-size: 0.92em;
+  background: var(--se-gray-100);
+  border-radius: var(--se-radius-sm);
+  padding: 0.15em 0.4em;
+  color: var(--se-gray-800);
+}
+
+/* Selection */
+::selection {
+  background: var(--se-magenta);
+  color: var(--se-white);
+}
