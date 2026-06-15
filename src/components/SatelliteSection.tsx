@@ -658,7 +658,7 @@ export function SatelliteSection({ onComplete, onHome }: SatelliteSectionProps) 
             onPrev={() => goTo(4)} onNext={() => {}} nextEnabled={false}
             nextLabel="Réponds aux questions d'abord"
           >
-            <Quiz questions={quizQuestions} onComplete={handleQuizComplete} />
+            <Quiz questions={quizQuestions} section="satellites" onComplete={handleQuizComplete} />
           </ChapterShell>
         )}
 

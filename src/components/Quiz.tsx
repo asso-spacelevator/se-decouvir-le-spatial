@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { CheckCircle, XCircle } from 'lucide-react';
+import { useSession } from '../contexts/SessionContext';
 
 interface QuizOption {
   id: string;
@@ -17,10 +18,12 @@ interface QuizQuestion {
 
 interface QuizProps {
   questions: QuizQuestion[];
+  section: string;
   onComplete?: () => void;
 }
 
-export function Quiz({ questions, onComplete }: QuizProps) {
+export function Quiz({ questions, section, onComplete }: QuizProps) {
+  const { recordQuizScore } = useSession();
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [showFeedback, setShowFeedback] = useState(false);
@@ -48,7 +51,7 @@ export function Quiz({ questions, onComplete }: QuizProps) {
 
     setShowFeedback(true);
     setAnsweredQuestions(new Set([...answeredQuestions, currentQuestionIndex]));
-
+    recordQuizScore(section, currentQuestion.id, isCorrect);
   };
 
   const handleNextQuestion = () => {

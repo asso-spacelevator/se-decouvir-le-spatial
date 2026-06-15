@@ -1192,6 +1192,7 @@ function StatRow({ v, k }: { v: string; k: string }) {
  * ────────────────────────────────────────────────────────*/
 const QUESTIONS = [
   {
+    id: 'impact_q1',
     q: "Combien de satellites utilises-tu au cours d'une journée, en moyenne ?",
     options: [
       { t: 'Aucun, je ne suis pas astronaute', ok: false },
@@ -1202,6 +1203,7 @@ const QUESTIONS = [
     e: "Sans t'en rendre compte, tu utilises des dizaines de satellites chaque jour. Au moins 4 satellites GPS te localisent en permanence. Tes appels et internet passent par des satellites télécom. La météo, les bulletins routiers, et même les champs qui produisent ta nourriture sont suivis depuis l'espace.",
   },
   {
+    id: 'impact_q2',
     q: "Parmi ces objets du quotidien, lequel a été inventé pour les missions spatiales avant d'arriver dans ta vie ?",
     options: [
       { t: 'Le vélo électrique', ok: false },
@@ -1212,6 +1214,7 @@ const QUESTIONS = [
     e: "La mousse à mémoire de forme a été inventée par la NASA en 1966 pour absorber les chocs au décollage. Aujourd'hui dans nos matelas, sièges auto et équipements médicaux. Ces innovations nées du spatial qui entrent dans nos vies s'appellent des retombées — spinoffs.",
   },
   {
+    id: 'impact_q3',
     q: "Quelle est la taille de la plus grande antenne de radiotélécommunications du monde ?",
     img: 'https://www.nasa.gov/wp-content/uploads/2020/03/dsn-stadium-final.jpg?resize=900,900',
     imgCredit: 'NASA/JPL-Caltech',
@@ -1224,6 +1227,7 @@ const QUESTIONS = [
     e: "L'antenne DSS-14 à Goldstone (Californie) mesure 70 mètres de diamètre. Appartenant au réseau Deep Space Network (DSN) de la NASA, elle communique avec des sondes aux confins du système solaire, comme Voyager 1 — à plus de 23 milliards de kilomètres de la Terre.",
   },
   {
+    id: 'impact_q4',
     q: "Combien d'astronautes français ont voyagé dans l'espace depuis le début de l'exploration spatiale ?",
     options: [
       { t: '4', ok: false },
@@ -1234,6 +1238,7 @@ const QUESTIONS = [
     e: "10 Français ont décollé vers l'espace depuis 1982, quand Jean-Loup Chrétien est devenu le premier. Parmi eux : Patrick Baudry, Jean-François Clervoy, Thomas Pesquet — parti en 2016 et 2021. La France est le pays non-américain et non-russe ayant envoyé le plus d'astronautes dans l'espace.",
   },
   {
+    id: 'impact_q5',
     q: "À quelle altitude orbite la Station spatiale internationale (ISS) ?",
     options: [
       { t: 'Environ 200 km', ok: false },
@@ -1244,6 +1249,7 @@ const QUESTIONS = [
     e: "L'ISS se trouve à environ 400 km d'altitude, en orbite basse (LEO). Elle effectue une révolution complète autour de la Terre en 90 minutes, soit 16 orbites par jour, à 27 600 km/h. À cette hauteur, les astronautes voient un lever de soleil toutes les 45 minutes.",
   },
   {
+    id: 'impact_q6',
     q: "Quel programme européen met à disposition de tous, gratuitement, des images satellite de la Terre ?",
     options: [
       { t: 'Galileo', ok: false },
@@ -1256,6 +1262,7 @@ const QUESTIONS = [
 ];
 
 function Quiz({ onDone, initial }: { onDone: (score: number) => void; initial: number | null }) {
+  const { recordQuizScore } = useSession();
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<(boolean | null)[]>(QUESTIONS.map(() => null));
   const [chosen, setChosen] = useState<number | null>(null);
@@ -1266,6 +1273,7 @@ function Quiz({ onDone, initial }: { onDone: (score: number) => void; initial: n
     const ok = QUESTIONS[step].options[i].ok;
     setChosen(i);
     const next = [...answers]; next[step] = ok; setAnswers(next);
+    recordQuizScore('impact_terrestre', QUESTIONS[step].id, ok);
   };
 
   const goNext = () => {
