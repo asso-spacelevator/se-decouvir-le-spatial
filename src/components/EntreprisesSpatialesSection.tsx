@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Building2, Rocket, ExternalLink, Telescope } from 'lucide-react';
 import { SectionTopBar, SectionProgress, ChapterShell, ChapterRecap } from './ChapterShell';
 import { EuropeActorsMap } from './EuropeActorsMap';
+import MonteTaBoiteWidget from './MonteTaBoiteWidget';
 import { YouTubeEmbed } from './YouTubeEmbed';
 import { EUROPEAN_SPACE_COMPANIES } from '../data/europeanSpaceCompanies';
 import { useSession } from '../contexts/SessionContext';
@@ -9,15 +10,16 @@ import { useSession } from '../contexts/SessionContext';
 /* ════════════════════════════════════════════════════════════════════
  * EntreprisesSpatialesSection — Session 2, après ExplorationSection
  *
- * 4 chapitres :
+ * 5 chapitres :
  *   0. Carte interactive des acteurs du spatial européen
- *   1. Startups vs entreprises historiques (comparaison neutre)
- *   2. Les métiers en action (placeholders vidéo CEO / RH / commercial)
- *   3. Récap
+ *   1. Atelier « Monte ta boîte spatiale »
+ *   2. Startups vs entreprises historiques (comparaison neutre)
+ *   3. Les métiers en action (placeholders vidéo CEO / RH / commercial)
+ *   4. Récap
  * ════════════════════════════════════════════════════════════════════ */
 
 const SECTION = 'entreprises_spatiales';
-const TOTAL_CHAPTERS = 4;
+const TOTAL_CHAPTERS = 5;
 
 // ── Données comparaison startups vs historiques ───────────────────────
 const COMPARISON = [
@@ -161,7 +163,7 @@ export function EntreprisesSpatialesSection({ onComplete, onHome }: EntreprisesS
             onPrev={() => goTo(0)}
             onNext={() => goTo(2)}
             nextEnabled
-            nextLabel="Continue · Les métiers en action →"
+            nextLabel="Continue · Monte ta boîte spatiale →"
           >
             {/* En-têtes colonnes */}
             <div className="grid grid-cols-2 gap-4 mb-4">
@@ -212,16 +214,34 @@ export function EntreprisesSpatialesSection({ onComplete, onHome }: EntreprisesS
         )}
 
         {/* ──────────────────────────────────────────────────────────────
-            Chapitre 2 : Les métiers en action
+            Chapitre 2 : Atelier « Monte ta boîte spatiale »
         ────────────────────────────────────────────────────────────── */}
         {chapter === 2 && (
           <ChapterShell
             kicker="03"
+            title="À toi de jouer :"
+            titleAccent="monte ta boîte spatiale."
+            lede="Choisis un secteur, donne une identité à ton entreprise, puis recrute ton équipe. À la fin, l'atelier t'aide à vérifier si tu n'as oublié aucun métier clé."
+            onPrev={() => goTo(1)}
+            onNext={() => goTo(3)}
+            nextEnabled
+            nextLabel="Continue · Les métiers en action →"
+          >
+            <MonteTaBoiteWidget />
+          </ChapterShell>
+        )}
+
+        {/* ──────────────────────────────────────────────────────────────
+            Chapitre 3 : Les métiers en action
+        ────────────────────────────────────────────────────────────── */}
+        {chapter === 3 && (
+          <ChapterShell
+            kicker="04"
             title="Les métiers"
             titleAccent="en action."
             lede="Découvre la diversité des métiers du secteur, puis explore le site de Comètes pour voir à quoi ressemble une mission spatiale au quotidien."
-            onPrev={() => goTo(1)}
-            onNext={() => goTo(3)}
+            onPrev={() => goTo(2)}
+            onNext={() => goTo(4)}
             nextEnabled={cometesVisited}
             nextLabel={cometesVisited ? 'Continue · Récap →' : 'Explore le site de Comètes pour continuer'}
           >
@@ -322,12 +342,12 @@ export function EntreprisesSpatialesSection({ onComplete, onHome }: EntreprisesS
         )}
 
         {/* ──────────────────────────────────────────────────────────────
-            Chapitre 3 : Récap
+            Chapitre 4 : Récap
         ────────────────────────────────────────────────────────────── */}
-        {chapter === 3 && (
+        {chapter === 4 && (
           <ChapterRecap
             chapterLabel="Entreprises du spatial européen"
-            summary="Tu as cartographié l'écosystème spatial européen, comparé les deux modèles économiques qui le structurent et découvert la diversité des métiers qui y recrutent."
+            summary="Tu as cartographié l'écosystème spatial européen, monté ta propre boîte spatiale, comparé les deux modèles économiques qui le structurent et découvert la diversité des métiers qui y recrutent."
             stats={[
               { v: EUROPEAN_SPACE_COMPANIES.length, t: 'acteurs cartographiés en Europe' },
               { v: VIDEO_CARDS.length, t: 'métiers présentés dans cette section' },
@@ -335,7 +355,7 @@ export function EntreprisesSpatialesSection({ onComplete, onHome }: EntreprisesS
             nextTitle="Accompagnement & Orientation"
             nextDesc="Quelles formations et quels parcours mènent au secteur spatial ?"
             onContinue={onComplete}
-            onPrev={() => goTo(2)}
+            onPrev={() => goTo(3)}
           />
         )}
       </div>
