@@ -125,7 +125,6 @@ const challenges = [
     innovation: "Les boucliers thermiques modernes supportent des gradients de 3 000 °C sur quelques centimètres d'épaisseur.",
     comparaison: "Ton four de cuisine monte à 250 °C au maximum. Le moteur Vulcain brûle à 3 000 °C — soit 12 fours superposés. Et il doit tenir ces températures pendant les 8 minutes que dure la montée.",
     funFact: "Le nez d'un lanceur lors de la rentrée atmosphérique chauffe tellement qu'il crée un plasma qui bloque temporairement les communications radio.",
-    link: { label: "Propulsion spatiale — CNES", url: "https://cnes.fr/fr/propulsion-spatiale" },
   },
   {
     name: 'Puissance Colossale',
@@ -134,7 +133,6 @@ const challenges = [
     innovation: "Un seul moteur Vulcain 2.1 produit une puissance équivalente à 1 500 voitures de F1 combinées.",
     comparaison: "300 kg de carburant brûlés chaque seconde, c'est l'équivalent d'une baignoire entière vidée en flammes toutes les secondes. En 8 minutes de vol, Ariane 6 consomme autant de carburant qu'une voiture en parcourant 800 000 km.",
     funFact: "Si on pouvait canaliser toute la puissance d'un moteur de lanceur dans une ampoule, elle brillerait 190 fois plus fort que le Soleil vu depuis la Terre.",
-    link: { label: "Le moteur Vulcain 2.1 — ArianeGroup", url: "https://www.ariane.group/fr/lanceur/ariane-6/" },
   },
   {
     name: 'Précision Absolue',
@@ -143,7 +141,6 @@ const challenges = [
     innovation: "Les gyroscopes laser actuels détectent des rotations de l'ordre du milliardième de degré.",
     comparaison: "0,1° d'erreur, c'est comme lancer une fléchette depuis Paris et rater la cible à New York de 400 km — soit l'équivalent de viser New York et atterrir à Boston.",
     funFact: "La précision requise est équivalente à lancer une fléchette depuis Paris et toucher le centre d'une cible à New York.",
-    link: { label: "Navigation et guidage — ONERA", url: "https://www.onera.fr/fr" },
   },
   {
     name: 'Légèreté Maximale',
@@ -152,7 +149,6 @@ const challenges = [
     innovation: "Les nouveaux matériaux permettent un rapport résistance/poids 5 fois supérieur à l'acier.",
     comparaison: "C'est comme préparer ton sac pour un voyage avec un quota de 20 kg : chaque kilo de sac vide économisé te permet d'emporter 100 kg de matériel utile de plus. Chaque gramme gagné sur la structure profite directement au satellite.",
     funFact: "Économiser 1 kg sur la structure d'un lanceur peut permettre de placer 100 kg supplémentaires en orbite.",
-    link: { label: "Matériaux spatiaux — CNES R&T", url: "https://cnes.fr/fr/recherche-technologie" },
   },
   {
     name: 'Vibrations et Acoustique',
@@ -161,7 +157,6 @@ const challenges = [
     innovation: "Des capteurs piézoélectriques actifs contrent les vibrations en temps réel, comme un casque antibruit géant pour satellite.",
     comparaison: "Un concert de rock c'est environ 110 dB — déjà douloureux. Au décollage, Ariane 6 atteint 165 dB : acoustiquement, c'est 100 000 fois plus intense qu'un concert. À cette puissance, les tympans humains éclateraient en moins d'une seconde.",
     funFact: "La pression acoustique au décollage atteint 165 dB. Sans protection, un satellite se briserait en vol avant même d'atteindre l'atmosphère.",
-    link: { label: "Centre d'essais ESA — ESTEC", url: "https://www.esa.int/Enabling_Support/Space_Engineering_Technology/Test_Centre" },
   },
 ];
 
@@ -290,6 +285,7 @@ export function RocketSection({ onComplete, onHome }: RocketSectionProps) {
 
   // Existing state
   const [selectedChallenge, setSelectedChallenge] = useState<number | null>(null);
+  const [futureRocketsClicked, setFutureRocketsClicked] = useState(false);
   const [quizCompleted, setQuizCompleted] = useState(false);
   const [reflection, setReflection] = useState('');
 
@@ -303,6 +299,7 @@ export function RocketSection({ onComplete, onHome }: RocketSectionProps) {
       const r = await getResponses('rockets');
       if (r.chapter) setChapter(Math.min(parseInt(r.chapter, 10) || 0, TOTAL_CHAPTERS - 1));
       if (r.selectedChallenge) setSelectedChallenge(parseInt(r.selectedChallenge, 10));
+      if (r.futureRocketsClicked === 'true') setFutureRocketsClicked(true);
       if (r.quizCompleted === 'true') setQuizCompleted(true);
       if (r.reflection) setReflection(r.reflection);
       if (r.orderClicks) setOrderClicks(JSON.parse(r.orderClicks));
@@ -357,6 +354,11 @@ export function RocketSection({ onComplete, onHome }: RocketSectionProps) {
       setSelectedLauncher(null);
       setTimeout(() => setWorldMatchWrong(false), 800);
     }
+  };
+
+  const handleFutureRocketsClick = async () => {
+    setFutureRocketsClicked(true);
+    if (hydrated) await saveResponse('rockets', 'futureRocketsClicked', 'true');
   };
 
   const handleChallengeSelect = async (i: number) => {
@@ -590,8 +592,14 @@ export function RocketSection({ onComplete, onHome }: RocketSectionProps) {
             titlePrefix="Quel problème les équipes ont-elles dû"
             titleAccent="résoudre ?"
             lede="Sélectionne un défi pour découvrir comment les ingénieurs l'ont résolu. Chaque contrainte a généré une innovation qui profite aujourd'hui à d'autres secteurs."
-            onPrev={() => goTo(1)} onNext={() => goTo(3)} nextEnabled={selectedChallenge !== null}
-            nextLabel={selectedChallenge !== null ? "Continue · Les salles blanches →" : "Sélectionne un défi d'abord"}
+            onPrev={() => goTo(1)} onNext={() => goTo(3)} nextEnabled={selectedChallenge !== null && futureRocketsClicked}
+            nextLabel={
+              selectedChallenge === null
+                ? "Sélectionne un défi d'abord"
+                : futureRocketsClicked
+                  ? "Continue · Les salles blanches →"
+                  : "Consulte l'article sur les fusées de demain"
+            }
           >
             <div className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -628,15 +636,6 @@ export function RocketSection({ onComplete, onHome }: RocketSectionProps) {
                   <div className="bg-white/[0.04] border border-white/10 rounded-xl px-5 py-4">
                     <p className="text-[13px] text-white/70 leading-[1.55]">{challenges[selectedChallenge].funFact}</p>
                   </div>
-                  <a
-                    href={challenges[selectedChallenge].link.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 text-[12px] text-magenta hover:underline"
-                  >
-                    {challenges[selectedChallenge].link.label}
-                    <ExternalLink className="w-3 h-3" strokeWidth={1.75} />
-                  </a>
                 </div>
               )}
 
@@ -679,6 +678,24 @@ export function RocketSection({ onComplete, onHome }: RocketSectionProps) {
                   </span>
                 </a>
               </div>
+
+              <a
+                href="https://cnes.fr/dossiers/quoi-ressembleront-fusees-de-demain"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={handleFutureRocketsClick}
+                className={`block rounded-2xl border-[1.5px] p-5 transition hover:-translate-y-0.5 ${
+                  futureRocketsClicked ? 'border-white/10 bg-white/[0.04]' : 'border-magenta bg-magenta/[0.06] animate-pulse'
+                }`}
+              >
+                <p className="text-[10px] uppercase tracking-[0.16em] text-white/45 mb-1.5">CNES</p>
+                <p className="text-[14px] font-semibold text-white mb-1">
+                  À quoi ressembleront les fusées de demain ?
+                </p>
+                <span className="inline-flex items-center gap-1.5 text-[12px] text-magenta hover:underline">
+                  Lire le dossier <ExternalLink className="w-3 h-3" strokeWidth={1.75} />
+                </span>
+              </a>
             </div>
           </ChapterShell>
         )}
@@ -1061,7 +1078,7 @@ export function RocketSection({ onComplete, onHome }: RocketSectionProps) {
             onPrev={() => goTo(5)} onNext={() => {}} nextEnabled={false}
             nextLabel="Réponds aux questions d'abord"
           >
-            <Quiz questions={quizQuestions} onComplete={handleQuizComplete} />
+            <Quiz questions={quizQuestions} section="rockets" onComplete={handleQuizComplete} />
           </ChapterShell>
         )}
 
