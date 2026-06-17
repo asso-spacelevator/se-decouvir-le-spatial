@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
-import { Instagram, Youtube, Globe, ExternalLink, QrCode, Check } from 'lucide-react';
+import { Instagram, Youtube, Globe, ExternalLink, QrCode, Check, ThumbsUp, Sparkles } from 'lucide-react';
 import { useSession } from '../contexts/SessionContext';
 import { QRCodeSVG } from 'qrcode.react';
 import { SectionCanvas, SectionTopBar, SectionProgress, ChapterShell, ChapterRecap } from './ChapterShell';
 
-const TOTAL_CHAPTERS = 4;
+const TOTAL_CHAPTERS = 5;
 const MIN_ACCOUNTS = 3;
 const MIN_SITES = 3;
 
@@ -56,6 +56,26 @@ const webResources: WebResource[] = [
   { name: 'Robotique FIRST France', description: "Compétitions de robotique éducative STEM, soutenues par la Fondation EDF", url: 'https://www.robotiquefirstfrance.org/' },
 ];
 
+interface SpatialEvent {
+  id: string;
+  name: string;
+  description: string;
+  when: string;
+}
+
+const spatialEvents: SpatialEvent[] = [
+  { id: 'bourget', name: 'Salon du Bourget', description: 'Le plus grand salon aéronautique et spatial au monde, organisé tous les deux ans près de Paris.', when: 'Juin (années impaires)' },
+  { id: 'nuit_etoiles', name: 'Nuit des Étoiles', description: "Événement national d'astronomie avec des observations gratuites partout en France.", when: 'Août' },
+  { id: 'fete_science', name: 'Fête de la Science', description: "Semaine nationale de médiation scientifique avec des ateliers et conférences ouverts à tous.", when: 'Octobre' },
+  { id: 'world_space_week', name: "Semaine Mondiale de l'Espace", description: "Célébration internationale de la contribution de l'espace à l'amélioration de la condition humaine.", when: '4–10 octobre' },
+  { id: 'cspace', name: "C'Space (CNES)", description: "Campagne de lancement de fusées et ballons étudiants organisée par le CNES à Biscarrosse.", when: 'Juillet' },
+  { id: 'forum_espace', name: "Forum de l'Espace CNES", description: "Grande conférence annuelle réunissant les acteurs de la filière spatiale française.", when: 'Décembre' },
+  { id: 'ers', name: 'European Rover Challenge', description: "Compétition internationale de robots spatiaux étudiants, basée en Pologne.", when: 'Septembre' },
+  { id: 'spacecal', name: 'SpaceCal', description: "Agenda en ligne des événements spatiaux français — conférences, expositions, concours.", when: 'Toute l\'année' },
+];
+
+const MIN_EVENTS_RATED = Math.ceil(spatialEvents.length * 3 / 4);
+
 const categoryLabels: Record<SocialReference['category'], string> = {
   astronaut: 'Astronautes Français',
   agency: 'Agences Spatiales',
@@ -77,6 +97,8 @@ export function SocialReferencesSection({ onComplete, onHome }: SocialReferences
   const [selectedQR, setSelectedQR] = useState<string | null>(null);
   const [visitedAccounts, setVisitedAccounts] = useState<string[]>([]);
   const [visitedSites, setVisitedSites] = useState<string[]>([]);
+  const [knewEvents, setKnewEvents] = useState<string[]>([]);
+  const [newEvents, setNewEvents] = useState<string[]>([]);
 
   useEffect(() => {
     (async () => {
@@ -88,6 +110,12 @@ export function SocialReferencesSection({ onComplete, onHome }: SocialReferences
       }
       if (r.visitedSites) {
         try { setVisitedSites(JSON.parse(r.visitedSites)); } catch { /* ignore parse errors */ }
+      }
+      if (r.knewEvents) {
+        try { setKnewEvents(JSON.parse(r.knewEvents)); } catch { /* ignore parse errors */ }
+      }
+      if (r.newEvents) {
+        try { setNewEvents(JSON.parse(r.newEvents)); } catch { /* ignore parse errors */ }
       }
       setHydrated(true);
     })();
@@ -120,6 +148,29 @@ export function SocialReferencesSection({ onComplete, onHome }: SocialReferences
     if (hydrated) await saveResponse('social_references', 'visitedSites', JSON.stringify(updated));
   };
 
+  const rateEvent = async (id: string, knew: boolean) => {
+    const removeFrom = knew ? newEvents : knewEvents;
+    const addTo = knew ? knewEvents : newEvents;
+    const setRemove = knew ? setNewEvents : setKnewEvents;
+    const setAdd = knew ? setKnewEvents : setNewEvents;
+    const keyRemove = knew ? 'newEvents' : 'knewEvents';
+    const keyAdd = knew ? 'knewEvents' : 'newEvents';
+
+    const updatedRemove = removeFrom.filter(i => i !== id);
+    const updatedAdd = addTo.includes(id) ? addTo : [...addTo, id];
+
+    setRemove(updatedRemove);
+    setAdd(updatedAdd);
+
+    if (hydrated) {
+      await saveResponse('social_references', keyRemove, JSON.stringify(updatedRemove));
+      await saveResponse('social_references', keyAdd, JSON.stringify(updatedAdd));
+    }
+  };
+
+  const ratedEventsCount = new Set([...knewEvents, ...newEvents]).size;
+  const eventsNeeded = Math.max(0, MIN_EVENTS_RATED - ratedEventsCount);
+
   const accountsNeeded = Math.max(0, MIN_ACCOUNTS - visitedAccounts.length);
   const sitesNeeded = Math.max(0, MIN_SITES - visitedSites.length);
 
@@ -146,7 +197,7 @@ export function SocialReferencesSection({ onComplete, onHome }: SocialReferences
         </div>
       )}
 
-      <SectionTopBar label="Session 1 · Chapitre 3 sur 4 · Réseaux Sociaux" onHome={onHome} />
+      <SectionTopBar label="Session 1 · Chapitre 3 sur 5 · Réseaux Sociaux" onHome={onHome} />
       <SectionProgress current={chapter} total={TOTAL_CHAPTERS} />
 
       <div className="relative z-[1] max-w-[1120px] mx-auto px-8 pt-14 pb-24">
@@ -292,15 +343,98 @@ export function SocialReferencesSection({ onComplete, onHome }: SocialReferences
           </ChapterShell>
         )}
 
-        {/* ── Ch 3 : Ton inspiration ── */}
+        {/* ── Ch 3 : Évènements ── */}
         {chapter === 2 && (
           <ChapterShell
-            kicker="03" title="Ton inspiration"
+            kicker="03" title="Évènements à ne pas manquer"
+            titlePrefix="Le spatial, ça se vit aussi"
+            titleAccent="en dehors de l'école."
+            lede="Pour chaque évènement, dis-nous si tu le connaissais déjà ou si tu le découvres maintenant."
+            onPrev={() => goTo(1)} onNext={() => goTo(3)}
+            nextEnabled={eventsNeeded === 0}
+            nextLabel={
+              eventsNeeded > 0
+                ? `Note encore ${eventsNeeded} évènement${eventsNeeded > 1 ? 's' : ''} pour continuer (${ratedEventsCount}/${MIN_EVENTS_RATED})`
+                : 'Continue · Ton inspiration →'
+            }
+          >
+            <div className="flex items-center gap-3 mb-6">
+              <span className={`text-[13px] font-semibold tabular-nums ${eventsNeeded === 0 ? 'text-magenta' : 'text-white/55'}`}>
+                {ratedEventsCount} / {MIN_EVENTS_RATED} évènements notés
+              </span>
+              {eventsNeeded === 0 && (
+                <span className="inline-flex items-center gap-1 bg-magenta/15 text-magenta rounded-full px-2.5 py-0.5 text-[11px] font-semibold">
+                  <Check className="w-3 h-3" strokeWidth={2.5} /> Minimum atteint
+                </span>
+              )}
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {spatialEvents.map(evt => {
+                const knew = knewEvents.includes(evt.id);
+                const isNew = newEvents.includes(evt.id);
+                const rated = knew || isNew;
+                return (
+                  <div
+                    key={evt.id}
+                    className={`bg-white/[0.04] border rounded-2xl p-5 transition-all ${
+                      rated ? 'border-magenta' : 'border-white/10'
+                    }`}
+                  >
+                    <div className="mb-3">
+                      <div className="flex items-start justify-between gap-2 mb-1">
+                        <h5 className="font-semibold text-white text-[15px] leading-snug">{evt.name}</h5>
+                        {rated && (
+                          <span className={`flex-shrink-0 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold ${
+                            knew ? 'bg-magenta/15 text-magenta' : 'bg-white/10 text-white/70'
+                          }`}>
+                            {knew ? <><ThumbsUp className="w-2.5 h-2.5" /> Je connaissais</> : <><Sparkles className="w-2.5 h-2.5" /> Découverte</>}
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-[11px] text-magenta/60 mb-1.5 font-medium">{evt.when}</p>
+                      <p className="text-[12px] text-white/55 leading-[1.45]">{evt.description}</p>
+                    </div>
+                    <div className="flex gap-2 mt-3">
+                      <button
+                        onClick={() => rateEvent(evt.id, true)}
+                        className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-[12px] font-semibold transition border ${
+                          knew
+                            ? 'bg-magenta text-white border-magenta'
+                            : 'bg-white/[0.04] text-white/60 border-white/10 hover:border-magenta hover:text-white'
+                        }`}
+                      >
+                        <ThumbsUp className="w-3.5 h-3.5" strokeWidth={2} />
+                        Je connaissais
+                      </button>
+                      <button
+                        onClick={() => rateEvent(evt.id, false)}
+                        className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-[12px] font-semibold transition border ${
+                          isNew
+                            ? 'bg-white/15 text-white border-white/40'
+                            : 'bg-white/[0.04] text-white/60 border-white/10 hover:border-white/30 hover:text-white'
+                        }`}
+                      >
+                        <Sparkles className="w-3.5 h-3.5" strokeWidth={2} />
+                        Je découvre
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </ChapterShell>
+        )}
+
+        {/* ── Ch 4 : Ton inspiration ── */}
+        {chapter === 3 && (
+          <ChapterShell
+            kicker="04" title="Ton inspiration"
             titlePrefix="Quel compte ou contenu spatial"
             titleAccent="t'inspire le plus ?"
             lede="Partage ce qui t'a le plus intéressé. Il n'y a pas de bonne ou mauvaise réponse."
-            onPrev={() => goTo(1)} onNext={() => goTo(3)} nextEnabled={favorite.trim().length > 0}
-            nextLabel={favorite.trim().length > 0 ? "Terminer le chapitre →" : "Écris ta réponse d'abord"}
+            onPrev={() => goTo(2)} onNext={() => goTo(4)} nextEnabled={favorite.trim().length > 0}
+            nextLabel={favorite.trim().length > 0 ? "Voir mon récap →" : "Écris ta réponse d'abord"}
           >
             <div>
               <label className="block text-[13px] font-medium text-white/70 mb-3">
@@ -319,18 +453,20 @@ export function SocialReferencesSection({ onComplete, onHome }: SocialReferences
         )}
 
         {/* ── Récap ── */}
-        {chapter === 3 && (
+        {chapter === 4 && (
           <ChapterRecap
             chapterLabel="Réseaux Sociaux"
             summary="Tu as découvert les comptes à suivre pour rester connecté à l'actualité spatiale, les sites de référence, et partagé ce qui t'inspire."
             stats={[
               { v: visitedAccounts.length, t: 'comptes consultés' },
               { v: visitedSites.length, t: 'sites explorés' },
+              { v: knewEvents.length, t: `évènement${knewEvents.length > 1 ? 's' : ''} déjà connu${knewEvents.length > 1 ? 's' : ''}` },
+              { v: newEvents.length, t: `évènement${newEvents.length > 1 ? 's' : ''} découvert${newEvents.length > 1 ? 's' : ''}` },
             ]}
             nextTitle="Pause entre les sessions"
             nextDesc="Session 1 terminée. Reviens à l'accueil pour démarrer la session 2."
             onContinue={onComplete}
-            onPrev={() => goTo(2)}
+            onPrev={() => goTo(3)}
           />
         )}
       </div>
