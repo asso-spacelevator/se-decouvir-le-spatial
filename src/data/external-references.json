@@ -1,0 +1,73 @@
+{
+  "instagram": [
+    { "name": "Thomas Pesquet", "handle": "@thom_astro", "category": "astronaut", "url": "https://www.instagram.com/thom_astro/" },
+    { "name": "Sophie Adenot", "handle": "@soph8astro", "category": "astronaut", "url": "https://www.instagram.com/soph8astro/" },
+    { "name": "CNES", "handle": "@cnes_france", "category": "agency", "url": "https://www.instagram.com/cnes_france/" },
+    { "name": "Odyssée Spatiale", "handle": "@odyssee.spatiale", "category": "education", "url": "https://www.instagram.com/odyssee.spatiale/" },
+    { "name": "Spaceexplorerw", "handle": "@spaceexplorerw", "category": "education", "url": "https://www.instagram.com/spaceexplorerw/" },
+    { "name": "Rêves d'Espace", "handle": "@revesdespace", "category": "education", "url": "https://www.instagram.com/revesdespace/" },
+    { "name": "Cité de l'Espace", "handle": "@citeespace", "category": "education", "url": "https://www.instagram.com/citeespace/" },
+    { "name": "Elles bougent", "handle": "@ellesbougent", "category": "female_role_model", "url": "https://www.instagram.com/ellesbougent" },
+    { "name": "Astro Allan", "handle": "@astro_allan", "category": "female_role_model", "url": "https://www.instagram.com/astro_allan/" }
+  ],
+  "youtube": [
+    { "name": "CNES", "handle": "youtube.com/@CnesFrance", "category": "agency", "url": "https://www.youtube.com/@CnesFrance/" },
+    { "name": "ESA", "handle": "youtube.com/user/ESA", "category": "agency", "url": "https://www.youtube.com/user/ESA" },
+    { "name": "Techniques Spatiales", "handle": "@TechniquesSpatiales", "category": "education", "url": "https://www.youtube.com/@TechniquesSpatiales" },
+    { "name": "Stardust", "handle": "youtube.com/@StardustSpace", "category": "education", "url": "https://www.youtube.com/channel/UCdL3UpiseRlvxXuORJjmqZw" }
+  ],
+  "linkedin": [
+    { "name": "The Women's Voices", "category": "female_role_model", "url": "https://www.linkedin.com/company/the-women-s-voices/posts/" }
+  ],
+  "media_actualite": [
+    { "name": "Rêves d'Espace", "description": "Actualité spatiale : missions, astronautes, exploration", "url": "https://reves-d-espace.com" },
+    { "name": "CNES", "description": "Ressources officielles, projets éducatifs (Proximars, SpatioLab)", "url": "https://cnes.fr" },
+    { "name": "ESA", "description": "Missions spatiales européennes, contenus éducatifs et vidéos", "url": "https://www.esa.int" },
+    { "name": "SpaceCal", "description": "L'agenda des événements du spatial français — gratuit pour tous", "url": "https://www.spacecal.fr/" },
+    { "name": "Robotique FIRST France", "description": "Compétitions de robotique éducative STEM, soutenues par la Fondation EDF", "url": "https://www.robotiquefirstfrance.org/" }
+  ],
+  "associations_accompagnement": [
+    { "name": "Planète Sciences", "url": "https://www.planete-sciences.org/" },
+    { "name": "Elles Bougent", "url": "https://www.ellesbougent.com" },
+    { "name": "Femmes & Sciences", "url": "https://www.femmesetsciences.fr" },
+    { "name": "Girls Can Code", "url": "https://girlscancode.fr" },
+    { "name": "Association Eureka", "url": "https://association-eureka.fr/" },
+    { "name": "Mentorat Vers le Sup", "url": "https://www.mentoratverslesup.dema1n.org/" },
+    { "name": "1 Jeune 1 Mentor", "url": "https://www.1jeune1mentor.fr/" },
+    { "name": "Télémaque", "url": "https://www.telemaque.org/" },
+    { "name": "Propulse Association", "url": "https://propulse-association.fr/" },
+    { "name": "Association Tremplin", "url": "http://www.association-tremplin.org" },
+    { "name": "Les Maths en Scène", "url": "https://lesmathsenscene.fr" },
+    { "name": "C'Génial", "url": "https://www.cgenial.org" }
+  ],
+  "dispositifs": [
+    { "name": "Mallettes pédagogiques CNES", "provider": "CNES", "url": "https://cnes.fr/fr/education" },
+    { "name": "Défis Espace ESA", "provider": "ESA", "url": "https://www.esa.int/Education" },
+    { "name": "Rencontrer des ambassadeurs métiers", "provider": "My Job Glasses", "url": "https://www.myjobglasses.com/rencontrez-des-ambassadeurs/" },
+    { "name": "Carrières ESA", "provider": "ESA", "url": "https://www.esa.int/About_Us/Careers_at_ESA" }
+  ],
+  "institutionnel_technique": [
+    { "name": "ArianeGroup", "url": "https://www.ariane.group/" },
+    { "name": "Arianespace — Ariane 6", "url": "https://www.arianespace.com/vehicle/ariane-6/" },
+    { "name": "CNES — Ariane 6", "url": "https://cnes.fr/projets/ariane-6/modeles" },
+    { "name": "CNES — Débris spatiaux", "url": "https://cnes.fr/dossiers/debris-spatiaux" },
+    { "name": "CNES — T4SC", "url": "https://cnes.fr/projets/t4sc" },
+    { "name": "CNES — Sciences de la Terre", "url": "https://cnes.fr/scientifiques/sciences-terre-environnement" },
+    { "name": "CNES — Accès à l'espace", "url": "https://cnes.fr/fr/acces-espace" },
+    { "name": "CNES — Centre Spatial Guyanais", "url": "https://cnes.fr/dossiers/centre-spatial-guyanais-une-porte-vers-lespace" },
+    { "name": "CNES — Applications satellites", "url": "https://cnes.fr/dossiers/applications-satellites" },
+    { "name": "CNES — Futurs lanceurs", "url": "https://cnes.fr/dossiers/quoi-ressembleront-fusees-de-demain" },
+    { "name": "ESA — Test Centre", "url": "https://www.esa.int/Enabling_Support/Space_Engineering_Technology/Test_Centre" },
+    { "name": "ESA — Themis", "url": "https://www.esa.int/Enabling_Support/Space_Transportation/Themis" },
+    { "name": "ESA — Transport spatial", "url": "https://www.esa.int/Enabling_Support/Space_Transportation" },
+    { "name": "ESA — Visite virtuelle ESTEC", "url": "https://esamultimedia.esa.int/multimedia/ESTEC/virtualtour/" },
+    { "name": "ESA — Visuals Earth", "url": "https://visuals.earth.esa.int/" },
+    { "name": "Copernicus Climate Change Service", "url": "https://climate.copernicus.eu/" },
+    { "name": "IFREMER — Océan et climat", "url": "https://www.ifremer.fr/fr/ocean-climat" },
+    { "name": "Spot The Station (NASA)", "url": "https://spotthestation.nasa.gov" },
+    { "name": "Stuff in Space", "url": "https://stuffin-space.vader.zone/" },
+    { "name": "Comètes (entreprise spatiale)", "url": "https://cometes-spatial.fr" },
+    { "name": "Imperial College London", "url": "https://www.imperial.ac.uk/" },
+    { "name": "NASA Ames", "url": "https://www.nasa.gov/ames/" }
+  ]
+}
