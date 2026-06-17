@@ -123,7 +123,7 @@ function CompanyLogo({ company }: { company: SpaceCompany }) {
 }
 
 /* ════════════════════════════════════════════════════════════════════════ */
-export function EuropeActorsMap({ className = '' }: { className?: string }) {
+export function EuropeActorsMap({ className = '', onCompanySelect }: { className?: string; onCompanySelect?: (id: number) => void }) {
   const companies = useMemo(
     () => EUROPEAN_SPACE_COMPANIES.map((c, id) => ({ ...c, id })),
     [],
@@ -242,6 +242,7 @@ export function EuropeActorsMap({ className = '' }: { className?: string }) {
 
   const selectCompany = (id: number) => {
     setSelectedId(id);
+    onCompanySelect?.(id);
     const row = rowRefs.current[id];
     const list = listRef.current;
     if (row && list) {

@@ -19,7 +19,7 @@ import { useSession } from '../contexts/SessionContext';
  * ════════════════════════════════════════════════════════════════════ */
 
 const SECTION = 'entreprises_spatiales';
-const TOTAL_CHAPTERS = 5;
+const TOTAL_CHAPTERS = 6;
 
 // ── Données comparaison startups vs historiques ───────────────────────
 const COMPARISON = [
@@ -93,20 +93,52 @@ interface EntreprisesSpatialeSectionProps {
 }
 
 export function EntreprisesSpatialesSection({ onComplete, onHome }: EntreprisesSpatialeSectionProps) {
-  const { saveResponse, getResponses } = useSession();
+  const { saveResponse, getResponses, logVideoView } = useSession();
   const [chapter, setChapter] = useState(0);
   const [hydrated, setHydrated] = useState(false);
   const [cometesVisited, setCometesVisited] = useState(false);
+  const [mapCompaniesSet, setMapCompaniesSet] = useState<Set<number>>(new Set());
+  const [comparisonReflection, setComparisonReflection] = useState('');
+  const [afterWords, setAfterWords] = useState<string[]>(['', '', '', '', '']);
 
   useEffect(() => {
     (async () => {
       const r = await getResponses(SECTION);
       if (r.chapter) setChapter(Math.min(parseInt(r.chapter) || 0, TOTAL_CHAPTERS - 1));
       if (r.cometes_visited === 'true') setCometesVisited(true);
+      if (r.map_companies_ids) {
+        try {
+          const ids = r.map_companies_ids.split(',').map(Number).filter(n => !isNaN(n));
+          setMapCompaniesSet(new Set(ids));
+        } catch { /* ignore */ }
+      }
+      if (r.comparison_reflection) setComparisonReflection(r.comparison_reflection);
+      if (r.mots_fin_session) {
+        try { setAfterWords(JSON.parse(r.mots_fin_session) as string[]); } catch { /* ignore */ }
+      }
       setHydrated(true);
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const handleMapCompanySelect = async (id: number) => {
+    if (mapCompaniesSet.has(id)) return;
+    const next = new Set(mapCompaniesSet);
+    next.add(id);
+    setMapCompaniesSet(next);
+    if (hydrated) await saveResponse(SECTION, 'map_companies_ids', Array.from(next).join(','));
+  };
+
+  const handleComparisonReflectionChange = async (v: string) => {
+    setComparisonReflection(v);
+    if (hydrated) await saveResponse(SECTION, 'comparison_reflection', v);
+  };
+
+  const handleAfterWordChange = async (index: number, value: string) => {
+    const updated = afterWords.map((w, i) => (i === index ? value : w));
+    setAfterWords(updated);
+    if (hydrated) await saveResponse(SECTION, 'mots_fin_session', JSON.stringify(updated));
+  };
 
   const handleCometesClick = async () => {
     setCometesVisited(true);
@@ -144,10 +176,10 @@ export function EntreprisesSpatialesSection({ onComplete, onHome }: EntreprisesS
             lede="Clique sur un point pour découvrir une entreprise, ses partenaires et ses chiffres clés. Filtre par secteur pour voir qui fait quoi à travers l'Europe."
             onPrev={null}
             onNext={() => goTo(1)}
-            nextEnabled
-            nextLabel="Continue · Startups vs Historiques →"
+            nextEnabled={mapCompaniesSet.size >= 3}
+            nextLabel={mapCompaniesSet.size >= 3 ? "Continue · Startups vs Historiques →" : `Explore au moins 3 entreprises (${mapCompaniesSet.size}/3 explorées)`}
           >
-            <EuropeActorsMap />
+            <EuropeActorsMap onCompanySelect={handleMapCompanySelect} />
           </ChapterShell>
         )}
 
@@ -162,8 +194,8 @@ export function EntreprisesSpatialesSection({ onComplete, onHome }: EntreprisesS
             lede="Dans le spatial, il existe deux grands types d'entreprises. Elles fonctionnent très différemment, mais elles ont toutes les deux leur place. Voici comment les comparer, sans prendre parti."
             onPrev={() => goTo(0)}
             onNext={() => goTo(2)}
-            nextEnabled
-            nextLabel="Continue · Monte ta boîte spatiale →"
+            nextEnabled={comparisonReflection.trim().length >= 10}
+            nextLabel={comparisonReflection.trim().length >= 10 ? "Continue · Monte ta boîte spatiale →" : "Réponds à la question pour continuer"}
           >
             {/* En-têtes colonnes */}
             <div className="grid grid-cols-2 gap-4 mb-4">
@@ -210,6 +242,21 @@ export function EntreprisesSpatialesSection({ onComplete, onHome }: EntreprisesS
                 <span className="font-semibold text-white">À retenir :</span> les deux fonctionnent ensemble. Les grandes entreprises passent souvent des commandes aux startups (pièces, logiciels, services), et les startups ont besoin des grands groupes pour tester et valider leurs technologies. Il n'y a pas un meilleur chemin que l'autre pour entrer dans le secteur spatial.
               </p>
             </div>
+
+            {/* Réflexion personnelle */}
+            <div className="mt-6">
+              <label className="block text-[13px] font-semibold text-white mb-2">
+                Quel type d'environnement de travail t'attire le plus, et pourquoi ?
+              </label>
+              <textarea
+                value={comparisonReflection}
+                onChange={e => handleComparisonReflectionChange(e.target.value)}
+                placeholder="Startup ou grande entreprise ? Dis-nous ce qui t'attire dans ce modèle..."
+                className="w-full bg-white/[0.04] border border-white/10 rounded-lg px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-magenta focus:ring-2 focus:ring-magenta/20 resize-none text-[14px]"
+                rows={4}
+                maxLength={2000}
+              />
+            </div>
           </ChapterShell>
         )}
 
@@ -243,7 +290,7 @@ export function EntreprisesSpatialesSection({ onComplete, onHome }: EntreprisesS
             onPrev={() => goTo(2)}
             onNext={() => goTo(4)}
             nextEnabled={cometesVisited}
-            nextLabel={cometesVisited ? 'Continue · Récap →' : 'Explore le site de Comètes pour continuer'}
+            nextLabel={cometesVisited ? 'Continue · Nuage de mots →' : 'Explore le site de Comètes pour continuer'}
           >
             {CATEGORY_ORDER.map(cat => {
               const cards = VIDEO_CARDS.filter(v => v.category === cat);
@@ -333,7 +380,7 @@ export function EntreprisesSpatialesSection({ onComplete, onHome }: EntreprisesS
                   <p className="text-[13px] font-semibold">Métier · diriger une entreprise du spatial</p>
                 </div>
                 <div className="relative aspect-video bg-black">
-                  <YouTubeEmbed videoId="WfJBYx9cRe4" title="Pierre Bertrand — présentation" nocookie />
+                  <YouTubeEmbed videoId="WfJBYx9cRe4" title="Pierre Bertrand — présentation" nocookie onView={() => logVideoView(SECTION, 'WfJBYx9cRe4', 'Pierre Bertrand — présentation')} />
                 </div>
                 <p className="text-[11px] italic text-white/35 px-5 py-3 border-t border-white/10">Pierre Bertrand, président de l'association Space Elevator et fondateur de Skyhopy : ingénieur formé en France (CentraleSupélec) et au MIT, il a conçu des satellites pour des entreprises européennes et internationales avant de fonder sa propre société.</p>
               </div>
@@ -345,7 +392,7 @@ export function EntreprisesSpatialesSection({ onComplete, onHome }: EntreprisesS
                   <p className="text-[13px] font-semibold">Métier · ingénieur appel d'offres</p>
                 </div>
                 <div className="relative aspect-[9/16] bg-black">
-                  <YouTubeEmbed videoId="BG5cHnVtj7A" title="Ingénieur appel d'offres — présentation" nocookie />
+                  <YouTubeEmbed videoId="BG5cHnVtj7A" title="Ingénieur appel d'offres — présentation" nocookie onView={() => logVideoView(SECTION, 'BG5cHnVtj7A', 'Ingénieur appel d\'offres — présentation')} />
                 </div>
               </div>
 
@@ -354,7 +401,7 @@ export function EntreprisesSpatialesSection({ onComplete, onHome }: EntreprisesS
                   <p className="text-[13px] font-semibold">Métier · responsable marketing</p>
                 </div>
                 <div className="relative aspect-[9/16] bg-black">
-                  <YouTubeEmbed videoId="EQV0ZaiPgHE" title="Responsable marketing — présentation" nocookie />
+                  <YouTubeEmbed videoId="EQV0ZaiPgHE" title="Responsable marketing — présentation" nocookie onView={() => logVideoView(SECTION, 'EQV0ZaiPgHE', 'Responsable marketing — présentation')} />
                 </div>
               </div>
             </div>
@@ -362,9 +409,31 @@ export function EntreprisesSpatialesSection({ onComplete, onHome }: EntreprisesS
         )}
 
         {/* ──────────────────────────────────────────────────────────────
-            Chapitre 4 : Récap
+            Chapitre 4 : Nuage de mots — fin de session
         ────────────────────────────────────────────────────────────── */}
-        {chapter === 4 && (
+        {chapter === 4 && (() => {
+          const filledAfter = afterWords.filter(w => w.trim().length > 0).length;
+          const canContinue = import.meta.env.DEV || filledAfter >= 3;
+          return (
+            <ChapterShell
+              kicker="05"
+              title="Et maintenant,"
+              titleAccent="quels mots te viennent ?"
+              lede="Tu as exploré l'écosystème, monté ta boîte et découvert les métiers. Quels mots te viennent spontanément quand tu penses au secteur spatial aujourd'hui ?"
+              onPrev={() => goTo(3)}
+              onNext={() => goTo(5)}
+              nextEnabled={canContinue}
+              nextLabel={canContinue ? 'Continue · Récap →' : `Écris au moins 3 mots (${filledAfter}/3)`}
+            >
+              <WordInputs words={afterWords} onChange={handleAfterWordChange} />
+            </ChapterShell>
+          );
+        })()}
+
+        {/* ──────────────────────────────────────────────────────────────
+            Chapitre 5 : Récap
+        ────────────────────────────────────────────────────────────── */}
+        {chapter === 5 && (
           <ChapterRecap
             chapterLabel="Entreprises du spatial européen"
             summary="Tu as cartographié l'écosystème spatial européen, monté ta propre boîte spatiale, comparé les deux modèles économiques qui le structurent et découvert la diversité des métiers qui y recrutent."
@@ -375,9 +444,66 @@ export function EntreprisesSpatialesSection({ onComplete, onHome }: EntreprisesS
             nextTitle="Accompagnement & Orientation"
             nextDesc="Quelles formations et quels parcours mènent au secteur spatial ?"
             onContinue={onComplete}
-            onPrev={() => goTo(3)}
+            onPrev={() => goTo(4)}
           />
         )}
+      </div>
+    </div>
+  );
+}
+
+/* ════════════════════════════════════════════════════════════════════
+ *  WordInputs — collecte 5 mots libres en fin de section
+ * ════════════════════════════════════════════════════════════════════ */
+function WordInputs({ words, onChange }: { words: string[]; onChange: (i: number, v: string) => void }) {
+  const filled = words.filter(w => w.trim().length > 0).length;
+
+  return (
+    <div className="flex flex-col gap-7">
+      <div className="grid grid-cols-1 sm:grid-cols-5 gap-4">
+        {words.map((word, i) => (
+          <div key={i} className="flex flex-col items-center gap-3">
+            <div className={`w-10 h-10 rounded-full grid place-items-center transition-all duration-300 ${
+              word.trim()
+                ? 'bg-magenta text-white shadow-[0_0_0_4px_rgba(200,37,122,0.18)]'
+                : 'bg-magenta/10 border border-magenta/30 text-magenta'
+            }`}>
+              <span className="font-bold text-[14px]">{i + 1}</span>
+            </div>
+            <input
+              type="text"
+              value={word}
+              onChange={(e) => onChange(i, e.target.value)}
+              placeholder="…"
+              maxLength={30}
+              className={`w-full rounded-xl px-3 py-4 text-white text-[15px] text-center font-medium placeholder-white/25 focus:outline-none focus:ring-2 focus:ring-magenta/20 transition-all duration-200 ${
+                word.trim()
+                  ? 'bg-magenta/[0.08] border border-magenta/40 focus:border-magenta'
+                  : 'bg-white/[0.04] border border-white/10 focus:border-magenta'
+              }`}
+            />
+          </div>
+        ))}
+      </div>
+
+      <div className="flex items-center gap-3">
+        <div className="flex gap-1.5">
+          {words.map((w, i) => (
+            <div
+              key={i}
+              className={`rounded-full transition-all duration-300 ${
+                w.trim() ? 'w-4 h-2 bg-magenta' : 'w-2 h-2 bg-white/15'
+              }`}
+            />
+          ))}
+        </div>
+        <span className="text-[12px] text-white/45">
+          {filled === 5
+            ? 'Parfait. Tu es prêt·e à continuer.'
+            : filled >= 3
+              ? `${filled} mots. Tu peux continuer dès maintenant.`
+              : `${filled} mot${filled > 1 ? 's' : ''} sur 5.`}
+        </span>
       </div>
     </div>
   );
