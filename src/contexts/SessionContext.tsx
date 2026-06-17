@@ -8,8 +8,9 @@ interface SessionContextType {
   completeSection: (section: string) => Promise<void>;
   saveResponse: (section: string, questionId: string, response: string) => Promise<void>;
   getResponses: (section: string) => Promise<Record<string, string>>;
-  submitQuestion: (category: string, questionText: string, isAnonymous: boolean) => Promise<void>;
+  submitQuestion: (category: string, questionText: string, isAnonymous: boolean, sourceSection?: string) => Promise<void>;
   recordQuizScore: (section: string, questionId: string, isCorrect: boolean) => Promise<void>;
+  logVideoView: (section: string, videoId: string, videoTitle: string) => Promise<void>;
   saveSchoolName: (name: string) => Promise<void>;
   restartSession: () => Promise<void>;
   markSession1Complete: () => Promise<void>;
@@ -185,7 +186,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     return responses;
   };
 
-  const submitQuestion = async (category: string, questionText: string, isAnonymous: boolean) => {
+  const submitQuestion = async (category: string, questionText: string, isAnonymous: boolean, sourceSection?: string) => {
     if (!session) return;
 
     await supabase
@@ -194,7 +195,8 @@ export function SessionProvider({ children }: { children: ReactNode }) {
         session_id: session.id,
         category,
         question_text: questionText,
-        is_anonymous: isAnonymous
+        is_anonymous: isAnonymous,
+        ...(sourceSection ? { source_section: sourceSection } : {}),
       });
   };
 
@@ -208,6 +210,19 @@ export function SessionProvider({ children }: { children: ReactNode }) {
         section,
         question_id: questionId,
         is_correct: isCorrect
+      });
+  };
+
+  const logVideoView = async (section: string, videoId: string, videoTitle: string) => {
+    if (!session) return;
+
+    await supabase
+      .from('video_views')
+      .insert({
+        session_id: session.id,
+        section,
+        video_id: videoId,
+        video_title: videoTitle,
       });
   };
 
@@ -267,7 +282,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <SessionContext.Provider value={{ session, loading, updateSection, completeSection, saveResponse, getResponses, submitQuestion, recordQuizScore, saveSchoolName, restartSession, markSession1Complete, markSession2Complete }}>
+    <SessionContext.Provider value={{ session, loading, updateSection, completeSection, saveResponse, getResponses, submitQuestion, recordQuizScore, logVideoView, saveSchoolName, restartSession, markSession1Complete, markSession2Complete }}>
       {children}
     </SessionContext.Provider>
   );

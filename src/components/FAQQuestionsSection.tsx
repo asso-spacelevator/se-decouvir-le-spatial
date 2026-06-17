@@ -116,7 +116,7 @@ export function FAQQuestionsSection({ onComplete, onHome }: FAQQuestionsSectionP
 
   const handleSubmit = async () => {
     if (!questionText.trim()) return;
-    await submitQuestion(category, questionText, isAnonymous);
+    await submitQuestion(category, questionText, isAnonymous, 'faq_questions');
     setQuestionSubmitted(true);
     if (hydrated) await saveResponse('faq_questions', 'questionSubmitted', 'true');
   };

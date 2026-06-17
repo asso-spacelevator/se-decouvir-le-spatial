@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { PlayCircle, VideoOff } from 'lucide-react';
 
 type ConsentValue = 'accepted' | 'refused';
@@ -23,10 +23,12 @@ interface YouTubeEmbedProps {
   title: string;
   start?: number;
   nocookie?: boolean;
+  onView?: () => void;
 }
 
-export function YouTubeEmbed({ videoId, title, start, nocookie = false }: YouTubeEmbedProps) {
+export function YouTubeEmbed({ videoId, title, start, nocookie = false, onView }: YouTubeEmbedProps) {
   const [consent, setConsent] = useState<ConsentValue | null>(readConsent);
+  const viewFired = useRef(false);
 
   useEffect(() => {
     const onCustom = (e: Event) => setConsent((e as CustomEvent<ConsentValue>).detail);
@@ -38,6 +40,13 @@ export function YouTubeEmbed({ videoId, title, start, nocookie = false }: YouTub
       window.removeEventListener('storage', onStorage);
     };
   }, []);
+
+  useEffect(() => {
+    if (consent === 'accepted' && onView && !viewFired.current) {
+      viewFired.current = true;
+      onView();
+    }
+  }, [consent, onView]);
 
   const accept = () => writeConsent('accepted');
   const refuse = () => writeConsent('refused');
