@@ -417,7 +417,7 @@ export function MoonEssay({
       <textarea
         rows={4}
         value={value}
-        placeholder="Écris ta réponse ici…"
+        placeholder="Écris ta réponse ici… (30 caractères)"
         onChange={(e) => {
           const v = e.target.value;
           setValue(v);

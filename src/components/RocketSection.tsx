@@ -267,7 +267,7 @@ function ResourceLinks({ title, links }: { title: string; links: { label: string
 }
 
 export function RocketSection({ onComplete, onHome }: RocketSectionProps) {
-  const { saveResponse, getResponses } = useSession();
+  const { saveResponse, getResponses, logVideoView } = useSession();
   const [chapter, setChapter] = useState(0);
   const [hydrated, setHydrated] = useState(false);
 
@@ -644,7 +644,7 @@ export function RocketSection({ onComplete, onHome }: RocketSectionProps) {
                   <p className="text-[13px] font-semibold">Métier · ingénieur structures pour l'hypersonique</p>
                 </div>
                 <div className="aspect-video bg-black/70 relative">
-                  <YouTubeEmbed videoId="kUdCU-x7dKo" title="Allan Petre — présentation" nocookie />
+                  <YouTubeEmbed videoId="kUdCU-x7dKo" title="Allan Petre — présentation" nocookie onView={() => logVideoView('rockets', 'kUdCU-x7dKo', 'Allan Petre — présentation')} />
                 </div>
                 <p className="text-[11px] italic text-white/35 px-5 py-3 border-t border-white/10">Allan Petre, ingénieur en mécanique des fluides : dimensionner les structures de capsules, lanceurs et satellites pour qu'elles tiennent aux vitesses hypersoniques. Doctorat à l'Imperial College de Londres et passage à la NASA, à San Francisco.</p>
               </div>

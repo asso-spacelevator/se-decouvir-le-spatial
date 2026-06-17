@@ -65,11 +65,11 @@ const MOSAIC_CSS = `
 .mq-detail{ display:block; max-height:0; opacity:0; margin-top:0; overflow:hidden;
   color:rgba(255,255,255,.86); font-size:11.5px; line-height:1.42; font-weight:400; text-shadow:0 1px 8px rgba(0,0,0,.7);
   transition:max-height .42s cubic-bezier(.2,0,0,1), opacity .3s, margin-top .42s; }
-.mq-tile:hover .mq-detail, .mq-tile:focus-within .mq-detail{ max-height:170px; opacity:1; margin-top:7px; }
+.mq-tile:hover .mq-detail, .mq-tile:focus-within .mq-detail, .mq-tile.mq-answered .mq-detail{ max-height:170px; opacity:1; margin-top:7px; }
 .mq-ask{ display:flex; flex-wrap:wrap; gap:6px; max-height:0; opacity:0; margin-top:0; overflow:hidden;
   transition:max-height .42s cubic-bezier(.2,0,0,1), opacity .3s .04s, margin-top .42s; }
-.mq-tile:hover .mq-ask, .mq-tile:focus-within .mq-ask{ max-height:90px; opacity:1; margin-top:10px; }
-.mq-tile.mq-short:hover .mq-year, .mq-tile.mq-short:focus-within .mq-year{ display:none; }
+.mq-tile:hover .mq-ask, .mq-tile:focus-within .mq-ask, .mq-tile.mq-answered .mq-ask{ max-height:90px; opacity:1; margin-top:10px; }
+.mq-tile.mq-short:hover .mq-year, .mq-tile.mq-short:focus-within .mq-year, .mq-tile.mq-short.mq-answered .mq-year{ display:none; }
 .mq-askbtn{ font-family:inherit; font-size:11px; font-weight:600; line-height:1; cursor:pointer; border-radius:7px;
   padding:7px 9px; border:1px solid rgba(255,255,255,.28); background:rgba(255,255,255,.10); color:#fff;
   display:inline-flex; align-items:center; gap:6px; transition:background .15s, border-color .15s, color .15s; }
@@ -130,9 +130,14 @@ const MOSAIC_CSS = `
 }
 `;
 
-export function MosaiqueSatellites() {
+interface MosaiqueSatellitesProps {
+  onAnsweredCount?: (count: number) => void;
+}
+
+export function MosaiqueSatellites({ onAnsweredCount }: MosaiqueSatellitesProps = {}) {
   const ref = useRef<HTMLDivElement>(null);
   const [verdicts, setVerdicts] = useState<Record<string, Verdict>>({});
+  const [revealed, setRevealed] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     try { setVerdicts(JSON.parse(localStorage.getItem(STORE) || '{}')); } catch { /* ignore */ }
@@ -154,9 +159,15 @@ export function MosaiqueSatellites() {
 
   useEffect(() => {
     const obs = new IntersectionObserver((entries) => {
-      entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('mq-in'); obs.unobserve(e.target); } });
+      entries.forEach((e) => {
+        if (e.isIntersecting) {
+          const key = (e.target as HTMLElement).dataset.mqKey ?? '';
+          setRevealed((prev) => { const s = new Set(prev); s.add(key); return s; });
+          obs.unobserve(e.target);
+        }
+      });
     }, { threshold: 0.08 });
-    ref.current?.querySelectorAll('.mq-tile, .mq-out').forEach((el, i) => {
+    ref.current?.querySelectorAll('[data-mq-key]').forEach((el, i) => {
       (el as HTMLElement).style.transitionDelay = `${Math.min(i, 12) * 45}ms`;
       obs.observe(el);
     });
@@ -164,6 +175,9 @@ export function MosaiqueSatellites() {
   }, []);
 
   const knownCount = Object.values(verdicts).filter((v) => v === 'known').length;
+  const answeredCount = Object.keys(verdicts).length;
+
+  useEffect(() => { onAnsweredCount?.(answeredCount); }, [answeredCount, onAnsweredCount]);
 
   return (
     <section ref={ref}>
@@ -201,9 +215,10 @@ export function MosaiqueSatellites() {
             v ? 'mq-answered' : '',
             v === 'known' ? 'mq-is-known' : '',
             v === 'unknown' ? 'mq-is-unknown' : '',
+            revealed.has(t.area) ? 'mq-in' : '',
           ].filter(Boolean).join(' ');
           return (
-            <figure key={t.area} className={cls} tabIndex={0}>
+            <figure key={t.area} data-mq-key={t.area} className={cls} tabIndex={0}>
               <img loading="lazy" src={t.img} alt={t.alt} />
               {t.feature && <span className="mq-tick" />}
               <div className="mq-scrim" />
@@ -235,7 +250,7 @@ export function MosaiqueSatellites() {
           );
         })}
 
-        <div className="mq-out mq-a-out">
+        <div data-mq-key="out" className={`mq-out mq-a-out${revealed.has('out') ? ' mq-in' : ''}`}>
           <p className="mq-big">En 70 ans, on est passé d'<b>un</b> satellite à <b>plus de 10&nbsp;000</b> en orbite.</p>
           <p>Météo, GPS, télévision, Internet, sécurité civile&nbsp;: ils sont devenus l'infrastructure invisible qui
             conditionne chaque aspect de nos vies. Tu viens d'en parcourir l'histoire image par image.</p>

@@ -246,6 +246,7 @@ export function SatelliteSection({ onComplete, onHome }: SatelliteSectionProps) 
   const [hydrated, setHydrated] = useState(false);
   const [selectedOrbit, setSelectedOrbit] = useState<number | null>(null);
   const [anatomyGameCompleted, setAnatomyGameCompleted] = useState(false);
+  const [mosaicAnswered, setMosaicAnswered] = useState(0);
   const [quizCompleted, setQuizCompleted] = useState(false);
   const [missionIdea, setMissionIdea] = useState('');
   const [instrumentsExplored, setInstrumentsExplored] = useState<Set<string>>(new Set());
@@ -324,8 +325,8 @@ export function SatelliteSection({ onComplete, onHome }: SatelliteSectionProps) 
             titlePrefix="Tout a commencé le 4 octobre 1957 :"
             titleAccent="7 500 satellites au-dessus de ta tête aujourd'hui."
             lede="En 70 ans, l'humanité est passée de zéro à une infrastructure qui conditionne chaque GPS, chaque prévision météo, chaque appel international. Parcours la frise pour voir comment cette révolution silencieuse s'est construite."
-            onPrev={null} onNext={() => goTo(1)} nextEnabled={true}
-            nextLabel="Continue · Anatomie d'un satellite →"
+            onPrev={null} onNext={() => goTo(1)} nextEnabled={mosaicAnswered >= 10}
+            nextLabel={mosaicAnswered >= 10 ? "Continue · Anatomie d'un satellite →" : `Note encore ${10 - mosaicAnswered} moment${10 - mosaicAnswered > 1 ? 's' : ''} pour continuer`}
           >
             <div className="grid grid-cols-3 gap-3 mb-8">
               {[
@@ -339,7 +340,7 @@ export function SatelliteSection({ onComplete, onHome }: SatelliteSectionProps) 
                 </div>
               ))}
             </div>
-            <MosaiqueSatellites />
+            <MosaiqueSatellites onAnsweredCount={setMosaicAnswered} />
           </ChapterShell>
         )}
 
