@@ -58,6 +58,9 @@ export function ExplorationSection({ onComplete, onHome }: ExplorationSectionPro
   const [moonQuiz, setMoonQuiz] = useState<number | null>(null);
   const [moonEssay, setMoonEssay] = useState('');
   const [roverSolved, setRoverSolved] = useState(false);
+  const [jwstReflection, setJwstReflection] = useState('');
+  const [voyagerAnswer, setVoyagerAnswer] = useState<'true' | 'false' | null>(null);
+  const [metierAnswer, setMetierAnswer] = useState<'true' | 'false' | null>(null);
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
@@ -67,6 +70,9 @@ export function ExplorationSection({ onComplete, onHome }: ExplorationSectionPro
       if (r.moon_quiz) setMoonQuiz(parseInt(r.moon_quiz, 10));
       if (r.moon_essay) setMoonEssay(r.moon_essay);
       if (r.rover_solved === '1') setRoverSolved(true);
+      if (r.jwst_reflection) setJwstReflection(r.jwst_reflection);
+      if (r.voyager_answer === 'true' || r.voyager_answer === 'false') setVoyagerAnswer(r.voyager_answer);
+      if (r.metier_answer === 'true' || r.metier_answer === 'false') setMetierAnswer(r.metier_answer);
       setHydrated(true);
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -90,6 +96,18 @@ export function ExplorationSection({ onComplete, onHome }: ExplorationSectionPro
     setRoverSolved(true);
     if (hydrated) await saveResponse('exploration', 'rover_solved', '1');
   };
+  const handleJwstReflection = async (text: string) => {
+    setJwstReflection(text);
+    if (hydrated) await saveResponse('exploration', 'jwst_reflection', text);
+  };
+  const handleVoyagerAnswer = async (v: 'true' | 'false') => {
+    setVoyagerAnswer(v);
+    if (hydrated) await saveResponse('exploration', 'voyager_answer', v);
+  };
+  const handleMetierAnswer = async (v: 'true' | 'false') => {
+    setMetierAnswer(v);
+    if (hydrated) await saveResponse('exploration', 'metier_answer', v);
+  };
 
   return (
     <SectionCanvas>
@@ -103,9 +121,24 @@ export function ExplorationSection({ onComplete, onHome }: ExplorationSectionPro
             num="02" kicker="Télescope spatial · observation"
             title={<>James&nbsp;Webb — voir la<br /><span className="text-magenta">première lumière de l'Univers.</span></>}
             lede="Le plus grand et le plus puissant télescope spatial jamais lancé. Replié comme un origami, déployé à 1,5 million de km, refroidi à l'extrême — pour capter une lumière vieille de 13,5 milliards d'années."
-            onPrev={() => goTo(0)} onNext={() => goTo(2)} nextLabel="Continue · Artémis →"
+            onPrev={() => goTo(0)} onNext={() => goTo(2)}
+            nextEnabled={jwstReflection.trim().length >= 10}
+            nextLabel={jwstReflection.trim().length >= 10 ? "Continue · Artémis →" : "Réponds à la question pour continuer"}
           >
             <JamesWebb />
+            <div className="mt-10 border-t border-white/10 pt-8">
+              <label className="block text-[13px] font-semibold text-white mb-2">
+                Parmi les 4 applications de James Webb, laquelle te semble la plus importante, et pourquoi ?
+              </label>
+              <textarea
+                value={jwstReflection}
+                onChange={e => handleJwstReflection(e.target.value)}
+                placeholder="Écris ta réponse ici..."
+                className="w-full bg-white/[0.04] border border-white/10 rounded-lg px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-magenta focus:ring-2 focus:ring-magenta/20 resize-none text-[14px]"
+                rows={4}
+                maxLength={2000}
+              />
+            </div>
           </MissionShell>
         )}
         {chapter === 2 && (
@@ -113,8 +146,13 @@ export function ExplorationSection({ onComplete, onHome }: ExplorationSectionPro
             num="03" kicker="Vols habités · retour sur la Lune"
             title={<>Artémis — bientôt,<br /><span className="text-magenta">marcher de nouveau sur la Lune.</span></>}
             lede="Depuis Apollo 11 et le premier pas sur la Lune en 1969, le rêve d'y retourner — et peut-être d'y vivre un jour — n'a jamais disparu. Artémis en est la suite : un programme américain qui ramène des astronautes autour de la Lune, puis sur sa surface, vers le pôle Sud."
-            onPrev={() => goTo(1)} onNext={() => goTo(3)} nextEnabled={moonQuiz !== null}
-            nextLabel={moonQuiz !== null ? 'Continue · Voyager 1 →' : 'Réponds au quiz pour continuer'}
+            onPrev={() => goTo(1)} onNext={() => goTo(3)}
+            nextEnabled={moonQuiz !== null && moonEssay.trim().length >= 10}
+            nextLabel={
+              moonQuiz === null ? 'Réponds au quiz pour continuer'
+              : moonEssay.trim().length < 10 ? 'Complète ta réponse pour continuer'
+              : 'Continue · Voyager 1 →'
+            }
           >
             <Artemis
               moonQuiz={moonQuiz} onMoonQuiz={handleMoonQuiz}
@@ -127,9 +165,51 @@ export function ExplorationSection({ onComplete, onHome }: ExplorationSectionPro
             num="04" kicker="Sonde interstellaire · 1977 →"
             title={<>Voyager 1 — l'objet<br /><span className="text-magenta">le plus lointain jamais construit.</span></>}
             lede="Lancée en 1977, elle a survolé Jupiter et Saturne, puis quitté le système solaire. Elle emporte un disque d'or : un message de l'humanité, pour qui le trouvera."
-            onPrev={() => goTo(2)} onNext={() => goTo(4)} nextLabel="Continue · Mars →"
+            onPrev={() => goTo(2)} onNext={() => goTo(4)}
+            nextEnabled={voyagerAnswer !== null}
+            nextLabel={voyagerAnswer !== null ? "Continue · Mars →" : "Réponds à la question pour continuer"}
           >
             <Voyager />
+            <div className="mt-10 border-t border-white/10 pt-8">
+              <div className="rounded-2xl border border-magenta/25 bg-magenta/[0.06] p-6">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-magenta mb-3">Vrai ou Faux ?</p>
+                <p className="text-[17px] font-bold text-white mb-5">
+                  Le disque d'or embarqué sur Voyager 1 a été conçu sous la direction de Carl Sagan.
+                </p>
+                <div className="flex gap-3">
+                  {(['true', 'false'] as const).map(val => {
+                    const selected = voyagerAnswer === val;
+                    const isCorrect = val === 'true';
+                    const showFeedback = voyagerAnswer !== null;
+                    return (
+                      <button
+                        key={val}
+                        onClick={() => handleVoyagerAnswer(val)}
+                        disabled={voyagerAnswer !== null}
+                        className={`flex-1 rounded-lg px-5 py-3 text-[14px] font-semibold transition border ${
+                          selected
+                            ? isCorrect
+                              ? 'bg-green-900/40 border-green-500 text-green-300'
+                              : 'bg-red-900/40 border-red-500 text-red-300'
+                            : showFeedback && isCorrect
+                              ? 'bg-green-900/20 border-green-500/50 text-green-400'
+                              : 'border-white/15 text-white/70 hover:border-magenta/50 hover:text-white disabled:opacity-50'
+                        }`}
+                      >
+                        {val === 'true' ? 'Vrai' : 'Faux'}
+                      </button>
+                    );
+                  })}
+                </div>
+                {voyagerAnswer !== null && (
+                  <p className={`mt-4 text-[13px] leading-relaxed ${voyagerAnswer === 'true' ? 'text-green-300' : 'text-red-300'}`}>
+                    {voyagerAnswer === 'true'
+                      ? 'Exact. Carl Sagan a présidé le comité qui a conçu le disque d\'or — il a sélectionné les sons, les images et les musiques pour représenter l\'humanité.'
+                      : 'Pas tout à fait. C\'est bien Carl Sagan qui a dirigé la conception du disque d\'or, avec un comité qu\'il présidait.'}
+                  </p>
+                )}
+              </div>
+            </div>
           </MissionShell>
         )}
         {chapter === 4 && (
@@ -148,9 +228,11 @@ export function ExplorationSection({ onComplete, onHome }: ExplorationSectionPro
             num="06" kicker="Carrières · exploration spatiale"
             title={<>Quels métiers<br /><span className="text-magenta">derrière ces missions ?</span></>}
             lede="Avant qu'une sonde ne décolle ou qu'un télescope ne s'ouvre, des centaines de spécialistes ont conçu, testé et analysé pendant des années. Voici quelques métiers qui font avancer l'exploration spatiale."
-            onPrev={() => goTo(4)} onNext={() => goTo(6)} nextLabel="Voir le récap →"
+            onPrev={() => goTo(4)} onNext={() => goTo(6)}
+            nextEnabled={metierAnswer !== null}
+            nextLabel={metierAnswer !== null ? "Voir le récap →" : "Réponds à la question pour continuer"}
           >
-            <Metiers />
+            <Metiers answer={metierAnswer} onAnswer={handleMetierAnswer} />
           </MissionShell>
         )}
         {chapter === 6 && (
@@ -1025,7 +1107,8 @@ const METIERS_RECHERCHE = [
   },
 ] as const;
 
-function Metiers() {
+function Metiers({ answer, onAnswer }: { answer: 'true' | 'false' | null; onAnswer: (v: 'true' | 'false') => void }) {
+  const { logVideoView } = useSession();
   return (
     <>
       <SectionLabel>Des métiers, pas seulement des astronautes</SectionLabel>
@@ -1100,7 +1183,7 @@ function Metiers() {
       </p>
       <figure className="m-0 mb-3 max-w-[640px]">
         <div className="relative rounded-2xl overflow-hidden border border-white/12 bg-black aspect-video">
-          <YouTubeEmbed videoId="zISjqQEh6LY" title="Ines Mertz — présentation" nocookie />
+          <YouTubeEmbed videoId="zISjqQEh6LY" title="Ines Mertz — présentation" nocookie onView={() => logVideoView('exploration', 'zISjqQEh6LY', 'Ines Mertz — présentation')} />
         </div>
         <figcaption className="mt-2 flex items-start gap-2 text-[11px] text-white/45">
           <span className="font-mono uppercase tracking-wide text-magenta-300 shrink-0">Crédit</span>
@@ -1108,7 +1191,46 @@ function Metiers() {
         </figcaption>
       </figure>
 
-      <div className="border border-magenta rounded-lg p-4 border-[1.5px]">
+      <div className="mt-6 rounded-2xl border border-magenta/25 bg-magenta/[0.06] p-6">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-magenta mb-3">Vrai ou Faux ? · après avoir regardé la vidéo</p>
+        <p className="text-[17px] font-bold text-white mb-5">
+          Inès Mertz fait sa thèse sur la planète Mercure et le vent solaire.
+        </p>
+        <div className="flex gap-3">
+          {(['true', 'false'] as const).map(val => {
+            const selected = answer === val;
+            const isCorrect = val === 'true';
+            const showFeedback = answer !== null;
+            return (
+              <button
+                key={val}
+                onClick={() => onAnswer(val)}
+                disabled={answer !== null}
+                className={`flex-1 rounded-lg px-5 py-3 text-[14px] font-semibold transition border ${
+                  selected
+                    ? isCorrect
+                      ? 'bg-green-900/40 border-green-500 text-green-300'
+                      : 'bg-red-900/40 border-red-500 text-red-300'
+                    : showFeedback && isCorrect
+                      ? 'bg-green-900/20 border-green-500/50 text-green-400'
+                      : 'border-white/15 text-white/70 hover:border-magenta/50 hover:text-white disabled:opacity-50'
+                }`}
+              >
+                {val === 'true' ? 'Vrai' : 'Faux'}
+              </button>
+            );
+          })}
+        </div>
+        {answer !== null && (
+          <p className={`mt-4 text-[13px] leading-relaxed ${answer === 'true' ? 'text-green-300' : 'text-red-300'}`}>
+            {answer === 'true'
+              ? 'Exact. Inès Mertz est doctorante à l\'Observatoire de Paris et travaille sur Mercure et le vent solaire — elle a aussi effectué un stage au JPL en Californie.'
+              : 'Pas tout à fait. Inès Mertz fait bien sa thèse sur Mercure et le vent solaire, à l\'Observatoire de Paris.'}
+          </p>
+        )}
+      </div>
+
+      <div className="mt-6 border border-magenta rounded-lg p-4 border-[1.5px]">
         <p className="m-0 text-[13px] text-white/70 leading-relaxed">
           <strong className="text-white">Le saviez-vous ?</strong> Une mission comme Perseverance a mobilisé plus de 7&nbsp;000 personnes,
           ingénieur·es, scientifiques et technicien·nes, avant même son décollage. Chacun de ces métiers est une porte d'entrée possible vers le spatial.
