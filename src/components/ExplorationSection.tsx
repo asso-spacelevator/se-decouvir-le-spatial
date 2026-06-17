@@ -128,12 +128,12 @@ export function ExplorationSection({ onComplete, onHome }: ExplorationSectionPro
             <JamesWebb />
             <div className="mt-10 border-t border-white/10 pt-8">
               <label className="block text-[13px] font-semibold text-white mb-2">
-                Parmi les 4 applications de James Webb, laquelle te semble la plus importante, et pourquoi ?
+                Parmi les 4 applications de James Webb, laquelle te semble la plus importante, et pourquoi ? 
               </label>
               <textarea
                 value={jwstReflection}
                 onChange={e => handleJwstReflection(e.target.value)}
-                placeholder="Écris ta réponse ici..."
+                placeholder="Écris ta réponse ici... (30 caractères)"
                 className="w-full bg-white/[0.04] border border-white/10 rounded-lg px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-magenta focus:ring-2 focus:ring-magenta/20 resize-none text-[14px]"
                 rows={4}
                 maxLength={2000}

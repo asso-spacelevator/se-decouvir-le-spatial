@@ -251,7 +251,7 @@ export function EntreprisesSpatialesSection({ onComplete, onHome }: EntreprisesS
               <textarea
                 value={comparisonReflection}
                 onChange={e => handleComparisonReflectionChange(e.target.value)}
-                placeholder="Startup ou grande entreprise ? Dis-nous ce qui t'attire dans ce modèle..."
+                placeholder="Startup ou grande entreprise ? Dis-nous ce qui t'attire dans ce modèle... (30 caractères)"
                 className="w-full bg-white/[0.04] border border-white/10 rounded-lg px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-magenta focus:ring-2 focus:ring-magenta/20 resize-none text-[14px]"
                 rows={4}
                 maxLength={2000}
