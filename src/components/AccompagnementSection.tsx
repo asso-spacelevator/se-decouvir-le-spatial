@@ -200,6 +200,7 @@ export function AccompagnementSection({ onComplete, onHome }: AccompagnementSect
   const [chapter, setChapter] = useState(0);
   const [hydrated, setHydrated] = useState(false);
   const [interested, setInterested] = useState('');
+  const [assocLinksVisited, setAssocLinksVisited] = useState<Set<number>>(new Set());
   const [mentoringPlatforms, setMentoringPlatforms] = useState<MentoringPlatform[]>([]);
   const [scientificAssociations, setScientificAssociations] = useState<ScientificAssociation[]>([]);
 
@@ -208,6 +209,12 @@ export function AccompagnementSection({ onComplete, onHome }: AccompagnementSect
       const r = await getResponses('accompagnement');
       if (r.chapter) setChapter(Math.min(parseInt(r.chapter, 10) || 0, TOTAL_CHAPTERS - 1));
       if (r.interested) setInterested(r.interested);
+      if (r.assoc_links_visited) {
+        try {
+          const ids = r.assoc_links_visited.split(',').map(Number).filter(n => !isNaN(n));
+          setAssocLinksVisited(new Set(ids));
+        } catch { /* ignore */ }
+      }
 
       const { data: mentoring } = await supabase.from('mentoring_platforms').select('*').order('name');
       if (mentoring) setMentoringPlatforms(mentoring);
@@ -232,6 +239,14 @@ export function AccompagnementSection({ onComplete, onHome }: AccompagnementSect
     if (hydrated) await saveResponse('accompagnement', 'interested', v);
   };
 
+  const handleAssocLinkVisit = async (index: number) => {
+    if (assocLinksVisited.has(index)) return;
+    const next = new Set(assocLinksVisited);
+    next.add(index);
+    setAssocLinksVisited(next);
+    if (hydrated) await saveResponse('accompagnement', 'assoc_links_visited', Array.from(next).join(','));
+  };
+
   return (
     <SectionCanvas>
       <SectionTopBar label="Session 2 · Chapitre 4 sur 5 · Accompagnement" onHome={onHome} />
@@ -246,8 +261,8 @@ export function AccompagnementSection({ onComplete, onHome }: AccompagnementSect
             titlePrefix="150 000 jeunes accompagnés chaque année."
             titleAccent="Ces structures peuvent t'aider à trouver ta voie."
             lede="Associations spatiales, plateformes de mentorat, dispositifs d'orientation. Chaque fiche te donne accès à des personnes et des programmes qui peuvent t'accompagner concrètement."
-            onPrev={null} onNext={() => goTo(1)} nextEnabled={true}
-            nextLabel="Continue · Ressources →"
+            onPrev={null} onNext={() => goTo(1)} nextEnabled={assocLinksVisited.size >= 2}
+            nextLabel={assocLinksVisited.size >= 2 ? "Continue · Ressources →" : `Visite au moins 2 sites d'associations (${assocLinksVisited.size}/2 visités)`}
           >
             <div className="grid grid-cols-3 gap-3 mb-8">
               {[
@@ -278,8 +293,10 @@ export function AccompagnementSection({ onComplete, onHome }: AccompagnementSect
                   <div className="flex flex-wrap gap-2">
                     {a.website && (
                       <a href={a.website} target="_blank" rel="noopener noreferrer"
+                        onClick={() => handleAssocLinkVisit(i)}
                         className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-magenta/10 hover:bg-magenta/20 border border-magenta/30 rounded-lg text-[12px] text-magenta transition">
                         <ExternalLink className="w-3.5 h-3.5" /> Site web
+                        {assocLinksVisited.has(i) && <span className="text-[10px] bg-magenta/20 rounded-full px-1.5 py-0.5">visité</span>}
                       </a>
                     )}
                     {a.email && (
