@@ -60,7 +60,7 @@ export function Session1QuestionsSection({ onComplete, onHome }: Session1Questio
 
   const handleSubmit = async () => {
     if (!questionText.trim()) return;
-    await submitQuestion(category, questionText, true);
+    await submitQuestion(category, questionText, true, 'session1_questions');
     setQuestionSubmitted(true);
     if (hydrated) await saveResponse('questions_session1', 'questionSubmitted', 'true');
   };
