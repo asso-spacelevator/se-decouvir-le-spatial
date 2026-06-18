@@ -1,4 +1,17 @@
+import { createContext, useContext, useRef } from 'react';
 import { ChevronLeft, Home, Trophy } from 'lucide-react';
+import { useSession } from '../contexts/SessionContext';
+
+interface ChapterTimeCtx { section: string; page: number }
+export const ChapterTimeContext = createContext<ChapterTimeCtx | null>(null);
+
+export function ChapterTimeTracker({ section, page, children }: ChapterTimeCtx & { children: React.ReactNode }) {
+  return (
+    <ChapterTimeContext.Provider value={{ section, page }}>
+      {children}
+    </ChapterTimeContext.Provider>
+  );
+}
 
 /* ─── SectionCanvas ─────────────────────────────────────────────────
  * Full-screen deep-space canvas used by every section.
@@ -113,6 +126,15 @@ export interface ChapterShellProps {
 }
 
 export function ChapterShell(props: ChapterShellProps) {
+  const { logChapterTime } = useSession();
+  const ctx = useContext(ChapterTimeContext);
+  const mountedAt = useRef(Date.now());
+
+  const handleNext = () => {
+    if (ctx) logChapterTime(ctx.section, ctx.page, Math.round((Date.now() - mountedAt.current) / 1000));
+    props.onNext();
+  };
+
   return (
     <section className="animate-[chapterIn_480ms_cubic-bezier(.2,0,0,1)]">
       <div className="flex flex-col gap-2 mb-7">
@@ -137,7 +159,7 @@ export function ChapterShell(props: ChapterShellProps) {
             {props.nextDesc && <span className="text-[13px] text-white/60">{props.nextDesc}</span>}
           </div>
           <button
-            onClick={props.onNext}
+            onClick={handleNext}
             disabled={!props.nextEnabled}
             className="inline-flex items-center gap-2 bg-magenta text-white rounded-lg px-6 py-4 text-[14px] font-semibold hover:bg-magenta-700 disabled:bg-white/10 disabled:text-white/40 disabled:cursor-not-allowed transition whitespace-nowrap"
           >
@@ -158,7 +180,7 @@ export function ChapterShell(props: ChapterShellProps) {
 
         {!props.nextTitle && (
           <button
-            onClick={props.onNext}
+            onClick={handleNext}
             disabled={!props.nextEnabled}
             className="inline-flex items-center gap-2 rounded-lg px-5 py-3.5 text-[14px] font-semibold bg-magenta text-white hover:bg-magenta-700 disabled:bg-white/10 disabled:text-white/40 disabled:cursor-not-allowed transition"
           >
@@ -188,6 +210,15 @@ interface ChapterRecapProps {
 export function ChapterRecap({
   chapterLabel, summary, stats = [], nextTitle, nextDesc, onContinue, onPrev,
 }: ChapterRecapProps) {
+  const { logChapterTime } = useSession();
+  const ctx = useContext(ChapterTimeContext);
+  const mountedAt = useRef(Date.now());
+
+  const handleContinue = () => {
+    if (ctx) logChapterTime(ctx.section, ctx.page, Math.round((Date.now() - mountedAt.current) / 1000));
+    onContinue();
+  };
+
   return (
     <section className="animate-[chapterIn_480ms_cubic-bezier(.2,0,0,1)]">
       <div className="text-center pt-10">
@@ -218,7 +249,7 @@ export function ChapterRecap({
             <span className="text-[13px] text-white/60">{nextDesc}</span>
           </div>
           <button
-            onClick={onContinue}
+            onClick={handleContinue}
             className="inline-flex items-center gap-2 bg-magenta text-white rounded-lg px-6 py-4 text-[14px] font-semibold hover:bg-magenta-700 transition whitespace-nowrap"
           >
             Continuer la session →

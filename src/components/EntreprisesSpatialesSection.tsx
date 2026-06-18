@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Building2, Rocket, ExternalLink, Telescope } from 'lucide-react';
-import { SectionTopBar, SectionProgress, ChapterShell, ChapterRecap } from './ChapterShell';
+import { SectionTopBar, SectionProgress, ChapterShell, ChapterRecap, ChapterTimeTracker } from './ChapterShell';
 import { EuropeActorsMap } from './EuropeActorsMap';
 import MonteTaBoiteWidget from './MonteTaBoiteWidget';
 import { YouTubeEmbed } from './YouTubeEmbed';
@@ -153,6 +153,7 @@ export function EntreprisesSpatialesSection({ onComplete, onHome }: EntreprisesS
   };
 
   return (
+    <ChapterTimeTracker section="entreprises_spatiales" page={chapter}>
     <div className="relative min-h-screen bg-deepspace text-white font-sans overflow-x-hidden">
       <div className="starry-background absolute inset-0" />
       <div className="pointer-events-none absolute inset-0">
@@ -449,6 +450,7 @@ export function EntreprisesSpatialesSection({ onComplete, onHome }: EntreprisesS
         )}
       </div>
     </div>
+    </ChapterTimeTracker>
   );
 }
 

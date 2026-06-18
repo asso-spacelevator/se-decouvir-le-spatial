@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { ISSViewer } from './ISSViewer';
 import { ChevronLeft, ChevronRight, CheckCircle, ExternalLink, Rocket, Satellite, Trophy, Users } from 'lucide-react';
 import { useSession } from '../contexts/SessionContext';
-import { ChapterShell, SectionTopBar, SectionProgress } from './ChapterShell';
+import { ChapterShell, SectionTopBar, SectionProgress, ChapterTimeTracker } from './ChapterShell';
 import { YouTubeEmbed } from './YouTubeEmbed';
 
 /* ════════════════════════════════════════════════════════════════
@@ -92,6 +92,7 @@ export function ImpactTerrestreSection({ onComplete, onHome }: ImpactTerrestreSe
   };
 
   return (
+    <ChapterTimeTracker section="impact_terrestre" page={chapter}>
     <div className="relative min-h-screen bg-deepspace text-white font-sans overflow-x-hidden">
       <div className="starry-background absolute inset-0" />
 
@@ -281,6 +282,7 @@ export function ImpactTerrestreSection({ onComplete, onHome }: ImpactTerrestreSe
         )}
       </div>
     </div>
+    </ChapterTimeTracker>
   );
 }
 

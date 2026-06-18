@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useContext, useState } from 'react';
 import { ChevronLeft, ChevronRight, Telescope, Rocket, Radio, Globe, Trophy, Sun, Plane, Lightbulb, Atom, Star, Sparkles, FlaskConical, Eye, Search, Mountain, Dna, Orbit } from 'lucide-react';
 import { PerseveranceViewer } from './PerseveranceViewer';
 import { PlanetCompareViewer } from './PlanetCompareViewer';
 import { useSession } from '../contexts/SessionContext';
-import { SectionCanvas, SectionTopBar, SectionProgress } from './ChapterShell';
+import { SectionCanvas, SectionTopBar, SectionProgress, ChapterTimeTracker, ChapterTimeContext } from './ChapterShell';
 import { YouTubeEmbed } from './YouTubeEmbed';
 import {
   Img,
@@ -110,6 +110,7 @@ export function ExplorationSection({ onComplete, onHome }: ExplorationSectionPro
   };
 
   return (
+    <ChapterTimeTracker section="exploration" page={chapter}>
     <SectionCanvas>
       <SectionTopBar label={`Session 3 · Chapitre ${chapter + 1} sur ${TOTAL_CHAPTERS} · Exploration`} onHome={onHome} />
       <SectionProgress current={chapter} total={TOTAL_CHAPTERS} />
@@ -240,6 +241,7 @@ export function ExplorationSection({ onComplete, onHome }: ExplorationSectionPro
         )}
       </main>
     </SectionCanvas>
+    </ChapterTimeTracker>
   );
 }
 
@@ -302,7 +304,16 @@ function MissionShell(props: {
   nextLabel: string;
   children: React.ReactNode;
 }) {
+  const { logChapterTime } = useSession();
+  const ctx = useContext(ChapterTimeContext);
+  const mountedAt = useRef(Date.now());
   const enabled = props.nextEnabled ?? true;
+
+  const handleNext = () => {
+    if (ctx) logChapterTime(ctx.section, ctx.page, Math.round((Date.now() - mountedAt.current) / 1000));
+    props.onNext();
+  };
+
   return (
     <section className="animate-[chapterIn_480ms_cubic-bezier(.2,0,0,1)]">
       <div className="flex flex-col gap-2 mb-7">
@@ -325,7 +336,7 @@ function MissionShell(props: {
           </button>
         ) : <div />}
         <button
-          onClick={props.onNext}
+          onClick={handleNext}
           disabled={!enabled}
           className="inline-flex items-center gap-2 rounded-lg px-5 py-3.5 text-[14px] font-semibold bg-magenta text-white hover:bg-magenta-700 disabled:bg-white/10 disabled:text-white/40 disabled:cursor-not-allowed transition"
         >
