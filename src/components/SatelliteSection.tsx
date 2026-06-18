@@ -5,7 +5,7 @@ import { Quiz } from './Quiz';
 import { SatelliteAnatomy } from './SatelliteAnatomy';
 import { MosaiqueSatellites } from './MosaiqueSatellites';
 import { SatelliteDistribution } from './SatelliteDistribution';
-import { SectionCanvas, SectionTopBar, SectionProgress, ChapterShell, ChapterRecap } from './ChapterShell';
+import { SectionCanvas, SectionTopBar, SectionProgress, ChapterShell, ChapterRecap, ChapterTimeTracker } from './ChapterShell';
 import { YouTubeEmbed } from './YouTubeEmbed';
 
 const TOTAL_CHAPTERS = 7;
@@ -312,6 +312,7 @@ export function SatelliteSection({ onComplete, onHome }: SatelliteSectionProps) 
   };
 
   return (
+    <ChapterTimeTracker section="satellites" page={chapter}>
     <SectionCanvas>
       <SectionTopBar label={`Session 2 · Chapitre ${chapter + 1} sur ${TOTAL_CHAPTERS} · Satellites & Orbites`} onHome={onHome} />
       <SectionProgress current={chapter} total={TOTAL_CHAPTERS} />
@@ -706,5 +707,6 @@ export function SatelliteSection({ onComplete, onHome }: SatelliteSectionProps) 
         )}
       </div>
     </SectionCanvas>
+    </ChapterTimeTracker>
   );
 }

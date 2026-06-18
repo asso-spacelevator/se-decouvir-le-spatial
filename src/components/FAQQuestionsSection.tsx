@@ -1,7 +1,7 @@
 import { useState, useEffect, type ReactNode } from 'react';
 import { MessageCircle, Send, CheckCircle, Briefcase, Wrench, Globe, ChevronDown } from 'lucide-react';
 import { useSession } from '../contexts/SessionContext';
-import { SectionCanvas, SectionTopBar, SectionProgress, ChapterShell } from './ChapterShell';
+import { SectionCanvas, SectionTopBar, SectionProgress, ChapterShell, ChapterTimeTracker } from './ChapterShell';
 
 const TOTAL_CHAPTERS = 2;
 
@@ -122,6 +122,7 @@ export function FAQQuestionsSection({ onComplete, onHome }: FAQQuestionsSectionP
   };
 
   return (
+    <ChapterTimeTracker section="faq_questions" page={chapter}>
     <SectionCanvas>
       <SectionTopBar label="Session 2 · Chapitre 5 sur 5 · Zone FAQ" onHome={onHome} />
       <SectionProgress current={chapter} total={TOTAL_CHAPTERS} />
@@ -247,5 +248,6 @@ export function FAQQuestionsSection({ onComplete, onHome }: FAQQuestionsSectionP
         )}
       </div>
     </SectionCanvas>
+    </ChapterTimeTracker>
   );
 }

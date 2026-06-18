@@ -6,7 +6,7 @@ import {
 } from 'lucide-react';
 import { useSession } from '../contexts/SessionContext';
 import { supabase } from '../lib/supabase';
-import { SectionCanvas, SectionTopBar, SectionProgress, ChapterShell, ChapterRecap } from './ChapterShell';
+import { SectionCanvas, SectionTopBar, SectionProgress, ChapterShell, ChapterRecap, ChapterTimeTracker } from './ChapterShell';
 
 const TOTAL_CHAPTERS = 4;
 
@@ -248,6 +248,7 @@ export function AccompagnementSection({ onComplete, onHome }: AccompagnementSect
   };
 
   return (
+    <ChapterTimeTracker section="accompagnement" page={chapter}>
     <SectionCanvas>
       <SectionTopBar label="Session 2 · Chapitre 4 sur 5 · Accompagnement" onHome={onHome} />
       <SectionProgress current={chapter} total={TOTAL_CHAPTERS} />
@@ -480,5 +481,6 @@ export function AccompagnementSection({ onComplete, onHome }: AccompagnementSect
         )}
       </div>
     </SectionCanvas>
+    </ChapterTimeTracker>
   );
 }

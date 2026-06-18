@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Instagram, Youtube, Globe, ExternalLink, QrCode, Check, ThumbsUp, Sparkles } from 'lucide-react';
 import { useSession } from '../contexts/SessionContext';
 import { QRCodeSVG } from 'qrcode.react';
-import { SectionCanvas, SectionTopBar, SectionProgress, ChapterShell, ChapterRecap } from './ChapterShell';
+import { SectionCanvas, SectionTopBar, SectionProgress, ChapterShell, ChapterRecap, ChapterTimeTracker } from './ChapterShell';
 
 const TOTAL_CHAPTERS = 5;
 const MIN_ACCOUNTS = 3;
@@ -175,6 +175,7 @@ export function SocialReferencesSection({ onComplete, onHome }: SocialReferences
   const sitesNeeded = Math.max(0, MIN_SITES - visitedSites.length);
 
   return (
+    <ChapterTimeTracker section="social" page={chapter}>
     <SectionCanvas>
       {selectedQR && (
         <div
@@ -471,5 +472,6 @@ export function SocialReferencesSection({ onComplete, onHome }: SocialReferences
         )}
       </div>
     </SectionCanvas>
+    </ChapterTimeTracker>
   );
 }

@@ -4,7 +4,7 @@ import { useSession } from '../contexts/SessionContext';
 import { Quiz } from './Quiz';
 import { Ariane6Diagram } from './Ariane6Diagram';
 import { MissionSimulator } from './MissionSimulator';
-import { SectionCanvas, SectionTopBar, SectionProgress, ChapterShell, ChapterRecap } from './ChapterShell';
+import { SectionCanvas, SectionTopBar, SectionProgress, ChapterShell, ChapterRecap, ChapterTimeTracker } from './ChapterShell';
 import { YouTubeEmbed } from './YouTubeEmbed';
 
 const TOTAL_CHAPTERS = 8;
@@ -378,6 +378,7 @@ export function RocketSection({ onComplete, onHome }: RocketSectionProps) {
   };
 
   return (
+    <ChapterTimeTracker section="rockets" page={chapter}>
     <SectionCanvas>
       <SectionTopBar label="Session 1 · Chapitre 2 sur 4 · Lanceurs et Ariane 6" onHome={onHome} />
       <SectionProgress current={chapter} total={TOTAL_CHAPTERS} />
@@ -1131,5 +1132,6 @@ export function RocketSection({ onComplete, onHome }: RocketSectionProps) {
         )}
       </div>
     </SectionCanvas>
+    </ChapterTimeTracker>
   );
 }

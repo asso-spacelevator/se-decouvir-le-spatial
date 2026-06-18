@@ -5,6 +5,7 @@ import {
   SectionTopBar,
   SectionProgress,
   ChapterShell,
+  ChapterTimeTracker,
 } from './ChapterShell';
 import { AvatarGuide } from './AvatarGuide';
 import { useSession } from '../contexts/SessionContext';
@@ -252,6 +253,7 @@ export function IntroductionPage({ onContinue, onHome, onBack }: IntroductionPag
 
   /* -------------------------------------------------------------------------- */
   return (
+    <ChapterTimeTracker section="introduction" page={page}>
     <SectionCanvas>
       <SectionTopBar label="Introduction · Avant de commencer" onHome={onHome} />
       <SectionProgress current={page} total={TOTAL_PAGES} />
@@ -342,6 +344,7 @@ export function IntroductionPage({ onContinue, onHome, onBack }: IntroductionPag
         )}
       </div>
     </SectionCanvas>
+    </ChapterTimeTracker>
   );
 }
 

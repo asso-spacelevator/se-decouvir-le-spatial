@@ -11,6 +11,7 @@ interface SessionContextType {
   submitQuestion: (category: string, questionText: string, isAnonymous: boolean, sourceSection?: string) => Promise<void>;
   recordQuizScore: (section: string, questionId: string, isCorrect: boolean) => Promise<void>;
   logVideoView: (section: string, videoId: string, videoTitle: string) => Promise<void>;
+  logChapterTime: (section: string, pageIndex: number, elapsedSec: number) => Promise<void>;
   saveSchoolName: (name: string) => Promise<void>;
   restartSession: () => Promise<void>;
   markSession1Complete: () => Promise<void>;
@@ -226,6 +227,19 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       });
   };
 
+  const logChapterTime = async (section: string, pageIndex: number, elapsedSec: number) => {
+    if (!session) return;
+
+    await supabase
+      .from('chapter_time_logs')
+      .insert({
+        session_id: session.id,
+        section,
+        page_index: pageIndex,
+        elapsed_sec: elapsedSec,
+      });
+  };
+
   const saveSchoolName = async (name: string) => {
     if (!session) return;
 
@@ -282,7 +296,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <SessionContext.Provider value={{ session, loading, updateSection, completeSection, saveResponse, getResponses, submitQuestion, recordQuizScore, logVideoView, saveSchoolName, restartSession, markSession1Complete, markSession2Complete }}>
+    <SessionContext.Provider value={{ session, loading, updateSection, completeSection, saveResponse, getResponses, submitQuestion, recordQuizScore, logVideoView, logChapterTime, saveSchoolName, restartSession, markSession1Complete, markSession2Complete }}>
       {children}
     </SessionContext.Provider>
   );
