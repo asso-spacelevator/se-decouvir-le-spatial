@@ -228,9 +228,9 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   };
 
   const logChapterTime = async (section: string, pageIndex: number, elapsedSec: number) => {
-    if (!session) return;
+    if (!session) { console.warn('[time] no session'); return; }
 
-    await supabase
+    const { error } = await supabase
       .from('chapter_time_logs')
       .insert({
         session_id: session.id,
@@ -238,6 +238,8 @@ export function SessionProvider({ children }: { children: ReactNode }) {
         page_index: pageIndex,
         elapsed_sec: elapsedSec,
       });
+    if (error) console.error('[time] insert error', error.message);
+    else console.log('[time] saved to DB', section, pageIndex, elapsedSec + 's');
   };
 
   const saveSchoolName = async (name: string) => {

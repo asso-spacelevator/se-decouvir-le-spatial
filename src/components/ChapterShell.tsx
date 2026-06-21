@@ -131,7 +131,13 @@ export function ChapterShell(props: ChapterShellProps) {
   const mountedAt = useRef(Date.now());
 
   const handleNext = () => {
-    if (ctx) logChapterTime(ctx.section, ctx.page, Math.round((Date.now() - mountedAt.current) / 1000));
+    if (ctx) {
+      const elapsed = Math.round((Date.now() - mountedAt.current) / 1000);
+      console.log('[time] continue clicked', ctx.section, 'page', ctx.page, elapsed + 's');
+      logChapterTime(ctx.section, ctx.page, elapsed);
+    } else {
+      console.warn('[time] no ChapterTimeTracker context found');
+    }
     props.onNext();
   };
 
