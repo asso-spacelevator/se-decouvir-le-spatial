@@ -1,9 +1,9 @@
-import { useEffect, useRef, useContext, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ChevronLeft, ChevronRight, Telescope, Rocket, Radio, Globe, Trophy, Sun, Plane, Lightbulb, Atom, Star, Sparkles, FlaskConical, Eye, Search, Mountain, Dna, Orbit } from 'lucide-react';
 import { PerseveranceViewer } from './PerseveranceViewer';
 import { PlanetCompareViewer } from './PlanetCompareViewer';
 import { useSession } from '../contexts/SessionContext';
-import { SectionCanvas, SectionTopBar, SectionProgress, ChapterTimeTracker, ChapterTimeContext } from './ChapterShell';
+import { SectionCanvas, SectionTopBar, SectionProgress } from './ChapterShell';
 import { YouTubeEmbed } from './YouTubeEmbed';
 import {
   Img,
@@ -53,7 +53,7 @@ interface ExplorationSectionProps {
 }
 
 export function ExplorationSection({ onComplete, onHome }: ExplorationSectionProps) {
-  const { saveResponse, getResponses } = useSession();
+  const { saveResponse, getResponses, logChapterTime } = useSession();
   const [chapter, setChapter] = useState(0);
   const [moonQuiz, setMoonQuiz] = useState<number | null>(null);
   const [moonEssay, setMoonEssay] = useState('');
@@ -62,17 +62,24 @@ export function ExplorationSection({ onComplete, onHome }: ExplorationSectionPro
   const [voyagerAnswer, setVoyagerAnswer] = useState<'true' | 'false' | null>(null);
   const [metierAnswer, setMetierAnswer] = useState<'true' | 'false' | null>(null);
   const [hydrated, setHydrated] = useState(false);
+  const chapterStartRef = useRef(Date.now());
+  const currentChapterRef = useRef(0);
 
   useEffect(() => {
     (async () => {
       const r = await getResponses('exploration');
-      if (r.chapter) setChapter(Math.min(parseInt(r.chapter, 10) || 0, TOTAL_CHAPTERS - 1));
+      if (r.chapter) {
+        const saved = Math.min(parseInt(r.chapter, 10) || 0, TOTAL_CHAPTERS - 1);
+        setChapter(saved);
+        currentChapterRef.current = saved;
+      }
       if (r.moon_quiz) setMoonQuiz(parseInt(r.moon_quiz, 10));
       if (r.moon_essay) setMoonEssay(r.moon_essay);
       if (r.rover_solved === '1') setRoverSolved(true);
       if (r.jwst_reflection) setJwstReflection(r.jwst_reflection);
       if (r.voyager_answer === 'true' || r.voyager_answer === 'false') setVoyagerAnswer(r.voyager_answer);
       if (r.metier_answer === 'true' || r.metier_answer === 'false') setMetierAnswer(r.metier_answer);
+      chapterStartRef.current = Date.now();
       setHydrated(true);
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -80,6 +87,10 @@ export function ExplorationSection({ onComplete, onHome }: ExplorationSectionPro
 
   const goTo = async (i: number) => {
     if (i < 0 || i >= TOTAL_CHAPTERS) return;
+    const elapsed = Math.round((Date.now() - chapterStartRef.current) / 1000);
+    logChapterTime('exploration', currentChapterRef.current, elapsed);
+    chapterStartRef.current = Date.now();
+    currentChapterRef.current = i;
     setChapter(i);
     window.scrollTo({ top: 0, behavior: 'smooth' });
     if (hydrated) await saveResponse('exploration', 'chapter', String(i));
@@ -110,7 +121,6 @@ export function ExplorationSection({ onComplete, onHome }: ExplorationSectionPro
   };
 
   return (
-    <ChapterTimeTracker section="exploration" page={chapter}>
     <SectionCanvas>
       <SectionTopBar label={`Session 3 · Chapitre ${chapter + 1} sur ${TOTAL_CHAPTERS} · Exploration`} onHome={onHome} />
       <SectionProgress current={chapter} total={TOTAL_CHAPTERS} />
@@ -241,7 +251,6 @@ export function ExplorationSection({ onComplete, onHome }: ExplorationSectionPro
         )}
       </main>
     </SectionCanvas>
-    </ChapterTimeTracker>
   );
 }
 
@@ -304,15 +313,8 @@ function MissionShell(props: {
   nextLabel: string;
   children: React.ReactNode;
 }) {
-  const { logChapterTime } = useSession();
-  const ctx = useContext(ChapterTimeContext);
-  const mountedAt = useRef(Date.now());
   const enabled = props.nextEnabled ?? true;
-
-  const handleNext = () => {
-    if (ctx) logChapterTime(ctx.section, ctx.page, Math.round((Date.now() - mountedAt.current) / 1000));
-    props.onNext();
-  };
+  const handleNext = () => props.onNext();
 
   return (
     <section className="animate-[chapterIn_480ms_cubic-bezier(.2,0,0,1)]">
