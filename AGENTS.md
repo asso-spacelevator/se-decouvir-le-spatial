@@ -105,6 +105,14 @@ hosted projects sync it via `supabase config push` (a separate command from
   every corresponding `<textarea>` must carry a matching `maxLength={N}` so
   the browser enforces the limit before the DB rejects the write
 
+### Legal pages
+
+`src/components/LegalPage.tsx` holds the privacy policy and terms of use
+(linked from `LegalFooter` and `StartPage`). Update it in the same change
+whenever you add or alter collected data (new tables/columns, tracking, local
+storage), retention or purge rules, third-party embeds or services (video,
+fonts, CDNs), the hosting provider or region, or the contact details.
+
 ### Static Assets
 
 Static assets (images, PDFs, etc.) live in the `public/` directory and are served
