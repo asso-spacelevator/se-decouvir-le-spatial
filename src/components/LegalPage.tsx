@@ -93,30 +93,32 @@ export function LegalPage({ page, onClose }: { page: LegalPageId; onClose: () =>
   const { title, accent, sections } = PAGES[page];
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-deepspace text-white font-sans overflow-x-hidden">
-      <div className="starry-background absolute inset-0" />
-      <div className="pointer-events-none absolute inset-0">
-        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] rounded-full opacity-15 bg-magenta blur-[120px]" />
-      </div>
-      <div className="relative z-10 max-w-[800px] mx-auto px-6 py-12 flex flex-col gap-8">
-        <button
-          type="button"
-          onClick={onClose}
-          className="self-start inline-flex items-center gap-2 border border-white/10 hover:border-white/30 text-white/70 hover:text-white rounded-lg px-4 py-2.5 text-[14px] transition-colors duration-150"
-        >
-          <ArrowLeft className="w-4 h-4" strokeWidth={1.75} />
-          Retour
-        </button>
-        <h1 className="font-display font-bold text-[40px] leading-[1.05] tracking-[0.04em] uppercase m-0">
-          {title}<span className="text-magenta">{accent}</span>
-        </h1>
-        {sections.map(({ heading, body }) => (
-          <section key={heading} className="bg-white/[0.04] border border-white/10 rounded-2xl p-6">
-            <h2 className="font-semibold text-[18px] m-0 mb-3">{heading}</h2>
-            {body.map((p) => (
-              <p key={p} className="text-[14.5px] leading-[1.6] text-white/75 m-0 mb-2 last:mb-0">{p}</p>
-            ))}
-          </section>
-        ))}
+      <div className="relative min-h-full">
+        <div className="starry-background absolute inset-0" />
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute bottom-0 left-0 w-[600px] h-[600px] rounded-full opacity-15 bg-magenta blur-[120px]" />
+        </div>
+        <div className="relative z-10 max-w-[800px] mx-auto px-6 py-12 flex flex-col gap-8">
+          <button
+            type="button"
+            onClick={onClose}
+            className="self-start inline-flex items-center gap-2 border border-white/10 hover:border-white/30 text-white/70 hover:text-white rounded-lg px-4 py-2.5 text-[14px] transition-colors duration-150"
+          >
+            <ArrowLeft className="w-4 h-4" strokeWidth={1.75} />
+            Retour
+          </button>
+          <h1 className="font-display font-bold text-[40px] leading-[1.05] tracking-[0.04em] uppercase m-0">
+            {title}<span className="text-magenta">{accent}</span>
+          </h1>
+          {sections.map(({ heading, body }) => (
+            <section key={heading} className="bg-white/[0.04] border border-white/10 rounded-2xl p-6">
+              <h2 className="font-semibold text-[18px] m-0 mb-3">{heading}</h2>
+              {body.map((p) => (
+                <p key={p} className="text-[14.5px] leading-[1.6] text-white/75 m-0 mb-2 last:mb-0">{p}</p>
+              ))}
+            </section>
+          ))}
+        </div>
       </div>
     </div>
   );
