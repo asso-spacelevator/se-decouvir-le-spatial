@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { SessionProvider, useSession } from './contexts/SessionContext';
 import { StartPage } from './components/StartPage';
 import { IntroductionPage } from './components/IntroductionPage';
@@ -29,10 +29,46 @@ const sectionOrder: Section[] = [
 const SESSION1_SECTIONS: Section[] = ['introduction', 'impact_terrestre', 'rockets', 'social', 'questions_session1', 'session_break'];
 const SESSION2_SECTIONS: Section[] = ['introduction_s2', 'satellites', 'exploration', 'entreprises_spatiales', 'accompagnement', 'faq_questions'];
 
+const LEGAL_HASHES: Record<LegalPageId, string> = {
+  privacy: '#/confidentialite',
+  terms: '#/conditions',
+};
+const legalFromHash = () =>
+  (Object.keys(LEGAL_HASHES) as LegalPageId[]).find((id) => LEGAL_HASHES[id] === window.location.hash) ?? null;
+
 function AppContent() {
   const { session, loading, updateSection, completeSection, markSession1Complete, markSession2Complete } = useSession();
   const [currentView, setCurrentView] = useState<Section>('start');
-  const [legalPage, setLegalPage] = useState<LegalPageId | null>(null);
+  const [legalPage, setLegalPage] = useState<LegalPageId | null>(legalFromHash);
+  const openedInApp = useRef(false);
+
+  useEffect(() => {
+    const onHashChange = () => {
+      const page = legalFromHash();
+      if (!page) openedInApp.current = false;
+      setLegalPage(page);
+    };
+    window.addEventListener('hashchange', onHashChange);
+    return () => window.removeEventListener('hashchange', onHashChange);
+  }, []);
+
+  const openLegal = (page: LegalPageId) => {
+    openedInApp.current = true;
+    window.location.hash = LEGAL_HASHES[page];
+  };
+
+  // Back to the previous history entry when we pushed one, otherwise (direct link) just clear the hash.
+  const closeLegal = () => {
+    if (openedInApp.current) {
+      openedInApp.current = false;
+      window.history.back();
+    } else {
+      window.history.replaceState(null, '', window.location.pathname + window.location.search);
+      setLegalPage(null);
+    }
+  };
+
+  const legalOverlay = legalPage && <LegalPage page={legalPage} onClose={closeLegal} />;
 
   useEffect(() => {
     if (session && session.current_section) {
@@ -92,6 +128,7 @@ function AppContent() {
   if (loading) {
     return (
       <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+        {legalOverlay}
         <div className="text-white text-xl">Chargement...</div>
       </div>
     );
@@ -99,12 +136,12 @@ function AppContent() {
 
   return (
     <div className="min-h-screen bg-deepspace">
-      {legalPage && <LegalPage page={legalPage} onClose={() => setLegalPage(null)} />}
+      {legalOverlay}
       {currentView === 'start' && (
         <StartPage
           onStartSession1={handleStartSession1}
           onStartSession2={handleStartSession2}
-          onOpenLegal={setLegalPage}
+          onOpenLegal={openLegal}
         />
       )}
 
@@ -200,7 +237,7 @@ function AppContent() {
 
       {currentView === 'completed' && <CompletionPage onRestart={handleHome} />}
 
-      <LegalFooter onOpen={setLegalPage} />
+      <LegalFooter onOpen={openLegal} />
     </div>
   );
 }
