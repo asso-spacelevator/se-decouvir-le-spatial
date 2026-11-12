@@ -12,7 +12,7 @@ const PAGES: Record<LegalPageId, { title: string; accent: string; sections: { he
       {
         heading: 'Qui est responsable ?',
         body: [
-          `L'association Space Elevator est responsable du traitement des données de ce site. Contact : ${CONTACT}. Adresse postale : [TODO : à compléter].`,
+          `L'association Space Elevator est responsable du traitement des données de ce site. Contact : ${CONTACT}. Adresse postale : 27 rue Caraman, 31000 Toulouse.`,
         ],
       },
       {
@@ -39,7 +39,7 @@ const PAGES: Record<LegalPageId, { title: string; accent: string; sections: { he
       {
         heading: 'Qui reçoit les données ?',
         body: [
-          "Supabase, notre sous-traitant d'hébergement de base de données (région d'hébergement : [TODO : à confirmer]).",
+          "Supabase, notre sous-traitant d'hébergement de base de données (région d'hébergement : Londres, Royaume-Uni (eu-west-2)).",
           "Des contenus tiers sont chargés par ton navigateur : vidéos YouTube, images de drapeaux (flagcdn) et police Google Fonts. Ces services peuvent déposer des cookies ou recevoir ton adresse IP selon leurs propres politiques.",
         ],
       },
