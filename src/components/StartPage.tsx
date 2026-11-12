@@ -243,10 +243,10 @@ export function StartPage({ onStartSession1, onStartSession2, onOpenLegal }: Sta
         </div>
 
         <p className="text-[12px] text-white/55 m-0">
-          En continuant, tu acceptes les{' '}
-          <button type="button" onClick={() => onOpenLegal('terms')} className="text-magenta hover:underline">conditions d'utilisation</button>
-          {' '}et la{' '}
-          <button type="button" onClick={() => onOpenLegal('privacy')} className="text-magenta hover:underline">politique de confidentialité</button>.
+          Pour savoir comment tes données sont utilisées, consulte la{' '}
+          <button type="button" onClick={() => onOpenLegal('privacy')} className="text-magenta hover:underline">politique de confidentialité</button>
+          {' '}et les{' '}
+          <button type="button" onClick={() => onOpenLegal('terms')} className="text-magenta hover:underline">conditions d'utilisation</button>.
         </p>
 
         {/* Sessions */}

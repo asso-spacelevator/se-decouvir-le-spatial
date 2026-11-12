@@ -97,12 +97,9 @@ function AppContent() {
     );
   }
 
-  if (legalPage) {
-    return <LegalPage page={legalPage} onClose={() => setLegalPage(null)} />;
-  }
-
   return (
     <div className="min-h-screen bg-deepspace">
+      {legalPage && <LegalPage page={legalPage} onClose={() => setLegalPage(null)} />}
       {currentView === 'start' && (
         <StartPage
           onStartSession1={handleStartSession1}
