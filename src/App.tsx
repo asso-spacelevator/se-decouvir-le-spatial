@@ -14,6 +14,8 @@ import { EntreprisesSpatialesSection } from './components/EntreprisesSpatialesSe
 import { AccompagnementSection } from './components/AccompagnementSection';
 import { FAQQuestionsSection } from './components/FAQQuestionsSection';
 import { CompletionPage } from './components/CompletionPage';
+import { LegalPage, type LegalPageId } from './components/LegalPage';
+import { LegalFooter } from './components/LegalFooter';
 import type { Section } from './lib/supabase';
 
 const sectionOrder: Section[] = [
@@ -30,6 +32,7 @@ const SESSION2_SECTIONS: Section[] = ['introduction_s2', 'satellites', 'explorat
 function AppContent() {
   const { session, loading, updateSection, completeSection, markSession1Complete, markSession2Complete } = useSession();
   const [currentView, setCurrentView] = useState<Section>('start');
+  const [legalPage, setLegalPage] = useState<LegalPageId | null>(null);
 
   useEffect(() => {
     if (session && session.current_section) {
@@ -94,12 +97,17 @@ function AppContent() {
     );
   }
 
+  if (legalPage) {
+    return <LegalPage page={legalPage} onClose={() => setLegalPage(null)} />;
+  }
+
   return (
     <div className="min-h-screen bg-deepspace">
       {currentView === 'start' && (
         <StartPage
           onStartSession1={handleStartSession1}
           onStartSession2={handleStartSession2}
+          onOpenLegal={setLegalPage}
         />
       )}
 
@@ -194,6 +202,8 @@ function AppContent() {
       )}
 
       {currentView === 'completed' && <CompletionPage onRestart={handleHome} />}
+
+      <LegalFooter onOpen={setLegalPage} />
     </div>
   );
 }

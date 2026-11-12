@@ -3,10 +3,12 @@ import { Globe, Rocket, Wifi, Satellite, Compass, Building2, Users, MessageCircl
 import { GirlAvatar, BoyAvatar } from './AvatarGuide';
 import { useSession } from '../contexts/SessionContext';
 import { RestartConfirmModal } from './RestartConfirmModal';
+import type { LegalPageId } from './LegalPage';
 
 interface StartPageProps {
   onStartSession1: () => void;
   onStartSession2: () => void;
+  onOpenLegal: (page: LegalPageId) => void;
 }
 
 /* ─────────────────────────────────────────────────────────
@@ -34,7 +36,7 @@ const SESSION_2_TOPICS = [
   { icon: <MessageCircle className="w-4 h-4" />, label: 'FAQ & questions' },
 ];
 
-export function StartPage({ onStartSession1, onStartSession2 }: StartPageProps) {
+export function StartPage({ onStartSession1, onStartSession2, onOpenLegal }: StartPageProps) {
   const { session, restartSession, saveSchoolName } = useSession();
   const [dialogueIndex, setDialogueIndex] = useState(0);
   const [visible, setVisible] = useState(true);
@@ -239,6 +241,13 @@ export function StartPage({ onStartSession1, onStartSession2 }: StartPageProps) 
             )}
           </div>
         </div>
+
+        <p className="text-[12px] text-white/55 m-0">
+          En continuant, tu acceptes les{' '}
+          <button type="button" onClick={() => onOpenLegal('terms')} className="text-magenta hover:underline">conditions d'utilisation</button>
+          {' '}et la{' '}
+          <button type="button" onClick={() => onOpenLegal('privacy')} className="text-magenta hover:underline">politique de confidentialité</button>.
+        </p>
 
         {/* Sessions */}
         <section className="grid grid-cols-1 md:grid-cols-2 gap-5">
