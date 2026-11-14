@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Instagram, Youtube, Globe, ExternalLink, QrCode, Check, ThumbsUp, Sparkles } from 'lucide-react';
+import { Globe, ExternalLink, QrCode, Check, ThumbsUp, Sparkles } from 'lucide-react';
 import { useSession } from '../contexts/SessionContext';
 import { QRCodeSVG } from 'qrcode.react';
 import { SectionCanvas, SectionTopBar, SectionProgress, ChapterShell, ChapterRecap, ChapterTimeTracker } from './ChapterShell';
@@ -82,6 +82,36 @@ const categoryLabels: Record<SocialReference['category'], string> = {
   education: 'Vulgarisation & Éducation',
   female_role_model: 'Modèles & Diversité',
 };
+
+// lucide-react v1 dropped brand icons: inline the old stroke glyphs.
+const svgProps = {
+  viewBox: '0 0 24 24',
+  fill: 'none',
+  stroke: 'currentColor',
+  strokeWidth: 2,
+  strokeLinecap: 'round',
+  strokeLinejoin: 'round',
+  'aria-hidden': true,
+} as const;
+
+function Instagram({ className }: { className?: string }) {
+  return (
+    <svg {...svgProps} className={className}>
+      <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+      <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+    </svg>
+  );
+}
+
+function Youtube({ className }: { className?: string }) {
+  return (
+    <svg {...svgProps} className={className}>
+      <path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17" />
+      <path d="m10 15 5-3-5-3z" />
+    </svg>
+  );
+}
 
 function TypeIcon({ type }: { type: RefType }) {
   if (type === 'youtube') return <Youtube className="w-4 h-4 text-magenta flex-shrink-0" />;
